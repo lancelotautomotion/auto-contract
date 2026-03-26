@@ -1,0 +1,121 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// Un compte = un gérant de gîte
+model User {
+  id        String   @id @default(cuid())
+  clerkId   String   @unique
+  email     String   @unique
+  name      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  gites Gite[]
+}
+
+// Un gîte appartient à un gérant
+model Gite {
+  id          String  @id @default(cuid())
+  name        String
+  address     String?
+  city        String?
+  zipCode     String?
+  email       String?
+  phone       String?
+  capacity    Int     @default(12)
+  cleaningFee Float   @default(90)
+  touristTax  Float   @default(1.32)
+  driveTemplateFolderId String?
+  driveOutputFolderId   String?
+  n8nWebhookUrl         String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  reservations Reservation[]
+}
+
+// Une réservation = un séjour client
+model Reservation {
+  id        String            @id @default(cuid())
+  status    ReservationStatus @default(NEW)
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+
+  // Infos client
+  clientFirstName String
+  clientLastName  String
+  clientEmail     String
+  clientPhone     String
+  clientAddress   String?
+  clientCity      String?
+  clientZipCode   String?
+
+  // Dates du séjour
+  checkIn  DateTime
+  checkOut DateTime
+
+  // Tarifs
+  rent        Float
+  deposit     Float
+  cleaningFee Float
+  touristTax  Float
+
+  // Options
+  nordicBath Boolean @default(false)
+  sheet160   Boolean @default(false)
+  sheet90    Boolean @default(false)
+  towels     Boolean @default(false)
+
+  notes String?
+
+  giteId String
+  gite   Gite   @relation(fields: [giteId], references: [id], onDelete: Cascade)
+
+  contract Contract?
+}
+
+// Le contrat généré pour une réservation
+model Contract {
+  id        String         @id @default(cuid())
+  status    ContractStatus @default(PENDING)
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+
+  driveFileId  String?
+  driveFileUrl String?
+
+  emailSentAt DateTime?
+  emailStatus EmailStatus @default(NOT_SENT)
+
+  reservationId String      @unique
+  reservation   Reservation @relation(fields: [reservationId], references: [id], onDelete: Cascade)
+}
+
+enum ReservationStatus {
+  NEW
+  CONFIRMED
+  CANCELLED
+}
+
+enum ContractStatus {
+  PENDING
+  GENERATING
+  GENERATED
+  ERROR
+}
+
+enum EmailStatus {
+  NOT_SENT
+  SENDING
+  SENT
+  ERROR
+}
