@@ -1,5 +1,6 @@
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
+import Link from "next/link";
 
 export default async function DashboardPage() {
   const { userId } = await auth();
@@ -7,47 +8,74 @@ export default async function DashboardPage() {
 
   const user = await currentUser();
 
+  const stats = [
+    { label: 'Réservations', value: '0' },
+    { label: 'Contrats générés', value: '0' },
+    { label: 'Emails envoyés', value: '0' },
+  ];
+
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white border-b border-gray-200 px-6 py-4">
-        <div className="max-w-5xl mx-auto flex items-center justify-between">
-          <h1 className="text-xl font-bold text-gray-900">ContratGîte</h1>
-          <span className="text-sm text-gray-500">{user?.emailAddresses[0]?.emailAddress}</span>
+    <div className="min-h-screen" style={{ backgroundColor: 'var(--bg)' }}>
+      {/* Header */}
+      <header className="px-8 py-5 flex items-center justify-between" style={{ borderBottom: '1px solid var(--border)' }}>
+        <span className="text-xs tracking-[0.2em] uppercase" style={{ color: 'var(--text-muted)' }}>
+          ContratGîte
+        </span>
+        <div className="flex items-center gap-6">
+          <span className="text-xs" style={{ color: 'var(--text-muted)' }}>
+            {user?.emailAddresses[0]?.emailAddress}
+          </span>
         </div>
       </header>
 
-      <main className="max-w-5xl mx-auto px-6 py-10">
-        <div className="mb-8">
-          <h2 className="text-2xl font-bold text-gray-900">
-            Bonjour {user?.firstName ?? "!"}
-          </h2>
-          <p className="text-gray-500 mt-1">Gérez vos réservations et contrats depuis ici.</p>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
-          <StatCard label="Réservations" value="0" />
-          <StatCard label="Contrats générés" value="0" />
-          <StatCard label="Emails envoyés" value="0" />
-        </div>
-
-        <div className="bg-white rounded-xl border border-dashed border-gray-300 p-12 text-center">
-          <p className="text-gray-400 text-base">
-            Aucune réservation pour l'instant.
+      <main className="px-8 py-12 max-w-5xl">
+        {/* Title */}
+        <div className="mb-12">
+          <p className="text-xs tracking-[0.2em] uppercase mb-3" style={{ color: 'var(--text-muted)' }}>
+            — Tableau de bord
           </p>
-          <button className="mt-4 rounded-lg bg-green-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-green-700 transition-colors">
-            + Ajouter une réservation
-          </button>
+          <h1
+            className="text-5xl"
+            style={{ fontFamily: 'Cormorant Garamond, serif', fontWeight: 300 }}
+          >
+            Bonjour{user?.firstName ? `, ${user.firstName}` : ''}.  
+          </h1>
+        </div>
+
+        {/* Stats */}
+        <div
+          className="grid grid-cols-3 mb-12"
+          style={{ border: '1px solid var(--border)', backgroundColor: 'var(--border)', gap: '1px' }}
+        >
+          {stats.map((s) => (
+            <div key={s.label} className="p-6" style={{ backgroundColor: 'var(--bg-card)' }}>
+              <p className="text-xs tracking-[0.15em] uppercase mb-3" style={{ color: 'var(--text-muted)' }}>{s.label}</p>
+              <p className="text-4xl" style={{ fontFamily: 'Cormorant Garamond, serif', fontWeight: 300 }}>{s.value}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* Reservations */}
+        <div style={{ border: '1px solid var(--border)' }}>
+          <div className="px-6 py-4 flex items-center justify-between" style={{ borderBottom: '1px solid var(--border)' }}>
+            <p className="text-xs tracking-[0.2em] uppercase" style={{ color: 'var(--text-muted)' }}>
+              Réservations
+            </p>
+            <Link
+              href="/dashboard/reservations/new"
+              className="text-xs tracking-[0.15em] uppercase px-5 py-2 transition-opacity hover:opacity-80"
+              style={{ backgroundColor: 'var(--text)', color: 'var(--bg)' }}
+            >
+              + Nouvelle réservation
+            </Link>
+          </div>
+          <div className="px-6 py-16 text-center">
+            <p className="text-sm" style={{ color: 'var(--text-muted)' }}>
+              Aucune réservation pour l'instant.
+            </p>
+          </div>
         </div>
       </main>
-    </div>
-  );
-}
-
-function StatCard({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="bg-white rounded-xl border border-gray-200 p-6">
-      <p className="text-sm text-gray-500">{label}</p>
-      <p className="text-3xl font-bold text-gray-900 mt-1">{value}</p>
     </div>
   );
 }
