@@ -8,73 +8,117 @@ export default async function DashboardPage() {
 
   const user = await currentUser();
 
-  const stats = [
-    { label: 'Réservations', value: '0' },
-    { label: 'Contrats générés', value: '0' },
-    { label: 'Emails envoyés', value: '0' },
-  ];
-
   return (
-    <div className="min-h-screen" style={{ backgroundColor: 'var(--bg)' }}>
+    <div style={{ minHeight: '100vh', backgroundColor: '#EDE8E1', fontFamily: 'Inter, sans-serif' }}>
+
       {/* Header */}
-      <header className="px-8 py-5 flex items-center justify-between" style={{ borderBottom: '1px solid var(--border)' }}>
-        <span className="text-xs tracking-[0.2em] uppercase" style={{ color: 'var(--text-muted)' }}>
+      <header style={{
+        padding: '20px 40px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        borderBottom: '1px solid #CEC8BF',
+        backgroundColor: '#EDE8E1',
+      }}>
+        <span style={{ fontSize: '11px', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#7A7570' }}>
           ContratGîte
         </span>
-        <div className="flex items-center gap-6">
-          <span className="text-xs" style={{ color: 'var(--text-muted)' }}>
-            {user?.emailAddresses[0]?.emailAddress}
-          </span>
-        </div>
+        <span style={{ fontSize: '12px', color: '#7A7570' }}>
+          {user?.emailAddresses[0]?.emailAddress}
+        </span>
       </header>
 
-      <main className="px-8 py-12 max-w-5xl">
+      <main style={{ padding: '48px 40px', maxWidth: '1100px' }}>
+
         {/* Title */}
-        <div className="mb-12">
-          <p className="text-xs tracking-[0.2em] uppercase mb-3" style={{ color: 'var(--text-muted)' }}>
+        <div style={{ marginBottom: '40px' }}>
+          <p style={{ fontSize: '11px', letterSpacing: '0.25em', textTransform: 'uppercase', color: '#7A7570', marginBottom: '10px' }}>
             — Tableau de bord
           </p>
-          <h1
-            className="text-5xl"
-            style={{ fontFamily: 'Cormorant Garamond, serif', fontWeight: 300 }}
-          >
+          <h1 style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', fontSize: '48px', fontWeight: 300, color: '#1C1C1A', margin: 0 }}>
             Bonjour{user?.firstName ? `, ${user.firstName}` : ''}.  
           </h1>
         </div>
 
         {/* Stats */}
-        <div
-          className="grid grid-cols-3 mb-12"
-          style={{ border: '1px solid var(--border)', backgroundColor: 'var(--border)', gap: '1px' }}
-        >
-          {stats.map((s) => (
-            <div key={s.label} className="p-6" style={{ backgroundColor: 'var(--bg-card)' }}>
-              <p className="text-xs tracking-[0.15em] uppercase mb-3" style={{ color: 'var(--text-muted)' }}>{s.label}</p>
-              <p className="text-4xl" style={{ fontFamily: 'Cormorant Garamond, serif', fontWeight: 300 }}>{s.value}</p>
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(3, 1fr)',
+          border: '1px solid #CEC8BF',
+          marginBottom: '32px',
+          backgroundColor: '#CEC8BF',
+          gap: '1px',
+        }}>
+          {[
+            { label: 'Réservations', value: '0' },
+            { label: 'Contrats générés', value: '0' },
+            { label: 'Emails envoyés', value: '0' },
+          ].map((s) => (
+            <div key={s.label} style={{ padding: '28px 32px', backgroundColor: '#E5DED5' }}>
+              <p style={{ fontSize: '11px', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#7A7570', marginBottom: '12px' }}>
+                {s.label}
+              </p>
+              <p style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', fontSize: '42px', fontWeight: 300, color: '#1C1C1A', margin: 0 }}>
+                {s.value}
+              </p>
             </div>
           ))}
         </div>
 
-        {/* Reservations */}
-        <div style={{ border: '1px solid var(--border)' }}>
-          <div className="px-6 py-4 flex items-center justify-between" style={{ borderBottom: '1px solid var(--border)' }}>
-            <p className="text-xs tracking-[0.2em] uppercase" style={{ color: 'var(--text-muted)' }}>
+        {/* Reservations table */}
+        <div style={{ border: '1px solid #CEC8BF', backgroundColor: '#F7F4F0' }}>
+
+          {/* Table header */}
+          <div style={{
+            padding: '16px 32px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            borderBottom: '1px solid #CEC8BF',
+            backgroundColor: '#E5DED5',
+          }}>
+            <p style={{ fontSize: '11px', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#7A7570', margin: 0 }}>
               Réservations
             </p>
             <Link
               href="/dashboard/reservations/new"
-              className="text-xs tracking-[0.15em] uppercase px-5 py-2 transition-opacity hover:opacity-80"
-              style={{ backgroundColor: 'var(--text)', color: 'var(--bg)' }}
+              style={{
+                fontSize: '11px',
+                letterSpacing: '0.15em',
+                textTransform: 'uppercase',
+                padding: '10px 20px',
+                backgroundColor: '#1C1C1A',
+                color: '#EDE8E1',
+                textDecoration: 'none',
+              }}
             >
               + Nouvelle réservation
             </Link>
           </div>
-          <div className="px-6 py-16 text-center">
-            <p className="text-sm" style={{ color: 'var(--text-muted)' }}>
+
+          {/* Column headers */}
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: '2fr 1fr 1fr 1fr 1fr',
+            padding: '12px 32px',
+            borderBottom: '1px solid #CEC8BF',
+            backgroundColor: '#EDE8E1',
+          }}>
+            {['Client', 'Arrivée', 'Départ', 'Contrat', 'Email'].map((col) => (
+              <span key={col} style={{ fontSize: '10px', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#7A7570' }}>
+                {col}
+              </span>
+            ))}
+          </div>
+
+          {/* Empty state */}
+          <div style={{ padding: '48px 32px', textAlign: 'center' }}>
+            <p style={{ fontSize: '13px', color: '#7A7570', margin: 0 }}>
               Aucune réservation pour l'instant.
             </p>
           </div>
         </div>
+
       </main>
     </div>
   );
