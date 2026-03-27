@@ -22,13 +22,20 @@ export default async function DashboardPage() {
   try {
     const dbUser = await prisma.user.findUnique({ where: { clerkId: userId } });
     if (dbUser) {
+      const gite = await prisma.gite.findFirst({ where: { userId: dbUser.id } });
+      if (!gite || gite.name === "Mon Gîte") redirect("/onboarding");
+
       reservations = await prisma.reservation.findMany({
         where: { gite: { userId: dbUser.id } },
         include: { contract: true },
         orderBy: { checkIn: 'asc' },
       });
+    } else {
+      redirect("/onboarding");
     }
-  } catch { /* DB indisponible */ }
+  } catch (e: unknown) {
+    if (e && typeof e === 'object' && 'digest' in e) throw e;
+  }
 
   const contractsGenerated = reservations.filter(r => r.contract?.status === 'GENERATED').length;
   const emailsSent = reservations.filter(r => r.contract?.emailStatus === 'SENT').length;
@@ -38,7 +45,10 @@ export default async function DashboardPage() {
     <div style={{ minHeight: '100vh', backgroundColor: '#EDE8E1', fontFamily: 'Inter, sans-serif' }}>
       <header style={{ padding: '20px 40px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #CEC8BF', backgroundColor: '#EDE8E1' }}>
         <span style={{ fontSize: '11px', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#7A7570' }}>ContratGîte</span>
-        <span style={{ fontSize: '12px', color: '#7A7570' }}>{user?.emailAddresses[0]?.emailAddress}</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
+          <Link href="/dashboard/settings" style={{ fontSize: '11px', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#7A7570', textDecoration: 'none' }}>Paramètres</Link>
+          <span style={{ fontSize: '12px', color: '#7A7570' }}>{user?.emailAddresses[0]?.emailAddress}</span>
+        </div>
       </header>
 
       <main style={{ padding: '48px 40px', maxWidth: '1000px', margin: '0 auto' }}>
@@ -49,23 +59,23 @@ export default async function DashboardPage() {
           </h1>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', border: '1px solid #CEC8BF', marginBottom: '32px', backgroundColor: '#CEC8BF', gap: '1px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', marginBottom: '32px', gap: '16px' }}>
           {[
             { label: 'Réservations', value: reservations.length.toString() },
             { label: 'Contrats générés', value: contractsGenerated.toString() },
             { label: 'Emails envoyés', value: emailsSent.toString() },
           ].map((s) => (
-            <div key={s.label} style={{ padding: '28px 32px', backgroundColor: '#E5DED5' }}>
+            <div key={s.label} style={{ padding: '28px 32px', backgroundColor: '#E5DED5', borderRadius: '12px', border: '1px solid #CEC8BF' }}>
               <p style={{ fontSize: '11px', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#7A7570', marginBottom: '12px' }}>{s.label}</p>
               <p style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', fontSize: '42px', fontWeight: 300, color: '#1C1C1A', margin: 0 }}>{s.value}</p>
             </div>
           ))}
         </div>
 
-        <div style={{ border: '1px solid #CEC8BF' }}>
+        <div style={{ border: '1px solid #CEC8BF', borderRadius: '12px', overflow: 'hidden' }}>
           <div style={{ padding: '16px 32px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #CEC8BF', backgroundColor: '#E5DED5' }}>
             <p style={{ fontSize: '11px', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#7A7570', margin: 0 }}>Réservations</p>
-            <Link href="/dashboard/reservations/new" style={{ fontSize: '11px', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '10px 20px', backgroundColor: '#1C1C1A', color: '#EDE8E1', textDecoration: 'none' }}>
+            <Link href="/dashboard/reservations/new" style={{ fontSize: '11px', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '10px 20px', backgroundColor: '#1C1C1A', color: '#EDE8E1', textDecoration: 'none', borderRadius: '8px' }}>
               + Nouvelle réservation
             </Link>
           </div>
@@ -95,7 +105,7 @@ export default async function DashboardPage() {
                 </div>
                 <span style={{ fontSize: '13px', color: '#1C1C1A' }}>{fmt(r.checkIn)}</span>
                 <span style={{ fontSize: '13px', color: '#1C1C1A' }}>{fmt(r.checkOut)}</span>
-                <span style={{ fontSize: '10px', letterSpacing: '0.12em', textTransform: 'uppercase', padding: '4px 10px', backgroundColor: r.contract?.status === 'GENERATED' ? '#1C1C1A' : '#E5DED5', color: r.contract?.status === 'GENERATED' ? '#EDE8E1' : '#7A7570', display: 'inline-block' }}>
+                <span style={{ fontSize: '10px', letterSpacing: '0.12em', textTransform: 'uppercase', padding: '4px 12px', backgroundColor: r.contract?.status === 'GENERATED' ? '#1C1C1A' : '#E5DED5', color: r.contract?.status === 'GENERATED' ? '#EDE8E1' : '#7A7570', display: 'inline-block', borderRadius: '20px' }}>
                   {r.contract?.status === 'GENERATED' ? 'Généré' : 'En attente'}
                 </span>
               </Link>
