@@ -42,6 +42,14 @@ export default async function SettingsPage() {
           n8nWebhookUrl: gite.n8nWebhookUrl ?? '',
           driveTemplateFolderId: gite.driveTemplateFolderId ?? '',
           driveOutputFolderId: gite.driveOutputFolderId ?? '',
+          offerNordicBath: gite.offerNordicBath,
+          nordicBathPrice: gite.nordicBathPrice,
+          offerSheet160: gite.offerSheet160,
+          sheet160Price: gite.sheet160Price,
+          offerSheet90: gite.offerSheet90,
+          sheet90Price: gite.sheet90Price,
+          offerTowels: gite.offerTowels,
+          towelsPrice: gite.towelsPrice,
         }} />
       </main>
     </div>

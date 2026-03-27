@@ -34,6 +34,16 @@ model Gite {
   driveOutputFolderId   String?
   n8nWebhookUrl         String?
 
+  // Options proposées aux clients
+  offerNordicBath Boolean @default(true)
+  nordicBathPrice Float   @default(120)
+  offerSheet160   Boolean @default(true)
+  sheet160Price   Float   @default(0)
+  offerSheet90    Boolean @default(true)
+  sheet90Price    Float   @default(0)
+  offerTowels     Boolean @default(true)
+  towelsPrice     Float   @default(0)
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

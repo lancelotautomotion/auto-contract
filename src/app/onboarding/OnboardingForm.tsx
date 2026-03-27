@@ -9,6 +9,13 @@ const section = { marginBottom: '36px' };
 const sectionTitle = { fontSize: '11px', letterSpacing: '0.25em', textTransform: 'uppercase' as const, color: '#7A7570', marginBottom: '20px', paddingBottom: '10px', borderBottom: '1px solid #CEC8BF' };
 const grid2 = { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' };
 
+const OPTIONS = [
+  { key: 'offerNordicBath', priceKey: 'nordicBathPrice', label: 'Bain nordique' },
+  { key: 'offerSheet160',   priceKey: 'sheet160Price',   label: 'Draps 160x200' },
+  { key: 'offerSheet90',    priceKey: 'sheet90Price',    label: 'Draps 90x190' },
+  { key: 'offerTowels',     priceKey: 'towelsPrice',     label: 'Linge de toilette' },
+];
+
 export default function OnboardingForm({ defaultEmail }: { defaultEmail: string }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -17,9 +24,14 @@ export default function OnboardingForm({ defaultEmail }: { defaultEmail: string 
     address: '', city: '', zipCode: '',
     capacity: '12', cleaningFee: '90', touristTax: '1.32',
     n8nWebhookUrl: '', driveTemplateFolderId: '', driveOutputFolderId: '',
+    offerNordicBath: true,  nordicBathPrice: '120',
+    offerSheet160: true,    sheet160Price: '0',
+    offerSheet90: true,     sheet90Price: '0',
+    offerTowels: true,      towelsPrice: '0',
   });
 
   const set = (k: string, v: string) => setForm(f => ({ ...f, [k]: v }));
+  const toggle = (k: string) => setForm(f => ({ ...f, [k]: !f[k as keyof typeof f] }));
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -62,6 +74,38 @@ export default function OnboardingForm({ defaultEmail }: { defaultEmail: string 
           <div><label style={label}>Capacité (personnes)</label><input type="number" style={input} value={form.capacity} onChange={e => set('capacity', e.target.value)} /></div>
           <div><label style={label}>Frais de ménage (€)</label><input type="number" step="0.01" style={input} value={form.cleaningFee} onChange={e => set('cleaningFee', e.target.value)} /></div>
           <div><label style={label}>Taxe de séjour (€/nuit)</label><input type="number" step="0.01" style={input} value={form.touristTax} onChange={e => set('touristTax', e.target.value)} /></div>
+        </div>
+      </div>
+
+      <div style={section}>
+        <p style={sectionTitle}>Options proposées aux clients</p>
+        <p style={{ fontSize: '12px', color: '#7A7570', marginBottom: '16px', lineHeight: 1.6 }}>
+          Sélectionnez les options disponibles dans votre gîte. Indiquez 0 € si l&apos;option est incluse dans le loyer.
+        </p>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+          {OPTIONS.map(opt => (
+            <div key={opt.key} style={{ display: 'flex', alignItems: 'center', gap: '16px', padding: '14px 16px', border: '1px solid #CEC8BF', borderRadius: '8px', backgroundColor: form[opt.key as keyof typeof form] ? '#E5DED5' : '#F7F4F0' }}>
+              <input
+                type="checkbox"
+                checked={form[opt.key as keyof typeof form] as boolean}
+                onChange={() => toggle(opt.key)}
+                style={{ width: '16px', height: '16px', accentColor: '#1C1C1A', flexShrink: 0, cursor: 'pointer' }}
+              />
+              <span style={{ flex: 1, fontSize: '13px', color: '#1C1C1A', fontWeight: form[opt.key as keyof typeof form] ? 500 : 400 }}>{opt.label}</span>
+              {form[opt.key as keyof typeof form] && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span style={{ fontSize: '11px', color: '#7A7570', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Prix</span>
+                  <input
+                    type="number" step="0.01" min="0"
+                    value={form[opt.priceKey as keyof typeof form] as string}
+                    onChange={e => set(opt.priceKey, e.target.value)}
+                    style={{ width: '80px', padding: '6px 10px', border: '1px solid #CEC8BF', backgroundColor: '#EDE8E1', fontSize: '13px', color: '#1C1C1A', outline: 'none', borderRadius: '6px', textAlign: 'right' }}
+                  />
+                  <span style={{ fontSize: '13px', color: '#7A7570' }}>€</span>
+                </div>
+              )}
+            </div>
+          ))}
         </div>
       </div>
 
