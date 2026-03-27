@@ -8,7 +8,6 @@
   --text: #1C1C1A;
   --text-muted: #7A7570;
   --border: #CEC8BF;
-  --accent: #1C1C1A;
 }
 
 body {
@@ -20,4 +19,28 @@ body {
 
 h1, h2, h3 {
   font-family: 'Cormorant Garamond', serif;
+}
+
+.reservation-row {
+  transition: background-color 0.15s ease;
+}
+
+.reservation-row:hover {
+  background-color: #EDE8E1 !important;
+}
+
+.reservation-row:hover .client-name {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.reservation-row:hover .row-arrow {
+  opacity: 1;
+}
+
+.row-arrow {
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  font-size: 14px;
+  color: #7A7570;
 }

@@ -80,10 +80,18 @@ export default async function DashboardPage() {
             </div>
           ) : (
             reservations.map((r, i) => (
-              <Link key={r.id} href={`/dashboard/reservations/${r.id}`} style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr', padding: '16px 32px', borderBottom: i < reservations.length - 1 ? '1px solid #CEC8BF' : 'none', backgroundColor: '#F7F4F0', alignItems: 'center', textDecoration: 'none', cursor: 'pointer' }}>
-                <div>
-                  <p style={{ fontSize: '14px', color: '#1C1C1A', margin: 0 }}>{r.clientFirstName} {r.clientLastName}</p>
-                  <p style={{ fontSize: '12px', color: '#7A7570', margin: '2px 0 0' }}>{r.clientEmail}</p>
+              <Link
+                key={r.id}
+                href={`/dashboard/reservations/${r.id}`}
+                className="reservation-row"
+                style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr', padding: '16px 32px', borderBottom: i < reservations.length - 1 ? '1px solid #CEC8BF' : 'none', backgroundColor: '#F7F4F0', alignItems: 'center', textDecoration: 'none' }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <div>
+                    <p className="client-name" style={{ fontSize: '14px', color: '#1C1C1A', margin: 0 }}>{r.clientFirstName} {r.clientLastName}</p>
+                    <p style={{ fontSize: '12px', color: '#7A7570', margin: '2px 0 0' }}>{r.clientEmail}</p>
+                  </div>
+                  <span className="row-arrow">→</span>
                 </div>
                 <span style={{ fontSize: '13px', color: '#1C1C1A' }}>{fmt(r.checkIn)}</span>
                 <span style={{ fontSize: '13px', color: '#1C1C1A' }}>{fmt(r.checkOut)}</span>
