@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 const labelStyle = { fontSize: '11px', letterSpacing: '0.15em', textTransform: 'uppercase' as const, color: '#7A7570', display: 'block', marginBottom: '6px' };
-const inputStyle = { width: '100%', padding: '10px 14px', border: '1px solid #CEC8BF', backgroundColor: '#F7F4F0', fontSize: '14px', color: '#1C1C1A', outline: 'none', boxSizing: 'border-box' as const };
+const inputStyle = { width: '100%', padding: '10px 14px', border: '1px solid #CEC8BF', backgroundColor: '#F7F4F0', fontSize: '14px', color: '#1C1C1A', outline: 'none', boxSizing: 'border-box' as const, borderRadius: '8px' };
 const sectionStyle = { marginBottom: '40px' };
 const sectionTitleStyle = { fontSize: '11px', letterSpacing: '0.25em', textTransform: 'uppercase' as const, color: '#7A7570', marginBottom: '20px', paddingBottom: '10px', borderBottom: '1px solid #CEC8BF' };
 const gridStyle = { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' };
@@ -60,7 +60,7 @@ export default function EditReservationForm({ id, initial }: { id: string; initi
       <div style={sectionStyle}>
         <p style={sectionTitleStyle}>Dates du séjour</p>
         <div style={gridStyle}>
-          <div><label style={labelStyle}>Date d'arrivée *</label><input required type="date" style={inputStyle} value={form.checkIn} onChange={e => set('checkIn', e.target.value)} /></div>
+          <div><label style={labelStyle}>Date d&apos;arrivée *</label><input required type="date" style={inputStyle} value={form.checkIn} onChange={e => set('checkIn', e.target.value)} /></div>
           <div><label style={labelStyle}>Date de départ *</label><input required type="date" style={inputStyle} value={form.checkOut} onChange={e => set('checkOut', e.target.value)} /></div>
         </div>
       </div>
@@ -84,7 +84,7 @@ export default function EditReservationForm({ id, initial }: { id: string; initi
             { key: 'sheet90', label: 'Draps 90x190' },
             { key: 'towels', label: 'Linge de toilette' },
           ].map(opt => (
-            <label key={opt.key} style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', padding: '12px 16px', border: '1px solid #CEC8BF', backgroundColor: form[opt.key as keyof FormData] ? '#E5DED5' : '#F7F4F0' }}>
+            <label key={opt.key} style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', padding: '12px 16px', border: '1px solid #CEC8BF', backgroundColor: form[opt.key as keyof FormData] ? '#E5DED5' : '#F7F4F0', borderRadius: '8px' }}>
               <input type="checkbox" checked={form[opt.key as keyof FormData] as boolean} onChange={e => set(opt.key, e.target.checked)} style={{ width: '14px', height: '14px', accentColor: '#1C1C1A' }} />
               <span style={{ fontSize: '13px', color: '#1C1C1A' }}>{opt.label}</span>
             </label>
@@ -98,10 +98,10 @@ export default function EditReservationForm({ id, initial }: { id: string; initi
       </div>
 
       <div style={{ display: 'flex', gap: '16px' }}>
-        <button type="submit" disabled={loading} style={{ fontSize: '11px', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '14px 32px', backgroundColor: loading ? '#CEC8BF' : '#1C1C1A', color: '#EDE8E1', border: 'none', cursor: loading ? 'not-allowed' : 'pointer', flex: 1 }}>
+        <button type="submit" disabled={loading} style={{ fontSize: '11px', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '14px 32px', backgroundColor: loading ? '#CEC8BF' : '#1C1C1A', color: '#EDE8E1', border: 'none', cursor: loading ? 'not-allowed' : 'pointer', flex: 1, borderRadius: '8px' }}>
           {loading ? 'Enregistrement...' : 'Enregistrer les modifications →'}
         </button>
-        <button type="button" onClick={() => router.push(`/dashboard/reservations/${id}`)} style={{ fontSize: '11px', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '14px 32px', backgroundColor: '#E5DED5', color: '#1C1C1A', border: '1px solid #CEC8BF', cursor: 'pointer' }}>
+        <button type="button" onClick={() => router.push(`/dashboard/reservations/${id}`)} style={{ fontSize: '11px', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '14px 32px', backgroundColor: '#E5DED5', color: '#1C1C1A', border: '1px solid #CEC8BF', cursor: 'pointer', borderRadius: '8px' }}>
           Annuler
         </button>
       </div>

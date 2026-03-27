@@ -12,12 +12,12 @@ interface Props {
 const btnPrimary = {
   fontSize: '11px', letterSpacing: '0.15em', textTransform: 'uppercase' as const,
   padding: '14px 28px', backgroundColor: '#1C1C1A', color: '#EDE8E1',
-  border: 'none', cursor: 'pointer', flex: 1,
+  border: 'none', cursor: 'pointer', flex: 1, borderRadius: '8px',
 };
 const btnSecondary = {
   fontSize: '11px', letterSpacing: '0.15em', textTransform: 'uppercase' as const,
   padding: '14px 28px', backgroundColor: '#E5DED5', color: '#1C1C1A',
-  border: '1px solid #CEC8BF', cursor: 'pointer', flex: 1,
+  border: '1px solid #CEC8BF', cursor: 'pointer', flex: 1, borderRadius: '8px',
 };
 const btnDisabled = {
   ...btnPrimary, backgroundColor: '#CEC8BF', cursor: 'not-allowed' as const,
@@ -49,8 +49,11 @@ export default function ContractActions({ reservationId, contractStatus, emailSt
     } finally { setLoading(null); }
   };
 
+  // suppress unused variable warning
+  void setFileUrl;
+
   return (
-    <div style={{ border: '1px solid #CEC8BF', backgroundColor: '#F7F4F0' }}>
+    <div style={{ border: '1px solid #CEC8BF', backgroundColor: '#F7F4F0', borderRadius: '12px', overflow: 'hidden' }}>
       <div style={{ padding: '16px 32px', borderBottom: '1px solid #CEC8BF', backgroundColor: '#E5DED5' }}>
         <p style={{ fontSize: '11px', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#7A7570', margin: 0 }}>Actions</p>
       </div>

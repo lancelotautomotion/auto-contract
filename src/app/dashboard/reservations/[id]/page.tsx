@@ -1,4 +1,4 @@
-import { auth, currentUser } from "@clerk/nextjs/server";
+import { auth } from "@clerk/nextjs/server";
 import { redirect, notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import ContractActions from "./ContractActions";
@@ -43,17 +43,17 @@ export default async function ReservationDetailPage({ params }: { params: Promis
             <p style={{ fontSize: '13px', color: '#7A7570', marginTop: '6px' }}>{reservation.clientEmail} · {reservation.clientPhone}</p>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '10px' }}>
-            <span style={{ fontSize: '10px', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '6px 14px', backgroundColor: reservation.contract?.status === 'GENERATED' ? '#1C1C1A' : '#E5DED5', color: reservation.contract?.status === 'GENERATED' ? '#EDE8E1' : '#7A7570', display: 'inline-block' }}>
+            <span style={{ fontSize: '10px', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '6px 14px', backgroundColor: reservation.contract?.status === 'GENERATED' ? '#1C1C1A' : '#E5DED5', color: reservation.contract?.status === 'GENERATED' ? '#EDE8E1' : '#7A7570', display: 'inline-block', borderRadius: '20px' }}>
               {reservation.contract?.status === 'GENERATED' ? 'Contrat généré' :
                reservation.contract?.status === 'GENERATING' ? 'En cours...' : 'En attente'}
             </span>
-            <Link href={`/dashboard/reservations/${id}/edit`} style={{ fontSize: '11px', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '8px 16px', border: '1px solid #CEC8BF', backgroundColor: '#E5DED5', color: '#1C1C1A', textDecoration: 'none' }}>
+            <Link href={`/dashboard/reservations/${id}/edit`} style={{ fontSize: '11px', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '8px 16px', border: '1px solid #CEC8BF', backgroundColor: '#E5DED5', color: '#1C1C1A', textDecoration: 'none', borderRadius: '8px' }}>
               Modifier →
             </Link>
           </div>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1px', border: '1px solid #CEC8BF', backgroundColor: '#CEC8BF', marginBottom: '32px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1px', border: '1px solid #CEC8BF', backgroundColor: '#CEC8BF', marginBottom: '32px', borderRadius: '12px', overflow: 'hidden' }}>
           <div style={{ backgroundColor: '#F7F4F0', padding: '28px 32px' }}>
             <p style={{ fontSize: '11px', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#7A7570', marginBottom: '20px', paddingBottom: '10px', borderBottom: '1px solid #CEC8BF' }}>Séjour</p>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
