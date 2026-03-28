@@ -23,32 +23,19 @@ export default function Sidebar() {
 
   return (
     <aside style={{
-      width: '220px',
+      width: '200px',
       flexShrink: 0,
-      backgroundColor: 'var(--bg)',
-      borderRight: '1px solid var(--border)',
+      backgroundColor: 'transparent',
       display: 'flex',
       flexDirection: 'column',
       minHeight: '100vh',
       position: 'sticky',
       top: 0,
       height: '100vh',
+      padding: '48px 0',
     }}>
-      {/* Brand */}
-      <div style={{ padding: '36px 28px 32px' }}>
-        <span style={{
-          fontSize: '11px',
-          letterSpacing: '0.2em',
-          textTransform: 'uppercase',
-          color: 'var(--text)',
-          fontWeight: 500,
-        }}>
-          ContratGîte
-        </span>
-      </div>
-
       {/* Navigation */}
-      <nav style={{ flex: 1, padding: '0 16px' }}>
+      <nav style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '0 32px' }}>
         {NAV.map(item => {
           const active = isActive(item.href);
           return (
@@ -56,18 +43,16 @@ export default function Sidebar() {
               key={item.href}
               href={item.href}
               style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '10px',
-                padding: '8px 12px',
-                marginBottom: '2px',
+                display: 'block',
+                padding: '6px 0 6px 14px',
                 textDecoration: 'none',
-                fontSize: '13px',
+                fontSize: '15px',
                 color: active ? 'var(--text)' : 'var(--text-muted)',
-                backgroundColor: active ? 'var(--bg-card)' : 'transparent',
-                borderRadius: '8px',
                 fontWeight: active ? 500 : 400,
-                transition: 'color 0.12s ease, background-color 0.12s ease',
+                borderLeft: active ? '2px solid var(--text)' : '2px solid transparent',
+                transition: 'color 0.15s ease, border-color 0.15s ease',
+                fontFamily: "'Cormorant Garamond', serif",
+                letterSpacing: '0.01em',
               }}
             >
               {item.label}
@@ -77,19 +62,19 @@ export default function Sidebar() {
       </nav>
 
       {/* Bottom */}
-      <div style={{ padding: '24px 28px', borderTop: '1px solid var(--border)' }}>
+      <div style={{ padding: '0 32px' }}>
         <button
           onClick={toggle}
           style={{
             display: 'block',
             width: '100%',
-            padding: '0 0 12px',
+            padding: '0 0 10px',
             background: 'none',
             border: 'none',
             cursor: 'pointer',
             color: 'var(--text-muted)',
-            fontSize: '12px',
-            letterSpacing: '0.04em',
+            fontSize: '11px',
+            letterSpacing: '0.05em',
             textAlign: 'left',
           }}
         >
@@ -106,8 +91,9 @@ export default function Sidebar() {
             border: 'none',
             cursor: 'pointer',
             color: 'var(--text-muted)',
-            fontSize: '12px',
-            letterSpacing: '0.04em',
+            fontSize: '11px',
+            letterSpacing: '0.08em',
+            textTransform: 'uppercase',
             textAlign: 'left',
           }}
         >
