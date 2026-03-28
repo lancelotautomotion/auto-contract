@@ -1,7 +1,8 @@
 import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { generateContractPdf, DEFAULT_CONTRACT_TEMPLATE, ContractData } from "@/lib/contractPdf";
+import { generateContractPdf, ContractData } from "@/lib/contractPdf";
+import { DEFAULT_CONTRACT_TEMPLATE } from "@/lib/defaultContractTemplate";
 
 export async function POST(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
