@@ -34,16 +34,6 @@ model Gite {
   driveOutputFolderId   String?
   n8nWebhookUrl         String?
 
-  // Options proposées aux clients
-  offerNordicBath Boolean @default(true)
-  nordicBathPrice Float   @default(120)
-  offerSheet160   Boolean @default(true)
-  sheet160Price   Float   @default(0)
-  offerSheet90    Boolean @default(true)
-  sheet90Price    Float   @default(0)
-  offerTowels     Boolean @default(true)
-  towelsPrice     Float   @default(0)
-
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -51,6 +41,20 @@ model Gite {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   reservations Reservation[]
+  options      GiteOption[]
+}
+
+// Options configurées par le gérant (dynamiques)
+model GiteOption {
+  id       String @id @default(cuid())
+  label    String
+  price    Float  @default(0)
+  position Int    @default(0)
+
+  giteId String
+  gite   Gite   @relation(fields: [giteId], references: [id], onDelete: Cascade)
+
+  reservationOptions ReservationOption[]
 }
 
 // Une réservation = un séjour client
@@ -79,18 +83,26 @@ model Reservation {
   cleaningFee Float
   touristTax  Float
 
-  // Options
-  nordicBath Boolean @default(false)
-  sheet160   Boolean @default(false)
-  sheet90    Boolean @default(false)
-  towels     Boolean @default(false)
-
   notes String?
 
   giteId String
   gite   Gite   @relation(fields: [giteId], references: [id], onDelete: Cascade)
 
-  contract Contract?
+  contract            Contract?
+  reservationOptions  ReservationOption[]
+}
+
+// Options sélectionnées pour une réservation (snapshot au moment de la résa)
+model ReservationOption {
+  id    String @id @default(cuid())
+  label String
+  price Float  @default(0)
+
+  reservationId String
+  reservation   Reservation @relation(fields: [reservationId], references: [id], onDelete: Cascade)
+
+  giteOptionId String?
+  giteOption   GiteOption? @relation(fields: [giteOptionId], references: [id], onDelete: SetNull)
 }
 
 // Le contrat généré pour une réservation

@@ -17,6 +17,14 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
 
   const body = await req.json();
 
+  const gite = await prisma.gite.findFirst({
+    where: { userId: dbUser.id },
+    include: { options: true },
+  });
+
+  const selectedIds: string[] = Array.isArray(body.selectedOptionIds) ? body.selectedOptionIds : [];
+  const selectedOptions = gite?.options.filter(o => selectedIds.includes(o.id)) ?? [];
+
   const updated = await prisma.reservation.update({
     where: { id },
     data: {
@@ -33,11 +41,15 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
       deposit: parseFloat(body.deposit),
       cleaningFee: parseFloat(body.cleaningFee ?? 90),
       touristTax: parseFloat(body.touristTax ?? 1.32),
-      nordicBath: body.nordicBath === true,
-      sheet160: body.sheet160 === true,
-      sheet90: body.sheet90 === true,
-      towels: body.towels === true,
       notes: body.notes ?? "",
+      reservationOptions: {
+        deleteMany: {},
+        create: selectedOptions.map(o => ({
+          label: o.label,
+          price: o.price,
+          giteOptionId: o.id,
+        })),
+      },
     },
   });
 

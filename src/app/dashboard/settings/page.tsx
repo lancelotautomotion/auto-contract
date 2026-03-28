@@ -10,7 +10,10 @@ export default async function SettingsPage() {
   const dbUser = await prisma.user.findUnique({ where: { clerkId: userId } });
   if (!dbUser) redirect("/onboarding");
 
-  const gite = await prisma.gite.findFirst({ where: { userId: dbUser.id } });
+  const gite = await prisma.gite.findFirst({
+    where: { userId: dbUser.id },
+    include: { options: { orderBy: { position: 'asc' } } },
+  });
   if (!gite) redirect("/onboarding");
 
   return (
@@ -42,14 +45,7 @@ export default async function SettingsPage() {
           n8nWebhookUrl: gite.n8nWebhookUrl ?? '',
           driveTemplateFolderId: gite.driveTemplateFolderId ?? '',
           driveOutputFolderId: gite.driveOutputFolderId ?? '',
-          offerNordicBath: (gite as any).offerNordicBath ?? true,
-          nordicBathPrice: (gite as any).nordicBathPrice ?? 120,
-          offerSheet160:   (gite as any).offerSheet160 ?? true,
-          sheet160Price:   (gite as any).sheet160Price ?? 0,
-          offerSheet90:    (gite as any).offerSheet90 ?? true,
-          sheet90Price:    (gite as any).sheet90Price ?? 0,
-          offerTowels:     (gite as any).offerTowels ?? true,
-          towelsPrice:     (gite as any).towelsPrice ?? 0,
+          options: gite.options.map(o => ({ id: o.id, label: o.label, price: o.price })),
         }} />
       </main>
     </div>

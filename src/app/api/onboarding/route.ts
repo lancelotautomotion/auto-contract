@@ -8,7 +8,7 @@ export async function POST(req: NextRequest) {
 
   const body = await req.json();
 
-  const data = {
+  const giteData = {
     name: body.giteName,
     email: body.email,
     phone: body.phone ?? "",
@@ -21,14 +21,6 @@ export async function POST(req: NextRequest) {
     n8nWebhookUrl: body.n8nWebhookUrl ?? "",
     driveTemplateFolderId: body.driveTemplateFolderId ?? "",
     driveOutputFolderId: body.driveOutputFolderId ?? "",
-    offerNordicBath: body.offerNordicBath ?? true,
-    nordicBathPrice: parseFloat(body.nordicBathPrice ?? "120"),
-    offerSheet160: body.offerSheet160 ?? true,
-    sheet160Price: parseFloat(body.sheet160Price ?? "0"),
-    offerSheet90: body.offerSheet90 ?? true,
-    sheet90Price: parseFloat(body.sheet90Price ?? "0"),
-    offerTowels: body.offerTowels ?? true,
-    towelsPrice: parseFloat(body.towelsPrice ?? "0"),
   };
 
   let user = await prisma.user.findUnique({ where: { clerkId: userId } });
@@ -38,12 +30,27 @@ export async function POST(req: NextRequest) {
     });
   }
 
-  const existing = await prisma.gite.findFirst({ where: { userId: user.id } });
-  if (existing) {
-    const updated = await prisma.gite.update({ where: { id: existing.id }, data });
-    return NextResponse.json(updated);
+  let gite = await prisma.gite.findFirst({ where: { userId: user.id } });
+  if (gite) {
+    gite = await prisma.gite.update({ where: { id: gite.id }, data: giteData });
+  } else {
+    gite = await prisma.gite.create({ data: { userId: user.id, ...giteData } });
   }
 
-  const gite = await prisma.gite.create({ data: { userId: user.id, ...data } });
-  return NextResponse.json(gite, { status: 201 });
+  // Remplace toutes les options si fournies
+  if (Array.isArray(body.options)) {
+    await prisma.giteOption.deleteMany({ where: { giteId: gite.id } });
+    if (body.options.length > 0) {
+      await prisma.giteOption.createMany({
+        data: body.options.map((opt: { label: string; price: number }, i: number) => ({
+          giteId: gite!.id,
+          label: opt.label,
+          price: parseFloat(String(opt.price ?? 0)),
+          position: i,
+        })),
+      });
+    }
+  }
+
+  return NextResponse.json(gite, { status: 200 });
 }
