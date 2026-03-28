@@ -9,15 +9,19 @@ export default async function DashboardPage() {
 
   const user = await currentUser();
 
+  let pendingReservations: Array<{
+    id: string; clientFirstName: string; clientLastName: string;
+    clientEmail: string; checkIn: Date; checkOut: Date;
+    reservationOptions: { label: string; price: number }[];
+  }> = [];
+
   let reservations: Array<{
-    id: string;
-    clientFirstName: string;
-    clientLastName: string;
-    clientEmail: string;
-    checkIn: Date;
-    checkOut: Date;
+    id: string; clientFirstName: string; clientLastName: string;
+    clientEmail: string; checkIn: Date; checkOut: Date;
     contract: { status: string; emailStatus: string } | null;
   }> = [];
+
+  let giteSlug: string | null = null;
 
   try {
     const dbUser = await prisma.user.findUnique({ where: { clerkId: userId } });
@@ -25,8 +29,16 @@ export default async function DashboardPage() {
       const gite = await prisma.gite.findFirst({ where: { userId: dbUser.id } });
       if (!gite || gite.name === "Mon Gîte") redirect("/onboarding");
 
+      giteSlug = gite.slug ?? null;
+
+      pendingReservations = await prisma.reservation.findMany({
+        where: { gite: { userId: dbUser.id }, status: 'PENDING_REVIEW' },
+        include: { reservationOptions: true },
+        orderBy: { createdAt: 'desc' },
+      });
+
       reservations = await prisma.reservation.findMany({
-        where: { gite: { userId: dbUser.id } },
+        where: { gite: { userId: dbUser.id }, status: { not: 'PENDING_REVIEW' } },
         include: { contract: true },
         orderBy: { checkIn: 'asc' },
       });
@@ -46,6 +58,11 @@ export default async function DashboardPage() {
       <header style={{ padding: '20px 40px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #CEC8BF', backgroundColor: '#EDE8E1' }}>
         <span style={{ fontSize: '11px', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#7A7570' }}>ContratGîte</span>
         <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
+          {giteSlug && (
+            <a href={`/book/${giteSlug}`} target="_blank" rel="noreferrer" style={{ fontSize: '11px', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#7A7570', textDecoration: 'none' }}>
+              ↗ Page client
+            </a>
+          )}
           <Link href="/dashboard/settings" style={{ fontSize: '11px', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#7A7570', textDecoration: 'none' }}>Paramètres</Link>
           <span style={{ fontSize: '12px', color: '#7A7570' }}>{user?.emailAddresses[0]?.emailAddress}</span>
         </div>
@@ -59,6 +76,7 @@ export default async function DashboardPage() {
           </h1>
         </div>
 
+        {/* Stats */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', marginBottom: '32px', gap: '16px' }}>
           {[
             { label: 'Réservations', value: reservations.length.toString() },
@@ -72,6 +90,43 @@ export default async function DashboardPage() {
           ))}
         </div>
 
+        {/* Demandes en attente */}
+        {pendingReservations.length > 0 && (
+          <div style={{ marginBottom: '32px', border: '1px solid #CEC8BF', borderRadius: '12px', overflow: 'hidden' }}>
+            <div style={{ padding: '16px 32px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #CEC8BF', backgroundColor: '#1C1C1A' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <p style={{ fontSize: '11px', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#EDE8E1', margin: 0 }}>Nouvelles demandes</p>
+                <span style={{ fontSize: '11px', padding: '2px 10px', backgroundColor: '#EDE8E1', color: '#1C1C1A', borderRadius: '20px', fontWeight: 500 }}>
+                  {pendingReservations.length}
+                </span>
+              </div>
+              <p style={{ fontSize: '11px', color: '#7A7570', margin: 0 }}>À compléter et valider</p>
+            </div>
+            {pendingReservations.map((r, i) => (
+              <Link
+                key={r.id}
+                href={`/dashboard/reservations/${r.id}/complete`}
+                className="reservation-row"
+                style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr auto', padding: '16px 32px', borderBottom: i < pendingReservations.length - 1 ? '1px solid #CEC8BF' : 'none', backgroundColor: '#F7F4F0', alignItems: 'center', textDecoration: 'none' }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <div>
+                    <p className="client-name" style={{ fontSize: '14px', color: '#1C1C1A', margin: 0 }}>{r.clientFirstName} {r.clientLastName}</p>
+                    <p style={{ fontSize: '12px', color: '#7A7570', margin: '2px 0 0' }}>{r.clientEmail}</p>
+                  </div>
+                  <span className="row-arrow">→</span>
+                </div>
+                <span style={{ fontSize: '13px', color: '#1C1C1A' }}>{fmt(r.checkIn)}</span>
+                <span style={{ fontSize: '13px', color: '#1C1C1A' }}>{fmt(r.checkOut)}</span>
+                <span style={{ fontSize: '10px', letterSpacing: '0.12em', textTransform: 'uppercase', padding: '4px 12px', backgroundColor: '#EDE8E1', color: '#7A7570', borderRadius: '20px', border: '1px solid #CEC8BF' }}>
+                  À compléter
+                </span>
+              </Link>
+            ))}
+          </div>
+        )}
+
+        {/* Réservations confirmées */}
         <div style={{ border: '1px solid #CEC8BF', borderRadius: '12px', overflow: 'hidden' }}>
           <div style={{ padding: '16px 32px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #CEC8BF', backgroundColor: '#E5DED5' }}>
             <p style={{ fontSize: '11px', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#7A7570', margin: 0 }}>Réservations</p>
