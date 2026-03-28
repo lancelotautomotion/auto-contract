@@ -9,95 +9,99 @@ const NAV = [
   { href: '/dashboard/settings', label: 'Paramètres' },
 ];
 
-const ITEM_H = 38;
-const ITEM_GAP = 2;
-
 export default function Sidebar() {
   const pathname = usePathname();
 
-  const activeIndex = NAV.findIndex(({ href }) =>
-    href === '/dashboard' ? pathname === '/dashboard' : pathname.startsWith(href)
-  );
+  const isActive = (href: string) =>
+    href === '/dashboard' ? pathname === '/dashboard' : pathname.startsWith(href);
 
   return (
-    <aside style={{
-      width: '210px',
-      flexShrink: 0,
-      backgroundColor: 'var(--bg-card)',
-      borderRight: '1px solid var(--border)',
-      display: 'flex',
-      flexDirection: 'column',
-      minHeight: '100vh',
-      position: 'sticky',
-      top: 0,
-      height: '100vh',
-    }}>
+    <>
+      <style>{`
+        .nav-item {
+          position: relative;
+          display: flex;
+          align-items: center;
+          padding: 20px 28px;
+          text-decoration: none;
+          font-family: 'Inter', sans-serif;
+          font-size: 12px;
+          font-weight: 300;
+          letter-spacing: 0.12em;
+          text-transform: uppercase;
+          color: var(--text-muted);
+          border-bottom: 1px solid var(--border);
+          transition: color 0.2s ease;
+          overflow: hidden;
+        }
+        .nav-item::before {
+          content: '';
+          position: absolute;
+          left: 0;
+          top: 0;
+          bottom: 0;
+          width: 2px;
+          background: var(--text);
+          transform: scaleY(0);
+          transform-origin: bottom;
+          transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .nav-item.active {
+          color: var(--text);
+          font-weight: 400;
+        }
+        .nav-item.active::before {
+          transform: scaleY(1);
+        }
+        .nav-item:not(.active):hover {
+          color: var(--text);
+        }
+      `}</style>
 
-      {/* Brand */}
-      <div style={{ padding: '32px 20px 28px' }}>
-        <span style={{
-          fontSize: '10px',
-          letterSpacing: '0.3em',
-          textTransform: 'uppercase',
-          color: 'var(--text-muted)',
-          fontFamily: "'Inter', sans-serif",
-          fontWeight: 500,
+      <aside style={{
+        width: '200px',
+        flexShrink: 0,
+        backgroundColor: 'var(--bg-card)',
+        display: 'flex',
+        flexDirection: 'column',
+        minHeight: '100vh',
+        position: 'sticky',
+        top: 0,
+        height: '100vh',
+        borderRight: '1px solid var(--border)',
+      }}>
+
+        {/* Brand */}
+        <div style={{
+          padding: '32px 28px 28px',
+          borderBottom: '1px solid var(--border)',
         }}>
-          ContratGîte
-        </span>
-      </div>
+          <span style={{
+            fontSize: '9px',
+            letterSpacing: '0.3em',
+            textTransform: 'uppercase',
+            color: 'var(--text-muted)',
+            fontFamily: "'Inter', sans-serif",
+            fontWeight: 500,
+          }}>
+            ContratGîte
+          </span>
+        </div>
 
-      {/* Nav */}
-      <nav style={{ padding: '0 10px', position: 'relative' }}>
-
-        {/* Pill animé */}
-        {activeIndex >= 0 && (
-          <div
-            aria-hidden
-            style={{
-              position: 'absolute',
-              left: '10px',
-              right: '10px',
-              height: `${ITEM_H}px`,
-              top: `${activeIndex * (ITEM_H + ITEM_GAP)}px`,
-              backgroundColor: 'var(--bg-white)',
-              borderRadius: '8px',
-              boxShadow: '0 1px 4px rgba(0,0,0,0.07)',
-              transition: 'top 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-            }}
-          />
-        )}
-
-        {NAV.map((item, i) => {
-          const active = i === activeIndex;
-          return (
+        {/* Nav */}
+        <nav style={{ flex: 1 }}>
+          {NAV.map(item => (
             <Link
               key={item.href}
               href={item.href}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                height: `${ITEM_H}px`,
-                marginBottom: `${ITEM_GAP}px`,
-                padding: '0 14px',
-                textDecoration: 'none',
-                fontSize: '12.5px',
-                fontFamily: "'Inter', sans-serif",
-                letterSpacing: '0.01em',
-                fontWeight: active ? 500 : 400,
-                color: active ? 'var(--text)' : 'var(--text-muted)',
-                position: 'relative',
-                zIndex: 1,
-                transition: 'color 0.2s ease',
-                borderRadius: '8px',
-              }}
+              className={`nav-item${isActive(item.href) ? ' active' : ''}`}
             >
               {item.label}
             </Link>
-          );
-        })}
-      </nav>
+          ))}
+        </nav>
 
-    </aside>
+      </aside>
+    </>
   );
 }
