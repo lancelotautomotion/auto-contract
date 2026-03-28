@@ -117,6 +117,11 @@ model Contract {
   driveFileId  String?
   driveFileUrl String?
 
+  signatureToken String?   @unique
+  signedAt       DateTime?
+  signedByName   String?
+  signedByIp     String?
+
   emailSentAt DateTime?
   emailStatus EmailStatus @default(NOT_SENT)
 
@@ -135,6 +140,7 @@ enum ContractStatus {
   PENDING
   GENERATING
   GENERATED
+  SIGNED
   ERROR
 }
 

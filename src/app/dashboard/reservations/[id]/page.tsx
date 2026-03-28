@@ -102,6 +102,8 @@ export default async function ReservationDetailPage({ params }: { params: Promis
           contractStatus={reservation.contract?.status ?? null}
           emailStatus={reservation.contract?.emailStatus ?? null}
           driveFileUrl={reservation.contract?.driveFileUrl ?? null}
+          signedAt={reservation.contract?.signedAt ?? null}
+          signedByName={reservation.contract?.signedByName ?? null}
         />
       </main>
     </div>

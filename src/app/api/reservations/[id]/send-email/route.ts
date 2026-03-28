@@ -1,9 +1,8 @@
 import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { generateContractPdf, ContractData } from "@/lib/contractPdf";
-import { DEFAULT_CONTRACT_TEMPLATE } from "@/lib/defaultContractTemplate";
 import { Resend } from "resend";
+import { randomBytes } from "crypto";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -17,71 +16,55 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
 
   const reservation = await prisma.reservation.findFirst({
     where: { id, gite: { userId: dbUser.id } },
-    include: { gite: true, reservationOptions: true },
+    include: { gite: true },
   });
   if (!reservation) return NextResponse.json({ error: "Réservation introuvable" }, { status: 404 });
 
   if (!process.env.RESEND_API_KEY) {
-    return NextResponse.json({ error: "RESEND_API_KEY non configurée dans les variables d'environnement" }, { status: 500 });
+    return NextResponse.json({ error: "RESEND_API_KEY non configurée" }, { status: 500 });
   }
 
-  const fmt = (d: Date) => new Date(d).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  // Générer ou réutiliser le token de signature
+  const existingContract = await prisma.contract.findUnique({ where: { reservationId: id } });
+  const signatureToken = existingContract?.signatureToken ?? randomBytes(32).toString('hex');
 
-  const data: ContractData = {
-    template: reservation.gite.contractTemplate ?? DEFAULT_CONTRACT_TEMPLATE,
-    nom_client: reservation.clientLastName,
-    prenom_client: reservation.clientFirstName,
-    email_client: reservation.clientEmail,
-    telephone_client: reservation.clientPhone,
-    adresse_client: reservation.clientAddress,
-    ville_client: reservation.clientCity,
-    code_postal_client: reservation.clientZipCode,
-    date_entree: fmt(reservation.checkIn),
-    date_sortie: fmt(reservation.checkOut),
-    loyer: reservation.rent ?? 0,
-    acompte: reservation.deposit ?? 0,
-    menage: reservation.cleaningFee ?? 0,
-    taxe_sejour: reservation.touristTax ?? 0,
-    options: reservation.reservationOptions.map(o => ({ label: o.label, price: o.price })),
-    nom_gite: reservation.gite.name,
-    adresse_gite: reservation.gite.address,
-    ville_gite: reservation.gite.city,
-    email_gite: reservation.gite.email,
-    telephone_gite: reservation.gite.phone,
-  };
+  await prisma.contract.upsert({
+    where: { reservationId: id },
+    create: { reservationId: id, status: 'GENERATED', signatureToken, emailStatus: 'SENT', emailSentAt: new Date() },
+    update: { signatureToken, emailStatus: 'SENT', emailSentAt: new Date() },
+  });
 
-  const pdfBuffer = await generateContractPdf(data);
-
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000';
+  const signUrl = `${appUrl}/sign/${signatureToken}`;
   const fromEmail = process.env.RESEND_FROM_EMAIL ?? 'onboarding@resend.dev';
+  const fmt = (d: Date) => new Date(d).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
   const dateEntree = fmt(reservation.checkIn);
   const dateSortie = fmt(reservation.checkOut);
 
   const { error } = await resend.emails.send({
     from: fromEmail,
     to: reservation.clientEmail,
-    subject: `Votre contrat de location — ${reservation.gite.name}`,
+    subject: `Votre contrat de location à signer — ${reservation.gite.name}`,
     html: `
-      <p>Bonjour ${reservation.clientFirstName},</p>
-      <p>Veuillez trouver ci-joint votre contrat de location pour votre séjour du <strong>${dateEntree}</strong> au <strong>${dateSortie}</strong> au ${reservation.gite.name}.</p>
-      <p>Merci de le lire attentivement et de nous le retourner signé.</p>
-      <p>Cordialement,<br/>${reservation.gite.name}</p>
+      <div style="font-family: Inter, sans-serif; max-width: 560px; margin: 0 auto; color: #1C1C1A;">
+        <p>Bonjour ${reservation.clientFirstName},</p>
+        <p>Votre contrat de location pour votre séjour du <strong>${dateEntree}</strong> au <strong>${dateSortie}</strong> au <strong>${reservation.gite.name}</strong> est prêt.</p>
+        <p>Merci de le lire attentivement et de le signer en cliquant sur le bouton ci-dessous :</p>
+        <p style="text-align: center; margin: 32px 0;">
+          <a href="${signUrl}" style="background-color: #1C1C1A; color: #EDE8E1; padding: 14px 32px; text-decoration: none; border-radius: 8px; font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase;">
+            Lire et signer le contrat →
+          </a>
+        </p>
+        <p style="font-size: 12px; color: #7A7570;">Ce lien est personnel et sécurisé. Une fois signé, vous recevrez automatiquement votre exemplaire par email.</p>
+        <p>Cordialement,<br/>${reservation.gite.name}</p>
+      </div>
     `,
-    attachments: [{
-      filename: `contrat-${reservation.clientLastName}-${reservation.clientFirstName}.pdf`,
-      content: pdfBuffer.toString('base64'),
-    }],
   });
 
   if (error) {
     console.error('Resend error:', error);
     return NextResponse.json({ error: "Erreur lors de l'envoi de l'email" }, { status: 500 });
   }
-
-  await prisma.contract.upsert({
-    where: { reservationId: id },
-    create: { reservationId: id, status: 'GENERATED', emailStatus: 'SENT', emailSentAt: new Date() },
-    update: { status: 'GENERATED', emailStatus: 'SENT', emailSentAt: new Date() },
-  });
 
   return NextResponse.json({ success: true });
 }

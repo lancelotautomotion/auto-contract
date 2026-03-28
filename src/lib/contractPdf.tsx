@@ -68,6 +68,34 @@ const styles = StyleSheet.create({
   empty: { marginBottom: 7 },
 });
 
+export interface SignatureInfo {
+  signedByName: string;
+  signedAt: Date;
+  signedByIp: string;
+  reservationId: string;
+}
+
+function buildSignatureBlock(sig: SignatureInfo): string {
+  const dateStr = sig.signedAt.toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' });
+  const timeStr = sig.signedAt.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+  return [
+    '',
+    '─────────────────────────────────────────────────────────────',
+    'SIGNATURE ÉLECTRONIQUE',
+    `Signé le : ${dateStr} à ${timeStr}`,
+    `Par : ${sig.signedByName}`,
+    `Adresse IP : ${sig.signedByIp}`,
+    `Référence : ${sig.reservationId}`,
+    'Ce document constitue une signature électronique simple au sens du règlement eIDAS (UE) n°910/2014.',
+    '─────────────────────────────────────────────────────────────',
+  ].join('\n');
+}
+
+export async function generateSignedContractPdf(data: ContractData, sig: SignatureInfo): Promise<Buffer> {
+  const templateWithSig = data.template + buildSignatureBlock(sig);
+  return generateContractPdf({ ...data, template: templateWithSig });
+}
+
 export async function generateContractPdf(data: ContractData): Promise<Buffer> {
   const text = buildText(data);
   const lines = text.split('\n');
