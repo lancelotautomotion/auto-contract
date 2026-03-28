@@ -23,7 +23,7 @@ export default function Sidebar() {
 
   return (
     <aside style={{
-      width: '200px',
+      width: '220px',
       flexShrink: 0,
       backgroundColor: 'transparent',
       display: 'flex',
@@ -35,7 +35,7 @@ export default function Sidebar() {
       padding: '48px 0',
     }}>
       {/* Navigation */}
-      <nav style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '0 32px' }}>
+      <nav style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '0 24px 0 40px' }}>
         {NAV.map(item => {
           const active = isActive(item.href);
           return (
@@ -44,15 +44,17 @@ export default function Sidebar() {
               href={item.href}
               style={{
                 display: 'block',
-                padding: '6px 0 6px 14px',
+                padding: '7px 0 7px 16px',
+                marginBottom: '4px',
                 textDecoration: 'none',
-                fontSize: '15px',
+                fontSize: '13px',
                 color: active ? 'var(--text)' : 'var(--text-muted)',
                 fontWeight: active ? 500 : 400,
-                borderLeft: active ? '2px solid var(--text)' : '2px solid transparent',
-                transition: 'color 0.15s ease, border-color 0.15s ease',
-                fontFamily: "'Cormorant Garamond', serif",
+                fontFamily: "'Inter', sans-serif",
                 letterSpacing: '0.01em',
+                borderLeft: active ? '2px solid var(--text)' : '2px solid transparent',
+                transition: 'color 0.2s ease, border-color 0.2s ease, opacity 0.2s ease',
+                opacity: active ? 1 : 0.7,
               }}
             >
               {item.label}
@@ -62,7 +64,7 @@ export default function Sidebar() {
       </nav>
 
       {/* Bottom */}
-      <div style={{ padding: '0 32px' }}>
+      <div style={{ padding: '0 24px 0 40px' }}>
         <button
           onClick={toggle}
           style={{
@@ -74,7 +76,8 @@ export default function Sidebar() {
             cursor: 'pointer',
             color: 'var(--text-muted)',
             fontSize: '11px',
-            letterSpacing: '0.05em',
+            fontFamily: "'Inter', sans-serif",
+            letterSpacing: '0.04em',
             textAlign: 'left',
           }}
         >
@@ -92,6 +95,7 @@ export default function Sidebar() {
             cursor: 'pointer',
             color: 'var(--text-muted)',
             fontSize: '11px',
+            fontFamily: "'Inter', sans-serif",
             letterSpacing: '0.08em',
             textTransform: 'uppercase',
             textAlign: 'left',
