@@ -216,7 +216,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
                 <span style={{ fontSize: '13px', color: '#1C1C1A' }}>{fmt(r.checkOut)}</span>
                 <span style={{
                   fontSize: '10px', letterSpacing: '0.1em', textTransform: 'uppercase',
-                  padding: '4px 10px', whiteSpace: 'nowrap', borderRadius: '20px',
+                  padding: '4px 8px', whiteSpace: 'nowrap', borderRadius: '20px',
                   textAlign: 'center', display: 'inline-block',
                   backgroundColor: r.contract?.status === 'SIGNED' ? SIGNED_BG : r.contract?.status === 'GENERATED' ? PENDING_BG : '#EDE8E1',
                   color: r.contract?.status === 'SIGNED' ? SIGNED_TEXT : r.contract?.status === 'GENERATED' ? PENDING_TEXT : '#7A7570',
