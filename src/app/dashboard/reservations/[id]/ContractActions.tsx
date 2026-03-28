@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 
 interface Props {
   reservationId: string;
@@ -28,6 +28,28 @@ export default function ContractActions({ reservationId, contractStatus, emailSt
   const [mailStatus, setMailStatus] = useState(emailStatus);
   const [loading, setLoading] = useState<string | null>(null);
   const [emailError, setEmailError] = useState<string | null>(null);
+  const [signed, setSigned] = useState<{ at: Date; byName: string } | null>(
+    signedAt ? { at: new Date(signedAt), byName: signedByName ?? '' } : null
+  );
+  const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  useEffect(() => {
+    const poll = async () => {
+      try {
+        const res = await fetch(`/api/reservations/${reservationId}/contract-status`);
+        if (!res.ok) return;
+        const data = await res.json();
+        if (data.contractStatus) setStatus(data.contractStatus);
+        if (data.emailStatus) setMailStatus(data.emailStatus);
+        if (data.signedAt && !signed) {
+          setSigned({ at: new Date(data.signedAt), byName: data.signedByName ?? '' });
+        }
+      } catch { /* silently ignore */ }
+    };
+
+    pollRef.current = setInterval(poll, 5000);
+    return () => { if (pollRef.current) clearInterval(pollRef.current); };
+  }, [reservationId, signed]);
 
   const downloadContract = async () => {
     setLoading('generate');
@@ -64,7 +86,7 @@ export default function ContractActions({ reservationId, contractStatus, emailSt
     }
   };
 
-  const isSigned = status === 'SIGNED' || signedAt !== null;
+  const isSigned = status === 'SIGNED' || signed !== null;
 
   return (
     <div style={{ border: '1px solid #CEC8BF', backgroundColor: '#F7F4F0', borderRadius: '12px', overflow: 'hidden' }}>
@@ -77,10 +99,10 @@ export default function ContractActions({ reservationId, contractStatus, emailSt
         )}
       </div>
 
-      {isSigned && signedAt && (
+      {isSigned && signed && (
         <div style={{ padding: '16px 32px', borderBottom: '1px solid #CEC8BF', backgroundColor: '#F0EDE8' }}>
           <p style={{ fontSize: '12px', color: '#7A7570', margin: 0 }}>
-            Signé électroniquement le {new Date(signedAt).toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' })} par <strong>{signedByName}</strong>
+            Signé électroniquement le {signed.at.toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' })} par <strong>{signed.byName}</strong>
           </p>
         </div>
       )}

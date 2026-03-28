@@ -49,8 +49,8 @@ export default async function DashboardPage() {
     if (e && typeof e === 'object' && 'digest' in e) throw e;
   }
 
-  const contractsGenerated = reservations.filter(r => r.contract?.status === 'GENERATED').length;
-  const emailsSent = reservations.filter(r => r.contract?.emailStatus === 'SENT').length;
+  const contractsGenerated = reservations.filter(r => r.contract?.status === 'GENERATED' || r.contract?.status === 'SIGNED').length;
+  const contractsSigned = reservations.filter(r => r.contract?.status === 'SIGNED').length;
   const fmt = (d: Date) => new Date(d).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
 
   return (
@@ -81,7 +81,7 @@ export default async function DashboardPage() {
           {[
             { label: 'Réservations', value: reservations.length.toString() },
             { label: 'Contrats générés', value: contractsGenerated.toString() },
-            { label: 'Emails envoyés', value: emailsSent.toString() },
+            { label: 'Contrats signés', value: contractsSigned.toString() },
           ].map((s) => (
             <div key={s.label} style={{ padding: '28px 32px', backgroundColor: '#E5DED5', borderRadius: '12px', border: '1px solid #CEC8BF' }}>
               <p style={{ fontSize: '11px', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#7A7570', marginBottom: '12px' }}>{s.label}</p>
@@ -160,8 +160,14 @@ export default async function DashboardPage() {
                 </div>
                 <span style={{ fontSize: '13px', color: '#1C1C1A' }}>{fmt(r.checkIn)}</span>
                 <span style={{ fontSize: '13px', color: '#1C1C1A' }}>{fmt(r.checkOut)}</span>
-                <span style={{ fontSize: '10px', letterSpacing: '0.12em', textTransform: 'uppercase', padding: '4px 12px', backgroundColor: r.contract?.status === 'GENERATED' ? '#1C1C1A' : '#E5DED5', color: r.contract?.status === 'GENERATED' ? '#EDE8E1' : '#7A7570', display: 'inline-block', borderRadius: '20px' }}>
-                  {r.contract?.status === 'GENERATED' ? 'Généré' : 'En attente'}
+                <span style={{
+                  fontSize: '10px', letterSpacing: '0.12em', textTransform: 'uppercase',
+                  padding: '4px 12px', display: 'inline-block', borderRadius: '20px',
+                  backgroundColor: r.contract?.status === 'SIGNED' ? '#1C1C1A' : r.contract?.status === 'GENERATED' ? '#E5DED5' : '#EDE8E1',
+                  color: r.contract?.status === 'SIGNED' ? '#EDE8E1' : r.contract?.status === 'GENERATED' ? '#1C1C1A' : '#7A7570',
+                  border: r.contract?.status === 'SIGNED' ? 'none' : '1px solid #CEC8BF',
+                }}>
+                  {r.contract?.status === 'SIGNED' ? 'Signé ✓' : r.contract?.status === 'GENERATED' ? 'Généré' : 'En attente'}
                 </span>
               </Link>
             ))
