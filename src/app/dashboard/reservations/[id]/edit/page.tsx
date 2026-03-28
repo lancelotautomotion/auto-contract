@@ -25,12 +25,7 @@ export default async function EditReservationPage({ params }: { params: Promise<
   const fmt = (d: Date) => new Date(d).toISOString().split('T')[0];
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#EDE8E1', fontFamily: 'Inter, sans-serif' }}>
-      <header style={{ padding: '20px 40px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #CEC8BF', backgroundColor: '#EDE8E1' }}>
-        <span style={{ fontSize: '11px', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#7A7570' }}>ContratGîte</span>
-        <a href={`/dashboard/reservations/${id}`} style={{ fontSize: '11px', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#7A7570', textDecoration: 'none' }}>← Retour</a>
-      </header>
-      <main style={{ maxWidth: '800px', margin: '0 auto', padding: '48px 40px' }}>
+    <main style={{ maxWidth: '800px', margin: '0 auto', padding: '48px 40px' }}>
         <div style={{ marginBottom: '40px' }}>
           <p style={{ fontSize: '11px', letterSpacing: '0.25em', textTransform: 'uppercase', color: '#7A7570', marginBottom: '10px' }}>— Modifier la réservation</p>
           <h1 style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', fontSize: '44px', fontWeight: 300, color: '#1C1C1A', margin: 0 }}>
@@ -58,7 +53,6 @@ export default async function EditReservationPage({ params }: { params: Promise<
             notes: reservation.notes ?? '',
           }}
         />
-      </main>
-    </div>
+    </main>
   );
 }

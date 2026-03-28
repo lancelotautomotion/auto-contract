@@ -1,6 +1,8 @@
 import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { generateContractPdf, ContractData } from "@/lib/contractPdf";
+import { DEFAULT_CONTRACT_TEMPLATE } from "@/lib/defaultContractTemplate";
 
 export async function POST(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -12,49 +14,48 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
 
   const reservation = await prisma.reservation.findFirst({
     where: { id, gite: { userId: dbUser.id } },
-    include: { gite: true },
+    include: { gite: true, reservationOptions: true },
   });
   if (!reservation) return NextResponse.json({ error: "Réservation introuvable" }, { status: 404 });
 
-  // Crée ou met à jour le contrat en statut GENERATING
+  const fmt = (d: Date) => new Date(d).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+
+  const data: ContractData = {
+    template: reservation.gite.contractTemplate ?? DEFAULT_CONTRACT_TEMPLATE,
+    nom_client: reservation.clientLastName,
+    prenom_client: reservation.clientFirstName,
+    email_client: reservation.clientEmail,
+    telephone_client: reservation.clientPhone,
+    adresse_client: reservation.clientAddress,
+    ville_client: reservation.clientCity,
+    code_postal_client: reservation.clientZipCode,
+    date_entree: fmt(reservation.checkIn),
+    date_sortie: fmt(reservation.checkOut),
+    loyer: reservation.rent ?? 0,
+    acompte: reservation.deposit ?? 0,
+    menage: reservation.cleaningFee ?? 0,
+    taxe_sejour: reservation.touristTax ?? 0,
+    options: reservation.reservationOptions.map((o: { label: string; price: number }) => ({ label: o.label, price: o.price })),
+    nom_gite: reservation.gite.name,
+    adresse_gite: reservation.gite.address,
+    ville_gite: reservation.gite.city,
+    email_gite: reservation.gite.email,
+    telephone_gite: reservation.gite.phone,
+    logoDataUrl: reservation.gite.logoDataUrl,
+  };
+
+  const pdfBuffer = await generateContractPdf(data);
+
   await prisma.contract.upsert({
     where: { reservationId: id },
-    create: { reservationId: id, status: 'GENERATING' },
-    update: { status: 'GENERATING' },
+    create: { reservationId: id, status: 'GENERATED', driveFileUrl: null },
+    update: { status: 'GENERATED' },
   });
 
-  // Appel n8n si l'URL est configurée
-  const webhookUrl = reservation.gite.n8nWebhookUrl ?? process.env.N8N_WEBHOOK_BASE_URL;
-  if (webhookUrl) {
-    const fmt = (d: Date) => new Date(d).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
-    try {
-      await fetch(webhookUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          reservation_id: reservation.id,
-          nom: reservation.clientLastName,
-          prenom: reservation.clientFirstName,
-          email: reservation.clientEmail,
-          telephone: reservation.clientPhone,
-          adresse: reservation.clientAddress,
-          ville: reservation.clientCity,
-          code_postal: reservation.clientZipCode,
-          date_entree: fmt(reservation.checkIn),
-          date_sortie: fmt(reservation.checkOut),
-          loyer: reservation.rent,
-          acompte: reservation.deposit,
-          menage: reservation.cleaningFee,
-          taxe_sejour: reservation.touristTax,
-          bain_nordique: reservation.nordicBath,
-          callback_url: `${process.env.NEXT_PUBLIC_APP_URL}/api/n8n/callback`,
-        }),
-      });
-    } catch (e) {
-      console.error('n8n webhook error:', e);
-      // On ne bloque pas si n8n est injoignable
-    }
-  }
-
-  return NextResponse.json({ success: true });
+  return new NextResponse(pdfBuffer, {
+    headers: {
+      'Content-Type': 'application/pdf',
+      'Content-Disposition': `attachment; filename="contrat-${reservation.clientLastName}-${reservation.clientFirstName}.pdf"`,
+    },
+  });
 }

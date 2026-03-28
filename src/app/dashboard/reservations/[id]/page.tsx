@@ -25,13 +25,7 @@ export default async function ReservationDetailPage({ params }: { params: Promis
   const fmtPrice = (n: number) => `${n.toFixed(2).replace('.', ',')} €`;
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#EDE8E1', fontFamily: 'Inter, sans-serif' }}>
-      <header style={{ padding: '20px 40px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #CEC8BF', backgroundColor: '#EDE8E1' }}>
-        <span style={{ fontSize: '11px', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#7A7570' }}>ContratGîte</span>
-        <a href="/dashboard" style={{ fontSize: '11px', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#7A7570', textDecoration: 'none' }}>← Tableau de bord</a>
-      </header>
-
-      <main style={{ maxWidth: '1000px', margin: '0 auto', padding: '48px 40px' }}>
+    <main style={{ maxWidth: '1000px', margin: '0 auto', padding: '48px 40px' }}>
 
         {/* Title + statut + bouton modifier */}
         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '40px' }}>
@@ -103,7 +97,6 @@ export default async function ReservationDetailPage({ params }: { params: Promis
           emailStatus={reservation.contract?.emailStatus ?? null}
           driveFileUrl={reservation.contract?.driveFileUrl ?? null}
         />
-      </main>
-    </div>
+    </main>
   );
 }

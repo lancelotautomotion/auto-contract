@@ -17,26 +17,20 @@ export async function POST(req: NextRequest) {
     zipCode: body.zipCode ?? "",
     slug: body.slug ? body.slug.toLowerCase().replace(/[^a-z0-9-]/g, '-') : undefined,
     contractTemplate: body.contractTemplate ?? undefined,
+    logoDataUrl: body.logoDataUrl ?? null,
     capacity: parseInt(body.capacity ?? "12"),
     cleaningFee: parseFloat(body.cleaningFee ?? "90"),
     touristTax: parseFloat(body.touristTax ?? "1.32"),
   };
 
-  let user = await prisma.user.findUnique({ where: { clerkId: userId } });
-  if (!user) {
-    user = await prisma.user.create({
-      data: { clerkId: userId, email: body.email, name: body.giteName },
-    });
-  }
+  const user = await prisma.user.findUnique({ where: { clerkId: userId } });
+  if (!user) return NextResponse.json({ error: "Utilisateur introuvable" }, { status: 404 });
 
   let gite = await prisma.gite.findFirst({ where: { userId: user.id } });
-  if (gite) {
-    gite = await prisma.gite.update({ where: { id: gite.id }, data: giteData });
-  } else {
-    gite = await prisma.gite.create({ data: { userId: user.id, ...giteData } });
-  }
+  if (!gite) return NextResponse.json({ error: "Gîte introuvable" }, { status: 404 });
 
-  // Remplace toutes les options si fournies
+  gite = await prisma.gite.update({ where: { id: gite.id }, data: giteData });
+
   if (Array.isArray(body.options)) {
     await prisma.giteOption.deleteMany({ where: { giteId: gite.id } });
     if (body.options.length > 0) {
