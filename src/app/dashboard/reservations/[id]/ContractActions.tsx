@@ -19,84 +19,95 @@ const btnSecondary = {
   padding: '14px 28px', backgroundColor: '#E5DED5', color: '#1C1C1A',
   border: '1px solid #CEC8BF', cursor: 'pointer', flex: 1, borderRadius: '8px',
 };
-const btnDisabled = {
-  ...btnPrimary, backgroundColor: '#CEC8BF', cursor: 'not-allowed' as const,
-};
+const btnDisabled = { ...btnPrimary, backgroundColor: '#CEC8BF', cursor: 'not-allowed' as const };
 
-export default function ContractActions({ reservationId, contractStatus, emailStatus, driveFileUrl }: Props) {
+export default function ContractActions({ reservationId, contractStatus, emailStatus }: Props) {
   const [status, setStatus] = useState(contractStatus);
   const [mailStatus, setMailStatus] = useState(emailStatus);
   const [loading, setLoading] = useState<string | null>(null);
-  const [fileUrl, setFileUrl] = useState(driveFileUrl);
+  const [emailError, setEmailError] = useState<string | null>(null);
 
-  const generateContract = async () => {
+  const downloadContract = async () => {
     setLoading('generate');
     try {
       const res = await fetch(`/api/reservations/${reservationId}/generate-contract`, { method: 'POST' });
-      const data = await res.json();
-      if (res.ok) { setStatus('GENERATING'); }
-      else alert(data.error ?? 'Erreur lors de la génération');
-    } finally { setLoading(null); }
+      if (!res.ok) {
+        const data = await res.json();
+        alert(data.error ?? 'Erreur lors de la génération');
+        return;
+      }
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `contrat-${reservationId}.pdf`;
+      a.click();
+      URL.revokeObjectURL(url);
+      setStatus('GENERATED');
+    } finally {
+      setLoading(null);
+    }
   };
 
   const sendEmail = async () => {
     setLoading('email');
+    setEmailError(null);
     try {
       const res = await fetch(`/api/reservations/${reservationId}/send-email`, { method: 'POST' });
       const data = await res.json();
-      if (res.ok) { setMailStatus('SENDING'); }
-      else alert(data.error ?? "Erreur lors de l'envoi");
-    } finally { setLoading(null); }
+      if (res.ok) {
+        setMailStatus('SENT');
+        setStatus('GENERATED');
+      } else {
+        setEmailError(data.error ?? "Erreur lors de l'envoi");
+      }
+    } finally {
+      setLoading(null);
+    }
   };
-
-  // suppress unused variable warning
-  void setFileUrl;
 
   return (
     <div style={{ border: '1px solid #CEC8BF', backgroundColor: '#F7F4F0', borderRadius: '12px', overflow: 'hidden' }}>
       <div style={{ padding: '16px 32px', borderBottom: '1px solid #CEC8BF', backgroundColor: '#E5DED5' }}>
-        <p style={{ fontSize: '11px', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#7A7570', margin: 0 }}>Actions</p>
+        <p style={{ fontSize: '11px', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#7A7570', margin: 0 }}>Contrat</p>
       </div>
       <div style={{ padding: '28px 32px', display: 'flex', gap: '16px', flexWrap: 'wrap' as const }}>
 
-        {/* Générer */}
-        {status === 'GENERATED' ? (
-          <button style={btnSecondary} disabled>Contrat généré</button>
-        ) : status === 'GENERATING' ? (
-          <button style={btnDisabled} disabled>Génération en cours...</button>
-        ) : (
-          <button style={loading === 'generate' ? btnDisabled : btnPrimary} onClick={generateContract} disabled={loading !== null}>
-            {loading === 'generate' ? 'Envoi à n8n...' : 'Générer le contrat →'}
-          </button>
-        )}
+        <button
+          style={loading === 'generate' ? btnDisabled : btnPrimary}
+          onClick={downloadContract}
+          disabled={loading !== null}
+        >
+          {loading === 'generate'
+            ? 'Génération...'
+            : status === 'GENERATED'
+              ? 'Retélécharger le PDF →'
+              : 'Télécharger le contrat PDF →'}
+        </button>
 
-        {/* Envoyer email */}
         {mailStatus === 'SENT' ? (
-          <button style={btnSecondary} disabled>Email envoyé</button>
-        ) : mailStatus === 'SENDING' ? (
-          <button style={btnDisabled} disabled>Envoi en cours...</button>
+          <button style={btnSecondary} disabled>Email envoyé ✓</button>
         ) : (
           <button
-            style={status !== 'GENERATED' ? btnDisabled : (loading === 'email' ? btnDisabled : btnPrimary)}
+            style={loading === 'email' ? btnDisabled : btnPrimary}
             onClick={sendEmail}
-            disabled={status !== 'GENERATED' || loading !== null}
+            disabled={loading !== null}
           >
-            {loading === 'email' ? 'Envoi...' : 'Envoyer par email →'}
+            {loading === 'email' ? 'Envoi en cours...' : 'Envoyer par email →'}
           </button>
-        )}
-
-        {/* Lien Drive */}
-        {fileUrl && (
-          <a href={fileUrl} target="_blank" rel="noreferrer" style={{ ...btnSecondary, textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            Voir le PDF
-          </a>
         )}
       </div>
 
-      {status === 'GENERATING' && (
+      {emailError && (
+        <div style={{ padding: '0 32px 20px' }}>
+          <p style={{ fontSize: '12px', color: '#c0392b', margin: 0 }}>{emailError}</p>
+        </div>
+      )}
+
+      {mailStatus === 'SENT' && (
         <div style={{ padding: '0 32px 20px' }}>
           <p style={{ fontSize: '12px', color: '#7A7570', margin: 0 }}>
-            Le contrat est en cours de génération par n8n. Rafraîchis la page dans quelques secondes.
+            Le contrat a été envoyé au client par email avec le PDF en pièce jointe.
           </p>
         </div>
       )}

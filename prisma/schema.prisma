@@ -31,6 +31,7 @@ model Gite {
   cleaningFee Float   @default(90)
   touristTax  Float   @default(1.32)
   slug                  String? @unique
+  contractTemplate      String?
   driveTemplateFolderId String?
   driveOutputFolderId   String?
   n8nWebhookUrl         String?
