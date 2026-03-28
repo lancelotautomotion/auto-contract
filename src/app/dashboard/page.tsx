@@ -159,7 +159,7 @@ export default async function DashboardPage() {
               + Nouvelle réservation
             </Link>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr', padding: '12px 32px', borderBottom: '1px solid #CEC8BF', backgroundColor: '#EDE8E1' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr auto', padding: '12px 32px', borderBottom: '1px solid #CEC8BF', backgroundColor: '#EDE8E1' }}>
             {['Client', 'Arrivée', 'Départ', 'Statut'].map(col => (
               <span key={col} style={{ fontSize: '10px', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#7A7570' }}>{col}</span>
             ))}
@@ -174,7 +174,7 @@ export default async function DashboardPage() {
                 key={r.id}
                 href={`/dashboard/reservations/${r.id}`}
                 className="reservation-row"
-                style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr', padding: '16px 32px', borderBottom: i < reservations.length - 1 ? '1px solid #CEC8BF' : 'none', backgroundColor: '#F7F4F0', alignItems: 'center', textDecoration: 'none' }}
+                style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr auto', padding: '16px 32px', borderBottom: i < reservations.length - 1 ? '1px solid #CEC8BF' : 'none', backgroundColor: '#F7F4F0', alignItems: 'center', textDecoration: 'none' }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                   <div>
@@ -186,13 +186,13 @@ export default async function DashboardPage() {
                 <span style={{ fontSize: '13px', color: '#1C1C1A' }}>{fmt(r.checkIn)}</span>
                 <span style={{ fontSize: '13px', color: '#1C1C1A' }}>{fmt(r.checkOut)}</span>
                 <span style={{
-                  fontSize: '10px', letterSpacing: '0.12em', textTransform: 'uppercase',
-                  padding: '4px 12px', display: 'inline-block', borderRadius: '20px',
+                  fontSize: '10px', letterSpacing: '0.1em', textTransform: 'uppercase',
+                  padding: '4px 12px', whiteSpace: 'nowrap', borderRadius: '20px',
                   backgroundColor: r.contract?.status === 'SIGNED' ? SIGNED_BG : r.contract?.status === 'GENERATED' ? PENDING_BG : '#EDE8E1',
                   color: r.contract?.status === 'SIGNED' ? SIGNED_TEXT : r.contract?.status === 'GENERATED' ? PENDING_TEXT : '#7A7570',
                   border: `1px solid ${r.contract?.status === 'SIGNED' ? SIGNED_TEXT : r.contract?.status === 'GENERATED' ? PENDING_TEXT : '#CEC8BF'}`,
                 }}>
-                  {r.contract?.status === 'SIGNED' ? 'Signé ✓' : r.contract?.status === 'GENERATED' ? 'En attente signature' : 'En attente'}
+                  {r.contract?.status === 'SIGNED' ? 'Signé ✓' : r.contract?.status === 'GENERATED' ? 'En attente de signature' : 'En attente'}
                 </span>
               </Link>
             ))
