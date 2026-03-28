@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
-import { useCallback } from "react";
+import { useCallback, useRef } from "react";
 
 const STATUTS = [
   { value: '', label: 'Tous' },
@@ -31,13 +31,19 @@ export default function ReservationFilters({ currentStatus, currentSort, current
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const updateParam = useCallback((key: string, value: string) => {
+  const updateParam = useCallback((key: string, value: string, scroll = false) => {
     const params = new URLSearchParams(searchParams.toString());
     if (value) params.set(key, value);
     else params.delete(key);
-    router.push(`${pathname}?${params.toString()}`);
+    router.replace(`${pathname}?${params.toString()}`, { scroll });
   }, [router, pathname, searchParams]);
+
+  const handleSearch = (value: string) => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => updateParam('search', value, false), 300);
+  };
 
   const inputStyle = {
     padding: '7px 12px', border: '1px solid #CEC8BF', backgroundColor: '#F7F4F0',
@@ -52,7 +58,7 @@ export default function ReservationFilters({ currentStatus, currentSort, current
         type="text"
         placeholder="Rechercher un client..."
         defaultValue={currentSearch}
-        onChange={e => updateParam('search', e.target.value)}
+        onChange={e => handleSearch(e.target.value)}
         style={{ ...inputStyle, minWidth: '180px' }}
       />
 
@@ -63,7 +69,7 @@ export default function ReservationFilters({ currentStatus, currentSort, current
           return (
             <button
               key={s.value}
-              onClick={() => updateParam('status', s.value)}
+              onClick={() => updateParam('status', s.value, false)}
               style={{
                 fontSize: '10px', letterSpacing: '0.1em', textTransform: 'uppercase',
                 padding: '5px 12px', borderRadius: '20px', cursor: 'pointer',
@@ -80,12 +86,12 @@ export default function ReservationFilters({ currentStatus, currentSort, current
       {/* Tri par date */}
       <select
         value={currentSort}
-        onChange={e => updateParam('sort', e.target.value)}
+        onChange={e => updateParam('sort', e.target.value, false)}
         style={{ ...inputStyle, cursor: 'pointer' }}
       >
-        <option value="asc">Arrivée ↑ (proche → loin)</option>
-        <option value="desc">Arrivée ↓ (loin → proche)</option>
-        <option value="recent">Plus récemment créé</option>
+        <option value="asc">Arrivée la plus proche en premier</option>
+        <option value="desc">Arrivée la plus lointaine en premier</option>
+        <option value="recent">Dernière réservation créée</option>
       </select>
     </div>
   );
