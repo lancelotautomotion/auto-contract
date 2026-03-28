@@ -2,8 +2,6 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useTheme } from "@/providers/ThemeProvider";
-import { useClerk } from "@clerk/nextjs";
 
 const NAV = [
   { href: '/dashboard', label: 'Tableau de bord' },
@@ -13,8 +11,6 @@ const NAV = [
 
 export default function Sidebar() {
   const pathname = usePathname();
-  const { dark, toggle } = useTheme();
-  const { signOut } = useClerk();
 
   const isActive = (href: string) => {
     if (href === '/dashboard') return pathname === '/dashboard';
@@ -23,19 +19,18 @@ export default function Sidebar() {
 
   return (
     <aside style={{
-      width: '220px',
+      width: '420px',
       flexShrink: 0,
       backgroundColor: 'transparent',
       display: 'flex',
       flexDirection: 'column',
+      justifyContent: 'center',
       minHeight: '100vh',
       position: 'sticky',
       top: 0,
       height: '100vh',
-      padding: '48px 0',
     }}>
-      {/* Navigation */}
-      <nav style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '0 16px' }}>
+      <nav style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
         {NAV.map(item => {
           const active = isActive(item.href);
           return (
@@ -44,7 +39,7 @@ export default function Sidebar() {
               href={item.href}
               style={{
                 display: 'block',
-                padding: '10px 0',
+                padding: '6px 0',
                 textDecoration: active ? 'underline' : 'none',
                 textUnderlineOffset: '4px',
                 textAlign: 'center',
@@ -62,48 +57,6 @@ export default function Sidebar() {
           );
         })}
       </nav>
-
-      {/* Bottom */}
-      <div style={{ padding: '0 16px', textAlign: 'center' }}>
-        <button
-          onClick={toggle}
-          style={{
-            display: 'block',
-            width: '100%',
-            padding: '0 0 10px',
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer',
-            color: 'var(--text-muted)',
-            fontSize: '11px',
-            fontFamily: "'Inter', sans-serif",
-            letterSpacing: '0.04em',
-            textAlign: 'center',
-          }}
-        >
-          {dark ? '☾ Mode nuit' : '☀ Mode clair'}
-        </button>
-
-        <button
-          onClick={() => signOut({ redirectUrl: '/' })}
-          style={{
-            display: 'block',
-            width: '100%',
-            padding: 0,
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer',
-            color: 'var(--text-muted)',
-            fontSize: '11px',
-            fontFamily: "'Inter', sans-serif",
-            letterSpacing: '0.08em',
-            textTransform: 'uppercase',
-            textAlign: 'center',
-          }}
-        >
-          Déconnexion
-        </button>
-      </div>
     </aside>
   );
 }
