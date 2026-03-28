@@ -3,15 +3,19 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import CalendarView from "./CalendarView";
+import ReservationFilters from "./ReservationFilters";
+import { Suspense } from "react";
 
 const SIGNED_BG = '#D1EDD4';
 const SIGNED_TEXT = '#2D6A31';
 const PENDING_BG = '#FDECD0';
 const PENDING_TEXT = '#C47822';
 
-export default async function DashboardPage() {
+export default async function DashboardPage({ searchParams }: { searchParams: Promise<{ status?: string; sort?: string; search?: string }> }) {
   const { userId } = await auth();
   if (!userId) redirect("/sign-in");
+
+  const { status: filterStatus = '', sort: filterSort = 'asc', search: filterSearch = '' } = await searchParams;
 
   const user = await currentUser();
 
@@ -43,10 +47,32 @@ export default async function DashboardPage() {
         orderBy: { createdAt: 'desc' },
       });
 
+      const contractFilter = filterStatus === 'none'
+        ? { contract: null }
+        : filterStatus === 'GENERATED' || filterStatus === 'SIGNED'
+          ? { contract: { status: filterStatus as 'GENERATED' | 'SIGNED' } }
+          : {};
+
+      const searchFilter = filterSearch
+        ? {
+            OR: [
+              { clientFirstName: { contains: filterSearch, mode: 'insensitive' as const } },
+              { clientLastName: { contains: filterSearch, mode: 'insensitive' as const } },
+              { clientEmail: { contains: filterSearch, mode: 'insensitive' as const } },
+            ]
+          }
+        : {};
+
+      const orderBy = filterSort === 'desc'
+        ? { checkIn: 'desc' as const }
+        : filterSort === 'recent'
+          ? { createdAt: 'desc' as const }
+          : { checkIn: 'asc' as const };
+
       reservations = await prisma.reservation.findMany({
-        where: { gite: { userId: dbUser.id }, status: { not: 'PENDING_REVIEW' } },
+        where: { gite: { userId: dbUser.id }, status: { not: 'PENDING_REVIEW' }, ...contractFilter, ...searchFilter },
         include: { contract: true },
-        orderBy: { checkIn: 'asc' },
+        orderBy,
       });
     } else {
       redirect("/onboarding");
@@ -159,6 +185,9 @@ export default async function DashboardPage() {
               + Nouvelle réservation
             </Link>
           </div>
+          <Suspense>
+            <ReservationFilters currentStatus={filterStatus} currentSort={filterSort} currentSearch={filterSearch} />
+          </Suspense>
           <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 180px', padding: '12px 32px', borderBottom: '1px solid #CEC8BF', backgroundColor: '#EDE8E1' }}>
             {['Client', 'Arrivée', 'Départ', 'Statut'].map(col => (
               <span key={col} style={{ fontSize: '10px', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#7A7570' }}>{col}</span>
