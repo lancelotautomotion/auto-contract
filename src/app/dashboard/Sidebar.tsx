@@ -78,7 +78,7 @@ export default function Sidebar() {
             textAlign: 'left',
           }}
         >
-          {dark ? '☀ Mode clair' : '☾ Mode nuit'}
+          {dark ? '☾ Mode nuit' : '☀ Mode clair'}
         </button>
 
         <button
