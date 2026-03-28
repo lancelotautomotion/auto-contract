@@ -20,52 +20,35 @@ export default function Nav() {
       <style>{`
         .nav-link {
           display: block;
-          padding: 18px 0;
-          font-family: 'Inter', sans-serif;
-          font-size: 13px;
+          padding: 10px 0;
+          font-family: 'Cormorant Garamond', serif;
+          font-size: 20px;
           font-weight: 300;
-          letter-spacing: 0.08em;
-          text-transform: uppercase;
           color: var(--text-muted);
           text-decoration: none;
-          position: relative;
-          transition: color 0.2s ease;
-          border-bottom: 1px solid var(--border);
-        }
-        .nav-link:first-child {
-          border-top: 1px solid var(--border);
-        }
-        .nav-link::after {
-          content: '';
-          position: absolute;
-          bottom: -1px;
-          left: 0;
-          width: 0;
-          height: 1px;
-          background-color: var(--text);
-          transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+          opacity: 0.45;
+          transform: translateX(-6px);
+          transition:
+            opacity 0.35s ease,
+            transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+            color 0.35s ease;
         }
         .nav-link.active {
           color: var(--text);
-          font-weight: 400;
+          opacity: 1;
+          transform: translateX(0);
+          font-style: italic;
         }
-        .nav-link.active::after {
-          width: 100%;
-        }
-        .nav-link:hover {
-          color: var(--text);
-        }
-        .nav-link:hover::after {
-          width: 100%;
+        .nav-link:hover:not(.active) {
+          opacity: 0.75;
+          transform: translateX(-2px);
         }
       `}</style>
 
       <nav style={{
         display: 'flex',
         flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'stretch',
-        width: '180px',
+        gap: '4px',
       }}>
         {NAV.map(item => (
           <Link

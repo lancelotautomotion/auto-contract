@@ -6,11 +6,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
       {/* Colonne nav — centrée horizontalement dans l'espace disponible */}
       <div style={{
-        width: '280px',
+        width: '220px',
         flexShrink: 0,
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'center',
+        justifyContent: 'flex-start',
+        paddingLeft: '36px',
         position: 'sticky',
         top: 0,
         height: '100vh',
