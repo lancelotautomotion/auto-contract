@@ -32,6 +32,8 @@ model Gite {
   touristTax  Float   @default(1.32)
   slug                  String? @unique
   contractTemplate      String?
+  logoDataUrl           String?
+  notificationEmail     String?
   driveTemplateFolderId String?
   driveOutputFolderId   String?
   n8nWebhookUrl         String?

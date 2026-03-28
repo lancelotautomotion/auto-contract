@@ -41,18 +41,17 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
     ville_gite: reservation.gite.city,
     email_gite: reservation.gite.email,
     telephone_gite: reservation.gite.phone,
+    logoDataUrl: reservation.gite.logoDataUrl,
   };
 
   const pdfBuffer = await generateContractPdf(data);
 
-  // Upsert le contrat avec le PDF en base64
   await prisma.contract.upsert({
     where: { reservationId: id },
     create: { reservationId: id, status: 'GENERATED', driveFileUrl: null },
     update: { status: 'GENERATED' },
   });
 
-  // Retourne le PDF directement en réponse
   return new NextResponse(pdfBuffer, {
     headers: {
       'Content-Type': 'application/pdf',

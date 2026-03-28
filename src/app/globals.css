@@ -10,11 +10,21 @@
   --border: #CEC8BF;
 }
 
+.dark {
+  --bg: #1A1A18;
+  --bg-card: #242422;
+  --bg-white: #1E1E1C;
+  --text: #EDE8E1;
+  --text-muted: #8A857F;
+  --border: #3A3835;
+}
+
 body {
   background-color: var(--bg);
   color: var(--text);
   font-family: 'Inter', sans-serif;
   font-weight: 300;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 h1, h2, h3 {
@@ -26,7 +36,7 @@ h1, h2, h3 {
 }
 
 .reservation-row:hover {
-  background-color: #EDE8E1 !important;
+  background-color: var(--bg) !important;
 }
 
 .reservation-row:hover .client-name {

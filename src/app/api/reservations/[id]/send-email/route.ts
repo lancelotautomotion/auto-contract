@@ -4,8 +4,6 @@ import { prisma } from "@/lib/prisma";
 import { Resend } from "resend";
 import { randomBytes } from "crypto";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 export async function POST(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const { userId } = await auth();
@@ -23,8 +21,8 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
   if (!process.env.RESEND_API_KEY) {
     return NextResponse.json({ error: "RESEND_API_KEY non configurée" }, { status: 500 });
   }
+  const resend = new Resend(process.env.RESEND_API_KEY);
 
-  // Générer ou réutiliser le token de signature
   const existingContract = await prisma.contract.findUnique({ where: { reservationId: id } });
   const signatureToken = existingContract?.signatureToken ?? randomBytes(32).toString('hex');
 

@@ -21,13 +21,7 @@ export default async function CompleteReservationPage({ params }: { params: Prom
   const fmtDisplay = (d: Date) => new Date(d).toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' });
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#EDE8E1', fontFamily: 'Inter, sans-serif' }}>
-      <header style={{ padding: '20px 40px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #CEC8BF', backgroundColor: '#EDE8E1' }}>
-        <span style={{ fontSize: '11px', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#7A7570' }}>ContratGîte</span>
-        <a href="/dashboard" style={{ fontSize: '11px', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#7A7570', textDecoration: 'none' }}>← Tableau de bord</a>
-      </header>
-
-      <main style={{ maxWidth: '800px', margin: '0 auto', padding: '48px 40px' }}>
+    <main style={{ maxWidth: '800px', margin: '0 auto', padding: '48px 40px' }}>
 
         <div style={{ marginBottom: '32px' }}>
           <p style={{ fontSize: '11px', letterSpacing: '0.25em', textTransform: 'uppercase', color: '#7A7570', marginBottom: '10px' }}>— Nouvelle demande client</p>
@@ -86,7 +80,6 @@ export default async function CompleteReservationPage({ params }: { params: Prom
           />
         </div>
 
-      </main>
-    </div>
+    </main>
   );
 }

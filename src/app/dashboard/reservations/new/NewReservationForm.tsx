@@ -59,15 +59,7 @@ export default function NewReservationForm({ defaultCleaningFee, defaultTouristT
   };
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#EDE8E1', fontFamily: 'Inter, sans-serif' }}>
-      <header style={{ padding: '20px 40px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #CEC8BF', backgroundColor: '#EDE8E1' }}>
-        <span style={{ fontSize: '11px', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#7A7570' }}>ContratGîte</span>
-        <button onClick={() => router.push('/dashboard')} style={{ fontSize: '11px', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#7A7570', background: 'none', border: 'none', cursor: 'pointer' }}>
-          ← Retour
-        </button>
-      </header>
-
-      <main style={{ maxWidth: '800px', margin: '0 auto', padding: '48px 40px' }}>
+    <main style={{ maxWidth: '800px', margin: '0 auto', padding: '48px 40px' }}>
         <div style={{ marginBottom: '40px' }}>
           <p style={{ fontSize: '11px', letterSpacing: '0.25em', textTransform: 'uppercase', color: '#7A7570', marginBottom: '10px' }}>— Nouvelle réservation</p>
           <h1 style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', fontSize: '44px', fontWeight: 300, color: '#1C1C1A', margin: 0 }}>Ajouter un séjour</h1>
@@ -148,7 +140,6 @@ export default function NewReservationForm({ defaultCleaningFee, defaultTouristT
           </button>
 
         </form>
-      </main>
-    </div>
+    </main>
   );
 }

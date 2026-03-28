@@ -4,8 +4,6 @@ import { generateSignedContractPdf, ContractData } from "@/lib/contractPdf";
 import { DEFAULT_CONTRACT_TEMPLATE } from "@/lib/defaultContractTemplate";
 import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 export async function POST(req: NextRequest, { params }: { params: Promise<{ token: string }> }) {
   const { token } = await params;
   const { name } = await req.json();
@@ -62,6 +60,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ tok
     ville_gite: reservation.gite.city,
     email_gite: reservation.gite.email,
     telephone_gite: reservation.gite.phone,
+    logoDataUrl: reservation.gite.logoDataUrl,
   };
   void solde; void optionsText;
 
@@ -72,6 +71,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ tok
     reservationId: reservation.id,
   });
 
+  const resend = new Resend(process.env.RESEND_API_KEY);
   const fromEmail = process.env.RESEND_FROM_EMAIL ?? 'onboarding@resend.dev';
   const filename = `contrat-signe-${reservation.clientLastName}-${reservation.clientFirstName}.pdf`;
   const dateEntree = fmt(reservation.checkIn);

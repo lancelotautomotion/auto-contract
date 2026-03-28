@@ -1,5 +1,5 @@
 import 'server-only';
-import { Document, Page, Text, View, StyleSheet, renderToBuffer } from '@react-pdf/renderer';
+import { Document, Page, Text, View, Image, StyleSheet, renderToBuffer } from '@react-pdf/renderer';
 import React from 'react';
 
 export interface ContractData {
@@ -23,6 +23,7 @@ export interface ContractData {
   ville_gite: string | null;
   email_gite: string | null;
   telephone_gite: string | null;
+  logoDataUrl?: string | null;
 }
 
 function buildText(data: ContractData): string {
@@ -109,8 +110,16 @@ export async function generateContractPdf(data: ContractData): Promise<Buffer> {
     return React.createElement(Text, { key: i, style }, line);
   });
 
+  const logoElement = data.logoDataUrl
+    ? React.createElement(View, { key: 'logo-header', style: { marginBottom: 16, alignItems: 'flex-center' as never } },
+        React.createElement(Image, { src: data.logoDataUrl, style: { maxHeight: 60, maxWidth: 160, objectFit: 'contain' as never } })
+      )
+    : null;
+
+  const pageChildren = logoElement ? [logoElement, ...elements] : elements;
+
   const doc = React.createElement(Document, null,
-    React.createElement(Page, { size: 'A4', style: styles.page }, ...elements)
+    React.createElement(Page, { size: 'A4', style: styles.page }, ...pageChildren)
   );
 
   const buf = await renderToBuffer(doc);

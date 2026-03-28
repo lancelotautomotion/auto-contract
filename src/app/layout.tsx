@@ -1,12 +1,7 @@
 import type { Metadata } from "next";
-import { Geist } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
+import ThemeProvider from "@/providers/ThemeProvider";
 import "./globals.css";
-
-const geist = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
   title: "ContratGîte — Automatisez vos contrats de location",
@@ -20,8 +15,19 @@ export default function RootLayout({
 }) {
   return (
     <ClerkProvider>
-      <html lang="fr" className={`${geist.variable} h-full antialiased`}>
-        <body className="min-h-full bg-gray-50">{children}</body>
+      <html lang="fr" className="h-full antialiased" suppressHydrationWarning>
+        <head>
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `(function(){try{var t=localStorage.getItem('theme');if(t==='dark')document.documentElement.classList.add('dark');}catch(e){}})()`,
+            }}
+          />
+        </head>
+        <body className="min-h-full">
+          <ThemeProvider>
+            {children}
+          </ThemeProvider>
+        </body>
       </html>
     </ClerkProvider>
   );

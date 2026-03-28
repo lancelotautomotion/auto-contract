@@ -1,4 +1,4 @@
-import { auth, currentUser } from "@clerk/nextjs/server";
+import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
@@ -16,8 +16,6 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
   if (!userId) redirect("/sign-in");
 
   const { status: filterStatus = '', sort: filterSort = 'asc', search: filterSearch = '' } = await searchParams;
-
-  const user = await currentUser();
 
   let pendingReservations: Array<{
     id: string; clientFirstName: string; clientLastName: string;
@@ -95,25 +93,12 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
   const fmt = (d: Date) => new Date(d).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#EDE8E1', fontFamily: 'Inter, sans-serif' }}>
-      <header style={{ padding: '20px 40px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #CEC8BF', backgroundColor: '#EDE8E1' }}>
-        <span style={{ fontSize: '11px', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#7A7570' }}>ContratGîte</span>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
-          {giteSlug && (
-            <a href={`/book/${giteSlug}`} target="_blank" rel="noreferrer" style={{ fontSize: '11px', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#7A7570', textDecoration: 'none' }}>
-              ↗ Page client
-            </a>
-          )}
-          <Link href="/dashboard/settings" style={{ fontSize: '11px', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#7A7570', textDecoration: 'none' }}>Paramètres</Link>
-          <span style={{ fontSize: '12px', color: '#7A7570' }}>{user?.emailAddresses[0]?.emailAddress}</span>
-        </div>
-      </header>
-
+    <div>
       <main style={{ padding: '48px 40px', maxWidth: '1000px', margin: '0 auto' }}>
         <div style={{ marginBottom: '40px' }}>
           <p style={{ fontSize: '11px', letterSpacing: '0.25em', textTransform: 'uppercase', color: '#7A7570', marginBottom: '10px' }}>— Tableau de bord</p>
-          <h1 style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', fontSize: '48px', fontWeight: 300, color: '#1C1C1A', margin: 0 }}>
-            Bonjour{user?.firstName ? `, ${user.firstName}` : ''}.
+          <h1 style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', fontSize: '48px', fontWeight: 300, color: 'var(--text)', margin: 0 }}>
+            Bonjour.
           </h1>
         </div>
 
@@ -232,3 +217,4 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
     </div>
   );
 }
+
