@@ -132,7 +132,7 @@ export default async function DashboardPage() {
                 key={r.id}
                 href={`/dashboard/reservations/${r.id}/complete`}
                 className="reservation-row"
-                style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr auto', padding: '16px 32px', borderBottom: i < pendingReservations.length - 1 ? '1px solid #CEC8BF' : 'none', backgroundColor: '#F7F4F0', alignItems: 'center', textDecoration: 'none' }}
+                style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 180px', padding: '16px 32px', borderBottom: i < pendingReservations.length - 1 ? '1px solid #CEC8BF' : 'none', backgroundColor: '#F7F4F0', alignItems: 'center', textDecoration: 'none' }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                   <div>
@@ -159,7 +159,7 @@ export default async function DashboardPage() {
               + Nouvelle réservation
             </Link>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr auto', padding: '12px 32px', borderBottom: '1px solid #CEC8BF', backgroundColor: '#EDE8E1' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 180px', padding: '12px 32px', borderBottom: '1px solid #CEC8BF', backgroundColor: '#EDE8E1' }}>
             {['Client', 'Arrivée', 'Départ', 'Statut'].map(col => (
               <span key={col} style={{ fontSize: '10px', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#7A7570' }}>{col}</span>
             ))}
@@ -174,7 +174,7 @@ export default async function DashboardPage() {
                 key={r.id}
                 href={`/dashboard/reservations/${r.id}`}
                 className="reservation-row"
-                style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr auto', padding: '16px 32px', borderBottom: i < reservations.length - 1 ? '1px solid #CEC8BF' : 'none', backgroundColor: '#F7F4F0', alignItems: 'center', textDecoration: 'none' }}
+                style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 180px', padding: '16px 32px', borderBottom: i < reservations.length - 1 ? '1px solid #CEC8BF' : 'none', backgroundColor: '#F7F4F0', alignItems: 'center', textDecoration: 'none' }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                   <div>
