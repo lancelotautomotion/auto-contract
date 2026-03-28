@@ -55,7 +55,7 @@ export default function BookingForm({ giteSlug, options }: Props) {
   if (step === 'success') {
     return (
       <div style={{ textAlign: 'center', padding: '60px 20px', backgroundColor: '#F7F4F0', borderRadius: '20px', border: '1px solid #CEC8BF' }}>
-        <div style={{ fontSize: '40px', marginBottom: '20px' }}>✓</div>
+        <div style={{ fontSize: '40px', marginBottom: '20px', color: '#1C1C1A' }}>✓</div>
         <h2 style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', fontSize: '32px', fontWeight: 300, color: '#1C1C1A', marginBottom: '16px' }}>
           Demande envoyée !
         </h2>
