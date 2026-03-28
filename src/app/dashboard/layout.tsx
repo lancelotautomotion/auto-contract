@@ -10,8 +10,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         flexShrink: 0,
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'flex-start',
-        paddingLeft: '52px',
+        justifyContent: 'flex-end',
+        paddingRight: '40px',
         position: 'sticky',
         top: 0,
         height: '100vh',
@@ -23,6 +23,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       <div style={{ flex: 1, minWidth: 0 }}>
         {children}
       </div>
+
+      {/* Espaceur droit — compense la colonne nav pour centrer le contenu */}
+      <div style={{ width: '260px', flexShrink: 0 }} />
 
     </div>
   );
