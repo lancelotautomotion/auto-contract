@@ -17,7 +17,7 @@ export default async function ReservationDetailPage({ params }: { params: Promis
 
   const reservation = await prisma.reservation.findFirst({
     where: { id, gite: { userId: dbUser.id } },
-    include: { contract: true, gite: true },
+    include: { contract: true, gite: true, reservationOptions: { orderBy: { label: 'asc' } } },
   });
   if (!reservation) notFound();
 
@@ -79,19 +79,21 @@ export default async function ReservationDetailPage({ params }: { params: Promis
           </div>
           <div style={{ backgroundColor: '#E5DED5', padding: '28px 32px' }}>
             <p style={{ fontSize: '11px', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#7A7570', marginBottom: '20px', paddingBottom: '10px', borderBottom: '1px solid #CEC8BF' }}>Options</p>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              {[
-                { label: 'Bain nordique', active: reservation.nordicBath },
-                { label: 'Draps 160x200', active: reservation.sheet160 },
-                { label: 'Draps 90x190', active: reservation.sheet90 },
-                { label: 'Linge de toilette', active: reservation.towels },
-              ].map(opt => (
-                <div key={opt.label} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: opt.active ? '#1C1C1A' : '#CEC8BF', display: 'inline-block', flexShrink: 0 }} />
-                  <span style={{ fontSize: '13px', color: opt.active ? '#1C1C1A' : '#7A7570' }}>{opt.label}</span>
-                </div>
-              ))}
-            </div>
+            {reservation.reservationOptions.length === 0 ? (
+              <p style={{ fontSize: '13px', color: '#7A7570', fontStyle: 'italic' }}>Aucune option sélectionnée</p>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                {reservation.reservationOptions.map(opt => (
+                  <div key={opt.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#1C1C1A', display: 'inline-block', flexShrink: 0 }} />
+                      <span style={{ fontSize: '13px', color: '#1C1C1A' }}>{opt.label}</span>
+                    </div>
+                    {opt.price > 0 && <span style={{ fontSize: '12px', color: '#7A7570' }}>{fmtPrice(opt.price)}</span>}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 

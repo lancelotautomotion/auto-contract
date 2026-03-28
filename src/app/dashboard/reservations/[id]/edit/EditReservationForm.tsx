@@ -9,21 +9,36 @@ const sectionStyle = { marginBottom: '40px' };
 const sectionTitleStyle = { fontSize: '11px', letterSpacing: '0.25em', textTransform: 'uppercase' as const, color: '#7A7570', marginBottom: '20px', paddingBottom: '10px', borderBottom: '1px solid #CEC8BF' };
 const gridStyle = { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' };
 
+interface GiteOption { id: string; label: string; price: number; }
+
 interface FormData {
   clientFirstName: string; clientLastName: string; clientEmail: string; clientPhone: string;
   clientAddress: string; clientCity: string; clientZipCode: string;
   checkIn: string; checkOut: string;
   rent: string; deposit: string; cleaningFee: string; touristTax: string;
-  nordicBath: boolean; sheet160: boolean; sheet90: boolean; towels: boolean;
   notes: string;
 }
 
-export default function EditReservationForm({ id, initial }: { id: string; initial: FormData }) {
+interface Props {
+  id: string;
+  initial: FormData;
+  availableOptions: GiteOption[];
+  selectedOptionIds: string[];
+}
+
+export default function EditReservationForm({ id, initial, availableOptions, selectedOptionIds }: Props) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState<FormData>(initial);
+  const [selectedOptions, setSelectedOptions] = useState<Set<string>>(new Set(selectedOptionIds));
 
-  const set = (k: string, v: string | boolean) => setForm(f => ({ ...f, [k]: v }));
+  const set = (k: string, v: string) => setForm(f => ({ ...f, [k]: v }));
+
+  const toggleOption = (optId: string) => setSelectedOptions(prev => {
+    const next = new Set(prev);
+    next.has(optId) ? next.delete(optId) : next.add(optId);
+    return next;
+  });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,7 +47,7 @@ export default function EditReservationForm({ id, initial }: { id: string; initi
       const res = await fetch(`/api/reservations/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ ...form, selectedOptionIds: Array.from(selectedOptions) }),
       });
       if (res.ok) router.push(`/dashboard/reservations/${id}`);
     } finally {
@@ -75,22 +90,23 @@ export default function EditReservationForm({ id, initial }: { id: string; initi
         </div>
       </div>
 
-      <div style={sectionStyle}>
-        <p style={sectionTitleStyle}>Options</p>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-          {[
-            { key: 'nordicBath', label: 'Bain nordique (120 €)' },
-            { key: 'sheet160', label: 'Draps 160x200' },
-            { key: 'sheet90', label: 'Draps 90x190' },
-            { key: 'towels', label: 'Linge de toilette' },
-          ].map(opt => (
-            <label key={opt.key} style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', padding: '12px 16px', border: '1px solid #CEC8BF', backgroundColor: form[opt.key as keyof FormData] ? '#E5DED5' : '#F7F4F0', borderRadius: '8px' }}>
-              <input type="checkbox" checked={form[opt.key as keyof FormData] as boolean} onChange={e => set(opt.key, e.target.checked)} style={{ width: '14px', height: '14px', accentColor: '#1C1C1A' }} />
-              <span style={{ fontSize: '13px', color: '#1C1C1A' }}>{opt.label}</span>
-            </label>
-          ))}
+      {availableOptions.length > 0 && (
+        <div style={sectionStyle}>
+          <p style={sectionTitleStyle}>Options</p>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+            {availableOptions.map(opt => {
+              const checked = selectedOptions.has(opt.id);
+              return (
+                <label key={opt.id} style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', padding: '12px 16px', border: '1px solid #CEC8BF', backgroundColor: checked ? '#E5DED5' : '#F7F4F0', borderRadius: '8px' }}>
+                  <input type="checkbox" checked={checked} onChange={() => toggleOption(opt.id)} style={{ width: '14px', height: '14px', accentColor: '#1C1C1A' }} />
+                  <span style={{ fontSize: '13px', color: '#1C1C1A', flex: 1 }}>{opt.label}</span>
+                  {opt.price > 0 && <span style={{ fontSize: '12px', color: '#7A7570' }}>{opt.price} €</span>}
+                </label>
+              );
+            })}
+          </div>
         </div>
-      </div>
+      )}
 
       <div style={sectionStyle}>
         <p style={sectionTitleStyle}>Notes internes</p>

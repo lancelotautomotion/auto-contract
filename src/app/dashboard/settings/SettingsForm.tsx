@@ -8,22 +8,18 @@ const section = { marginBottom: '36px' };
 const sectionTitle = { fontSize: '11px', letterSpacing: '0.25em', textTransform: 'uppercase' as const, color: '#7A7570', marginBottom: '20px', paddingBottom: '10px', borderBottom: '1px solid #CEC8BF' };
 const grid2 = { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' };
 
-const OPTIONS = [
-  { key: 'offerNordicBath', priceKey: 'nordicBathPrice', label: 'Bain nordique' },
-  { key: 'offerSheet160',   priceKey: 'sheet160Price',   label: 'Draps 160x200' },
-  { key: 'offerSheet90',    priceKey: 'sheet90Price',    label: 'Draps 90x190' },
-  { key: 'offerTowels',     priceKey: 'towelsPrice',     label: 'Linge de toilette' },
-];
+interface GiteOption {
+  id?: string;
+  label: string;
+  price: number;
+}
 
 interface GiteData {
   id: string; name: string; email: string; phone: string;
   address: string; city: string; zipCode: string;
   capacity: number; cleaningFee: number; touristTax: number;
   n8nWebhookUrl: string; driveTemplateFolderId: string; driveOutputFolderId: string;
-  offerNordicBath: boolean; nordicBathPrice: number;
-  offerSheet160: boolean;   sheet160Price: number;
-  offerSheet90: boolean;    sheet90Price: number;
-  offerTowels: boolean;     towelsPrice: number;
+  options: GiteOption[];
 }
 
 export default function SettingsForm({ gite }: { gite: GiteData }) {
@@ -38,14 +34,17 @@ export default function SettingsForm({ gite }: { gite: GiteData }) {
     n8nWebhookUrl: gite.n8nWebhookUrl,
     driveTemplateFolderId: gite.driveTemplateFolderId,
     driveOutputFolderId: gite.driveOutputFolderId,
-    offerNordicBath: gite.offerNordicBath, nordicBathPrice: gite.nordicBathPrice.toString(),
-    offerSheet160: gite.offerSheet160,     sheet160Price: gite.sheet160Price.toString(),
-    offerSheet90: gite.offerSheet90,       sheet90Price: gite.sheet90Price.toString(),
-    offerTowels: gite.offerTowels,         towelsPrice: gite.towelsPrice.toString(),
   });
+  const [options, setOptions] = useState<GiteOption[]>(gite.options);
 
   const set = (k: string, v: string) => setForm(f => ({ ...f, [k]: v }));
-  const toggle = (k: string) => setForm(f => ({ ...f, [k]: !f[k as keyof typeof f] }));
+
+  const addOption = () => setOptions(o => [...o, { label: '', price: 0 }]);
+
+  const removeOption = (i: number) => setOptions(o => o.filter((_, idx) => idx !== i));
+
+  const updateOption = (i: number, field: 'label' | 'price', value: string) =>
+    setOptions(o => o.map((opt, idx) => idx === i ? { ...opt, [field]: field === 'price' ? parseFloat(value) || 0 : value } : opt));
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -55,7 +54,7 @@ export default function SettingsForm({ gite }: { gite: GiteData }) {
       const res = await fetch('/api/onboarding', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ ...form, options }),
       });
       if (res.ok) setSaved(true);
     } finally {
@@ -95,33 +94,52 @@ export default function SettingsForm({ gite }: { gite: GiteData }) {
       <div style={section}>
         <p style={sectionTitle}>Options proposées aux clients</p>
         <p style={{ fontSize: '12px', color: '#7A7570', marginBottom: '16px', lineHeight: 1.6 }}>
-          Sélectionnez les options disponibles. Indiquez 0 € si l&apos;option est incluse dans le loyer.
+          Ajoutez les options disponibles dans votre gîte. Indiquez 0 € si l&apos;option est incluse.
         </p>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-          {OPTIONS.map(opt => (
-            <div key={opt.key} style={{ display: 'flex', alignItems: 'center', gap: '16px', padding: '14px 16px', border: '1px solid #CEC8BF', borderRadius: '8px', backgroundColor: form[opt.key as keyof typeof form] ? '#E5DED5' : '#F7F4F0' }}>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '12px' }}>
+          {options.length === 0 && (
+            <p style={{ fontSize: '13px', color: '#7A7570', fontStyle: 'italic', padding: '12px 0' }}>
+              Aucune option configurée.
+            </p>
+          )}
+          {options.map((opt, i) => (
+            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '12px 14px', border: '1px solid #CEC8BF', borderRadius: '8px', backgroundColor: '#F7F4F0' }}>
               <input
-                type="checkbox"
-                checked={form[opt.key as keyof typeof form] as boolean}
-                onChange={() => toggle(opt.key)}
-                style={{ width: '16px', height: '16px', accentColor: '#1C1C1A', flexShrink: 0, cursor: 'pointer' }}
+                type="text"
+                placeholder="Nom de l'option (ex: Bain nordique)"
+                value={opt.label}
+                onChange={e => updateOption(i, 'label', e.target.value)}
+                style={{ flex: 1, padding: '8px 10px', border: '1px solid #CEC8BF', backgroundColor: '#EDE8E1', fontSize: '13px', color: '#1C1C1A', outline: 'none', borderRadius: '6px' }}
               />
-              <span style={{ flex: 1, fontSize: '13px', color: '#1C1C1A', fontWeight: form[opt.key as keyof typeof form] ? 500 : 400 }}>{opt.label}</span>
-              {form[opt.key as keyof typeof form] && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <span style={{ fontSize: '11px', color: '#7A7570', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Prix</span>
-                  <input
-                    type="number" step="0.01" min="0"
-                    value={form[opt.priceKey as keyof typeof form] as string}
-                    onChange={e => set(opt.priceKey, e.target.value)}
-                    style={{ width: '80px', padding: '6px 10px', border: '1px solid #CEC8BF', backgroundColor: '#EDE8E1', fontSize: '13px', color: '#1C1C1A', outline: 'none', borderRadius: '6px', textAlign: 'right' }}
-                  />
-                  <span style={{ fontSize: '13px', color: '#7A7570' }}>€</span>
-                </div>
-              )}
+              <input
+                type="number"
+                min="0"
+                step="0.01"
+                placeholder="0"
+                value={opt.price}
+                onChange={e => updateOption(i, 'price', e.target.value)}
+                style={{ width: '80px', padding: '8px 10px', border: '1px solid #CEC8BF', backgroundColor: '#EDE8E1', fontSize: '13px', color: '#1C1C1A', outline: 'none', borderRadius: '6px', textAlign: 'right' }}
+              />
+              <span style={{ fontSize: '13px', color: '#7A7570', flexShrink: 0 }}>€</span>
+              <button
+                type="button"
+                onClick={() => removeOption(i)}
+                style={{ padding: '6px 10px', border: '1px solid #CEC8BF', backgroundColor: 'transparent', color: '#7A7570', fontSize: '12px', cursor: 'pointer', borderRadius: '6px', flexShrink: 0 }}
+              >
+                ✕
+              </button>
             </div>
           ))}
         </div>
+
+        <button
+          type="button"
+          onClick={addOption}
+          style={{ fontSize: '11px', letterSpacing: '0.12em', textTransform: 'uppercase', padding: '10px 20px', border: '1px solid #CEC8BF', backgroundColor: 'transparent', color: '#1C1C1A', cursor: 'pointer', borderRadius: '8px' }}
+        >
+          + Ajouter une option
+        </button>
       </div>
 
       <div style={section}>

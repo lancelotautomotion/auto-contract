@@ -13,8 +13,14 @@ export default async function EditReservationPage({ params }: { params: Promise<
 
   const reservation = await prisma.reservation.findFirst({
     where: { id, gite: { userId: dbUser.id } },
+    include: { reservationOptions: true },
   });
   if (!reservation) notFound();
+
+  const gite = await prisma.gite.findFirst({
+    where: { userId: dbUser.id },
+    include: { options: { orderBy: { position: 'asc' } } },
+  });
 
   const fmt = (d: Date) => new Date(d).toISOString().split('T')[0];
 
@@ -33,6 +39,8 @@ export default async function EditReservationPage({ params }: { params: Promise<
         </div>
         <EditReservationForm
           id={id}
+          availableOptions={gite?.options.map(o => ({ id: o.id, label: o.label, price: o.price })) ?? []}
+          selectedOptionIds={reservation.reservationOptions.map(o => o.giteOptionId).filter(Boolean) as string[]}
           initial={{
             clientFirstName: reservation.clientFirstName,
             clientLastName: reservation.clientLastName,
@@ -47,10 +55,6 @@ export default async function EditReservationPage({ params }: { params: Promise<
             deposit: reservation.deposit.toString(),
             cleaningFee: reservation.cleaningFee.toString(),
             touristTax: reservation.touristTax.toString(),
-            nordicBath: reservation.nordicBath,
-            sheet160: reservation.sheet160,
-            sheet90: reservation.sheet90,
-            towels: reservation.towels,
             notes: reservation.notes ?? '',
           }}
         />

@@ -9,11 +9,10 @@ const sectionStyle = { marginBottom: '40px' };
 const sectionTitleStyle = { fontSize: '11px', letterSpacing: '0.25em', textTransform: 'uppercase' as const, color: '#7A7570', marginBottom: '20px', paddingBottom: '10px', borderBottom: '1px solid #CEC8BF' };
 const gridStyle = { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' };
 
-type OptionKey = 'nordicBath' | 'sheet160' | 'sheet90' | 'towels';
-
 interface GiteOption {
-  key: OptionKey;
+  id: string;
   label: string;
+  price: number;
 }
 
 interface Props {
@@ -32,11 +31,17 @@ export default function NewReservationForm({ defaultCleaningFee, defaultTouristT
     rent: '', deposit: '',
     cleaningFee: defaultCleaningFee,
     touristTax: defaultTouristTax,
-    nordicBath: false, sheet160: false, sheet90: false, towels: false,
     notes: '',
   });
+  const [selectedOptions, setSelectedOptions] = useState<Set<string>>(new Set());
 
-  const set = (k: string, v: string | boolean) => setForm(f => ({ ...f, [k]: v }));
+  const set = (k: string, v: string) => setForm(f => ({ ...f, [k]: v }));
+
+  const toggleOption = (id: string) => setSelectedOptions(prev => {
+    const next = new Set(prev);
+    next.has(id) ? next.delete(id) : next.add(id);
+    return next;
+  });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -45,7 +50,7 @@ export default function NewReservationForm({ defaultCleaningFee, defaultTouristT
       const res = await fetch('/api/reservations', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ ...form, selectedOptionIds: Array.from(selectedOptions) }),
       });
       if (res.ok) router.push('/dashboard');
     } finally {
@@ -63,7 +68,6 @@ export default function NewReservationForm({ defaultCleaningFee, defaultTouristT
       </header>
 
       <main style={{ maxWidth: '800px', margin: '0 auto', padding: '48px 40px' }}>
-
         <div style={{ marginBottom: '40px' }}>
           <p style={{ fontSize: '11px', letterSpacing: '0.25em', textTransform: 'uppercase', color: '#7A7570', marginBottom: '10px' }}>— Nouvelle réservation</p>
           <h1 style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', fontSize: '44px', fontWeight: 300, color: '#1C1C1A', margin: 0 }}>Ajouter un séjour</h1>
@@ -108,13 +112,25 @@ export default function NewReservationForm({ defaultCleaningFee, defaultTouristT
             <div style={sectionStyle}>
               <p style={sectionTitleStyle}>Options</p>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                {availableOptions.map(opt => (
-                  <label key={opt.key} style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', padding: '12px 16px', border: '1px solid #CEC8BF', backgroundColor: form[opt.key] ? '#E5DED5' : '#F7F4F0', borderRadius: '8px' }}>
-                    <input type="checkbox" checked={form[opt.key]} onChange={e => set(opt.key, e.target.checked)} style={{ width: '14px', height: '14px', accentColor: '#1C1C1A' }} />
-                    <span style={{ fontSize: '13px', color: '#1C1C1A' }}>{opt.label}</span>
-                  </label>
-                ))}
+                {availableOptions.map(opt => {
+                  const checked = selectedOptions.has(opt.id);
+                  return (
+                    <label key={opt.id} style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', padding: '12px 16px', border: '1px solid #CEC8BF', backgroundColor: checked ? '#E5DED5' : '#F7F4F0', borderRadius: '8px' }}>
+                      <input type="checkbox" checked={checked} onChange={() => toggleOption(opt.id)} style={{ width: '14px', height: '14px', accentColor: '#1C1C1A' }} />
+                      <span style={{ fontSize: '13px', color: '#1C1C1A', flex: 1 }}>{opt.label}</span>
+                      {opt.price > 0 && <span style={{ fontSize: '12px', color: '#7A7570' }}>{opt.price} €</span>}
+                    </label>
+                  );
+                })}
               </div>
+            </div>
+          )}
+
+          {availableOptions.length === 0 && (
+            <div style={{ ...sectionStyle, padding: '16px', border: '1px dashed #CEC8BF', borderRadius: '8px' }}>
+              <p style={{ fontSize: '13px', color: '#7A7570', margin: 0 }}>
+                Aucune option configurée. <a href="/dashboard/settings" style={{ color: '#1C1C1A' }}>Configurer les options →</a>
+              </p>
             </div>
           )}
 

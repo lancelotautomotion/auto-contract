@@ -8,7 +8,6 @@ export async function POST(req: NextRequest) {
 
   const body = await req.json();
 
-  // Récupère ou crée l'utilisateur en DB
   let user = await prisma.user.findUnique({ where: { clerkId: userId } });
   if (!user) {
     user = await prisma.user.create({
@@ -16,13 +15,19 @@ export async function POST(req: NextRequest) {
     });
   }
 
-  // Récupère ou crée le gîte par défaut
-  let gite = await prisma.gite.findFirst({ where: { userId: user.id } });
+  let gite = await prisma.gite.findFirst({
+    where: { userId: user.id },
+    include: { options: true },
+  });
   if (!gite) {
     gite = await prisma.gite.create({
       data: { name: "Mon Gîte", userId: user.id },
+      include: { options: true },
     });
   }
+
+  const selectedIds: string[] = Array.isArray(body.selectedOptionIds) ? body.selectedOptionIds : [];
+  const selectedOptions = gite.options.filter(o => selectedIds.includes(o.id));
 
   const reservation = await prisma.reservation.create({
     data: {
@@ -40,11 +45,14 @@ export async function POST(req: NextRequest) {
       deposit: parseFloat(body.deposit),
       cleaningFee: parseFloat(body.cleaningFee ?? 90),
       touristTax: parseFloat(body.touristTax ?? 1.32),
-      nordicBath: body.nordicBath === true,
-      sheet160: body.sheet160 === true,
-      sheet90: body.sheet90 === true,
-      towels: body.towels === true,
       notes: body.notes ?? "",
+      reservationOptions: {
+        create: selectedOptions.map(o => ({
+          label: o.label,
+          price: o.price,
+          giteOptionId: o.id,
+        })),
+      },
     },
   });
 
@@ -60,7 +68,7 @@ export async function GET() {
 
   const reservations = await prisma.reservation.findMany({
     where: { gite: { userId: user.id } },
-    include: { contract: true },
+    include: { contract: true, reservationOptions: true },
     orderBy: { createdAt: "desc" },
   });
 
