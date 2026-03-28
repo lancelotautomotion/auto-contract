@@ -71,10 +71,10 @@ export default async function ReservationDetailPage({ params }: { params: Promis
           <div style={{ backgroundColor: '#E5DED5', padding: '28px 32px' }}>
             <p style={{ fontSize: '11px', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#7A7570', marginBottom: '20px', paddingBottom: '10px', borderBottom: '1px solid #CEC8BF' }}>Tarifs</p>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-              <div><span style={labelStyle}>Loyer</span><span style={valueStyle}>{fmtPrice(reservation.rent)}</span></div>
-              <div><span style={labelStyle}>Acompte</span><span style={valueStyle}>{fmtPrice(reservation.deposit)}</span></div>
-              <div><span style={labelStyle}>Ménage</span><span style={valueStyle}>{fmtPrice(reservation.cleaningFee)}</span></div>
-              <div><span style={labelStyle}>Taxe de séjour</span><span style={valueStyle}>{fmtPrice(reservation.touristTax)}/nuit</span></div>
+              <div><span style={labelStyle}>Loyer</span><span style={valueStyle}>{reservation.rent != null ? fmtPrice(reservation.rent) : '—'}</span></div>
+              <div><span style={labelStyle}>Acompte</span><span style={valueStyle}>{reservation.deposit != null ? fmtPrice(reservation.deposit) : '—'}</span></div>
+              <div><span style={labelStyle}>Ménage</span><span style={valueStyle}>{reservation.cleaningFee != null ? fmtPrice(reservation.cleaningFee) : '—'}</span></div>
+              <div><span style={labelStyle}>Taxe de séjour</span><span style={valueStyle}>{reservation.touristTax != null ? `${fmtPrice(reservation.touristTax)}/nuit` : '—'}</span></div>
             </div>
           </div>
           <div style={{ backgroundColor: '#E5DED5', padding: '28px 32px' }}>

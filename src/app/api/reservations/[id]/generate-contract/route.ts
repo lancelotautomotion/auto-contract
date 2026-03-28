@@ -12,7 +12,7 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
 
   const reservation = await prisma.reservation.findFirst({
     where: { id, gite: { userId: dbUser.id } },
-    include: { gite: true },
+    include: { gite: true, reservationOptions: true },
   });
   if (!reservation) return NextResponse.json({ error: "Réservation introuvable" }, { status: 404 });
 
@@ -46,7 +46,14 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
           acompte: reservation.deposit,
           menage: reservation.cleaningFee,
           taxe_sejour: reservation.touristTax,
-          bain_nordique: reservation.nordicBath,
+          options: reservation.reservationOptions.map(o => ({ label: o.label, price: o.price })),
+          nom_gite: reservation.gite.name,
+          adresse_gite: reservation.gite.address,
+          ville_gite: reservation.gite.city,
+          email_gite: reservation.gite.email,
+          telephone_gite: reservation.gite.phone,
+          drive_template_folder_id: reservation.gite.driveTemplateFolderId,
+          drive_output_folder_id: reservation.gite.driveOutputFolderId,
           callback_url: `${process.env.NEXT_PUBLIC_APP_URL}/api/n8n/callback`,
         }),
       });
