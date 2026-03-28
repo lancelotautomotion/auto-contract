@@ -15,6 +15,7 @@ export async function POST(req: NextRequest) {
     address: body.address ?? "",
     city: body.city ?? "",
     zipCode: body.zipCode ?? "",
+    slug: body.slug ? body.slug.toLowerCase().replace(/[^a-z0-9-]/g, '-') : undefined,
     capacity: parseInt(body.capacity ?? "12"),
     cleaningFee: parseFloat(body.cleaningFee ?? "90"),
     touristTax: parseFloat(body.touristTax ?? "1.32"),

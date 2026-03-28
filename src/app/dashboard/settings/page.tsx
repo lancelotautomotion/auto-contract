@@ -45,6 +45,7 @@ export default async function SettingsPage() {
           n8nWebhookUrl: gite.n8nWebhookUrl ?? '',
           driveTemplateFolderId: gite.driveTemplateFolderId ?? '',
           driveOutputFolderId: gite.driveOutputFolderId ?? '',
+          slug: gite.slug ?? '',
           options: gite.options.map(o => ({ id: o.id, label: o.label, price: o.price })),
         }} />
       </main>

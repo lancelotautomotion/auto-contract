@@ -17,6 +17,7 @@ interface GiteOption {
 interface GiteData {
   id: string; name: string; email: string; phone: string;
   address: string; city: string; zipCode: string;
+  slug: string;
   capacity: number; cleaningFee: number; touristTax: number;
   n8nWebhookUrl: string; driveTemplateFolderId: string; driveOutputFolderId: string;
   options: GiteOption[];
@@ -28,6 +29,7 @@ export default function SettingsForm({ gite }: { gite: GiteData }) {
   const [form, setForm] = useState({
     giteName: gite.name, email: gite.email, phone: gite.phone,
     address: gite.address, city: gite.city, zipCode: gite.zipCode,
+    slug: gite.slug,
     capacity: gite.capacity.toString(),
     cleaningFee: gite.cleaningFee.toString(),
     touristTax: gite.touristTax.toString(),
@@ -65,6 +67,21 @@ export default function SettingsForm({ gite }: { gite: GiteData }) {
   return (
     <form onSubmit={handleSubmit}>
 
+      {/* Lien public */}
+      {form.slug && (
+        <div style={{ ...section, padding: '16px 20px', backgroundColor: '#F7F4F0', borderRadius: '10px', border: '1px solid #CEC8BF', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div>
+            <p style={{ fontSize: '11px', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#7A7570', marginBottom: '4px' }}>Lien de réservation client</p>
+            <p style={{ fontSize: '13px', color: '#1C1C1A', margin: 0 }}>
+              contratgite.com/book/<strong>{form.slug}</strong>
+            </p>
+          </div>
+          <a href={`/book/${form.slug}`} target="_blank" rel="noreferrer" style={{ fontSize: '11px', letterSpacing: '0.12em', textTransform: 'uppercase', padding: '8px 16px', border: '1px solid #CEC8BF', borderRadius: '8px', color: '#1C1C1A', textDecoration: 'none' }}>
+            Voir →
+          </a>
+        </div>
+      )}
+
       <div style={section}>
         <p style={sectionTitle}>Votre gîte</p>
         <div style={{ ...grid2, marginBottom: '16px' }}>
@@ -74,6 +91,20 @@ export default function SettingsForm({ gite }: { gite: GiteData }) {
           </div>
           <div><label style={label}>Email de contact *</label><input required type="email" style={input} value={form.email} onChange={e => set('email', e.target.value)} /></div>
           <div><label style={label}>Téléphone</label><input style={input} value={form.phone} onChange={e => set('phone', e.target.value)} /></div>
+          <div style={{ gridColumn: '1 / -1' }}>
+            <label style={label}>Slug (lien public) *</label>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{ fontSize: '13px', color: '#7A7570', flexShrink: 0 }}>/book/</span>
+              <input
+                required
+                style={input}
+                value={form.slug}
+                onChange={e => set('slug', e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '-'))}
+                placeholder="clos-du-marida"
+              />
+            </div>
+            <p style={{ fontSize: '11px', color: '#7A7570', marginTop: '6px' }}>Lettres minuscules, chiffres et tirets uniquement.</p>
+          </div>
         </div>
         <div style={{ marginBottom: '16px' }}><label style={label}>Adresse</label><input style={input} value={form.address} onChange={e => set('address', e.target.value)} /></div>
         <div style={grid2}>

@@ -30,6 +30,7 @@ model Gite {
   capacity    Int     @default(12)
   cleaningFee Float   @default(90)
   touristTax  Float   @default(1.32)
+  slug                  String? @unique
   driveTemplateFolderId String?
   driveOutputFolderId   String?
   n8nWebhookUrl         String?
@@ -77,11 +78,11 @@ model Reservation {
   checkIn  DateTime
   checkOut DateTime
 
-  // Tarifs
-  rent        Float
-  deposit     Float
-  cleaningFee Float
-  touristTax  Float
+  // Tarifs (null si demande client en attente de validation)
+  rent        Float?
+  deposit     Float?
+  cleaningFee Float?
+  touristTax  Float?
 
   notes String?
 
@@ -123,7 +124,8 @@ model Contract {
 }
 
 enum ReservationStatus {
-  NEW
+  PENDING_REVIEW  // Demande client, en attente de validation par le gérant
+  NEW             // Réservation confirmée / créée manuellement
   CONFIRMED
   CANCELLED
 }
