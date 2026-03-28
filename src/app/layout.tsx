@@ -17,10 +17,8 @@ export default function RootLayout({
   return (
     <ClerkProvider afterSignInUrl="/dashboard" afterSignUpUrl="/onboarding">
       <html lang="fr" className="h-full antialiased" suppressHydrationWarning>
-        <head>
-          <Script id="theme-init" strategy="beforeInteractive">{`(function(){try{var t=localStorage.getItem('theme');if(t==='dark')document.documentElement.classList.add('dark');}catch(e){}})();`}</Script>
-        </head>
         <body className="min-h-full">
+          <Script id="theme-init" strategy="beforeInteractive">{`(function(){try{var t=localStorage.getItem('theme');if(t==='dark')document.documentElement.classList.add('dark');}catch(e){}})();`}</Script>
           <ThemeProvider>
             {children}
           </ThemeProvider>
