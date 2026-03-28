@@ -2,6 +2,12 @@ import { auth, currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
+import CalendarView from "./CalendarView";
+
+const SIGNED_BG = '#D1EDD4';
+const SIGNED_TEXT = '#2D6A31';
+const PENDING_BG = '#FDECD0';
+const PENDING_TEXT = '#C47822';
 
 export default async function DashboardPage() {
   const { userId } = await auth();
@@ -51,6 +57,15 @@ export default async function DashboardPage() {
 
   const contractsGenerated = reservations.filter(r => r.contract?.status === 'GENERATED' || r.contract?.status === 'SIGNED').length;
   const contractsSigned = reservations.filter(r => r.contract?.status === 'SIGNED').length;
+
+  const calendarReservations = reservations.map(r => ({
+    id: r.id,
+    clientFirstName: r.clientFirstName,
+    clientLastName: r.clientLastName,
+    checkIn: r.checkIn.toISOString(),
+    checkOut: r.checkOut.toISOString(),
+    contractStatus: r.contract?.status ?? null,
+  }));
   const fmt = (d: Date) => new Date(d).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
 
   return (
@@ -88,6 +103,16 @@ export default async function DashboardPage() {
               <p style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', fontSize: '42px', fontWeight: 300, color: '#1C1C1A', margin: 0 }}>{s.value}</p>
             </div>
           ))}
+        </div>
+
+        {/* Calendrier */}
+        <div style={{ border: '1px solid #CEC8BF', borderRadius: '12px', overflow: 'hidden', marginBottom: '32px' }}>
+          <div style={{ padding: '16px 32px', borderBottom: '1px solid #CEC8BF', backgroundColor: '#E5DED5' }}>
+            <p style={{ fontSize: '11px', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#7A7570', margin: 0 }}>Planning</p>
+          </div>
+          <div style={{ padding: '24px 32px', backgroundColor: '#F7F4F0' }}>
+            <CalendarView reservations={calendarReservations} />
+          </div>
         </div>
 
         {/* Demandes en attente */}
@@ -163,11 +188,11 @@ export default async function DashboardPage() {
                 <span style={{
                   fontSize: '10px', letterSpacing: '0.12em', textTransform: 'uppercase',
                   padding: '4px 12px', display: 'inline-block', borderRadius: '20px',
-                  backgroundColor: r.contract?.status === 'SIGNED' ? '#1C1C1A' : r.contract?.status === 'GENERATED' ? '#E5DED5' : '#EDE8E1',
-                  color: r.contract?.status === 'SIGNED' ? '#EDE8E1' : r.contract?.status === 'GENERATED' ? '#1C1C1A' : '#7A7570',
-                  border: r.contract?.status === 'SIGNED' ? 'none' : '1px solid #CEC8BF',
+                  backgroundColor: r.contract?.status === 'SIGNED' ? SIGNED_BG : r.contract?.status === 'GENERATED' ? PENDING_BG : '#EDE8E1',
+                  color: r.contract?.status === 'SIGNED' ? SIGNED_TEXT : r.contract?.status === 'GENERATED' ? PENDING_TEXT : '#7A7570',
+                  border: `1px solid ${r.contract?.status === 'SIGNED' ? SIGNED_TEXT : r.contract?.status === 'GENERATED' ? PENDING_TEXT : '#CEC8BF'}`,
                 }}>
-                  {r.contract?.status === 'SIGNED' ? 'Signé ✓' : r.contract?.status === 'GENERATED' ? 'Généré' : 'En attente'}
+                  {r.contract?.status === 'SIGNED' ? 'Signé ✓' : r.contract?.status === 'GENERATED' ? 'En attente signature' : 'En attente'}
                 </span>
               </Link>
             ))
