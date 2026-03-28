@@ -35,7 +35,7 @@ export default function Sidebar() {
       padding: '48px 0',
     }}>
       {/* Navigation */}
-      <nav style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '0 24px 0 40px' }}>
+      <nav style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '0 16px' }}>
         {NAV.map(item => {
           const active = isActive(item.href);
           return (
@@ -44,17 +44,17 @@ export default function Sidebar() {
               href={item.href}
               style={{
                 display: 'block',
-                padding: '7px 0 7px 16px',
-                marginBottom: '4px',
-                textDecoration: 'none',
-                fontSize: '13px',
+                padding: '10px 0',
+                textDecoration: active ? 'underline' : 'none',
+                textUnderlineOffset: '4px',
+                textAlign: 'center',
+                fontSize: '15px',
                 color: active ? 'var(--text)' : 'var(--text-muted)',
                 fontWeight: active ? 500 : 400,
                 fontFamily: "'Inter', sans-serif",
                 letterSpacing: '0.01em',
-                borderLeft: active ? '2px solid var(--text)' : '2px solid transparent',
-                transition: 'color 0.2s ease, border-color 0.2s ease, opacity 0.2s ease',
-                opacity: active ? 1 : 0.7,
+                transition: 'color 0.2s ease, opacity 0.2s ease',
+                opacity: active ? 1 : 0.65,
               }}
             >
               {item.label}
@@ -64,7 +64,7 @@ export default function Sidebar() {
       </nav>
 
       {/* Bottom */}
-      <div style={{ padding: '0 24px 0 40px' }}>
+      <div style={{ padding: '0 16px', textAlign: 'center' }}>
         <button
           onClick={toggle}
           style={{
@@ -78,7 +78,7 @@ export default function Sidebar() {
             fontSize: '11px',
             fontFamily: "'Inter', sans-serif",
             letterSpacing: '0.04em',
-            textAlign: 'left',
+            textAlign: 'center',
           }}
         >
           {dark ? '☾ Mode nuit' : '☀ Mode clair'}
@@ -98,7 +98,7 @@ export default function Sidebar() {
             fontFamily: "'Inter', sans-serif",
             letterSpacing: '0.08em',
             textTransform: 'uppercase',
-            textAlign: 'left',
+            textAlign: 'center',
           }}
         >
           Déconnexion
