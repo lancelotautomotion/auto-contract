@@ -1,0 +1,57 @@
+import { auth } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
+import { prisma } from "@/lib/prisma";
+import SettingsForm from "./SettingsForm";
+
+export default async function SettingsPage() {
+  const { userId } = await auth();
+  if (!userId) redirect("/sign-in");
+
+  const dbUser = await prisma.user.findUnique({ where: { clerkId: userId } });
+  if (!dbUser) redirect("/onboarding");
+
+  const gite = await prisma.gite.findFirst({ where: { userId: dbUser.id } });
+  if (!gite) redirect("/onboarding");
+
+  return (
+    <div style={{ minHeight: '100vh', backgroundColor: '#EDE8E1', fontFamily: 'Inter, sans-serif' }}>
+      <header style={{ padding: '20px 40px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #CEC8BF' }}>
+        <span style={{ fontSize: '11px', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#7A7570' }}>ContratGîte</span>
+        <a href="/dashboard" style={{ fontSize: '11px', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#7A7570', textDecoration: 'none' }}>← Tableau de bord</a>
+      </header>
+
+      <main style={{ maxWidth: '680px', margin: '0 auto', padding: '48px 40px' }}>
+        <div style={{ marginBottom: '40px' }}>
+          <p style={{ fontSize: '11px', letterSpacing: '0.25em', textTransform: 'uppercase', color: '#7A7570', marginBottom: '10px' }}>— Paramètres</p>
+          <h1 style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', fontSize: '44px', fontWeight: 300, color: '#1C1C1A', margin: 0 }}>
+            {gite.name}
+          </h1>
+        </div>
+
+        <SettingsForm gite={{
+          id: gite.id,
+          name: gite.name,
+          email: gite.email ?? '',
+          phone: gite.phone ?? '',
+          address: gite.address ?? '',
+          city: gite.city ?? '',
+          zipCode: gite.zipCode ?? '',
+          capacity: gite.capacity,
+          cleaningFee: gite.cleaningFee,
+          touristTax: gite.touristTax,
+          n8nWebhookUrl: gite.n8nWebhookUrl ?? '',
+          driveTemplateFolderId: gite.driveTemplateFolderId ?? '',
+          driveOutputFolderId: gite.driveOutputFolderId ?? '',
+          offerNordicBath: (gite as any).offerNordicBath ?? true,
+          nordicBathPrice: (gite as any).nordicBathPrice ?? 120,
+          offerSheet160:   (gite as any).offerSheet160 ?? true,
+          sheet160Price:   (gite as any).sheet160Price ?? 0,
+          offerSheet90:    (gite as any).offerSheet90 ?? true,
+          sheet90Price:    (gite as any).sheet90Price ?? 0,
+          offerTowels:     (gite as any).offerTowels ?? true,
+          towelsPrice:     (gite as any).towelsPrice ?? 0,
+        }} />
+      </main>
+    </div>
+  );
+}

@@ -1,0 +1,46 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Inter:wght@300;400;500&display=swap');
+@import "tailwindcss";
+
+:root {
+  --bg: #EDE8E1;
+  --bg-card: #E5DED5;
+  --bg-white: #F7F4F0;
+  --text: #1C1C1A;
+  --text-muted: #7A7570;
+  --border: #CEC8BF;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  font-weight: 300;
+}
+
+h1, h2, h3 {
+  font-family: 'Cormorant Garamond', serif;
+}
+
+.reservation-row {
+  transition: background-color 0.15s ease;
+}
+
+.reservation-row:hover {
+  background-color: #EDE8E1 !important;
+}
+
+.reservation-row:hover .client-name {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.reservation-row:hover .row-arrow {
+  opacity: 1;
+}
+
+.row-arrow {
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  font-size: 14px;
+  color: #7A7570;
+}
