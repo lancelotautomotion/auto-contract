@@ -4,7 +4,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   return (
     <div style={{
       display: 'grid',
-      gridTemplateColumns: '260px 1fr 260px',
+      gridTemplateColumns: '260px 1fr',
       minHeight: '100vh',
       backgroundColor: 'var(--bg)',
     }}>
@@ -22,13 +22,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <Nav />
       </div>
 
-      {/* Contenu centré */}
-      <div style={{ minWidth: 0 }}>
+      {/* Contenu */}
+      <div style={{ minWidth: 0, paddingRight: '48px' }}>
         {children}
       </div>
-
-      {/* Colonne droite vide — symétrique */}
-      <div />
 
     </div>
   );
