@@ -126,11 +126,11 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
     <form onSubmit={handleSubmit}>
       {/* Sticky header : titre + tabs */}
       <div style={{ position: 'sticky', top: 0, zIndex: 20, backgroundColor: 'var(--bg)', paddingTop: '48px' }}>
-        <div style={{ maxWidth: activeTab === 'Contrat' ? '1200px' : '800px', margin: '0 auto' }}>
+        <div style={{ maxWidth: '800px', margin: '0 auto' }}>
           <p style={{ fontSize: '11px', letterSpacing: '0.25em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '10px' }}>— Mon établissement</p>
           <h1 style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', fontSize: '44px', fontWeight: 300, color: 'var(--text)', margin: '0 0 32px' }}>{form.giteName || 'Mon établissement'}</h1>
         </div>
-        <div style={{ display: 'flex', gap: '2px', maxWidth: activeTab === 'Contrat' ? '1200px' : '800px', margin: '0 auto', borderBottom: '1px solid var(--border)', marginBottom: '32px' }}>
+        <div style={{ display: 'flex', gap: '2px', maxWidth: '800px', margin: '0 auto', borderBottom: '1px solid var(--border)', marginBottom: '32px' }}>
         {TABS.map(tab => (
           <button key={tab} type="button" onClick={() => setActiveTab(tab)} style={{ fontSize: '11px', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '10px 20px', border: 'none', cursor: 'pointer', backgroundColor: 'transparent', color: activeTab === tab ? 'var(--text)' : 'var(--text-muted)', borderBottom: activeTab === tab ? '2px solid var(--text)' : '2px solid transparent', marginBottom: '-1px', transition: 'color 0.15s ease' }}>
             {tab}
