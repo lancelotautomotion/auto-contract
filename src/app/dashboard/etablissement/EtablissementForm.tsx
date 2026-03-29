@@ -184,7 +184,7 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
 
       {/* Tab: Options */}
       {activeTab === 'Options' && (
-        <div style={{ ...sec, maxWidth: '800px', margin: '0 auto' }}>
+        <div style={{ maxWidth: '800px', margin: '0 auto', marginBottom: '36px' }}>
           <p style={secTitle}>Options proposées aux clients</p>
           <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '20px', lineHeight: 1.6 }}>Ces options seront disponibles sur votre page de réservation client.</p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '16px' }}>
@@ -204,7 +204,7 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
 
       {/* Tab: Contrat */}
       {activeTab === 'Contrat' && (
-        <div style={{ ...sec, maxWidth: '1200px', margin: '0 auto' }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto', marginBottom: '36px' }}>
           <p style={secTitle}>Modèle de contrat</p>
 
           {/* Bloc éducatif */}
@@ -279,7 +279,7 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
 
       {/* Tab: Logo */}
       {activeTab === 'Logo' && (
-        <div style={{ ...sec, maxWidth: '800px', margin: '0 auto' }}>
+        <div style={{ maxWidth: '800px', margin: '0 auto', marginBottom: '36px' }}>
           <p style={secTitle}>Logo du gîte</p>
           <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '24px', lineHeight: 1.6 }}>Votre logo sera affiché en haut de chaque contrat PDF généré. Formats acceptés : PNG, JPG, WEBP.</p>
           {logoDataUrl ? (
