@@ -251,7 +251,7 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
             </div>
 
             {/* Aperçu droite */}
-            <div style={{ width: '320px', flexShrink: 0 }}>
+            <div style={{ width: '420px', flexShrink: 0 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
                 <p style={{ fontSize: '10px', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--text-muted)', margin: 0 }}>Aperçu en direct</p>
                 <span style={{ fontSize: '10px', color: 'var(--text-muted)', fontStyle: 'italic' }}>données d&apos;exemple</span>
