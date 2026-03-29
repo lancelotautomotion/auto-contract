@@ -18,7 +18,7 @@ export default async function EtablissementPage() {
 
   return (
     <main style={{ padding: '48px 40px' }}>
-      <div style={{ maxWidth: '800px', marginBottom: '40px' }}>
+      <div style={{ maxWidth: '800px', margin: '0 auto 40px' }}>
         <p style={{ fontSize: '11px', letterSpacing: '0.25em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '10px' }}>— Mon établissement</p>
         <h1 style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', fontSize: '44px', fontWeight: 300, color: 'var(--text)', margin: 0 }}>
           {gite.name}

@@ -125,7 +125,7 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
   return (
     <form onSubmit={handleSubmit}>
       {/* Tabs */}
-      <div style={{ display: 'flex', gap: '2px', marginBottom: '32px', borderBottom: '1px solid var(--border)', maxWidth: activeTab === 'Contrat' ? 'none' : '800px' }}>
+      <div style={{ display: 'flex', gap: '2px', marginBottom: '32px', borderBottom: '1px solid var(--border)', maxWidth: activeTab === 'Contrat' ? '1200px' : '800px', margin: '0 auto 32px' }}>
         {TABS.map(tab => (
           <button key={tab} type="button" onClick={() => setActiveTab(tab)} style={{ fontSize: '11px', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '10px 20px', border: 'none', cursor: 'pointer', backgroundColor: 'transparent', color: activeTab === tab ? 'var(--text)' : 'var(--text-muted)', borderBottom: activeTab === tab ? '2px solid var(--text)' : '2px solid transparent', marginBottom: '-1px', transition: 'color 0.15s ease' }}>
             {tab}
@@ -135,7 +135,7 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
 
       {/* Tab: Informations */}
       {activeTab === 'Informations' && (
-        <div style={{ maxWidth: '800px' }}>
+        <div style={{ maxWidth: '800px', margin: '0 auto' }}>
           {form.slug && (
             <div style={{ ...sec, padding: '16px 20px', backgroundColor: 'var(--bg-white)', borderRadius: '10px', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <div>
@@ -178,7 +178,7 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
 
       {/* Tab: Options */}
       {activeTab === 'Options' && (
-        <div style={{ ...sec, maxWidth: '800px' }}>
+        <div style={{ ...sec, maxWidth: '800px', margin: '0 auto' }}>
           <p style={secTitle}>Options proposées aux clients</p>
           <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '20px', lineHeight: 1.6 }}>Ces options seront disponibles sur votre page de réservation client.</p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '16px' }}>
@@ -198,7 +198,7 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
 
       {/* Tab: Contrat */}
       {activeTab === 'Contrat' && (
-        <div style={sec}>
+        <div style={{ ...sec, maxWidth: '1200px', margin: '0 auto' }}>
           <p style={secTitle}>Modèle de contrat</p>
 
           {/* Bloc éducatif */}
@@ -273,7 +273,7 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
 
       {/* Tab: Logo */}
       {activeTab === 'Logo' && (
-        <div style={{ ...sec, maxWidth: '800px' }}>
+        <div style={{ ...sec, maxWidth: '800px', margin: '0 auto' }}>
           <p style={secTitle}>Logo du gîte</p>
           <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '24px', lineHeight: 1.6 }}>Votre logo sera affiché en haut de chaque contrat PDF généré. Formats acceptés : PNG, JPG, WEBP.</p>
           {logoDataUrl ? (
@@ -298,7 +298,7 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
       )}
 
       {/* Save */}
-      <div style={{ display: 'flex', gap: '12px', alignItems: 'center', paddingTop: '20px', marginTop: '8px', borderTop: '1px solid var(--border)', maxWidth: activeTab === 'Contrat' ? 'none' : '800px' }}>
+      <div style={{ display: 'flex', gap: '12px', alignItems: 'center', paddingTop: '20px', marginTop: '8px', borderTop: '1px solid var(--border)', maxWidth: activeTab === 'Contrat' ? '1200px' : '800px', margin: '8px auto 0' }}>
         {activeTab === 'Contrat' && (
           <button type="button"
             onClick={() => { if (confirm('Remettre le contrat type par défaut ?')) { setContractTemplate(DEFAULT_CONTRACT_TEMPLATE); setSaved(false); } }}
@@ -306,7 +306,8 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
             Réinitialiser le modèle
           </button>
         )}
-        <button type="submit" disabled={loading} style={{ flex: 1, fontSize: '11px', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '14px', backgroundColor: loading ? 'var(--text-muted)' : 'var(--text)', color: 'var(--bg)', border: 'none', cursor: loading ? 'not-allowed' : 'pointer', borderRadius: '8px' }}>
+        <div style={{ flex: 1 }} />
+        <button type="submit" disabled={loading} style={{ fontSize: '11px', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '14px 40px', backgroundColor: loading ? 'var(--text-muted)' : 'var(--text)', color: 'var(--bg)', border: 'none', cursor: loading ? 'not-allowed' : 'pointer', borderRadius: '8px' }}>
           {loading ? 'Enregistrement...' : 'Sauvegarder →'}
         </button>
         {saved && <span style={{ fontSize: '12px', color: 'var(--text-muted)', flexShrink: 0 }}>✓ Sauvegardé</span>}
