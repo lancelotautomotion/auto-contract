@@ -74,6 +74,10 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ tok
 
   const resend = new Resend(process.env.RESEND_API_KEY);
   const fromEmail = process.env.RESEND_FROM_EMAIL ?? 'onboarding@resend.dev';
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000';
+  const logoPublicUrl = reservation.gite.slug && reservation.gite.logoDataUrl
+    ? `${appUrl}/api/gite/logo?slug=${reservation.gite.slug}`
+    : null;
   const filename = `contrat-signe-${reservation.clientLastName}-${reservation.clientFirstName}.pdf`;
   const dateEntree = fmt(reservation.checkIn);
   const dateSortie = fmt(reservation.checkOut);
@@ -93,7 +97,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ tok
     subject: `Contrat signé — ${reservation.gite.name}`,
     html: buildEmailHtml({
       giteName: reservation.gite.name,
-      logoDataUrl: reservation.gite.logoDataUrl,
+      logoPublicUrl,
       preheader: 'Votre contrat signé est disponible en pièce jointe.',
       body: clientBody,
     }),
@@ -114,7 +118,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ tok
       subject: `Contrat signé par ${reservation.clientFirstName} ${reservation.clientLastName}`,
       html: buildEmailHtml({
         giteName: reservation.gite.name,
-        logoDataUrl: reservation.gite.logoDataUrl,
+        logoPublicUrl,
         preheader: `${reservation.clientFirstName} ${reservation.clientLastName} vient de signer son contrat.`,
         body: managerBody,
       }),

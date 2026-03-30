@@ -50,9 +50,13 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
     <p style="margin:24px 0 0; font-size:14px; color:#1C1C1A;">Cordialement,<br/><strong>${reservation.gite.name}</strong></p>
   `;
 
+  const logoPublicUrl = reservation.gite.slug && reservation.gite.logoDataUrl
+    ? `${appUrl}/api/gite/logo?slug=${reservation.gite.slug}`
+    : null;
+
   const html = buildEmailHtml({
     giteName: reservation.gite.name,
-    logoDataUrl: reservation.gite.logoDataUrl,
+    logoPublicUrl,
     preheader: `Votre contrat pour le séjour du ${dateEntree} au ${dateSortie} est prêt.`,
     body,
   });

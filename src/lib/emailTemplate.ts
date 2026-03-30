@@ -6,16 +6,19 @@
 interface EmailTemplateOptions {
   giteName: string;
   logoDataUrl?: string | null;
+  logoPublicUrl?: string | null;  // URL publique prioritaire sur dataUrl
   preheader?: string;
-  body: string;        // HTML du corps
-  footer?: string;     // Texte de bas de page (optionnel)
+  body: string;
+  footer?: string;
 }
 
 export function buildEmailHtml(opts: EmailTemplateOptions): string {
-  const { giteName, logoDataUrl, preheader, body, footer } = opts;
+  const { giteName, logoDataUrl, logoPublicUrl, preheader, body, footer } = opts;
 
-  const logoBlock = logoDataUrl
-    ? `<img src="${logoDataUrl}" alt="${giteName}" style="max-height:48px; max-width:160px; object-fit:contain; display:block;" />`
+  // Priorité : URL publique (fonctionne dans Gmail) > data URL > texte
+  const logoSrc = logoPublicUrl ?? (logoDataUrl?.startsWith('http') ? logoDataUrl : null);
+  const logoBlock = logoSrc
+    ? `<img src="${logoSrc}" alt="${giteName}" style="max-height:48px; max-width:160px; object-fit:contain; display:block;" />`
     : `<span style="font-family:Georgia,serif; font-size:18px; font-weight:400; color:#1C1C1A; letter-spacing:0.02em;">${giteName}</span>`;
 
   const preheaderHtml = preheader
