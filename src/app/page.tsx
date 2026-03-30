@@ -155,7 +155,7 @@ export default function Home() {
       <nav style={S.nav}>
         <Link href="/" style={S.navLogo}>ContratGîte</Link>
         <div style={S.navLinks}>
-          <a href="#comment-ca-marche" style={S.navLink}>Comment ça marche</a>
+          <Link href="/comment-ca-marche" style={S.navLink}>Comment ça marche</Link>
           <a href="#tarifs" style={S.navLink}>Tarifs</a>
           <Link href="/sign-in" style={S.navLink}>Se connecter</Link>
           <Link href="/sign-up" style={S.navCta}>Démarrer →</Link>
@@ -179,9 +179,9 @@ export default function Home() {
         </p>
         <div style={S.heroCtas}>
           <Link href="/sign-up" style={S.ctaPrimary}>Essayer gratuitement →</Link>
-          <a href="#comment-ca-marche" style={S.ctaSecondary}>
+          <Link href="/comment-ca-marche" style={S.ctaSecondary}>
             Voir comment ça marche ↓
-          </a>
+          </Link>
         </div>
         <div style={S.heroStats}>
           {[
