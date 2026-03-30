@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { Resend } from "resend";
 import { randomBytes } from "crypto";
+import { buildEmailHtml, ctaButton, divider, muted } from "@/lib/emailTemplate";
 
 export async function POST(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -35,28 +36,32 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000';
   const signUrl = `${appUrl}/sign/${signatureToken}`;
   const fromEmail = process.env.RESEND_FROM_EMAIL ?? 'onboarding@resend.dev';
-  const fmt = (d: Date) => new Date(d).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  const fmt = (d: Date) => new Date(d).toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' });
   const dateEntree = fmt(reservation.checkIn);
   const dateSortie = fmt(reservation.checkOut);
+
+  const body = `
+    <p style="margin:0 0 16px;">Bonjour <strong>${reservation.clientFirstName}</strong>,</p>
+    <p style="margin:0 0 16px;">Votre contrat de location pour votre séjour du <strong>${dateEntree}</strong> au <strong>${dateSortie}</strong> au <strong>${reservation.gite.name}</strong> est prêt à être signé.</p>
+    <p style="margin:0 0 4px;">Merci de le lire attentivement et de le signer en cliquant sur le bouton ci-dessous :</p>
+    ${ctaButton('Lire et signer le contrat', signUrl)}
+    ${divider()}
+    ${muted('Ce lien est personnel et sécurisé. Une fois signé, vous recevrez automatiquement votre exemplaire par email.')}
+    <p style="margin:24px 0 0; font-size:14px; color:#1C1C1A;">Cordialement,<br/><strong>${reservation.gite.name}</strong></p>
+  `;
+
+  const html = buildEmailHtml({
+    giteName: reservation.gite.name,
+    logoDataUrl: reservation.gite.logoDataUrl,
+    preheader: `Votre contrat pour le séjour du ${dateEntree} au ${dateSortie} est prêt.`,
+    body,
+  });
 
   const { error } = await resend.emails.send({
     from: fromEmail,
     to: reservation.clientEmail,
     subject: `Votre contrat de location à signer — ${reservation.gite.name}`,
-    html: `
-      <div style="font-family: Inter, sans-serif; max-width: 560px; margin: 0 auto; color: #1C1C1A;">
-        <p>Bonjour ${reservation.clientFirstName},</p>
-        <p>Votre contrat de location pour votre séjour du <strong>${dateEntree}</strong> au <strong>${dateSortie}</strong> au <strong>${reservation.gite.name}</strong> est prêt.</p>
-        <p>Merci de le lire attentivement et de le signer en cliquant sur le bouton ci-dessous :</p>
-        <p style="text-align: center; margin: 32px 0;">
-          <a href="${signUrl}" style="background-color: #1C1C1A; color: #EDE8E1; padding: 14px 32px; text-decoration: none; border-radius: 8px; font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase;">
-            Lire et signer le contrat →
-          </a>
-        </p>
-        <p style="font-size: 12px; color: #7A7570;">Ce lien est personnel et sécurisé. Une fois signé, vous recevrez automatiquement votre exemplaire par email.</p>
-        <p>Cordialement,<br/>${reservation.gite.name}</p>
-      </div>
-    `,
+    html,
   });
 
   if (error) {
@@ -66,3 +71,4 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
 
   return NextResponse.json({ success: true });
 }
+

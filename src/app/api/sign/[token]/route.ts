@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { generateSignedContractPdf, ContractData } from "@/lib/contractPdf";
 import { DEFAULT_CONTRACT_TEMPLATE } from "@/lib/defaultContractTemplate";
+import { buildEmailHtml, divider, muted } from "@/lib/emailTemplate";
 import { Resend } from "resend";
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ token: string }> }) {
@@ -33,7 +34,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ tok
   });
 
   // Générer le PDF signé
-  const fmt = (d: Date) => new Date(d).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  const fmt = (d: Date) => new Date(d).toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' });
   const solde = Math.max(0, (reservation.rent ?? 0) - (reservation.deposit ?? 0));
   const optionsText = reservation.reservationOptions.length === 0
     ? 'Aucune option sélectionnée'
@@ -78,29 +79,45 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ tok
   const dateSortie = fmt(reservation.checkOut);
 
   // Email au client
+  const clientBody = `
+    <p style="margin:0 0 16px;">Bonjour <strong>${reservation.clientFirstName}</strong>,</p>
+    <p style="margin:0 0 16px;">Votre contrat de location pour le séjour du <strong>${dateEntree}</strong> au <strong>${dateSortie}</strong> au <strong>${reservation.gite.name}</strong> a bien été signé électroniquement.</p>
+    <p style="margin:0 0 16px;">Veuillez trouver ci-joint votre exemplaire signé en PDF.</p>
+    ${divider()}
+    ${muted('Conservez ce document — il fait office de preuve de votre réservation.')}
+    <p style="margin:24px 0 0; font-size:14px; color:#1C1C1A;">Cordialement,<br/><strong>${reservation.gite.name}</strong></p>
+  `;
   await resend.emails.send({
     from: fromEmail,
     to: reservation.clientEmail,
     subject: `Contrat signé — ${reservation.gite.name}`,
-    html: `
-      <p>Bonjour ${reservation.clientFirstName},</p>
-      <p>Votre contrat de location pour le séjour du <strong>${dateEntree}</strong> au <strong>${dateSortie}</strong> au ${reservation.gite.name} a bien été signé électroniquement.</p>
-      <p>Veuillez trouver ci-joint votre exemplaire signé.</p>
-      <p>Cordialement,<br/>${reservation.gite.name}</p>
-    `,
+    html: buildEmailHtml({
+      giteName: reservation.gite.name,
+      logoDataUrl: reservation.gite.logoDataUrl,
+      preheader: 'Votre contrat signé est disponible en pièce jointe.',
+      body: clientBody,
+    }),
     attachments: [{ filename, content: pdfBuffer.toString('base64') }],
   });
 
   // Email au gérant
   if (reservation.gite.email) {
+    const managerBody = `
+      <p style="margin:0 0 16px;">Le contrat de <strong>${reservation.clientFirstName} ${reservation.clientLastName}</strong> pour le séjour du <strong>${dateEntree}</strong> au <strong>${dateSortie}</strong> vient d'être signé électroniquement.</p>
+      <p style="margin:0 0 16px;">Le contrat signé est en pièce jointe.</p>
+      ${divider()}
+      ${muted(`Réservation enregistrée le ${new Date().toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' })}.`)}
+    `;
     await resend.emails.send({
       from: fromEmail,
       to: reservation.gite.email,
       subject: `Contrat signé par ${reservation.clientFirstName} ${reservation.clientLastName}`,
-      html: `
-        <p>Le contrat de ${reservation.clientFirstName} ${reservation.clientLastName} pour le séjour du <strong>${dateEntree}</strong> au <strong>${dateSortie}</strong> vient d'être signé électroniquement.</p>
-        <p>Le contrat signé est en pièce jointe.</p>
-      `,
+      html: buildEmailHtml({
+        giteName: reservation.gite.name,
+        logoDataUrl: reservation.gite.logoDataUrl,
+        preheader: `${reservation.clientFirstName} ${reservation.clientLastName} vient de signer son contrat.`,
+        body: managerBody,
+      }),
       attachments: [{ filename, content: pdfBuffer.toString('base64') }],
     });
   }
