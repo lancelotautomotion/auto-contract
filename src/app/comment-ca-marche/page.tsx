@@ -160,6 +160,7 @@ export default function CommentCaMarche() {
       <nav style={nav}>
         <Link href="/" style={navLogo}>ContratGîte</Link>
         <div style={{ display: 'flex', alignItems: 'center', gap: '32px' }}>
+          <Link href="/" style={navLink}>Accueil</Link>
           <Link href="/comment-ca-marche" style={{ ...navLink, color: '#1C1C1A' }}>Comment ça marche</Link>
           <a href="/#tarifs" style={navLink}>Tarifs</a>
           <Link href="/sign-in" style={navLink}>Se connecter</Link>
@@ -297,10 +298,11 @@ export default function CommentCaMarche() {
 
       {/* Footer */}
       <footer style={{ padding: '28px 48px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px', borderTop: '1px solid #CEC8BF' }}>
-        <span style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', fontSize: '15px', color: '#1C1C1A' }}>ContratGîte</span>
+        <Link href="/" style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', fontSize: '15px', color: '#1C1C1A', textDecoration: 'none' }}>ContratGîte</Link>
         <div style={{ display: 'flex', gap: '24px', alignItems: 'center', flexWrap: 'wrap' }}>
+          <Link href="/" style={{ fontSize: '11px', color: '#7A7570', textDecoration: 'none', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Accueil</Link>
           <Link href="/comment-ca-marche" style={{ fontSize: '11px', color: '#7A7570', textDecoration: 'none', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Comment ça marche</Link>
-          <Link href="/faq" style={{ fontSize: '11px', color: '#7A7570', textDecoration: 'none', letterSpacing: '0.1em', textTransform: 'uppercase' }}>FAQ</Link>
+          <a href="/#tarifs" style={{ fontSize: '11px', color: '#7A7570', textDecoration: 'none', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Tarifs</a>
           <Link href="/sign-in" style={{ fontSize: '11px', color: '#7A7570', textDecoration: 'none', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Connexion</Link>
           <span style={{ fontSize: '11px', color: '#7A7570' }}>© 2025 ContratGîte</span>
         </div>
