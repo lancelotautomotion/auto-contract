@@ -168,22 +168,58 @@ export default function CommentCaMarche() {
       </nav>
 
       {/* Hero */}
-      <section style={{ padding: '80px 48px 100px', borderBottom: '1px solid #CEC8BF' }}>
-        <div style={{ ...wrap, padding: '0 48px' }}>
-          <p style={{ ...tag, marginBottom: '20px' }}>— Comment ça marche</p>
-          <h1 style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', fontSize: 'clamp(48px, 6vw, 80px)', fontWeight: 300, color: '#1C1C1A', lineHeight: 1.05, marginBottom: '28px', letterSpacing: '-0.01em', maxWidth: '800px' }}>
-            De la réservation<br />au contrat signé,<br /><em>en moins de 3 minutes.</em>
-          </h1>
-          <p style={{ fontSize: '17px', color: '#7A7570', lineHeight: 1.8, maxWidth: '560px', fontWeight: 300, marginBottom: '40px' }}>
-            ContratGîte automatise tout ce qui suit une réservation. Voici exactement comment ça se passe, étape par étape.
-          </p>
-          <div style={{ display: 'flex', gap: '48px', flexWrap: 'wrap' }}>
-            {[{ num: '5 min', label: 'de configuration initiale' }, { num: '2 min', label: 'par réservation' }, { num: '1 clic', label: 'pour envoyer le contrat' }].map(s => (
-              <div key={s.label}>
-                <div style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', fontSize: '36px', fontWeight: 300, color: '#1C1C1A', lineHeight: 1 }}>{s.num}</div>
-                <div style={{ fontSize: '12px', color: '#7A7570', marginTop: '4px', letterSpacing: '0.05em' }}>{s.label}</div>
+      <section style={{ borderBottom: '1px solid #CEC8BF' }}>
+        <div style={{ ...wrap, padding: '80px 48px 100px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '80px', alignItems: 'center' }}>
+
+            {/* Texte */}
+            <div>
+              <p style={{ ...tag, marginBottom: '20px' }}>— Comment ça marche</p>
+              <h1 style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', fontSize: 'clamp(40px, 5vw, 68px)', fontWeight: 300, color: '#1C1C1A', lineHeight: 1.05, marginBottom: '28px', letterSpacing: '-0.01em' }}>
+                De la réservation<br />au contrat signé,<br /><em>en moins de 3 minutes.</em>
+              </h1>
+              <p style={{ fontSize: '16px', color: '#7A7570', lineHeight: 1.8, fontWeight: 300, marginBottom: '48px' }}>
+                ContratGîte automatise tout ce qui suit une réservation. Voici exactement comment ça se passe, étape par étape.
+              </p>
+              <div style={{ display: 'flex', gap: '40px', flexWrap: 'wrap' }}>
+                {[{ num: '5 min', label: 'de configuration initiale' }, { num: '2 min', label: 'par réservation' }, { num: '1 clic', label: 'pour envoyer le contrat' }].map(s => (
+                  <div key={s.label}>
+                    <div style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', fontSize: '36px', fontWeight: 300, color: '#1C1C1A', lineHeight: 1 }}>{s.num}</div>
+                    <div style={{ fontSize: '12px', color: '#7A7570', marginTop: '4px', letterSpacing: '0.05em' }}>{s.label}</div>
+                  </div>
+                ))}
               </div>
-            ))}
+            </div>
+
+            {/* Visuel — mini flow */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              {[
+                { step: '01', label: 'Réservation enregistrée', sub: 'Marie Dupont · 3 nuits · 14 juillet', status: null },
+                { step: '02', label: 'Contrat généré & envoyé', sub: 'PDF · lien de signature sécurisé', status: null },
+                { step: '03', label: 'Contrat signé', sub: 'Les deux parties reçoivent le PDF', status: 'Signé' },
+              ].map(({ step, label, sub, status }, i) => (
+                <div key={step} style={{ position: 'relative' }}>
+                  {i < 2 && (
+                    <div style={{ position: 'absolute', left: '19px', top: '48px', width: '1px', height: '28px', background: '#CEC8BF' }} />
+                  )}
+                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: '16px', background: i === 2 ? '#E5DED5' : 'white', borderRadius: '14px', border: '1px solid #CEC8BF', padding: '20px 24px', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
+                    <div style={{ width: '38px', height: '38px', borderRadius: '50%', background: i === 2 ? '#1C1C1A' : '#EDE8E1', border: '1px solid #CEC8BF', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                      <span style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', fontSize: '13px', color: i === 2 ? '#EDE8E1' : '#7A7570' }}>{step}</span>
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
+                        <span style={{ fontSize: '14px', color: '#1C1C1A', fontWeight: 500 }}>{label}</span>
+                        {status && (
+                          <span style={{ fontSize: '10px', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#1C1C1A', background: '#CEC8BF', padding: '3px 10px', borderRadius: '100px' }}>{status}</span>
+                        )}
+                      </div>
+                      <div style={{ fontSize: '12px', color: '#7A7570', marginTop: '4px' }}>{sub}</div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
           </div>
         </div>
       </section>
