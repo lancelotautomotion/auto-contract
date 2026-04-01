@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useCallback } from "react";
 import { DEFAULT_CONTRACT_TEMPLATE } from "@/lib/defaultContractTemplate";
 
 const lbl = { fontSize: '11px', letterSpacing: '0.15em', textTransform: 'uppercase' as const, color: 'var(--text-muted)', display: 'block', marginBottom: '6px' };
@@ -39,6 +39,15 @@ function buildPreview(template: string, form: { giteName: string; address: strin
     telephone_gite: form.phone || '07 81 52 27 76',
   };
   return Object.entries(vars).reduce((t, [k, v]) => t.replaceAll(`{{${k}}}`, v), template);
+}
+
+// Génère le HTML avec les {{variables}} surlignées pour l'overlay de l'éditeur
+function getHighlightedHtml(text: string): string {
+  const escaped = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  return escaped.replace(
+    /\{\{([^}]+)\}\}/g,
+    '<mark style="background:rgba(217,119,6,0.18);border-radius:3px;padding:0 2px;outline:1px solid rgba(217,119,6,0.35);color:transparent;">{{$1}}</mark>'
+  ) + '\n';
 }
 
 function PreviewLine({ line, i }: { line: string; i: number }) {
@@ -95,6 +104,14 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
   const [logoDataUrl, setLogoDataUrl] = useState(gite.logoDataUrl || '');
   const [logoLoading, setLogoLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const editorRef = useRef<HTMLTextAreaElement>(null);
+  const highlightRef = useRef<HTMLDivElement>(null);
+
+  const handleEditorScroll = useCallback(() => {
+    if (highlightRef.current && editorRef.current) {
+      highlightRef.current.scrollTop = editorRef.current.scrollTop;
+    }
+  }, []);
 
   const set = (k: string, v: string) => { setForm(f => ({ ...f, [k]: v })); setSaved(false); };
   const addOption = () => setOptions(o => [...o, { label: '', price: 0 }]);
@@ -219,18 +236,28 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
           </div>
 
           {/* Split éditeur / aperçu */}
-          <div style={{ display: 'flex', gap: '20px', alignItems: 'flex-start' }}>
+          <div style={{ display: 'flex', gap: '24px', alignItems: 'flex-start' }}>
 
             {/* Éditeur gauche */}
             <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ marginBottom: '10px', padding: '12px 14px', backgroundColor: 'var(--bg-white)', border: '1px solid var(--border)', borderRadius: '8px' }}>
-                <p style={{ fontSize: '10px', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--text-muted)', margin: '0 0 8px' }}>Cliquez pour insérer une balise</p>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px' }}>
+              {/* En-tête éditeur */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                <p style={{ fontSize: '10px', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--text-muted)', margin: 0 }}>Éditeur</p>
+                <span style={{ fontSize: '10px', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                  <span style={{ display: 'inline-block', width: '8px', height: '8px', borderRadius: '2px', background: 'rgba(217,119,6,0.25)', outline: '1px solid rgba(217,119,6,0.4)' }} />
+                  balises mises en évidence
+                </span>
+              </div>
+
+              {/* Balises à insérer */}
+              <div style={{ marginBottom: '8px', padding: '10px 14px', backgroundColor: 'var(--bg-white)', border: '1px solid var(--border)', borderRadius: '8px 8px 0 0', borderBottom: 'none' }}>
+                <p style={{ fontSize: '10px', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--text-muted)', margin: '0 0 7px' }}>Cliquez pour insérer une balise</p>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
                   {VARIABLES.map(([v, desc]) => (
                     <span key={v} title={desc}
-                      style={{ fontSize: '10px', fontFamily: 'monospace', padding: '3px 7px', backgroundColor: 'var(--bg)', border: '1px solid var(--border)', borderRadius: '4px', color: 'var(--text)', cursor: 'pointer' }}
+                      style={{ fontSize: '10px', fontFamily: 'monospace', padding: '2px 7px', backgroundColor: 'rgba(217,119,6,0.1)', border: '1px solid rgba(217,119,6,0.3)', borderRadius: '4px', color: 'rgb(180,83,9)', cursor: 'pointer', transition: 'background 0.1s' }}
                       onClick={() => {
-                        const ta = document.getElementById('contract-template') as HTMLTextAreaElement;
+                        const ta = editorRef.current;
                         if (ta) {
                           const s = ta.selectionStart, e = ta.selectionEnd;
                           const nv = contractTemplate.slice(0, s) + v + contractTemplate.slice(e);
@@ -243,21 +270,66 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
                 </div>
               </div>
 
-              <textarea
-                id="contract-template"
-                value={contractTemplate}
-                onChange={e => { setContractTemplate(e.target.value); setSaved(false); }}
-                style={{ width: '100%', height: '520px', padding: '14px', border: '1px solid var(--border)', backgroundColor: 'var(--bg-white)', fontSize: '11.5px', fontFamily: 'monospace', color: 'var(--text)', outline: 'none', borderRadius: '8px', boxSizing: 'border-box', lineHeight: 1.6, resize: 'none' }}
-              />
+              {/* Zone d'édition avec overlay de surlignage */}
+              <div style={{ position: 'relative', height: '560px', border: '1px solid var(--border)', borderRadius: '0 0 8px 8px', backgroundColor: '#ffffff', overflow: 'hidden', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
+                {/* Overlay de surlignage (sous le textarea) */}
+                <div
+                  ref={highlightRef}
+                  aria-hidden="true"
+                  style={{
+                    position: 'absolute', inset: 0,
+                    padding: '20px 24px',
+                    fontSize: '12.5px',
+                    fontFamily: '"Georgia", "Times New Roman", serif',
+                    lineHeight: 1.85,
+                    color: 'transparent',
+                    whiteSpace: 'pre-wrap',
+                    wordBreak: 'break-word',
+                    overflowY: 'auto',
+                    overflowX: 'hidden',
+                    pointerEvents: 'none',
+                    userSelect: 'none',
+                    boxSizing: 'border-box',
+                  }}
+                  dangerouslySetInnerHTML={{ __html: getHighlightedHtml(contractTemplate) }}
+                />
+                {/* Textarea transparent par-dessus */}
+                <textarea
+                  ref={editorRef}
+                  id="contract-template"
+                  value={contractTemplate}
+                  onChange={e => { setContractTemplate(e.target.value); setSaved(false); }}
+                  onScroll={handleEditorScroll}
+                  style={{
+                    position: 'absolute', inset: 0,
+                    width: '100%', height: '100%',
+                    padding: '20px 24px',
+                    fontSize: '12.5px',
+                    fontFamily: '"Georgia", "Times New Roman", serif',
+                    lineHeight: 1.85,
+                    color: '#1C1C1A',
+                    backgroundColor: 'transparent',
+                    border: 'none',
+                    outline: 'none',
+                    resize: 'none',
+                    boxSizing: 'border-box',
+                    caretColor: '#1C1C1A',
+                    overflowY: 'auto',
+                    overflowX: 'hidden',
+                    whiteSpace: 'pre-wrap',
+                    wordBreak: 'break-word',
+                  }}
+                />
+              </div>
             </div>
 
             {/* Aperçu droite */}
-            <div style={{ width: '420px', flexShrink: 0 }}>
+            <div style={{ width: '380px', flexShrink: 0 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
                 <p style={{ fontSize: '10px', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--text-muted)', margin: 0 }}>Aperçu en direct</p>
                 <span style={{ fontSize: '10px', color: 'var(--text-muted)', fontStyle: 'italic' }}>données d&apos;exemple</span>
               </div>
-              <div style={{ height: '600px', overflowY: 'auto', backgroundColor: '#ffffff', border: '1px solid var(--border)', borderRadius: '8px', padding: '20px 18px', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
+              <div style={{ height: '616px', overflowY: 'auto', backgroundColor: '#ffffff', border: '1px solid var(--border)', borderRadius: '8px', padding: '20px 18px', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
                 {/* Mini en-tête simulé */}
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', paddingBottom: '8px', borderBottom: '0.5px solid #CEC8BF', marginBottom: '8px' }}>
                   <div style={{ width: '50px', height: '20px', backgroundColor: '#EDE8E1', borderRadius: '2px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
