@@ -426,18 +426,26 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
           <p style={secTitle}>Modèle de contrat</p>
 
           {/* Bloc éducatif */}
-          <div style={{ marginBottom: '20px', padding: '16px 20px', backgroundColor: 'var(--bg-white)', border: '1px solid var(--border)', borderRadius: '10px', display: 'flex', gap: '14px', alignItems: 'flex-start' }}>
-            <span style={{ fontSize: '18px', flexShrink: 0, marginTop: '1px' }}>💡</span>
-            <div>
-              <p style={{ fontSize: '13px', fontWeight: 500, color: 'var(--text)', margin: '0 0 6px' }}>Comment fonctionnent les variables ?</p>
-              <p style={{ fontSize: '12px', color: 'var(--text-muted)', lineHeight: 1.7, margin: '0 0 4px' }}>
-                Les balises orange ci-dessus représentent les informations de votre client, et les vôtres.<br />
-                Glissez-les simplement dans votre contrat (ou cliquez dessus) pour les insérer là où vous le souhaitez.<br />
-                Lors de la création du contrat, elles se transformeront automatiquement pour afficher les vraies données !
-              </p>
-              <p style={{ fontSize: '12px', color: 'var(--text-muted)', lineHeight: 1.7, margin: 0 }}>
-                👉 <strong>Astuce :</strong> L&apos;aperçu sur la droite vous permet de voir le résultat en direct pour vous faire une idée.
-              </p>
+          <div style={{ marginBottom: '24px', padding: '20px 24px', backgroundColor: 'var(--bg-white)', border: '1px solid var(--border)', borderRadius: '10px' }}>
+            <p style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text)', margin: '0 0 12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span>💡</span> Comment fonctionnent les variables ?
+            </p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <div style={{ display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
+                <span style={{ color: 'rgb(146,57,0)', fontWeight: 600, flexShrink: 0 }}>1.</span>
+                <p style={{ fontSize: '13px', color: 'var(--text)', lineHeight: 1.6, margin: 0 }}>Les <strong>balises orange</strong> ci-dessus représentent les informations de votre client, et les vôtres.</p>
+              </div>
+              <div style={{ display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
+                <span style={{ color: 'rgb(146,57,0)', fontWeight: 600, flexShrink: 0 }}>2.</span>
+                <p style={{ fontSize: '13px', color: 'var(--text)', lineHeight: 1.6, margin: 0 }}>Glissez-les dans votre contrat (ou cliquez dessus) pour les insérer là où vous le souhaitez.</p>
+              </div>
+              <div style={{ display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
+                <span style={{ color: 'rgb(146,57,0)', fontWeight: 600, flexShrink: 0 }}>3.</span>
+                <p style={{ fontSize: '13px', color: 'var(--text)', lineHeight: 1.6, margin: 0 }}>Lors de la génération du contrat, elles se transformeront automatiquement avec les vraies données !</p>
+              </div>
+            </div>
+            <div style={{ marginTop: '14px', paddingTop: '12px', borderTop: '1px solid var(--border)', fontSize: '12px', color: 'var(--text-muted)', lineHeight: 1.6 }}>
+              👉 <strong>Astuce :</strong> l&apos;aperçu sur la droite vous montre le résultat en direct avec des données d&apos;exemple.
             </div>
           </div>
 
