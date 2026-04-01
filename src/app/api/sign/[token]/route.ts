@@ -59,6 +59,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ tok
     nom_gite: reservation.gite.name,
     adresse_gite: reservation.gite.address,
     ville_gite: reservation.gite.city,
+    code_postal_gite: reservation.gite.zipCode,
     email_gite: reservation.gite.email,
     telephone_gite: reservation.gite.phone,
     logoDataUrl: reservation.gite.logoDataUrl,

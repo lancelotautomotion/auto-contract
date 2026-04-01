@@ -39,6 +39,7 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
     nom_gite: reservation.gite.name,
     adresse_gite: reservation.gite.address,
     ville_gite: reservation.gite.city,
+    code_postal_gite: reservation.gite.zipCode,
     email_gite: reservation.gite.email,
     telephone_gite: reservation.gite.phone,
     logoDataUrl: reservation.gite.logoDataUrl,

@@ -21,6 +21,7 @@ export interface ContractData {
   nom_gite: string;
   adresse_gite: string | null;
   ville_gite: string | null;
+  code_postal_gite?: string | null;
   email_gite: string | null;
   telephone_gite: string | null;
   logoDataUrl?: string | null;
@@ -53,6 +54,7 @@ function buildText(data: ContractData): string {
     nom_gite: data.nom_gite,
     adresse_gite: data.adresse_gite ?? '',
     ville_gite: data.ville_gite ?? '',
+    code_postal_gite: data.code_postal_gite ?? '',
     email_gite: data.email_gite ?? '',
     telephone_gite: data.telephone_gite ?? '',
     date_du_jour: dateJour,

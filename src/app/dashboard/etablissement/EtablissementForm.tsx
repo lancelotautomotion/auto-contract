@@ -27,14 +27,16 @@ const EXAMPLE_DATA: Record<string, string> = {
   taxe_sejour: '1,65',
   options: '- Bain nordique : 50,00 €\n- Linge de maison : inclus',
   date_du_jour: '28 mars 2026',
+  code_postal_gite: '93400',
 };
 
-function buildPreview(template: string, form: { giteName: string; address: string; city: string; email: string; phone: string }): string {
+function buildPreview(template: string, form: { giteName: string; address: string; city: string; zipCode: string; email: string; phone: string }): string {
   const vars: Record<string, string> = {
     ...EXAMPLE_DATA,
     nom_gite: form.giteName || 'Le Clos du Marida',
     adresse_gite: form.address || '26 rue Soubise',
     ville_gite: form.city || 'Saint-Ouen-sur-Seine',
+    code_postal_gite: form.zipCode || '93400',
     email_gite: form.email || 'contact@gite.fr',
     telephone_gite: form.phone || '07 81 52 27 76',
   };
@@ -86,17 +88,17 @@ const TABS = ['Informations', 'Options', 'Contrat', 'Logo'] as const;
 type Tab = typeof TABS[number];
 
 const VARIABLES = [
-  ['{{prenom_client}}', 'Prénom'], ['{{nom_client}}', 'Nom'],
-  ['{{email_client}}', 'Email client'], ['{{telephone_client}}', 'Téléphone'],
+  ['{{prenom_client}}', 'Prénom client'], ['{{nom_client}}', 'Nom client'],
+  ['{{email_client}}', 'Email client'], ['{{telephone_client}}', 'Téléphone client'],
   ['{{adresse_client}}', 'Adresse client'], ['{{ville_client}}', 'Ville client'],
-  ['{{code_postal_client}}', 'Code postal'], ['{{date_entree}}', "Arrivée"],
+  ['{{code_postal_client}}', 'Code postal client'], ['{{date_entree}}', "Arrivée"],
   ['{{date_sortie}}', 'Départ'], ['{{loyer}}', 'Loyer €'],
   ['{{acompte}}', 'Acompte €'], ['{{solde}}', 'Solde €'],
   ['{{menage}}', 'Ménage €'], ['{{taxe_sejour}}', 'Taxe séjour'],
   ['{{options}}', 'Options'], ['{{nom_gite}}', 'Nom du gîte'],
   ['{{adresse_gite}}', 'Adresse gîte'], ['{{ville_gite}}', 'Ville gîte'],
-  ['{{email_gite}}', 'Email gîte'], ['{{telephone_gite}}', 'Tél. gîte'],
-  ['{{date_du_jour}}', "Date du jour"],
+  ['{{code_postal_gite}}', 'Code postal gîte'], ['{{email_gite}}', 'Email gîte'],
+  ['{{telephone_gite}}', 'Tél. gîte'], ['{{date_du_jour}}', "Date du jour"],
 ];
 
 // Map varName → label court pour affichage dans les chips
