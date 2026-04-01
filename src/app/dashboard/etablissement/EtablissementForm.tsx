@@ -323,8 +323,8 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
 
         {/* Palette sticky — visible uniquement sur l'onglet Contrat */}
         {activeTab === 'Contrat' && (
-          <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '10px 0 12px', borderBottom: '1px solid var(--border)', marginBottom: '24px' }}>
-            <p style={{ fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', margin: '0 0 8px' }}>Balises dynamiques</p>
+          <div style={{ maxWidth: '1200px', margin: '0 auto', paddingBottom: '12px', borderBottom: '1px solid var(--border)', marginBottom: '24px' }}>
+            <p style={secTitle}>Balises dynamiques</p>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px' }}>
               {VARIABLES.map(([v, label]) => {
                 const varName = v.slice(2, -2);
