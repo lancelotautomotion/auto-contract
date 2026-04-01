@@ -315,7 +315,7 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
         </div>
         <div style={{ display: 'flex', gap: '2px', maxWidth: '800px', margin: '0 auto', borderBottom: '1px solid var(--border)', marginBottom: activeTab === 'Contrat' ? '0' : '32px' }}>
         {TABS.map(tab => (
-          <button key={tab} type="button" onClick={() => setActiveTab(tab)} style={{ fontSize: '11px', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '10px 20px', border: 'none', cursor: 'pointer', backgroundColor: 'transparent', color: activeTab === tab ? 'var(--text)' : 'var(--text-muted)', borderBottom: activeTab === tab ? '2px solid var(--text)' : '2px solid transparent', marginBottom: '-1px', transition: 'color 0.15s ease' }}>
+          <button key={tab} type="button" onClick={() => setActiveTab(tab)} style={{ fontSize: '11px', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '10px 20px', borderTop: 'none', borderLeft: 'none', borderRight: 'none', cursor: 'pointer', backgroundColor: 'transparent', color: activeTab === tab ? 'var(--text)' : 'var(--text-muted)', borderBottom: activeTab === tab ? '2px solid var(--text)' : '2px solid transparent', marginBottom: '-1px', transition: 'color 0.15s ease' }}>
             {tab}
           </button>
         ))}
