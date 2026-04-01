@@ -35,12 +35,11 @@ function getFirstDayOfWeek(year: number, month: number) {
 const MONTHS = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
 const DAYS = ['Lu','Ma','Me','Je','Ve','Sa','Di'];
 
-export default function CalendarView({ reservations, compact }: { reservations: Reservation[]; compact?: boolean }) {
+export default function CalendarView({ reservations }: { reservations: Reservation[] }) {
   const today = new Date();
   const [baseMonth, setBaseMonth] = useState({ year: today.getFullYear(), month: today.getMonth() });
 
-  const monthCount = compact ? 1 : 3;
-  const months = Array.from({ length: monthCount }, (_, offset) => {
+  const months = [0, 1, 2].map(offset => {
     const m = (baseMonth.month + offset) % 12;
     const y = baseMonth.year + Math.floor((baseMonth.month + offset) / 12);
     return { year: y, month: m };
@@ -63,47 +62,41 @@ export default function CalendarView({ reservations, compact }: { reservations: 
     <div>
       {/* Navigation */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <button
-            onClick={() => setBaseMonth(b => {
-              const m = b.month === 0 ? 11 : b.month - 1;
-              const y = b.month === 0 ? b.year - 1 : b.year;
-              return { year: y, month: m };
-            })}
-            style={{ width: '28px', height: '28px', border: '1px solid #E5E0D8', backgroundColor: 'transparent', borderRadius: '6px', cursor: 'pointer', fontSize: '12px', color: '#1A1A14', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-          >
-            ←
-          </button>
-          <span style={{ fontSize: '11px', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#1A1A14', fontWeight: 600, fontFamily: 'Inter, sans-serif' }}>
-            {MONTHS[baseMonth.month]} {baseMonth.year}
+        <button
+          onClick={() => setBaseMonth(b => {
+            const m = b.month === 0 ? 11 : b.month - 1;
+            const y = b.month === 0 ? b.year - 1 : b.year;
+            return { year: y, month: m };
+          })}
+          style={{ padding: '6px 14px', border: '1px solid #CEC8BF', backgroundColor: 'transparent', borderRadius: '8px', cursor: 'pointer', fontSize: '13px', color: '#1C1C1A' }}
+        >
+          ←
+        </button>
+        <div style={{ display: 'flex', gap: '8px' }}>
+          {/* Légende */}
+          <span style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', color: SIGNED_TEXT }}>
+            <span style={{ width: 12, height: 12, borderRadius: 3, backgroundColor: SIGNED_BG, border: `1px solid ${SIGNED_TEXT}`, display: 'inline-block' }} />
+            Signé
           </span>
-          <button
-            onClick={() => setBaseMonth(b => {
-              const m = (b.month + 1) % 12;
-              const y = b.month === 11 ? b.year + 1 : b.year;
-              return { year: y, month: m };
-            })}
-            style={{ width: '28px', height: '28px', border: '1px solid #E5E0D8', backgroundColor: 'transparent', borderRadius: '6px', cursor: 'pointer', fontSize: '12px', color: '#1A1A14', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-          >
-            →
-          </button>
+          <span style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', color: PENDING_TEXT }}>
+            <span style={{ width: 12, height: 12, borderRadius: 3, backgroundColor: PENDING_BG, border: `1px solid ${PENDING_TEXT}`, display: 'inline-block' }} />
+            En attente de signature
+          </span>
         </div>
-        {!compact && (
-          <div style={{ display: 'flex', gap: '12px' }}>
-            <span style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', color: SIGNED_TEXT }}>
-              <span style={{ width: 10, height: 10, borderRadius: 2, backgroundColor: SIGNED_BG, border: `1px solid ${SIGNED_TEXT}`, display: 'inline-block' }} />
-              Signé
-            </span>
-            <span style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', color: PENDING_TEXT }}>
-              <span style={{ width: 10, height: 10, borderRadius: 2, backgroundColor: PENDING_BG, border: `1px solid ${PENDING_TEXT}`, display: 'inline-block' }} />
-              En attente
-            </span>
-          </div>
-        )}
+        <button
+          onClick={() => setBaseMonth(b => {
+            const m = (b.month + 1) % 12;
+            const y = b.month === 11 ? b.year + 1 : b.year;
+            return { year: y, month: m };
+          })}
+          style={{ padding: '6px 14px', border: '1px solid #CEC8BF', backgroundColor: 'transparent', borderRadius: '8px', cursor: 'pointer', fontSize: '13px', color: '#1C1C1A' }}
+        >
+          →
+        </button>
       </div>
 
-      {/* Grille mois */}
-      <div style={{ display: 'grid', gridTemplateColumns: `repeat(${monthCount}, 1fr)`, gap: '16px' }}>
+      {/* Grille 3 mois */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' }}>
         {months.map(({ year, month }) => {
           const daysInMonth = getDaysInMonth(year, month);
           const firstDay = getFirstDayOfWeek(year, month);
