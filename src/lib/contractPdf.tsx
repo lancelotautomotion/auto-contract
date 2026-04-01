@@ -141,7 +141,7 @@ const styles = StyleSheet.create({
   empty: { marginBottom: 5 },
   listItem: { marginBottom: 2, paddingLeft: 8, color: C.dark },
 
-  // Signature block
+  // Signature block (données e-signature)
   sigBox: {
     marginTop: 24,
     borderWidth: 0.5,
@@ -159,6 +159,13 @@ const styles = StyleSheet.create({
   },
   sigLine: { fontSize: 8.5, color: C.dark, marginBottom: 3 },
   sigNote: { fontSize: 7.5, color: C.muted, marginTop: 6, fontStyle: 'italic' },
+
+  // Bloc de signature bailleur / locataire (colonnes)
+  sigRow: { flexDirection: 'row', gap: 20 },
+  sigCol: { flex: 1 },
+  sigColLabel: { fontSize: 7.5, fontFamily: 'Helvetica-Bold', letterSpacing: 1, color: C.muted, marginBottom: 10 },
+  sigColLine: { borderBottomWidth: 0.5, borderBottomColor: C.border, marginBottom: 6 },
+  sigColName: { fontSize: 8.5, color: C.dark },
 
   // Footer
   footer: {
@@ -230,6 +237,29 @@ function buildElements(text: string): React.ReactElement[] {
 
     if (trimmed === '') {
       elements.push(React.createElement(View, { key: i, style: styles.empty }));
+      continue;
+    }
+
+    // Mise en colonnes bailleur / locataire (séparateur |)
+    if (trimmed.includes(' | ')) {
+      const [left, right] = trimmed.split(' | ', 2);
+      const l = left.trim(); const r = right.trim();
+      const isSigLine = /^_+$/.test(l) && /^_+$/.test(r);
+      const isHeader = l === l.toUpperCase() && l.length > 2 && !isSigLine;
+
+      const makeCol = (text: string, key: string) => {
+        if (isSigLine) return React.createElement(View, { key, style: { flex: 1, borderBottomWidth: 0.5, borderBottomColor: C.border, paddingBottom: 12, marginRight: key.endsWith('l') ? 10 : 0 } });
+        return React.createElement(View, { key, style: { flex: 1, marginRight: key.endsWith('l') ? 10 : 0 } },
+          React.createElement(Text, { style: isHeader ? styles.sigColLabel : styles.sigColName }, text)
+        );
+      };
+
+      elements.push(
+        React.createElement(View, { key: i, style: { flexDirection: 'row', marginTop: isHeader ? 14 : 4, marginBottom: 2 } },
+          makeCol(l, `${i}-l`),
+          makeCol(r, `${i}-r`)
+        )
+      );
       continue;
     }
 

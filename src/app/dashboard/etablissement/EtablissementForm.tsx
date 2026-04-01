@@ -44,6 +44,27 @@ function buildPreview(template: string, form: { giteName: string; address: strin
 function PreviewLine({ line, i }: { line: string; i: number }) {
   const trimmed = line.trim();
   if (trimmed === '') return <div key={i} style={{ height: '8px' }} />;
+
+  // Mise en colonnes bailleur / locataire (séparateur |)
+  if (trimmed.includes(' | ')) {
+    const [left, right] = trimmed.split(' | ', 2);
+    const l = left.trim(); const r = right.trim();
+    const isSigLine = /^_+$/.test(l) && /^_+$/.test(r);
+    const isHeader = l === l.toUpperCase() && l.length > 2 && !isSigLine;
+    if (isSigLine) return (
+      <div style={{ display: 'flex', gap: '16px', margin: '6px 0 4px' }}>
+        <div style={{ flex: 1, borderBottom: '0.5px solid #CEC8BF', height: '12px' }} />
+        <div style={{ flex: 1, borderBottom: '0.5px solid #CEC8BF', height: '12px' }} />
+      </div>
+    );
+    return (
+      <div style={{ display: 'flex', gap: '16px', margin: isHeader ? '10px 0 4px' : '2px 0' }}>
+        <p style={{ flex: 1, margin: 0, fontSize: isHeader ? '7.5px' : '8.5px', fontWeight: isHeader ? 700 : 400, color: isHeader ? '#7A7570' : '#1C1C1A', letterSpacing: isHeader ? '0.8px' : 0 }}>{l}</p>
+        <p style={{ flex: 1, margin: 0, fontSize: isHeader ? '7.5px' : '8.5px', fontWeight: isHeader ? 700 : 400, color: isHeader ? '#7A7570' : '#1C1C1A', letterSpacing: isHeader ? '0.8px' : 0 }}>{r}</p>
+      </div>
+    );
+  }
+
   const isArticle = /^ARTICLE\s+\d+/i.test(trimmed);
   const isSection = trimmed === trimmed.toUpperCase() && trimmed.length > 3 && trimmed.length < 40 && !trimmed.includes(':') && !trimmed.startsWith('-') && !/^\d/.test(trimmed);
   if (isArticle) return <p style={{ fontSize: '9px', fontWeight: 700, color: '#1C1C1A', margin: '10px 0 3px', letterSpacing: '0.3px' }}>{trimmed}</p>;
