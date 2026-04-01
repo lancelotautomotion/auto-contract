@@ -364,7 +364,7 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
             <div style={{ ...sec, padding: '16px 20px', backgroundColor: 'var(--bg-white)', borderRadius: '10px', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <div>
                 <p style={{ fontSize: '11px', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '4px' }}>Lien de réservation client</p>
-                <p style={{ fontSize: '13px', color: 'var(--text)', margin: 0 }}>contratgite.com/book/<strong>{form.slug}</strong></p>
+                <p style={{ fontSize: '13px', color: 'var(--text)', margin: 0 }}>prysme.app/book/<strong>{form.slug}</strong></p>
               </div>
               <a href={`/book/${form.slug}`} target="_blank" rel="noreferrer" style={{ fontSize: '11px', letterSpacing: '0.12em', textTransform: 'uppercase', padding: '8px 16px', border: '1px solid var(--border)', borderRadius: '8px', color: 'var(--text)', textDecoration: 'none' }}>Voir →</a>
             </div>

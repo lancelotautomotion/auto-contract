@@ -153,7 +153,7 @@ export default function Home() {
 
       {/* ── Nav ── */}
       <nav style={S.nav}>
-        <Link href="/" style={S.navLogo}>ContratGîte</Link>
+        <Link href="/" style={S.navLogo}>Prysme</Link>
         <div style={S.navLinks}>
           <Link href="/comment-ca-marche" style={S.navLink}>Comment ça marche</Link>
           <a href="#tarifs" style={S.navLink}>Tarifs</a>
@@ -175,7 +175,7 @@ export default function Home() {
         </h1>
         <p style={S.heroSub}>
           Fini les contrats remplis à la main, les PDF oubliés, les emails mal construits.
-          ContratGîte automatise toute la paperasse pour que vous vous concentriez sur vos locataires.
+          Prysme automatise toute la paperasse pour que vous vous concentriez sur vos locataires.
         </p>
         <div style={S.heroCtas}>
           <Link href="/sign-up" style={S.ctaPrimary}>Essayer gratuitement →</Link>
@@ -204,7 +204,7 @@ export default function Home() {
         <SectionHeader
           tag="— Pour qui ?"
           title={<>Fait pour les gérants<br /><em>qui gèrent tout eux-mêmes.</em></>}
-          sub="ContratGîte n'est pas un PMS à 150 €/mois avec 50 fonctions inutiles. C'est un outil simple, focalisé sur un seul problème : votre administratif de location."
+          sub="Prysme n'est pas un PMS à 150 €/mois avec 50 fonctions inutiles. C'est un outil simple, focalisé sur un seul problème : votre administratif de location."
         />
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '16px' }}>
           {personas.map((p) => (
@@ -344,11 +344,11 @@ export default function Home() {
 
       {/* ── Footer ── */}
       <footer style={{ padding: '32px 40px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
-        <span style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', fontSize: '15px', color: '#1C1C1A' }}>ContratGîte</span>
+        <span style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', fontSize: '15px', color: '#1C1C1A' }}>Prysme</span>
         <div style={{ display: 'flex', gap: '24px', alignItems: 'center' }}>
           <Link href="/sign-in" style={{ fontSize: '11px', color: '#7A7570', textDecoration: 'none', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Connexion</Link>
           <Link href="/sign-up" style={{ fontSize: '11px', color: '#7A7570', textDecoration: 'none', letterSpacing: '0.1em', textTransform: 'uppercase' }}>S&apos;inscrire</Link>
-          <span style={{ fontSize: '11px', color: '#7A7570' }}>© 2025 ContratGîte</span>
+          <span style={{ fontSize: '11px', color: '#7A7570' }}>© 2025 Prysme</span>
         </div>
       </footer>
 

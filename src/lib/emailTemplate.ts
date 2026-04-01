@@ -1,5 +1,5 @@
 /**
- * Template email partagé — ContratGîte
+ * Template email partagé — Prysme
  * Compatible Gmail, Apple Mail, Outlook (table-based)
  */
 
@@ -76,7 +76,7 @@ export function buildEmailHtml(opts: EmailTemplateOptions): string {
               <table width="100%" cellpadding="0" cellspacing="0" border="0">
                 <tr>
                   <td style="font-family:Inter,sans-serif; font-size:11px; color:#7A7570; line-height:1.6;">
-                    ${footer ?? `Cet email a été envoyé par <strong>${giteName}</strong> via ContratGîte.`}
+                    ${footer ?? `Cet email a été envoyé par <strong>${giteName}</strong> via Prysme.`}
                   </td>
                 </tr>
               </table>
@@ -90,7 +90,7 @@ export function buildEmailHtml(opts: EmailTemplateOptions): string {
     </tr>
     <tr>
       <td align="center" style="padding:20px 16px 40px;">
-        <span style="font-size:10px; color:#7A7570; letter-spacing:0.1em; text-transform:uppercase;">ContratGîte</span>
+        <span style="font-size:10px; color:#7A7570; letter-spacing:0.1em; text-transform:uppercase;">Prysme</span>
       </td>
     </tr>
   </table>

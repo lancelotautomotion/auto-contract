@@ -50,7 +50,7 @@ export default async function BookingPage({ params }: { params: Promise<{ slug: 
       {/* Footer */}
       <footer style={{ padding: '24px 40px', borderTop: '1px solid #CEC8BF', textAlign: 'center', marginTop: '40px' }}>
         <span style={{ fontSize: '11px', color: '#7A7570' }}>Propulsé par </span>
-        <span style={{ fontSize: '11px', fontFamily: 'Cormorant Garamond, Georgia, serif', color: '#1C1C1A' }}>ContratGîte</span>
+        <span style={{ fontSize: '11px', fontFamily: 'Cormorant Garamond, Georgia, serif', color: '#1C1C1A' }}>Prysme</span>
       </footer>
     </div>
   );

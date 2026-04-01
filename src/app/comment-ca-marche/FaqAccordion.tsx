@@ -12,7 +12,7 @@ const faqs = [
   },
   {
     q: "Puis-je utiliser mon propre contrat ?",
-    a: "Absolument. Vous collez votre template existant dans l'éditeur et placez les balises variables aux bons endroits (ex : {{nom_client}}). ContratGîte les remplace automatiquement à chaque génération.",
+    a: "Absolument. Vous collez votre template existant dans l'éditeur et placez les balises variables aux bons endroits (ex : {{nom_client}}). Prysme les remplace automatiquement à chaque génération.",
   },
   {
     q: "Combien de réservations puis-je gérer ?",
@@ -20,7 +20,7 @@ const faqs = [
   },
   {
     q: "Est-ce que ça fonctionne sans passer par Airbnb ?",
-    a: "C'est exactement pour ça que ContratGîte a été conçu : pour les gérants qui louent en direct, sans intermédiaire. Vous gardez le lien direct avec vos locataires.",
+    a: "C'est exactement pour ça que Prysme a été conçu : pour les gérants qui louent en direct, sans intermédiaire. Vous gardez le lien direct avec vos locataires.",
   },
   {
     q: "Que se passe-t-il si je résilie ?",
