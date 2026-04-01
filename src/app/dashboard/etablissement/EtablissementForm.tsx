@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { DEFAULT_CONTRACT_TEMPLATE } from "@/lib/defaultContractTemplate";
 
 const lbl = { fontSize: '11px', letterSpacing: '0.15em', textTransform: 'uppercase' as const, color: 'var(--text-muted)', display: 'block', marginBottom: '6px' };
@@ -41,15 +41,6 @@ function buildPreview(template: string, form: { giteName: string; address: strin
   return Object.entries(vars).reduce((t, [k, v]) => t.replaceAll(`{{${k}}}`, v), template);
 }
 
-// Génère le HTML avec les {{variables}} surlignées pour l'overlay de l'éditeur
-function getHighlightedHtml(text: string): string {
-  const escaped = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-  return escaped.replace(
-    /\{\{([^}]+)\}\}/g,
-    '<mark style="background:rgba(217,119,6,0.18);border-radius:3px;padding:0 2px;outline:1px solid rgba(217,119,6,0.35);color:transparent;">{{$1}}</mark>'
-  ) + '\n';
-}
-
 function PreviewLine({ line, i }: { line: string; i: number }) {
   const trimmed = line.trim();
   if (trimmed === '') return <div key={i} style={{ height: '8px' }} />;
@@ -74,18 +65,76 @@ const TABS = ['Informations', 'Options', 'Contrat', 'Logo'] as const;
 type Tab = typeof TABS[number];
 
 const VARIABLES = [
-  ['{{prenom_client}}', 'Prénom du client'], ['{{nom_client}}', 'Nom du client'],
-  ['{{email_client}}', 'Email du client'], ['{{telephone_client}}', 'Téléphone'],
+  ['{{prenom_client}}', 'Prénom'], ['{{nom_client}}', 'Nom'],
+  ['{{email_client}}', 'Email client'], ['{{telephone_client}}', 'Téléphone'],
   ['{{adresse_client}}', 'Adresse client'], ['{{ville_client}}', 'Ville client'],
-  ['{{code_postal_client}}', 'Code postal client'], ['{{date_entree}}', "Date d'arrivée"],
-  ['{{date_sortie}}', 'Date de départ'], ['{{loyer}}', 'Loyer (€)'],
-  ['{{acompte}}', 'Acompte (€)'], ['{{solde}}', 'Solde à payer (€)'],
-  ['{{menage}}', 'Frais de ménage (€)'], ['{{taxe_sejour}}', 'Taxe de séjour (€/nuit)'],
-  ['{{options}}', 'Options sélectionnées'], ['{{nom_gite}}', 'Nom du gîte'],
-  ['{{adresse_gite}}', 'Adresse du gîte'], ['{{ville_gite}}', 'Ville du gîte'],
-  ['{{email_gite}}', 'Email du gîte'], ['{{telephone_gite}}', 'Téléphone du gîte'],
+  ['{{code_postal_client}}', 'Code postal'], ['{{date_entree}}', "Arrivée"],
+  ['{{date_sortie}}', 'Départ'], ['{{loyer}}', 'Loyer €'],
+  ['{{acompte}}', 'Acompte €'], ['{{solde}}', 'Solde €'],
+  ['{{menage}}', 'Ménage €'], ['{{taxe_sejour}}', 'Taxe séjour'],
+  ['{{options}}', 'Options'], ['{{nom_gite}}', 'Nom du gîte'],
+  ['{{adresse_gite}}', 'Adresse gîte'], ['{{ville_gite}}', 'Ville gîte'],
+  ['{{email_gite}}', 'Email gîte'], ['{{telephone_gite}}', 'Tél. gîte'],
   ['{{date_du_jour}}', "Date du jour"],
 ];
+
+// Map varName → label court pour affichage dans les chips
+const VAR_LABELS: Record<string, string> = Object.fromEntries(
+  VARIABLES.map(([v, label]) => [v.slice(2, -2), label])
+);
+
+// Génère le HTML d'un chip de variable (pour contentEditable)
+function makeChipHTML(varName: string): string {
+  const label = VAR_LABELS[varName] || varName;
+  return (
+    `<span contenteditable="false" data-var="${varName}" style="` +
+    `display:inline-flex;align-items:center;` +
+    `background:rgba(217,119,6,0.13);` +
+    `border:1px solid rgba(217,119,6,0.45);` +
+    `border-radius:20px;padding:2px 6px 2px 10px;` +
+    `font-size:11.5px;color:rgb(146,57,0);` +
+    `font-family:Inter,ui-sans-serif,sans-serif;font-weight:500;` +
+    `cursor:default;user-select:none;white-space:nowrap;` +
+    `line-height:1.5;vertical-align:middle;margin:0 2px;` +
+    `">${label}` +
+    `<span data-del="${varName}" style="cursor:pointer;opacity:0.4;font-size:15px;line-height:1;padding:0 5px 0 4px;">&times;</span>` +
+    `</span>`
+  );
+}
+
+// Convertit un template string en innerHTML pour le contentEditable
+function buildEditorHTML(template: string): string {
+  return template.split('\n').map(line => {
+    const content = line
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/\{\{([^}]+)\}\}/g, (_, v) => makeChipHTML(v));
+    return `<div>${content || '<br>'}</div>`;
+  }).join('');
+}
+
+// Lit le contentEditable et retourne le template string avec {{variables}}
+function readEditorTemplate(el: HTMLDivElement): string {
+  function readNode(node: Node): string {
+    if (node.nodeType === Node.TEXT_NODE) return node.textContent || '';
+    if (node.nodeType !== Node.ELEMENT_NODE) return '';
+    const elem = node as HTMLElement;
+    if (elem.dataset.var) return `{{${elem.dataset.var}}}`;
+    if (elem.tagName === 'BR') return '';
+    return Array.from(elem.childNodes).map(readNode).join('');
+  }
+  const lines: string[] = [];
+  el.childNodes.forEach(child => {
+    if (child.nodeType === Node.ELEMENT_NODE) {
+      const div = child as HTMLElement;
+      if (div.tagName === 'DIV' || div.tagName === 'P') { lines.push(readNode(div)); return; }
+    }
+    const t = readNode(child);
+    if (t) lines.push(t);
+  });
+  return lines.join('\n');
+}
 
 export default function EtablissementForm({ gite }: { gite: GiteData }) {
   const [activeTab, setActiveTab] = useState<Tab>('Informations');
@@ -104,12 +153,106 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
   const [logoDataUrl, setLogoDataUrl] = useState(gite.logoDataUrl || '');
   const [logoLoading, setLogoLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const editorRef = useRef<HTMLTextAreaElement>(null);
-  const highlightRef = useRef<HTMLDivElement>(null);
+  const editorRef = useRef<HTMLDivElement>(null);
 
-  const handleEditorScroll = useCallback(() => {
-    if (highlightRef.current && editorRef.current) {
-      highlightRef.current.scrollTop = editorRef.current.scrollTop;
+  // Initialise l'éditeur quand on ouvre l'onglet Contrat
+  useEffect(() => {
+    if (activeTab === 'Contrat' && editorRef.current && !editorRef.current.dataset.initialized) {
+      editorRef.current.innerHTML = buildEditorHTML(contractTemplate);
+      editorRef.current.dataset.initialized = 'true';
+    }
+  }, [activeTab]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Sérialise le DOM → template string à chaque saisie
+  const handleEditorInput = useCallback(() => {
+    if (!editorRef.current) return;
+    setContractTemplate(readEditorTemplate(editorRef.current));
+    setSaved(false);
+  }, []);
+
+  // Suppression d'un chip via le bouton ×
+  const handleEditorClick = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    const target = e.target as HTMLElement;
+    if (target.dataset.del) {
+      const chip = target.closest('[data-var]') as HTMLElement | null;
+      if (chip) { chip.remove(); handleEditorInput(); }
+    }
+  }, [handleEditorInput]);
+
+  // Colle uniquement du texte brut (pas de HTML)
+  const handleEditorPaste = useCallback((e: React.ClipboardEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    const text = e.clipboardData.getData('text/plain');
+    document.execCommand('insertText', false, text);
+  }, []);
+
+  // Tab → insère 4 espaces au lieu de changer le focus
+  const handleEditorKeyDown = useCallback((e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === 'Tab') {
+      e.preventDefault();
+      document.execCommand('insertText', false, '    ');
+    }
+  }, []);
+
+  // Insère un chip à la position du curseur (clic sur palette)
+  const insertVariable = useCallback((varName: string) => {
+    const el = editorRef.current;
+    if (!el) return;
+    el.focus();
+    const sel = window.getSelection();
+    const chipHTML = makeChipHTML(varName);
+    if (sel && sel.rangeCount > 0 && el.contains(sel.getRangeAt(0).commonAncestorContainer)) {
+      const range = sel.getRangeAt(0);
+      range.deleteContents();
+      const tmp = document.createElement('span');
+      tmp.innerHTML = chipHTML;
+      const chip = tmp.firstChild!;
+      range.insertNode(chip);
+      // Place le curseur juste après le chip
+      const after = document.createTextNode('\u200B');
+      chip.parentNode!.insertBefore(after, chip.nextSibling);
+      range.setStart(after, 1);
+      range.setEnd(after, 1);
+      sel.removeAllRanges();
+      sel.addRange(range);
+    } else {
+      el.innerHTML += chipHTML;
+    }
+    setContractTemplate(readEditorTemplate(el));
+    setSaved(false);
+  }, []);
+
+  // Reçoit le drop d'un chip depuis la palette
+  const handleEditorDrop = useCallback((e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    const varName = e.dataTransfer.getData('text/plain');
+    if (!varName || !VAR_LABELS[varName]) return;
+    const el = editorRef.current;
+    if (!el) return;
+
+    // Positionne le curseur à l'endroit du drop
+    let range: Range | null = null;
+    if (document.caretRangeFromPoint) {
+      range = document.caretRangeFromPoint(e.clientX, e.clientY);
+    } else {
+      const pos = (document as any).caretPositionFromPoint?.(e.clientX, e.clientY);
+      if (pos) { range = document.createRange(); range.setStart(pos.offsetNode, pos.offset); range.collapse(true); }
+    }
+    if (range && el.contains(range.commonAncestorContainer)) {
+      const sel = window.getSelection()!;
+      sel.removeAllRanges();
+      sel.addRange(range);
+    }
+    insertVariable(varName);
+  }, [insertVariable]);
+
+  // Réinitialise le template ET le contenu de l'éditeur
+  const handleReset = useCallback(() => {
+    if (!confirm('Remettre le contrat type par défaut ?')) return;
+    setContractTemplate(DEFAULT_CONTRACT_TEMPLATE);
+    setSaved(false);
+    if (editorRef.current) {
+      editorRef.current.innerHTML = buildEditorHTML(DEFAULT_CONTRACT_TEMPLATE);
     }
   }, []);
 
@@ -224,103 +367,76 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
         <div style={{ maxWidth: '1200px', margin: '0 auto', marginBottom: '36px' }}>
           <p style={secTitle}>Modèle de contrat</p>
 
-          {/* Bloc éducatif */}
-          <div style={{ marginBottom: '20px', padding: '16px 20px', backgroundColor: 'var(--bg-white)', border: '1px solid var(--border)', borderRadius: '10px', display: 'flex', gap: '14px', alignItems: 'flex-start' }}>
-            <span style={{ fontSize: '18px', flexShrink: 0, marginTop: '1px' }}>💡</span>
-            <div>
-              <p style={{ fontSize: '13px', fontWeight: 500, color: 'var(--text)', margin: '0 0 6px' }}>Comment fonctionnent les balises ?</p>
-              <p style={{ fontSize: '12px', color: 'var(--text-muted)', lineHeight: 1.7, margin: 0 }}>
-                Les balises comme <span style={{ fontFamily: 'monospace', fontSize: '11px', backgroundColor: 'var(--bg)', padding: '1px 6px', borderRadius: '4px', border: '1px solid var(--border)', color: 'var(--text)' }}>{'{{nom_client}}'}</span> sont des <strong>espaces réservés</strong> automatiquement remplacés par les vraies informations lors de la génération du contrat. <strong>L&apos;aperçu à droite</strong> vous montre le résultat en temps réel avec des données d&apos;exemple.
-              </p>
-            </div>
-          </div>
-
           {/* Split éditeur / aperçu */}
           <div style={{ display: 'flex', gap: '24px', alignItems: 'flex-start' }}>
 
             {/* Éditeur gauche */}
             <div style={{ flex: 1, minWidth: 0 }}>
-              {/* En-tête éditeur */}
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                <p style={{ fontSize: '10px', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--text-muted)', margin: 0 }}>Éditeur</p>
-                <span style={{ fontSize: '10px', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '5px' }}>
-                  <span style={{ display: 'inline-block', width: '8px', height: '8px', borderRadius: '2px', background: 'rgba(217,119,6,0.25)', outline: '1px solid rgba(217,119,6,0.4)' }} />
-                  balises mises en évidence
-                </span>
-              </div>
 
-              {/* Balises à insérer */}
-              <div style={{ marginBottom: '8px', padding: '10px 14px', backgroundColor: 'var(--bg-white)', border: '1px solid var(--border)', borderRadius: '8px 8px 0 0', borderBottom: 'none' }}>
-                <p style={{ fontSize: '10px', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--text-muted)', margin: '0 0 7px' }}>Cliquez pour insérer une balise</p>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
-                  {VARIABLES.map(([v, desc]) => (
-                    <span key={v} title={desc}
-                      style={{ fontSize: '10px', fontFamily: 'monospace', padding: '2px 7px', backgroundColor: 'rgba(217,119,6,0.1)', border: '1px solid rgba(217,119,6,0.3)', borderRadius: '4px', color: 'rgb(180,83,9)', cursor: 'pointer', transition: 'background 0.1s' }}
-                      onClick={() => {
-                        const ta = editorRef.current;
-                        if (ta) {
-                          const s = ta.selectionStart, e = ta.selectionEnd;
-                          const nv = contractTemplate.slice(0, s) + v + contractTemplate.slice(e);
-                          setContractTemplate(nv); setSaved(false);
-                          setTimeout(() => { ta.selectionStart = ta.selectionEnd = s + v.length; ta.focus(); }, 0);
-                        }
-                      }}
-                    >{v}</span>
-                  ))}
+              {/* Palette de variables (draggable) */}
+              <div style={{ marginBottom: '0', padding: '12px 16px 12px', backgroundColor: 'var(--bg-white)', border: '1px solid var(--border)', borderRadius: '10px 10px 0 0', borderBottom: 'none' }}>
+                <p style={{ fontSize: '10px', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--text-muted)', margin: '0 0 8px' }}>
+                  Glissez ou cliquez pour insérer une variable
+                </p>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px' }}>
+                  {VARIABLES.map(([v, label]) => {
+                    const varName = v.slice(2, -2);
+                    return (
+                      <span
+                        key={v}
+                        draggable
+                        onDragStart={e => e.dataTransfer.setData('text/plain', varName)}
+                        onClick={() => insertVariable(varName)}
+                        style={{
+                          display: 'inline-flex', alignItems: 'center', gap: '4px',
+                          background: 'rgba(217,119,6,0.1)',
+                          border: '1px solid rgba(217,119,6,0.4)',
+                          borderRadius: '20px',
+                          padding: '3px 11px',
+                          fontSize: '11.5px',
+                          color: 'rgb(146,57,0)',
+                          fontFamily: 'Inter,ui-sans-serif,sans-serif',
+                          fontWeight: 500,
+                          cursor: 'grab',
+                          userSelect: 'none',
+                          transition: 'background 0.12s',
+                        }}
+                      >
+                        {label}
+                      </span>
+                    );
+                  })}
                 </div>
               </div>
 
-              {/* Zone d'édition avec overlay de surlignage */}
-              <div style={{ position: 'relative', height: '560px', border: '1px solid var(--border)', borderRadius: '0 0 8px 8px', backgroundColor: '#ffffff', overflow: 'hidden', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
-                {/* Overlay de surlignage (sous le textarea) */}
-                <div
-                  ref={highlightRef}
-                  aria-hidden="true"
-                  style={{
-                    position: 'absolute', inset: 0,
-                    padding: '20px 24px',
-                    fontSize: '12.5px',
-                    fontFamily: '"Georgia", "Times New Roman", serif',
-                    lineHeight: 1.85,
-                    color: 'transparent',
-                    whiteSpace: 'pre-wrap',
-                    wordBreak: 'break-word',
-                    overflowY: 'auto',
-                    overflowX: 'hidden',
-                    pointerEvents: 'none',
-                    userSelect: 'none',
-                    boxSizing: 'border-box',
-                  }}
-                  dangerouslySetInnerHTML={{ __html: getHighlightedHtml(contractTemplate) }}
-                />
-                {/* Textarea transparent par-dessus */}
-                <textarea
-                  ref={editorRef}
-                  id="contract-template"
-                  value={contractTemplate}
-                  onChange={e => { setContractTemplate(e.target.value); setSaved(false); }}
-                  onScroll={handleEditorScroll}
-                  style={{
-                    position: 'absolute', inset: 0,
-                    width: '100%', height: '100%',
-                    padding: '20px 24px',
-                    fontSize: '12.5px',
-                    fontFamily: '"Georgia", "Times New Roman", serif',
-                    lineHeight: 1.85,
-                    color: '#1C1C1A',
-                    backgroundColor: 'transparent',
-                    border: 'none',
-                    outline: 'none',
-                    resize: 'none',
-                    boxSizing: 'border-box',
-                    caretColor: '#1C1C1A',
-                    overflowY: 'auto',
-                    overflowX: 'hidden',
-                    whiteSpace: 'pre-wrap',
-                    wordBreak: 'break-word',
-                  }}
-                />
-              </div>
+              {/* Zone d'édition riche (contentEditable) */}
+              <div
+                ref={editorRef}
+                contentEditable
+                suppressContentEditableWarning
+                onInput={handleEditorInput}
+                onClick={handleEditorClick}
+                onPaste={handleEditorPaste}
+                onKeyDown={handleEditorKeyDown}
+                onDrop={handleEditorDrop}
+                onDragOver={e => e.preventDefault()}
+                style={{
+                  minHeight: '560px',
+                  padding: '20px 24px',
+                  fontSize: '13px',
+                  fontFamily: '"Georgia", "Times New Roman", serif',
+                  lineHeight: 1.9,
+                  color: '#1C1C1A',
+                  backgroundColor: '#ffffff',
+                  border: '1px solid var(--border)',
+                  borderRadius: '0 0 10px 10px',
+                  outline: 'none',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+                  overflowY: 'auto',
+                  boxSizing: 'border-box' as const,
+                  wordBreak: 'break-word',
+                }}
+              />
             </div>
 
             {/* Aperçu droite */}
@@ -329,7 +445,7 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
                 <p style={{ fontSize: '10px', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--text-muted)', margin: 0 }}>Aperçu en direct</p>
                 <span style={{ fontSize: '10px', color: 'var(--text-muted)', fontStyle: 'italic' }}>données d&apos;exemple</span>
               </div>
-              <div style={{ height: '616px', overflowY: 'auto', backgroundColor: '#ffffff', border: '1px solid var(--border)', borderRadius: '8px', padding: '20px 18px', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
+              <div style={{ height: '648px', overflowY: 'auto', backgroundColor: '#ffffff', border: '1px solid var(--border)', borderRadius: '10px', padding: '20px 18px', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
                 {/* Mini en-tête simulé */}
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', paddingBottom: '8px', borderBottom: '0.5px solid #CEC8BF', marginBottom: '8px' }}>
                   <div style={{ width: '50px', height: '20px', backgroundColor: '#EDE8E1', borderRadius: '2px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -378,8 +494,7 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
       {/* Save */}
       <div style={{ display: 'flex', gap: '12px', alignItems: 'center', paddingTop: '20px', marginTop: '8px', borderTop: '1px solid var(--border)', maxWidth: activeTab === 'Contrat' ? '1200px' : '800px', margin: '8px auto 0' }}>
         {activeTab === 'Contrat' && (
-          <button type="button"
-            onClick={() => { if (confirm('Remettre le contrat type par défaut ?')) { setContractTemplate(DEFAULT_CONTRACT_TEMPLATE); setSaved(false); } }}
+          <button type="button" onClick={handleReset}
             style={{ fontSize: '11px', letterSpacing: '0.12em', textTransform: 'uppercase', padding: '12px 20px', border: '1px solid var(--border)', backgroundColor: 'transparent', color: 'var(--text-muted)', cursor: 'pointer', borderRadius: '8px', flexShrink: 0 }}>
             Réinitialiser le modèle
           </button>
