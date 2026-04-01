@@ -424,6 +424,19 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
         <div style={{ maxWidth: '1200px', margin: '0 auto', marginBottom: '36px' }}>
           <p style={secTitle}>Modèle de contrat</p>
 
+          {/* Bloc éducatif */}
+          <div style={{ marginBottom: '20px', padding: '16px 20px', backgroundColor: 'var(--bg-white)', border: '1px solid var(--border)', borderRadius: '10px', display: 'flex', gap: '14px', alignItems: 'flex-start' }}>
+            <span style={{ fontSize: '18px', flexShrink: 0, marginTop: '1px' }}>💡</span>
+            <div>
+              <p style={{ fontSize: '13px', fontWeight: 500, color: 'var(--text)', margin: '0 0 6px' }}>Comment fonctionnent les variables ?</p>
+              <p style={{ fontSize: '12px', color: 'var(--text-muted)', lineHeight: 1.7, margin: 0 }}>
+                Les <strong>variables</strong> (bulles orange en haut) sont des espaces réservés automatiquement remplacés par les vraies informations du client lors de la génération du contrat.
+                Glissez-les dans l&apos;éditeur ou cliquez dessus pour les insérer à l&apos;endroit du curseur.
+                <strong> L&apos;aperçu à droite</strong> vous montre le rendu final en temps réel avec des données d&apos;exemple.
+              </p>
+            </div>
+          </div>
+
           {/* Split éditeur / aperçu */}
           <div style={{ display: 'flex', gap: '24px', alignItems: 'flex-start' }}>
 
