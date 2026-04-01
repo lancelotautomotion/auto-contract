@@ -313,13 +313,47 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
           <p style={{ fontSize: '11px', letterSpacing: '0.25em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '10px' }}>— Mon établissement</p>
           <h1 style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', fontSize: '44px', fontWeight: 300, color: 'var(--text)', margin: '0 0 32px' }}>{form.giteName || 'Mon établissement'}</h1>
         </div>
-        <div style={{ display: 'flex', gap: '2px', maxWidth: '800px', margin: '0 auto', borderBottom: '1px solid var(--border)', marginBottom: '32px' }}>
+        <div style={{ display: 'flex', gap: '2px', maxWidth: '800px', margin: '0 auto', borderBottom: '1px solid var(--border)', marginBottom: activeTab === 'Contrat' ? '0' : '32px' }}>
         {TABS.map(tab => (
           <button key={tab} type="button" onClick={() => setActiveTab(tab)} style={{ fontSize: '11px', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '10px 20px', border: 'none', cursor: 'pointer', backgroundColor: 'transparent', color: activeTab === tab ? 'var(--text)' : 'var(--text-muted)', borderBottom: activeTab === tab ? '2px solid var(--text)' : '2px solid transparent', marginBottom: '-1px', transition: 'color 0.15s ease' }}>
             {tab}
           </button>
         ))}
         </div>
+
+        {/* Palette sticky — visible uniquement sur l'onglet Contrat */}
+        {activeTab === 'Contrat' && (
+          <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '10px 0 12px', borderBottom: '1px solid var(--border)', marginBottom: '24px' }}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px' }}>
+              {VARIABLES.map(([v, label]) => {
+                const varName = v.slice(2, -2);
+                return (
+                  <span
+                    key={v}
+                    draggable
+                    onDragStart={e => e.dataTransfer.setData('text/plain', varName)}
+                    onClick={() => insertVariable(varName)}
+                    style={{
+                      display: 'inline-flex', alignItems: 'center',
+                      background: 'rgba(217,119,6,0.1)',
+                      border: '1px solid rgba(217,119,6,0.4)',
+                      borderRadius: '20px',
+                      padding: '3px 11px',
+                      fontSize: '11.5px',
+                      color: 'rgb(146,57,0)',
+                      fontFamily: 'Inter,ui-sans-serif,sans-serif',
+                      fontWeight: 500,
+                      cursor: 'grab',
+                      userSelect: 'none',
+                    }}
+                  >
+                    {label}
+                  </span>
+                );
+              })}
+            </div>
+          </div>
+        )}
       </div>{/* /sticky header */}
 
       {/* Tab: Informations */}
@@ -396,42 +430,6 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
             {/* Éditeur gauche */}
             <div style={{ flex: 1, minWidth: 0 }}>
 
-              {/* Palette de variables (draggable) */}
-              <div style={{ marginBottom: '0', padding: '12px 16px 12px', backgroundColor: 'var(--bg-white)', border: '1px solid var(--border)', borderRadius: '10px 10px 0 0', borderBottom: 'none' }}>
-                <p style={{ fontSize: '10px', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--text-muted)', margin: '0 0 8px' }}>
-                  Glissez ou cliquez pour insérer une variable
-                </p>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px' }}>
-                  {VARIABLES.map(([v, label]) => {
-                    const varName = v.slice(2, -2);
-                    return (
-                      <span
-                        key={v}
-                        draggable
-                        onDragStart={e => e.dataTransfer.setData('text/plain', varName)}
-                        onClick={() => insertVariable(varName)}
-                        style={{
-                          display: 'inline-flex', alignItems: 'center', gap: '4px',
-                          background: 'rgba(217,119,6,0.1)',
-                          border: '1px solid rgba(217,119,6,0.4)',
-                          borderRadius: '20px',
-                          padding: '3px 11px',
-                          fontSize: '11.5px',
-                          color: 'rgb(146,57,0)',
-                          fontFamily: 'Inter,ui-sans-serif,sans-serif',
-                          fontWeight: 500,
-                          cursor: 'grab',
-                          userSelect: 'none',
-                          transition: 'background 0.12s',
-                        }}
-                      >
-                        {label}
-                      </span>
-                    );
-                  })}
-                </div>
-              </div>
-
               {/* Zone d'édition riche (contentEditable) */}
               <div
                 ref={editorRef}
@@ -452,7 +450,7 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
                   color: '#1C1C1A',
                   backgroundColor: '#ffffff',
                   border: '1px solid var(--border)',
-                  borderRadius: '0 0 10px 10px',
+                  borderRadius: '10px',
                   outline: 'none',
                   boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
                   overflowY: 'auto',
