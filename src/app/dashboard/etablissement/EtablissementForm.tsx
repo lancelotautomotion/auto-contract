@@ -430,10 +430,13 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
             <span style={{ fontSize: '18px', flexShrink: 0, marginTop: '1px' }}>💡</span>
             <div>
               <p style={{ fontSize: '13px', fontWeight: 500, color: 'var(--text)', margin: '0 0 6px' }}>Comment fonctionnent les variables ?</p>
+              <p style={{ fontSize: '12px', color: 'var(--text-muted)', lineHeight: 1.7, margin: '0 0 4px' }}>
+                Les balises orange ci-dessus représentent les informations de votre client, et les vôtres.<br />
+                Glissez-les simplement dans votre contrat (ou cliquez dessus) pour les insérer là où vous le souhaitez.<br />
+                Lors de la création du contrat, elles se transformeront automatiquement pour afficher les vraies données !
+              </p>
               <p style={{ fontSize: '12px', color: 'var(--text-muted)', lineHeight: 1.7, margin: 0 }}>
-                Les <strong>variables</strong> (bulles orange en haut) sont des espaces réservés automatiquement remplacés par les vraies informations du client lors de la génération du contrat.
-                Glissez-les dans l&apos;éditeur ou cliquez dessus pour les insérer à l&apos;endroit du curseur.
-                <strong> L&apos;aperçu à droite</strong> vous montre le rendu final en temps réel avec des données d&apos;exemple.
+                👉 <strong>Astuce :</strong> L&apos;aperçu sur la droite vous permet de voir le résultat en direct pour vous faire une idée.
               </p>
             </div>
           </div>
