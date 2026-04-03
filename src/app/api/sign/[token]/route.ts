@@ -7,9 +7,18 @@ import { Resend } from "resend";
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ token: string }> }) {
   const { token } = await params;
-  const { name } = await req.json();
+
+  let name: string;
+  try {
+    const body = await req.json();
+    name = body?.name;
+  } catch {
+    return NextResponse.json({ error: 'Corps de requête invalide' }, { status: 400 });
+  }
 
   if (!name?.trim()) return NextResponse.json({ error: 'Nom requis' }, { status: 400 });
+
+  try {
 
   const contract = await prisma.contract.findUnique({
     where: { signatureToken: token },
@@ -127,5 +136,9 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ tok
     });
   }
 
-  return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true });
+  } catch (err) {
+    console.error('[sign] Erreur:', err);
+    return NextResponse.json({ error: 'Erreur interne lors de la signature' }, { status: 500 });
+  }
 }
