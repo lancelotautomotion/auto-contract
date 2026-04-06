@@ -39,6 +39,7 @@ export default function ContractActions({ reservationId, contractStatus, emailSt
     signedAt ? { at: new Date(signedAt), byName: signedByName ?? '' } : null
   );
   const [depositReceived, setDepositReceived] = useState(initialDepositReceived);
+  const [remindSent, setRemindSent] = useState(false);
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
@@ -109,6 +110,18 @@ export default function ContractActions({ reservationId, contractStatus, emailSt
   };
 
   const isSigned = status === 'SIGNED' || signed !== null;
+  const threeDaysAfterSign = signed ? new Date(signed.at.getTime() + 3 * 24 * 60 * 60 * 1000) : null;
+  const canRemind = isSigned && !depositReceived && threeDaysAfterSign !== null && new Date() >= threeDaysAfterSign;
+
+  const remindDeposit = async () => {
+    setLoading('remind');
+    try {
+      const res = await fetch(`/api/reservations/${reservationId}/remind-deposit`, { method: 'POST' });
+      if (res.ok) setRemindSent(true);
+    } finally {
+      setLoading(null);
+    }
+  };
 
   return (
     <div style={{ border: '1px solid #CEC8BF', backgroundColor: '#F7F4F0', borderRadius: '12px', overflow: 'hidden' }}>
@@ -133,6 +146,26 @@ export default function ContractActions({ reservationId, contractStatus, emailSt
           <p style={{ fontSize: '12px', color: '#7A7570', margin: 0 }}>
             Signé électroniquement le {signed.at.toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' })} par <strong>{signed.byName}</strong>
           </p>
+        </div>
+      )}
+
+      {/* Bloc relance — visible 3 jours après signature si acompte pas reçu */}
+      {canRemind && (
+        <div style={{ padding: '14px 32px', borderBottom: '1px solid #CEC8BF', backgroundColor: '#FEF9F0', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px' }}>
+          <p style={{ fontSize: '12px', color: '#7A7570', margin: 0, lineHeight: 1.5 }}>
+            {remindSent
+              ? '✓ Rappel envoyé au locataire.'
+              : 'Plus de 3 jours sans réception de l\'acompte — vous pouvez relancer le locataire.'}
+          </p>
+          {!remindSent && (
+            <button
+              onClick={remindDeposit}
+              disabled={loading !== null}
+              style={{ ...btnSecondary, flex: 'none', whiteSpace: 'nowrap' as const, borderColor: '#C47822', color: '#C47822', opacity: loading === 'remind' ? 0.6 : 1 }}
+            >
+              {loading === 'remind' ? 'Envoi...' : 'Relancer le locataire →'}
+            </button>
+          )}
         </div>
       )}
 
