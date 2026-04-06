@@ -98,6 +98,7 @@ export default async function ReservationDetailPage({ params }: { params: Promis
           driveFileUrl={reservation.contract?.driveFileUrl ?? null}
           signedAt={reservation.contract?.signedAt ?? null}
           signedByName={reservation.contract?.signedByName ?? null}
+          depositReceived={reservation.contract?.depositReceived ?? false}
         />
     </main>
   );

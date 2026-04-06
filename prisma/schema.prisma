@@ -124,6 +124,9 @@ model Contract {
   signedByName   String?
   signedByIp     String?
 
+  depositReceived   Boolean   @default(false)
+  depositReceivedAt DateTime?
+
   emailSentAt DateTime?
   emailStatus EmailStatus @default(NOT_SENT)
 

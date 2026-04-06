@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { generateSignedContractPdf, ContractData } from "@/lib/contractPdf";
-import { DEFAULT_CONTRACT_TEMPLATE } from "@/lib/defaultContractTemplate";
 import { buildEmailHtml, divider, muted } from "@/lib/emailTemplate";
 import { Resend } from "resend";
 
@@ -42,45 +40,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ tok
     data: { status: 'SIGNED', signedAt, signedByName: name.trim(), signedByIp: ip },
   });
 
-  // Générer le PDF signé
   const fmt = (d: Date) => new Date(d).toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' });
-  const solde = Math.max(0, (reservation.rent ?? 0) - (reservation.deposit ?? 0));
-  const optionsText = reservation.reservationOptions.length === 0
-    ? 'Aucune option sélectionnée'
-    : reservation.reservationOptions.map(o => o.price > 0 ? `- ${o.label} : ${o.price.toFixed(2).replace('.', ',')} €` : `- ${o.label} : inclus`).join('\n');
-
-  const data: ContractData = {
-    template: reservation.gite.contractTemplate ?? DEFAULT_CONTRACT_TEMPLATE,
-    nom_client: reservation.clientLastName,
-    prenom_client: reservation.clientFirstName,
-    email_client: reservation.clientEmail,
-    telephone_client: reservation.clientPhone,
-    adresse_client: reservation.clientAddress,
-    ville_client: reservation.clientCity,
-    code_postal_client: reservation.clientZipCode,
-    date_entree: fmt(reservation.checkIn),
-    date_sortie: fmt(reservation.checkOut),
-    loyer: reservation.rent ?? 0,
-    acompte: reservation.deposit ?? 0,
-    menage: reservation.cleaningFee ?? 0,
-    taxe_sejour: reservation.touristTax ?? 0,
-    options: reservation.reservationOptions.map(o => ({ label: o.label, price: o.price })),
-    nom_gite: reservation.gite.name,
-    adresse_gite: reservation.gite.address,
-    ville_gite: reservation.gite.city,
-    code_postal_gite: reservation.gite.zipCode,
-    email_gite: reservation.gite.email,
-    telephone_gite: reservation.gite.phone,
-    logoDataUrl: reservation.gite.logoDataUrl,
-  };
-  void solde; void optionsText;
-
-  const pdfBuffer = await generateSignedContractPdf(data, {
-    signedByName: name.trim(),
-    signedAt,
-    signedByIp: ip,
-    reservationId: reservation.id,
-  });
 
   const resend = new Resend(process.env.RESEND_API_KEY);
   const fromEmail = process.env.RESEND_FROM_EMAIL ?? 'onboarding@resend.dev';
@@ -88,51 +48,56 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ tok
   const logoPublicUrl = reservation.gite.slug && reservation.gite.logoDataUrl
     ? `${appUrl}/api/gite/logo?slug=${reservation.gite.slug}`
     : null;
-  const filename = `contrat-signe-${reservation.clientLastName}-${reservation.clientFirstName}.pdf`;
   const dateEntree = fmt(reservation.checkIn);
   const dateSortie = fmt(reservation.checkOut);
+  const montantAcompte = reservation.deposit != null ? `${reservation.deposit.toFixed(2).replace('.', ',')} €` : null;
 
-  // Email au client
+  // Email au locataire — confirmation de signature, PDF envoyé après réception de l'acompte
   const clientBody = `
     <p style="margin:0 0 16px;">Bonjour <strong>${reservation.clientFirstName}</strong>,</p>
-    <p style="margin:0 0 16px;">Votre contrat de location pour le séjour du <strong>${dateEntree}</strong> au <strong>${dateSortie}</strong> au <strong>${reservation.gite.name}</strong> a bien été signé électroniquement.</p>
-    <p style="margin:0 0 16px;">Veuillez trouver ci-joint votre exemplaire signé en PDF.</p>
+    <p style="margin:0 0 16px;">Votre signature électronique pour le contrat de location du <strong>${dateEntree}</strong> au <strong>${dateSortie}</strong> au <strong>${reservation.gite.name}</strong> a bien été enregistrée.</p>
+    <p style="margin:0 0 16px;">${montantAcompte
+      ? `Dès réception de votre acompte de <strong>${montantAcompte}</strong>, votre exemplaire du contrat signé vous sera transmis par email.`
+      : `Votre exemplaire du contrat signé vous sera transmis par email dès réception de l'acompte.`
+    }</p>
     ${divider()}
-    ${muted('Conservez ce document — il fait office de preuve de votre réservation.')}
+    ${muted('Pour toute question, contactez directement votre hébergeur.')}
     <p style="margin:24px 0 0; font-size:14px; color:#1C1C1A;">Cordialement,<br/><strong>${reservation.gite.name}</strong></p>
   `;
   await resend.emails.send({
     from: fromEmail,
     to: reservation.clientEmail,
-    subject: `Contrat signé — ${reservation.gite.name}`,
+    subject: `Signature enregistrée — ${reservation.gite.name}`,
     html: buildEmailHtml({
       giteName: reservation.gite.name,
       logoPublicUrl,
-      preheader: 'Votre contrat signé est disponible en pièce jointe.',
+      preheader: 'Votre signature a bien été enregistrée. Le contrat signé vous sera envoyé dès réception de l\'acompte.',
       body: clientBody,
     }),
-    attachments: [{ filename, content: pdfBuffer.toString('base64') }],
   });
 
-  // Email au gérant
-  if (reservation.gite.email) {
+  // Email au gérant — notification de signature + action requise
+  const notifEmail = reservation.gite.notificationEmail ?? reservation.gite.email;
+  if (notifEmail) {
     const managerBody = `
-      <p style="margin:0 0 16px;">Le contrat de <strong>${reservation.clientFirstName} ${reservation.clientLastName}</strong> pour le séjour du <strong>${dateEntree}</strong> au <strong>${dateSortie}</strong> vient d'être signé électroniquement.</p>
-      <p style="margin:0 0 16px;">Le contrat signé est en pièce jointe.</p>
+      <p style="margin:0 0 16px;"><strong>${reservation.clientFirstName} ${reservation.clientLastName}</strong> vient de signer son contrat de location pour le séjour du <strong>${dateEntree}</strong> au <strong>${dateSortie}</strong>.</p>
+      ${montantAcompte
+        ? `<p style="margin:0 0 16px;">Dès réception de l'acompte de <strong>${montantAcompte}</strong>, marquez-le comme reçu dans votre tableau de bord pour que le contrat signé soit automatiquement envoyé au locataire.</p>`
+        : `<p style="margin:0 0 16px;">Marquez l'acompte comme reçu dans votre tableau de bord pour envoyer automatiquement le contrat signé au locataire.</p>`
+      }
       ${divider()}
-      ${muted(`Réservation enregistrée le ${new Date().toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' })}.`)}
+      ${muted(`Signé électroniquement le ${signedAt.toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' })} — IP : ${ip}`)}
     `;
     await resend.emails.send({
       from: fromEmail,
-      to: reservation.gite.email,
-      subject: `Contrat signé par ${reservation.clientFirstName} ${reservation.clientLastName}`,
+      to: notifEmail,
+      subject: `Contrat signé par ${reservation.clientFirstName} ${reservation.clientLastName} — acompte en attente`,
       html: buildEmailHtml({
         giteName: reservation.gite.name,
         logoPublicUrl,
-        preheader: `${reservation.clientFirstName} ${reservation.clientLastName} vient de signer son contrat.`,
+        preheader: `${reservation.clientFirstName} ${reservation.clientLastName} a signé. En attente de l'acompte.`,
         body: managerBody,
       }),
-      attachments: [{ filename, content: pdfBuffer.toString('base64') }],
     });
   }
 

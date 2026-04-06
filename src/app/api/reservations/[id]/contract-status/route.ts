@@ -19,5 +19,6 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
     emailStatus: contract?.emailStatus ?? null,
     signedAt: contract?.signedAt ?? null,
     signedByName: contract?.signedByName ?? null,
+    depositReceived: contract?.depositReceived ?? false,
   });
 }
