@@ -15,7 +15,7 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
 
   const reservation = await prisma.reservation.findFirst({
     where: { id, gite: { userId: dbUser.id } },
-    include: { gite: true },
+    include: { gite: { include: { documents: true } } },
   });
   if (!reservation) return NextResponse.json({ error: "Réservation introuvable" }, { status: 404 });
 
@@ -40,13 +40,22 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
   const dateEntree = fmt(reservation.checkIn);
   const dateSortie = fmt(reservation.checkOut);
 
+  const depositAmount = reservation.deposit != null
+    ? `${reservation.deposit.toFixed(2).replace('.', ',')} €`
+    : null;
+  const hasRib = reservation.gite.documents.some(d => /rib/i.test(d.label));
+
   const body = `
     <p style="margin:0 0 16px;">Bonjour <strong>${reservation.clientFirstName}</strong>,</p>
     <p style="margin:0 0 16px;">Votre contrat de location pour votre séjour du <strong>${dateEntree}</strong> au <strong>${dateSortie}</strong> au <strong>${reservation.gite.name}</strong> est prêt à être signé.</p>
-    <p style="margin:0 0 4px;">Merci de le lire attentivement et de le signer en cliquant sur le bouton ci-dessous :</p>
+    <p style="margin:0 0 16px;">Merci de le lire attentivement et de le signer en cliquant sur le bouton ci-dessous :</p>
     ${ctaButton('Lire et signer le contrat', signUrl)}
     ${divider()}
-    ${muted('Ce lien est personnel et sécurisé. Une fois signé, vous recevrez automatiquement votre exemplaire par email.')}
+    ${depositAmount
+      ? `<p style="margin:0 0 12px; font-size:14px; color:#1C1C1A;">Pour finaliser votre réservation, un acompte de <strong>${depositAmount}</strong> est à régler par virement bancaire${hasRib ? ' sur le RIB joint à ce mail' : ''}. Votre exemplaire du contrat signé vous sera envoyé dès réception de celui-ci.</p>`
+      : `<p style="margin:0 0 12px; font-size:14px; color:#1C1C1A;">Pour finaliser votre réservation, un acompte est à régler par virement bancaire${hasRib ? ' sur le RIB joint à ce mail' : ''}. Votre exemplaire du contrat signé vous sera envoyé dès réception de celui-ci.</p>`
+    }
+    ${muted('Ce lien est personnel et sécurisé.')}
     <p style="margin:24px 0 0; font-size:14px; color:#1C1C1A;">Cordialement,<br/><strong>${reservation.gite.name}</strong></p>
   `;
 
@@ -61,11 +70,17 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
     body,
   });
 
+  const attachments = reservation.gite.documents.map(doc => {
+    const base64 = doc.fileDataUrl.split(',')[1] ?? doc.fileDataUrl;
+    return { filename: doc.fileName, content: base64 };
+  });
+
   const { error } = await resend.emails.send({
     from: fromEmail,
     to: reservation.clientEmail,
     subject: `Votre contrat de location à signer — ${reservation.gite.name}`,
     html,
+    attachments,
   });
 
   if (error) {

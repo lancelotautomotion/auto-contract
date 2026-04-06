@@ -2,6 +2,7 @@
 
 import { useState, useRef, useCallback, useEffect } from "react";
 import { DEFAULT_CONTRACT_TEMPLATE } from "@/lib/defaultContractTemplate";
+import DocumentsTab from "./DocumentsTab";
 
 const lbl = { fontSize: '11px', letterSpacing: '0.15em', textTransform: 'uppercase' as const, color: 'var(--text-muted)', display: 'block', marginBottom: '6px' };
 const inp = { width: '100%', padding: '10px 14px', border: '1px solid var(--border)', backgroundColor: 'var(--bg-white)', fontSize: '14px', color: 'var(--text)', outline: 'none', boxSizing: 'border-box' as const, borderRadius: '8px' };
@@ -76,15 +77,17 @@ function PreviewLine({ line, i }: { line: string; i: number }) {
 }
 
 interface GiteOption { id?: string; label: string; price: number; }
+interface GiteDoc { id: string; label: string; fileName: string; mimeType: string; createdAt: string; }
 interface GiteData {
   id: string; name: string; email: string; phone: string;
   address: string; city: string; zipCode: string;
   slug: string; contractTemplate: string; logoDataUrl: string;
   capacity: number; cleaningFee: number; touristTax: number;
   options: GiteOption[];
+  documents: GiteDoc[];
 }
 
-const TABS = ['Informations', 'Options', 'Contrat', 'Logo'] as const;
+const TABS = ['Informations', 'Options', 'Contrat', 'Logo', 'Documents'] as const;
 type Tab = typeof TABS[number];
 
 const VARIABLES = [
@@ -537,7 +540,13 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
         </div>
       )}
 
-      {/* Save */}
+      {/* Tab: Documents */}
+      {activeTab === 'Documents' && (
+        <DocumentsTab initialDocs={gite.documents} />
+      )}
+
+      {/* Save — hidden on Documents tab */}
+      {activeTab !== 'Documents' && (
       <div style={{ display: 'flex', gap: '12px', alignItems: 'center', paddingTop: '20px', marginTop: '8px', borderTop: '1px solid var(--border)', maxWidth: activeTab === 'Contrat' ? '1200px' : '800px', margin: '8px auto 0' }}>
         {activeTab === 'Contrat' && (
           <button type="button" onClick={handleReset}
@@ -551,6 +560,7 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
         </button>
         {saved && <span style={{ fontSize: '12px', color: 'var(--text-muted)', flexShrink: 0 }}>✓ Sauvegardé</span>}
       </div>
+      )}
     </form>
   );
 }

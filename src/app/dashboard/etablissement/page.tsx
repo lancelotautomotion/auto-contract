@@ -12,7 +12,10 @@ export default async function EtablissementPage() {
 
   const gite = await prisma.gite.findFirst({
     where: { userId: dbUser.id },
-    include: { options: { orderBy: { position: 'asc' } } },
+    include: {
+      options: { orderBy: { position: 'asc' } },
+      documents: { orderBy: { createdAt: 'asc' }, select: { id: true, label: true, fileName: true, mimeType: true, createdAt: true } },
+    },
   });
   if (!gite) redirect("/onboarding");
 
@@ -33,6 +36,7 @@ export default async function EtablissementPage() {
         contractTemplate: gite.contractTemplate ?? '',
         logoDataUrl: gite.logoDataUrl ?? '',
         options: gite.options.map(o => ({ id: o.id, label: o.label, price: o.price })),
+        documents: gite.documents.map(d => ({ id: d.id, label: d.label, fileName: d.fileName, mimeType: d.mimeType, createdAt: d.createdAt.toISOString() })),
       }} />
     </main>
   );

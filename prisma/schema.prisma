@@ -46,6 +46,7 @@ model Gite {
 
   reservations Reservation[]
   options      GiteOption[]
+  documents    GiteDocument[]
 }
 
 // Options configurées par le gérant (dynamiques)
@@ -132,6 +133,19 @@ model Contract {
 
   reservationId String      @unique
   reservation   Reservation @relation(fields: [reservationId], references: [id], onDelete: Cascade)
+}
+
+// Documents joints aux emails (RIB, règlement intérieur, etc.)
+model GiteDocument {
+  id          String   @id @default(cuid())
+  label       String
+  fileName    String
+  mimeType    String
+  fileDataUrl String   // base64 data URL
+  createdAt   DateTime @default(now())
+
+  giteId String
+  gite   Gite   @relation(fields: [giteId], references: [id], onDelete: Cascade)
 }
 
 enum ReservationStatus {

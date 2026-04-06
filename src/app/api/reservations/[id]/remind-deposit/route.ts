@@ -15,7 +15,7 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
 
     const reservation = await prisma.reservation.findFirst({
       where: { id, gite: { userId: dbUser.id } },
-      include: { gite: true, contract: true },
+      include: { gite: { include: { documents: true } }, contract: true },
     });
 
     if (!reservation) return NextResponse.json({ error: 'Réservation introuvable' }, { status: 404 });
@@ -36,19 +36,25 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
     const montantAcompte = reservation.deposit != null
       ? `${reservation.deposit.toFixed(2).replace('.', ',')} €`
       : null;
+    const hasRib = reservation.gite.documents.some(d => /rib/i.test(d.label));
 
     const body = `
       <p style="margin:0 0 16px;">Bonjour <strong>${reservation.clientFirstName}</strong>,</p>
       <p style="margin:0 0 16px;">Nous vous rappelons que vous avez signé votre contrat de location pour le séjour du <strong>${dateEntree}</strong> au <strong>${dateSortie}</strong> au <strong>${reservation.gite.name}</strong>.</p>
       ${montantAcompte
-        ? `<p style="margin:0 0 16px;">Afin de finaliser votre réservation et de recevoir votre exemplaire du contrat signé, nous vous invitons à procéder au règlement de l'acompte de <strong>${montantAcompte}</strong>.</p>`
-        : `<p style="margin:0 0 16px;">Afin de finaliser votre réservation, nous vous invitons à procéder au règlement de l'acompte.</p>`
+        ? `<p style="margin:0 0 16px;">Afin de finaliser votre réservation et de recevoir votre exemplaire du contrat signé, nous vous invitons à procéder au règlement de l'acompte de <strong>${montantAcompte}</strong> par virement bancaire${hasRib ? ' sur le RIB joint à ce mail' : ''}.</p>`
+        : `<p style="margin:0 0 16px;">Afin de finaliser votre réservation, nous vous invitons à procéder au règlement de l'acompte par virement bancaire${hasRib ? ' sur le RIB joint à ce mail' : ''}.</p>`
       }
-      <p style="margin:0 0 16px;">Pour toute question concernant les modalités de paiement, n'hésitez pas à nous contacter directement.</p>
+      <p style="margin:0 0 16px;">Pour toute question, n'hésitez pas à nous contacter directement.</p>
       ${divider()}
       ${muted(`Séjour du ${dateEntree} au ${dateSortie} · ${reservation.gite.name}`)}
       <p style="margin:24px 0 0; font-size:14px; color:#1C1C1A;">Cordialement,<br/><strong>${reservation.gite.name}</strong></p>
     `;
+
+    const attachments = reservation.gite.documents.map(doc => {
+      const base64 = doc.fileDataUrl.split(',')[1] ?? doc.fileDataUrl;
+      return { filename: doc.fileName, content: base64 };
+    });
 
     await resend.emails.send({
       from: fromEmail,
@@ -60,6 +66,7 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
         preheader: `Rappel : votre acompte${montantAcompte ? ` de ${montantAcompte}` : ''} est en attente pour finaliser votre réservation.`,
         body,
       }),
+      attachments,
     });
 
     return NextResponse.json({ success: true });
