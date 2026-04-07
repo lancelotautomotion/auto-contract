@@ -24,39 +24,43 @@ export default function DocumentsTab({ initialDocs }: { initialDocs: GiteDoc[] }
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    if (!label.trim()) { setError('Donnez un nom au document avant de l\'importer.'); return; }
+    if (!label.trim()) { setError("Donnez un nom au document avant de l'importer."); return; }
 
     setUploading(true);
     setError(null);
-    const reader = new FileReader();
-    reader.onload = async () => {
-      try {
-        const res = await fetch('/api/etablissement/documents', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            label: label.trim(),
-            fileName: file.name,
-            mimeType: file.type || 'application/octet-stream',
-            fileDataUrl: reader.result as string,
-          }),
-        });
-        if (!res.ok) {
-          const data = await res.json();
-          setError(data.error ?? 'Erreur lors de l\'import');
-          return;
-        }
-        const doc = await res.json();
-        setDocs(d => [...d, doc]);
-        setLabel('');
-        if (fileInputRef.current) fileInputRef.current.value = '';
-      } catch {
-        setError('Erreur lors de l\'import');
-      } finally {
-        setUploading(false);
+    try {
+      // Step 1: upload to Vercel Blob
+      const fd = new FormData();
+      fd.append('file', file);
+      const uploadRes = await fetch('/api/upload', { method: 'POST', body: fd });
+      if (!uploadRes.ok) { setError("Erreur lors de l'upload"); return; }
+      const { url: fileUrl } = await uploadRes.json();
+
+      // Step 2: save metadata in DB
+      const res = await fetch('/api/etablissement/documents', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          label: label.trim(),
+          fileName: file.name,
+          mimeType: file.type || 'application/octet-stream',
+          fileUrl,
+        }),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        setError(data.error ?? "Erreur lors de l'import");
+        return;
       }
-    };
-    reader.readAsDataURL(file);
+      const doc = await res.json();
+      setDocs(d => [...d, doc]);
+      setLabel('');
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    } catch {
+      setError("Erreur lors de l'import");
+    } finally {
+      setUploading(false);
+    }
   };
 
   const handleDelete = async (id: string) => {

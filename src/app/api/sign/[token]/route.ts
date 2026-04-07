@@ -44,10 +44,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ tok
 
   const resend = new Resend(process.env.RESEND_API_KEY);
   const fromEmail = process.env.RESEND_FROM_EMAIL ?? 'onboarding@resend.dev';
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000';
-  const logoPublicUrl = reservation.gite.slug && reservation.gite.logoDataUrl
-    ? `${appUrl}/api/gite/logo?slug=${reservation.gite.slug}`
-    : null;
+  const logoPublicUrl = reservation.gite.logoUrl ?? null;
   const dateEntree = fmt(reservation.checkIn);
   const dateSortie = fmt(reservation.checkOut);
   const montantAcompte = reservation.deposit != null ? `${reservation.deposit.toFixed(2).replace('.', ',')} €` : null;

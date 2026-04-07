@@ -1,10 +1,10 @@
-import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { requireAuth } from "@/lib/auth";
 
 export async function POST(req: NextRequest) {
-  const { userId } = await auth();
-  if (!userId) return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
+  const [ctx, err] = await requireAuth();
+  if (err) return err;
 
   const body = await req.json();
 
@@ -15,18 +15,15 @@ export async function POST(req: NextRequest) {
     address: body.address ?? "",
     city: body.city ?? "",
     zipCode: body.zipCode ?? "",
-    slug: body.slug ? body.slug.toLowerCase().replace(/[^a-z0-9-]/g, '-') : undefined,
+    slug: body.slug ? body.slug.toLowerCase().replace(/[^a-z0-9-]/g, "-") : undefined,
     contractTemplate: body.contractTemplate ?? undefined,
-    logoDataUrl: body.logoDataUrl ?? null,
+    logoUrl: body.logoUrl ?? null,
     capacity: parseInt(body.capacity ?? "12"),
     cleaningFee: parseFloat(body.cleaningFee ?? "90"),
     touristTax: parseFloat(body.touristTax ?? "1.32"),
   };
 
-  const user = await prisma.user.findUnique({ where: { clerkId: userId } });
-  if (!user) return NextResponse.json({ error: "Utilisateur introuvable" }, { status: 404 });
-
-  let gite = await prisma.gite.findFirst({ where: { userId: user.id } });
+  let gite = await prisma.gite.findFirst({ where: { userId: ctx.userId } });
   if (!gite) return NextResponse.json({ error: "Gîte introuvable" }, { status: 404 });
 
   gite = await prisma.gite.update({ where: { id: gite.id }, data: giteData });

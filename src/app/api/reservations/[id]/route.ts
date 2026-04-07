@@ -1,29 +1,29 @@
-import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { requireAuth } from "@/lib/auth";
 
-export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function PATCH(
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
   const { id } = await params;
-  const { userId } = await auth();
-  if (!userId) return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
-
-  const dbUser = await prisma.user.findUnique({ where: { clerkId: userId } });
-  if (!dbUser) return NextResponse.json({ error: "Utilisateur introuvable" }, { status: 404 });
+  const [ctx, err] = await requireAuth();
+  if (err) return err;
 
   const existing = await prisma.reservation.findFirst({
-    where: { id, gite: { userId: dbUser.id } },
+    where: { id, gite: { userId: ctx.userId } },
   });
   if (!existing) return NextResponse.json({ error: "Réservation introuvable" }, { status: 404 });
 
   const body = await req.json();
 
   const gite = await prisma.gite.findFirst({
-    where: { userId: dbUser.id },
+    where: { userId: ctx.userId },
     include: { options: true },
   });
 
   const selectedIds: string[] = Array.isArray(body.selectedOptionIds) ? body.selectedOptionIds : [];
-  const selectedOptions = gite?.options.filter(o => selectedIds.includes(o.id)) ?? [];
+  const selectedOptions = gite?.options.filter((o) => selectedIds.includes(o.id)) ?? [];
 
   const updated = await prisma.reservation.update({
     where: { id },
@@ -44,7 +44,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
       notes: body.notes ?? "",
       reservationOptions: {
         deleteMany: {},
-        create: selectedOptions.map(o => ({
+        create: selectedOptions.map((o) => ({
           label: o.label,
           price: o.price,
           giteOptionId: o.id,

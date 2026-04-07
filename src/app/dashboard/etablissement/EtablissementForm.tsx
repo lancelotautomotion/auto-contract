@@ -81,7 +81,7 @@ interface GiteDoc { id: string; label: string; fileName: string; mimeType: strin
 interface GiteData {
   id: string; name: string; email: string; phone: string;
   address: string; city: string; zipCode: string;
-  slug: string; contractTemplate: string; logoDataUrl: string;
+  slug: string; contractTemplate: string; logoUrl: string;
   capacity: number; cleaningFee: number; touristTax: number;
   options: GiteOption[];
   documents: GiteDoc[];
@@ -176,7 +176,7 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
   });
   const [contractTemplate, setContractTemplate] = useState(gite.contractTemplate || DEFAULT_CONTRACT_TEMPLATE);
   const [options, setOptions] = useState<GiteOption[]>(gite.options);
-  const [logoDataUrl, setLogoDataUrl] = useState(gite.logoDataUrl || '');
+  const [logoUrl, setLogoUrl] = useState(gite.logoUrl || '');
   const [logoLoading, setLogoLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const editorRef = useRef<HTMLDivElement>(null);
@@ -288,20 +288,29 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
   const updateOption = (i: number, field: 'label' | 'price', value: string) =>
     setOptions(o => o.map((opt, idx) => idx === i ? { ...opt, [field]: field === 'price' ? parseFloat(value) || 0 : value } : opt));
 
-  const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleLogoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     setLogoLoading(true);
-    const reader = new FileReader();
-    reader.onload = () => { setLogoDataUrl(reader.result as string); setLogoLoading(false); setSaved(false); };
-    reader.readAsDataURL(file);
+    try {
+      const fd = new FormData();
+      fd.append('file', file);
+      const res = await fetch('/api/upload', { method: 'POST', body: fd });
+      if (res.ok) {
+        const { url } = await res.json();
+        setLogoUrl(url);
+        setSaved(false);
+      }
+    } finally {
+      setLogoLoading(false);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true); setSaved(false);
     try {
-      const res = await fetch('/api/etablissement', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...form, contractTemplate, options, logoDataUrl }) });
+      const res = await fetch('/api/etablissement', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...form, contractTemplate, options, logoUrl }) });
       if (res.ok) setSaved(true);
     } finally { setLoading(false); }
   };
@@ -519,10 +528,10 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
         <div style={{ maxWidth: '800px', margin: '0 auto', marginBottom: '36px' }}>
           <p style={secTitle}>Logo du gîte</p>
           <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '24px', lineHeight: 1.6 }}>Votre logo sera affiché en haut de chaque contrat PDF généré. Formats acceptés : PNG, JPG, WEBP.</p>
-          {logoDataUrl ? (
+          {logoUrl ? (
             <div style={{ marginBottom: '24px', padding: '24px', backgroundColor: 'var(--bg-white)', border: '1px solid var(--border)', borderRadius: '10px', display: 'flex', alignItems: 'center', gap: '24px' }}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={logoDataUrl} alt="Logo" style={{ maxHeight: '80px', maxWidth: '200px', objectFit: 'contain', borderRadius: '4px' }} />
+              <img src={logoUrl} alt="Logo" style={{ maxHeight: '80px', maxWidth: '200px', objectFit: 'contain', borderRadius: '4px' }} />
               <div>
                 <p style={{ fontSize: '13px', color: 'var(--text)', marginBottom: '8px' }}>Logo actuel</p>
                 <button type="button" onClick={() => { setLogoDataUrl(''); setSaved(false); }} style={{ fontSize: '11px', letterSpacing: '0.1em', textTransform: 'uppercase', padding: '6px 14px', border: '1px solid var(--border)', backgroundColor: 'transparent', color: 'var(--text-muted)', cursor: 'pointer', borderRadius: '6px' }}>Supprimer</button>
@@ -535,7 +544,7 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
           )}
           <input ref={fileInputRef} type="file" accept="image/png,image/jpeg,image/webp" style={{ display: 'none' }} onChange={handleLogoChange} />
           <button type="button" disabled={logoLoading} onClick={() => fileInputRef.current?.click()} style={{ fontSize: '11px', letterSpacing: '0.12em', textTransform: 'uppercase', padding: '10px 20px', border: '1px solid var(--border)', backgroundColor: 'transparent', color: 'var(--text)', cursor: logoLoading ? 'not-allowed' : 'pointer', borderRadius: '8px' }}>
-            {logoLoading ? 'Chargement...' : logoDataUrl ? 'Remplacer le logo' : '+ Importer un logo'}
+            {logoLoading ? 'Chargement...' : logoUrl ? 'Remplacer le logo' : '+ Importer un logo'}
           </button>
         </div>
       )}

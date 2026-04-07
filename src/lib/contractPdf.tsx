@@ -24,7 +24,7 @@ export interface ContractData {
   code_postal_gite?: string | null;
   email_gite: string | null;
   telephone_gite: string | null;
-  logoDataUrl?: string | null;
+  logoUrl?: string | null;
 }
 
 function buildText(data: ContractData): string {
@@ -208,8 +208,8 @@ function SignatureBlock({ sig }: { sig: SignatureInfo }) {
 }
 
 function Header({ data }: { data: ContractData }) {
-  const logoEl = data.logoDataUrl
-    ? React.createElement(Image, { src: data.logoDataUrl, style: styles.logo })
+  const logoEl = data.logoUrl
+    ? React.createElement(Image, { src: data.logoUrl, style: styles.logo })
     : React.createElement(View, { style: { width: 140 } });
 
   const infoLines = [

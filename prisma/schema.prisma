@@ -32,7 +32,7 @@ model Gite {
   touristTax  Float   @default(1.32)
   slug                  String? @unique
   contractTemplate      String?
-  logoDataUrl           String?
+  logoUrl               String?  // Vercel Blob URL (formerly logoDataUrl base64)
   notificationEmail     String?
   driveTemplateFolderId String?
   driveOutputFolderId   String?
@@ -127,6 +127,7 @@ model Contract {
 
   depositReceived   Boolean   @default(false)
   depositReceivedAt DateTime?
+  signedPdfUrl      String?   // Vercel Blob URL of the signed PDF (Chantier 3)
 
   emailSentAt DateTime?
   emailStatus EmailStatus @default(NOT_SENT)
@@ -138,11 +139,11 @@ model Contract {
 // Documents joints aux emails (RIB, règlement intérieur, etc.)
 model GiteDocument {
   id          String   @id @default(cuid())
-  label       String
-  fileName    String
-  mimeType    String
-  fileDataUrl String   // base64 data URL
-  createdAt   DateTime @default(now())
+  label     String
+  fileName  String
+  mimeType  String
+  fileUrl   String   // Vercel Blob URL (formerly fileDataUrl base64)
+  createdAt DateTime @default(now())
 
   giteId String
   gite   Gite   @relation(fields: [giteId], references: [id], onDelete: Cascade)

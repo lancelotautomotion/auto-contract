@@ -5,18 +5,16 @@
 
 interface EmailTemplateOptions {
   giteName: string;
-  logoDataUrl?: string | null;
-  logoPublicUrl?: string | null;  // URL publique prioritaire sur dataUrl
+  logoPublicUrl?: string | null;  // Vercel Blob URL
   preheader?: string;
   body: string;
   footer?: string;
 }
 
 export function buildEmailHtml(opts: EmailTemplateOptions): string {
-  const { giteName, logoDataUrl, logoPublicUrl, preheader, body, footer } = opts;
+  const { giteName, logoPublicUrl, preheader, body, footer } = opts;
 
-  // Priorité : URL publique (fonctionne dans Gmail) > data URL > texte
-  const logoSrc = logoPublicUrl ?? (logoDataUrl?.startsWith('http') ? logoDataUrl : null);
+  const logoSrc = logoPublicUrl ?? null;
   const logoBlock = logoSrc
     ? `<img src="${logoSrc}" alt="${giteName}" style="max-height:48px; max-width:160px; object-fit:contain; display:block;" />`
     : `<span style="font-family:Georgia,serif; font-size:18px; font-weight:400; color:#1C1C1A; letter-spacing:0.02em;">${giteName}</span>`;
