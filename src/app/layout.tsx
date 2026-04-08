@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
-import Script from "next/script";
 import ThemeProvider from "@/providers/ThemeProvider";
 import "./globals.css";
 
@@ -17,8 +16,11 @@ export default function RootLayout({
   return (
     <ClerkProvider afterSignInUrl="/dashboard" afterSignUpUrl="/onboarding">
       <html lang="fr" className="h-full antialiased" suppressHydrationWarning>
+        <head>
+          {/* eslint-disable-next-line @next/next/no-sync-scripts */}
+          <script dangerouslySetInnerHTML={{ __html: `(function(){try{var t=localStorage.getItem('theme');if(t==='dark')document.documentElement.classList.add('dark');}catch(e){}})();` }} />
+        </head>
         <body className="min-h-full">
-          <Script id="theme-init" strategy="beforeInteractive" dangerouslySetInnerHTML={{ __html: `(function(){try{var t=localStorage.getItem('theme');if(t==='dark')document.documentElement.classList.add('dark');}catch(e){}})();` }} />
           <ThemeProvider>
             {children}
           </ThemeProvider>
