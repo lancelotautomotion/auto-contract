@@ -16,10 +16,6 @@ export default function RootLayout({
   return (
     <ClerkProvider afterSignInUrl="/dashboard" afterSignUpUrl="/onboarding">
       <html lang="fr" className="h-full antialiased" suppressHydrationWarning>
-        <head>
-          {/* eslint-disable-next-line @next/next/no-sync-scripts */}
-          <script dangerouslySetInnerHTML={{ __html: `(function(){try{var t=localStorage.getItem('theme');if(t==='dark')document.documentElement.classList.add('dark');}catch(e){}})();` }} />
-        </head>
         <body className="min-h-full">
           <ThemeProvider>
             {children}
