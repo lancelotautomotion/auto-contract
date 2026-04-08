@@ -20,7 +20,7 @@ export async function GET(req: NextRequest) {
     : {};
 
   const archives = await prisma.reservation.findMany({
-    where: { gite: { userId: ctx.userId }, contract: { status: "SIGNED", depositReceived: true }, ...searchFilter },
+    where: { gite: { userId: ctx.userId }, contract: { is: { status: "SIGNED", depositReceived: true } }, ...searchFilter },
     include: { contract: true, gite: { select: { name: true } } },
     orderBy: { checkIn: "desc" },
   });

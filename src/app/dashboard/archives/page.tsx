@@ -36,7 +36,7 @@ export default async function ArchivesPage({
   const allSigned = await prisma.reservation.findMany({
     where: {
       gite: { userId: dbUser.id },
-      contract: { status: 'SIGNED', depositReceived: true },
+      contract: { is: { status: 'SIGNED', depositReceived: true } },
       ...searchFilter,
     },
     include: { contract: true, gite: { select: { name: true } } },
