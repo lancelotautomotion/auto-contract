@@ -303,11 +303,12 @@ STRIPE_PORTAL_CONFIG_ID=  # ID config Customer Portal
 |---|------|---------------|
 | 1 | Charte graphique + Logo | Socle visuel nécessaire avant la landing |
 | 2 | Landing page | Priorité absolue — convertit les visiteurs |
-| 3 | Mentions légales | Requis légalement avant tout lancement |
-| 4 | Stripe | Monétisation — bloquer l'accès après essai |
-| 5 | SEO | Optimiser pendant qu'on finalise le contenu |
-| 6 | Dashboard CEO | Suivi interne pour le lancement |
-| 7 | Déploiement Vercel | Étape finale |
+| 3 | Responsivité | Appliquée en continu sur chaque écran développé |
+| 4 | Mentions légales | Requis légalement avant tout lancement |
+| 5 | Stripe | Monétisation — bloquer l'accès après essai |
+| 6 | SEO | Optimiser pendant qu'on finalise le contenu |
+| 7 | Dashboard CEO | Suivi interne pour le lancement |
+| 8 | Déploiement Vercel | Étape finale |
 
 ---
 
@@ -320,9 +321,33 @@ STRIPE_PORTAL_CONFIG_ID=  # ID config Customer Portal
 
 ---
 
+## Responsivité (contrainte transversale)
+
+**Applicable à toutes les pages et composants.**
+
+#### Breakpoints
+- **Mobile** : `max-width: 768px` — navigation hamburger, colonnes empilées, touch-friendly (min 44px tap targets)
+- **Tablette** : `769px – 1024px` — layout adapté, sidebar réduite ou collapsible
+- **Desktop** : `> 1024px` — layout full, sidebar fixe
+
+#### Critères d'acceptation globaux
+- Aucun scroll horizontal sur aucun breakpoint
+- Toutes les actions clés accessibles sur mobile (créer réservation, envoyer email, voir contrat)
+- Sidebar dashboard : collapsible sur tablette, hamburger menu sur mobile
+- Tableaux : scroll horizontal interne ou affichage en cards sur mobile
+- Formulaires : inputs pleine largeur sur mobile
+- Testé sur : Chrome DevTools (iPhone 14, iPad, 1440px desktop)
+
+#### Implémentation
+- Media queries inline via `style` + `@media` dans `<style>` tags de composants, **ou** via `globals.css` pour les patterns répétitifs
+- Aucun framework CSS — responsive en CSS natif uniquement
+
+---
+
 ## Contraintes techniques globales
 
 - Inline CSS uniquement — aucun Tailwind, aucune classe CSS
+- **Responsive obligatoire** sur tous les écrans (mobile / tablette / desktop)
 - Auth via `requireAuth()` / `requireGite()` de `src/lib/auth.ts`
 - Fichiers binaires → Vercel Blob uniquement (pas de base64 en DB)
 - Prisma avec PrismaPg adapter (pas le client standard)
