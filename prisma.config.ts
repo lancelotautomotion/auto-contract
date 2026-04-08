@@ -1,4 +1,6 @@
-import "dotenv/config";
+import { config } from "dotenv";
+// Next.js uses .env.local — load it so `prisma db push` picks up DATABASE_URL
+config({ path: ".env.local" });
 import { defineConfig } from "prisma/config";
 
 export default defineConfig({
