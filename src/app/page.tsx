@@ -4,345 +4,397 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Prysme — Contrats de location pour gîtes, automatisés",
   description: "Automatisez vos contrats de location saisonnière en 2 minutes. Génération PDF, envoi email, suivi acompte. 30 jours gratuits, sans CB.",
-  openGraph: {
-    title: "Prysme — Contrats de location pour gîtes, automatisés",
-    description: "Automatisez vos contrats de location saisonnière en 2 minutes. 30 jours gratuits, sans CB.",
-    type: "website",
-  },
 };
 
-const S = {
-  page: { minHeight: '100vh', backgroundColor: '#EDE8E1', fontFamily: 'Inter, sans-serif' } as React.CSSProperties,
-  container: { maxWidth: '1080px', margin: '0 auto', padding: '0 32px' } as React.CSSProperties,
-  nav: { padding: '20px 40px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' } as React.CSSProperties,
-  navLogo: { fontSize: '15px', fontFamily: 'Cormorant Garamond, Georgia, serif', fontWeight: 500, color: '#1C1C1A', textDecoration: 'none', letterSpacing: '0.05em' } as React.CSSProperties,
-  navLinks: { display: 'flex', alignItems: 'center', gap: '32px' } as React.CSSProperties,
-  navLink: { fontSize: '12px', letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#7A7570', textDecoration: 'none' },
-  navCta: { fontSize: '11px', letterSpacing: '0.15em', textTransform: 'uppercase' as const, padding: '10px 22px', backgroundColor: '#1C1C1A', color: '#EDE8E1', textDecoration: 'none', borderRadius: '100px' },
-  heroSection: { padding: '72px 32px 80px', maxWidth: '1080px', margin: '0 auto' } as React.CSSProperties,
-  heroBadge: { display: 'inline-flex', alignItems: 'center', gap: '8px', fontSize: '11px', letterSpacing: '0.2em', textTransform: 'uppercase' as const, color: '#7A7570', backgroundColor: '#E5DED5', padding: '6px 14px', borderRadius: '100px', marginBottom: '32px', border: '1px solid #CEC8BF' },
-  heroDot: { width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#7A7570' } as React.CSSProperties,
-  heroTitle: { fontFamily: 'Cormorant Garamond, Georgia, serif', fontSize: 'clamp(44px, 6vw, 72px)', fontWeight: 300, color: '#1C1C1A', lineHeight: 1.1, marginBottom: '28px', letterSpacing: '-0.01em' } as React.CSSProperties,
-  heroSub: { fontSize: '16px', color: '#7A7570', lineHeight: 1.8, maxWidth: '560px', marginBottom: '44px', fontWeight: 300 } as React.CSSProperties,
-  heroCtas: { display: 'flex', alignItems: 'center', flexWrap: 'wrap' as const, gap: '16px', marginBottom: '60px' } as React.CSSProperties,
-  ctaPrimary: { fontSize: '12px', letterSpacing: '0.12em', textTransform: 'uppercase' as const, padding: '14px 28px', backgroundColor: '#1C1C1A', color: '#EDE8E1', textDecoration: 'none', borderRadius: '100px' },
-  ctaSecondary: { fontSize: '12px', color: '#7A7570', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '6px' } as React.CSSProperties,
-  heroStats: { display: 'flex', gap: '40px', flexWrap: 'wrap' as const } as React.CSSProperties,
-  heroStat: { display: 'flex', flexDirection: 'column' as const, gap: '4px' } as React.CSSProperties,
-  heroStatNum: { fontFamily: 'Cormorant Garamond, Georgia, serif', fontSize: '32px', fontWeight: 400, color: '#1C1C1A', lineHeight: 1 } as React.CSSProperties,
-  heroStatLabel: { fontSize: '11px', letterSpacing: '0.15em', textTransform: 'uppercase' as const, color: '#7A7570' },
-  section: { padding: '80px 32px', maxWidth: '1080px', margin: '0 auto' } as React.CSSProperties,
-  sectionTag: { fontSize: '11px', letterSpacing: '0.25em', textTransform: 'uppercase' as const, color: '#7A7570', marginBottom: '16px' },
-  sectionTitle: { fontFamily: 'Cormorant Garamond, Georgia, serif', fontSize: 'clamp(32px, 4vw, 48px)', fontWeight: 300, color: '#1C1C1A', lineHeight: 1.2, marginBottom: '16px' } as React.CSSProperties,
-  sectionSub: { fontSize: '15px', color: '#7A7570', lineHeight: 1.7, maxWidth: '520px', fontWeight: 300 } as React.CSSProperties,
-  divider: { borderTop: '1px solid #CEC8BF', margin: '0 40px' } as React.CSSProperties,
-  card: { backgroundColor: '#E5DED5', borderRadius: '20px', padding: '36px 32px', border: '1px solid #CEC8BF' } as React.CSSProperties,
-  cardLight: { backgroundColor: '#F7F4F0', borderRadius: '20px', padding: '36px 32px', border: '1px solid #CEC8BF' } as React.CSSProperties,
-  cardDark: { backgroundColor: '#1C1C1A', borderRadius: '20px', padding: '36px 32px' } as React.CSSProperties,
+// ─── Design tokens ───────────────────────────────────────────────────────────
+const tk = {
+  ink:       '#0A0A0B',
+  inkSoft:   '#4B5563',
+  inkMuted:  '#9CA3AF',
+  white:     '#FFFFFF',
+  surface:   '#F9FAFB',
+  surfaceAlt:'#F3F4F6',
+  border:    '#E5E7EB',
+  green:     '#16A34A',
+  greenBg:   '#F0FDF4',
+  blue:      '#2563EB',
+  blueBg:    '#EFF6FF',
+  font:      'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
 };
 
-const features = [
-  { icon: '📄', title: 'Contrat généré en 1 clic', desc: 'Vos données client remplissent automatiquement votre template. Export PDF instantané, aucune saisie manuelle.' },
-  { icon: '📧', title: 'Email pro envoyé automatiquement', desc: 'Email personnalisé avec contrat, règlement intérieur et RIB en pièces jointes — envoyé dès que vous validez.' },
-  { icon: '📅', title: 'Réservations centralisées', desc: 'Toutes vos réservations dans un seul tableau de bord. Statuts, dates, montants, options — tout visible d\'un coup d\'œil.' },
-  { icon: '⚙️', title: 'Adapté à votre gîte', desc: 'Configurez vos options (bain nordique, draps, serviettes), vos tarifs et votre template une seule fois.' },
-  { icon: '🗂️', title: 'Documents centralisés', desc: 'Importez votre RIB, règlement intérieur et tout document utile. Ils sont automatiquement joints aux emails envoyés.' },
-  { icon: '🔔', title: 'Suivi des acomptes', desc: 'Marquez les acomptes reçus, générez les contrats signés et gardez un historique complet de chaque séjour.' },
-];
-
-const steps = [
-  { num: '01', title: 'Saisissez la réservation', desc: 'Renseignez les informations du locataire, les dates et les options choisies en moins de 2 minutes.' },
-  { num: '02', title: 'Générez le contrat', desc: 'Un clic, et le contrat est rempli, exporté en PDF et prêt à être envoyé.' },
-  { num: '03', title: 'Envoyez à votre locataire', desc: 'L\'email professionnel avec toutes les pièces jointes part automatiquement. C\'est tout.' },
-];
-
-const testimonials = [
-  { quote: "Avant je passais 30 minutes par réservation entre le contrat Word, le PDF, et l'email. Maintenant c'est 2 minutes. Je ne reviendrais jamais en arrière.", name: 'Marie-Hélène', gite: 'Le Clos du Marida, Haute-Loire', initials: 'MH' },
-  { quote: "Simple, rapide, et les contrats sont vraiment professionnels. Mes locataires m'ont fait des retours positifs sur l'email de confirmation.", name: 'Thierry', gite: 'Gîte La Forêt Bleue, Ardèche', initials: 'T' },
-  { quote: "J'ai 3 gîtes et la gestion administrative me prenait des heures chaque semaine. Maintenant c'est réglé. L'outil est vraiment pensé pour nous.", name: 'Sophie', gite: 'Les Gîtes du Plateau, Aveyron', initials: 'S' },
-];
-
-const personas = [
-  { emoji: '🏡', title: 'Gérant de gîte indépendant', desc: 'Vous louez votre gîte en direct, sans passer par Airbnb. Vous gérez vos contrats vous-même et perdez du temps à chaque réservation.' },
-  { emoji: '📋', title: 'Loueur avec contrat légal', desc: 'Vous avez un template de contrat que vous remplissez à la main à chaque fois. Vous cherchez à automatiser sans tout réapprendre.' },
-  { emoji: '👨‍👩‍👧', title: 'Petite structure familiale', desc: 'Vous avez 1 à 3 propriétés et pas besoin d\'un logiciel à 150 €/mois. Vous voulez un outil simple qui fait exactement ce qu\'il faut.' },
-];
-
-function SectionHeader({ tag, title, sub, center = false }: { tag: string; title: React.ReactNode; sub?: string; center?: boolean }) {
+// ─── App preview mockup ──────────────────────────────────────────────────────
+function AppPreview() {
+  const rows = [
+    { name: 'Marie Dupont',  dates: '14–17 juil.', amount: '720 €',   signed: true },
+    { name: 'Pierre Martin', dates: '20–25 juil.', amount: '1 080 €', signed: false },
+    { name: 'Julie Blanc',   dates: '1–8 août',    amount: '960 €',   signed: true },
+  ];
   return (
-    <div style={{ textAlign: center ? 'center' : 'left', marginBottom: '48px' }}>
-      <p style={S.sectionTag}>{tag}</p>
-      <h2 style={S.sectionTitle}>{title}</h2>
-      {sub && <p style={{ ...S.sectionSub, margin: center ? '0 auto' : undefined }}>{sub}</p>}
+    <div style={{ background: '#111113', borderRadius: '14px', overflow: 'hidden', border: '1px solid #1F1F23', boxShadow: '0 32px 80px rgba(0,0,0,0.5)', fontFamily: tk.font }}>
+      {/* Browser chrome */}
+      <div style={{ background: '#18181B', padding: '10px 16px', display: 'flex', alignItems: 'center', gap: '8px', borderBottom: '1px solid #27272A' }}>
+        <div style={{ display: 'flex', gap: '5px' }}>
+          {['#EF4444','#F59E0B','#22C55E'].map(c => (
+            <div key={c} style={{ width: 10, height: 10, borderRadius: '50%', background: c, opacity: 0.7 }} />
+          ))}
+        </div>
+        <div style={{ background: '#27272A', borderRadius: '5px', padding: '3px 12px', marginLeft: '8px', flex: 1, maxWidth: '180px' }}>
+          <span style={{ fontSize: '10px', color: '#52525B' }}>prysme.fr/dashboard</span>
+        </div>
+      </div>
+      {/* Layout */}
+      <div style={{ display: 'grid', gridTemplateColumns: '150px 1fr' }}>
+        {/* Sidebar */}
+        <div style={{ background: '#09090B', borderRight: '1px solid #1F1F23', padding: '16px 12px', display: 'flex', flexDirection: 'column', gap: '2px' }}>
+          <div style={{ fontSize: '12px', fontWeight: 700, color: '#FFFFFF', padding: '4px 8px', marginBottom: '12px', letterSpacing: '-0.01em' }}>Prysme</div>
+          {[
+            { label: 'Tableau de bord', active: true },
+            { label: 'Réservations',    active: false },
+            { label: 'Établissement',   active: false },
+            { label: 'Paramètres',      active: false },
+          ].map(item => (
+            <div key={item.label} style={{ padding: '6px 8px', borderRadius: '6px', background: item.active ? '#18181B' : 'transparent', cursor: 'default' }}>
+              <span style={{ fontSize: '11px', color: item.active ? '#FAFAFA' : '#52525B', fontWeight: item.active ? 500 : 400 }}>{item.label}</span>
+            </div>
+          ))}
+        </div>
+        {/* Content */}
+        <div style={{ padding: '16px', background: '#09090B', minHeight: '240px' }}>
+          <div style={{ fontSize: '13px', fontWeight: 600, color: '#FAFAFA', marginBottom: '14px', letterSpacing: '-0.01em' }}>Tableau de bord</div>
+          {/* Stats */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px', marginBottom: '14px' }}>
+            {[{ v: '12', l: 'Réservations' }, { v: '3', l: 'En attente' }, { v: '2 260 €', l: 'Ce mois' }].map(s => (
+              <div key={s.l} style={{ background: '#111113', borderRadius: '7px', padding: '8px 10px', border: '1px solid #1F1F23' }}>
+                <div style={{ fontSize: '15px', fontWeight: 700, color: '#FAFAFA', lineHeight: 1 }}>{s.v}</div>
+                <div style={{ fontSize: '9px', color: '#52525B', marginTop: '3px', fontWeight: 400 }}>{s.l}</div>
+              </div>
+            ))}
+          </div>
+          {/* Rows */}
+          {rows.map((row, i) => (
+            <div key={row.name} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '7px 0', borderBottom: i < 2 ? '1px solid #18181B' : 'none' }}>
+              <div>
+                <div style={{ fontSize: '11px', color: '#E4E4E7', fontWeight: 500 }}>{row.name}</div>
+                <div style={{ fontSize: '9px', color: '#52525B', marginTop: '2px' }}>{row.dates}</div>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <span style={{ fontSize: '10px', color: '#71717A' }}>{row.amount}</span>
+                <span style={{ fontSize: '9px', padding: '2px 6px', borderRadius: '100px', background: row.signed ? '#14532D' : '#1C1917', color: row.signed ? '#86EFAC' : '#78716C', fontWeight: 500 }}>
+                  {row.signed ? 'Signé' : 'Attente'}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
 
+// ─── Shared Nav ──────────────────────────────────────────────────────────────
+function Nav({ theme = 'light' }: { theme?: 'light' | 'dark' }) {
+  const bg = theme === 'dark' ? tk.ink : tk.white;
+  const logo = theme === 'dark' ? tk.white : tk.ink;
+  const link = theme === 'dark' ? '#6B7280' : tk.inkSoft;
+  const ctaBg = theme === 'dark' ? tk.white : tk.ink;
+  const ctaColor = theme === 'dark' ? tk.ink : tk.white;
+  return (
+    <nav style={{ background: bg, padding: '0 40px', height: '60px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: `1px solid ${theme === 'dark' ? '#1F1F23' : tk.border}` }}>
+      <Link href="/" style={{ fontSize: '16px', fontWeight: 700, color: logo, textDecoration: 'none', letterSpacing: '-0.03em', fontFamily: tk.font }}>Prysme</Link>
+      <div className="nav-links" style={{ display: 'flex', alignItems: 'center', gap: '28px' }}>
+        <a href="#fonctionnalites" style={{ fontSize: '13px', color: link, textDecoration: 'none', fontFamily: tk.font, fontWeight: 400 }}>Fonctionnalités</a>
+        <a href="#tarifs" style={{ fontSize: '13px', color: link, textDecoration: 'none', fontFamily: tk.font, fontWeight: 400 }}>Tarifs</a>
+        <Link href="/sign-in" style={{ fontSize: '13px', color: link, textDecoration: 'none', fontFamily: tk.font, fontWeight: 400 }}>Connexion</Link>
+        <Link href="/sign-up" style={{ fontSize: '13px', fontWeight: 500, padding: '8px 18px', background: ctaBg, color: ctaColor, textDecoration: 'none', borderRadius: '8px', fontFamily: tk.font }}>
+          Démarrer gratuitement
+        </Link>
+      </div>
+      <Link href="/sign-up" className="nav-cta-mobile" style={{ display: 'none', fontSize: '13px', fontWeight: 500, padding: '8px 16px', background: ctaBg, color: ctaColor, textDecoration: 'none', borderRadius: '8px', fontFamily: tk.font }}>
+        Démarrer
+      </Link>
+    </nav>
+  );
+}
+
+// ─── Data ────────────────────────────────────────────────────────────────────
+const features = [
+  { icon: '⚡', title: 'Contrat en 1 clic', desc: 'Saisie une fois, contrat PDF généré instantanément avec toutes les données pré-remplies.' },
+  { icon: '📬', title: 'Email automatique', desc: 'Contrat, RIB et règlement intérieur envoyés au locataire dès validation. Zéro oubli.' },
+  { icon: '✍️', title: 'Signature en ligne', desc: 'Le locataire signe depuis son téléphone. Horodaté, légalement valide, sans impression.' },
+  { icon: '📊', title: 'Suivi en temps réel', desc: 'Statuts, acomptes, dates — tout est visible d\'un coup d\'œil dans votre dashboard.' },
+  { icon: '🗂️', title: 'Documents centralisés', desc: 'RIB, règlement intérieur et logos stockés une fois, joints automatiquement à chaque email.' },
+  { icon: '🔔', title: 'Rappels acompte', desc: 'Relancez vos locataires pour l\'acompte en un clic. Le mail part avec le contrat joint.' },
+];
+
+const steps = [
+  { n: '01', title: 'Configurez votre gîte', desc: 'Renseignez votre établissement, importez votre logo et vos documents. 5 minutes, une seule fois.' },
+  { n: '02', title: 'Saisissez la réservation', desc: 'Nom, dates, loyer, options. Tout centralisé dans une fiche en moins de 2 minutes.' },
+  { n: '03', title: 'Le contrat part tout seul', desc: 'Cliquez "Envoyer". Le PDF est généré et l\'email professionnel part automatiquement.' },
+];
+
+const testimonials = [
+  { quote: "Avant je passais 30 minutes par réservation. Maintenant c'est 2 minutes. Je ne reviendrais jamais en arrière.", name: 'Marie-Hélène', role: 'Le Clos du Marida, Haute-Loire' },
+  { quote: "Les contrats sont vraiment professionnels. Mes locataires m'ont fait des retours positifs sur l'email de confirmation.", name: 'Thierry', role: 'Gîte La Forêt Bleue, Ardèche' },
+  { quote: "J'ai 3 gîtes et la gestion administrative me prenait des heures. Maintenant c'est réglé en quelques clics.", name: 'Sophie', role: 'Les Gîtes du Plateau, Aveyron' },
+];
+
+// ─── Page ────────────────────────────────────────────────────────────────────
 export default function Home() {
   return (
     <>
       <style>{`
-        .lp-nav-links { display: flex; align-items: center; gap: 32px; }
-        .lp-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-        .lp-grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
-        .lp-hero-stats { display: flex; gap: 40px; flex-wrap: wrap; }
-        .lp-footer { padding: 32px 40px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
-        .lp-footer-links { display: flex; gap: 24px; align-items: center; flex-wrap: wrap; }
-        .lp-hero-ctas { display: flex; align-items: center; flex-wrap: wrap; gap: 16px; margin-bottom: 60px; }
+        * { box-sizing: border-box; }
+        .nav-links { display: flex; }
+        .nav-cta-mobile { display: none !important; }
+        .hero-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; }
+        .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; }
+        .steps-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
+        .testimonials-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        .trust-grid { display: flex; gap: 32px; justify-content: center; flex-wrap: wrap; }
+        .footer-inner { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+        .footer-links { display: flex; gap: 24px; flex-wrap: wrap; align-items: center; }
 
         @media (max-width: 1024px) {
-          .lp-grid-3 { grid-template-columns: repeat(2, 1fr); }
+          .features-grid { grid-template-columns: repeat(2, 1fr); }
+          .hero-grid { gap: 40px; }
         }
-
         @media (max-width: 768px) {
-          .lp-nav-links { display: none; }
-          .lp-nav-cta-mobile { display: inline-block !important; }
-          .lp-grid-3 { grid-template-columns: 1fr; }
-          .lp-grid-2 { grid-template-columns: 1fr; }
-          .lp-hero-stats { gap: 24px; }
-          .lp-section { padding: 56px 20px !important; }
-          .lp-hero { padding: 48px 20px 56px !important; }
-          .lp-nav { padding: 16px 20px !important; }
-          .lp-divider { margin: 0 20px !important; }
-          .lp-footer { padding: 24px 20px; flex-direction: column; align-items: flex-start; gap: 20px; }
-          .lp-footer-links { gap: 16px; }
-          .lp-pricing-wrap { padding: 0 20px; }
-          .lp-cta-section { padding: 56px 20px !important; }
-        }
-
-        @media (max-width: 480px) {
-          .lp-hero-ctas { flex-direction: column; align-items: flex-start; }
+          .nav-links { display: none !important; }
+          .nav-cta-mobile { display: block !important; }
+          .hero-grid { grid-template-columns: 1fr; gap: 40px; }
+          .features-grid { grid-template-columns: 1fr; }
+          .steps-grid { grid-template-columns: 1fr; gap: 16px; }
+          .testimonials-grid { grid-template-columns: 1fr; }
+          .trust-grid { gap: 16px; }
+          .lp-section-pad { padding: 64px 24px !important; }
+          .lp-hero-pad { padding: 56px 24px 64px !important; }
+          .footer-inner { flex-direction: column; align-items: flex-start; }
+          .footer-links { gap: 16px; }
         }
       `}</style>
 
-      <main style={S.page}>
+      <main style={{ fontFamily: tk.font, backgroundColor: tk.white, color: tk.ink }}>
 
         {/* ── Nav ── */}
-        <nav style={S.nav} className="lp-nav">
-          <Link href="/" style={S.navLogo}>Prysme</Link>
-          <div className="lp-nav-links">
-            <a href="#comment-ca-marche" style={S.navLink}>Comment ça marche</a>
-            <a href="#tarifs" style={S.navLink}>Tarifs</a>
-            <Link href="/sign-in" style={S.navLink}>Se connecter</Link>
-            <Link href="/sign-up" style={S.navCta}>Essai gratuit →</Link>
-          </div>
-          {/* CTA mobile only */}
-          <Link href="/sign-up" style={{ ...S.navCta, display: 'none' }} className="lp-nav-cta-mobile">
-            Essai gratuit →
-          </Link>
-        </nav>
+        <Nav theme="dark" />
 
         {/* ── Hero ── */}
-        <section style={S.heroSection} className="lp-hero">
-          <div style={S.heroBadge}>
-            <span style={S.heroDot} />
-            Automatisation · Gîtes &amp; Locations saisonnières
-          </div>
-          <h1 style={S.heroTitle}>
-            Vos contrats de location,<br />
-            <em>générés et envoyés</em><br />
-            en un clic.
-          </h1>
-          <p style={S.heroSub}>
-            Fini les contrats remplis à la main, les PDF oubliés, les emails mal construits.
-            Prysme automatise toute la paperasse pour que vous vous concentriez sur vos locataires.
-          </p>
-          <div className="lp-hero-ctas">
-            <Link href="/sign-up" style={S.ctaPrimary}>Essayer gratuitement 30 jours →</Link>
-            <a href="#comment-ca-marche" style={S.ctaSecondary}>
-              Voir comment ça marche ↓
-            </a>
-          </div>
-          <div className="lp-hero-stats">
-            {[
-              { num: '2 min', label: 'par réservation' },
-              { num: '-95%', label: "d'administratif" },
-              { num: '30 jours', label: 'gratuits, sans CB' },
-            ].map((s) => (
-              <div key={s.label} style={S.heroStat}>
-                <span style={S.heroStatNum}>{s.num}</span>
-                <span style={S.heroStatLabel}>{s.label}</span>
-              </div>
-            ))}
-          </div>
-        </section>
+        <section style={{ background: tk.ink, padding: '72px 40px 80px' }} className="lp-hero-pad">
+          <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+            <div className="hero-grid">
 
-        <hr style={S.divider} className="lp-divider" />
-
-        {/* ── Pour qui ── */}
-        <section style={S.section} className="lp-section">
-          <SectionHeader
-            tag="— Pour qui ?"
-            title={<>Fait pour les gérants<br /><em>qui gèrent tout eux-mêmes.</em></>}
-            sub="Prysme n'est pas un PMS à 150 €/mois avec 50 fonctions inutiles. C'est un outil simple, focalisé sur un seul problème : votre administratif de location."
-          />
-          <div className="lp-grid-3">
-            {personas.map((p) => (
-              <div key={p.title} style={S.card}>
-                <div style={{ fontSize: '32px', marginBottom: '20px' }}>{p.emoji}</div>
-                <h3 style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', fontSize: '22px', fontWeight: 400, color: '#1C1C1A', marginBottom: '12px' }}>{p.title}</h3>
-                <p style={{ fontSize: '13px', color: '#7A7570', lineHeight: 1.75, margin: 0 }}>{p.desc}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        <hr style={S.divider} className="lp-divider" />
-
-        {/* ── Comment ça marche ── */}
-        <section id="comment-ca-marche" style={S.section} className="lp-section">
-          <SectionHeader
-            tag="— Comment ça marche"
-            title={<>3 étapes,<br /><em>et c&apos;est réglé.</em></>}
-            sub="Pas besoin de formation. Vous saisissez, vous cliquez, le contrat part."
-          />
-          <div className="lp-grid-3">
-            {steps.map((step) => (
-              <div key={step.num} style={{ ...S.cardLight, position: 'relative', overflow: 'hidden' }}>
-                <p style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', fontSize: '64px', fontWeight: 300, color: '#CEC8BF', lineHeight: 1, marginBottom: '16px', letterSpacing: '-0.02em' }}>{step.num}</p>
-                <h3 style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', fontSize: '22px', fontWeight: 400, color: '#1C1C1A', marginBottom: '12px' }}>{step.title}</h3>
-                <p style={{ fontSize: '13px', color: '#7A7570', lineHeight: 1.75, margin: 0 }}>{step.desc}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        <hr style={S.divider} className="lp-divider" />
-
-        {/* ── Fonctionnalités ── */}
-        <section style={S.section} className="lp-section">
-          <SectionHeader
-            tag="— Fonctionnalités"
-            title={<>Tout ce qu&apos;il faut,<br /><em>rien de superflu.</em></>}
-          />
-          <div className="lp-grid-3">
-            {features.map((f) => (
-              <div key={f.title} style={{ ...S.card, display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                <span style={{ fontSize: '24px' }}>{f.icon}</span>
-                <h3 style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', fontSize: '20px', fontWeight: 400, color: '#1C1C1A', margin: 0 }}>{f.title}</h3>
-                <p style={{ fontSize: '13px', color: '#7A7570', lineHeight: 1.75, margin: 0 }}>{f.desc}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        <hr style={S.divider} className="lp-divider" />
-
-        {/* ── Témoignages ── */}
-        <section style={S.section} className="lp-section">
-          <SectionHeader
-            tag="— Retours utilisateurs"
-            title={<>Ce que disent<br /><em>les gérants.</em></>}
-            center
-          />
-          <div className="lp-grid-3">
-            {testimonials.map((t) => (
-              <div key={t.name} style={{ ...S.cardLight, display: 'flex', flexDirection: 'column', gap: '24px' }}>
-                <p style={{ fontSize: '14px', color: '#1C1C1A', lineHeight: 1.8, fontStyle: 'italic', margin: 0, flexGrow: 1 }}>
-                  &ldquo;{t.quote}&rdquo;
+              {/* Text */}
+              <div>
+                <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: '#18181B', border: '1px solid #27272A', borderRadius: '100px', padding: '5px 12px 5px 6px', marginBottom: '32px' }}>
+                  <span style={{ background: tk.blue, color: tk.white, fontSize: '10px', fontWeight: 600, padding: '2px 8px', borderRadius: '100px', letterSpacing: '0.04em' }}>NOUVEAU</span>
+                  <span style={{ fontSize: '12px', color: '#9CA3AF' }}>Essai 30 jours · Aucune CB requise</span>
+                </div>
+                <h1 style={{ fontFamily: tk.font, fontSize: 'clamp(36px, 5vw, 62px)', fontWeight: 800, color: tk.white, lineHeight: 1.05, marginBottom: '24px', letterSpacing: '-0.03em' }}>
+                  Vos contrats de<br />location, générés<br />en 2&nbsp;minutes.
+                </h1>
+                <p style={{ fontSize: '17px', color: '#9CA3AF', lineHeight: 1.7, marginBottom: '40px', maxWidth: '440px', fontWeight: 400 }}>
+                  Fini les contrats Word, les PDF oubliés, les emails bancals.
+                  Prysme automatise toute la paperasse administrative de votre gîte.
                 </p>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-                  <div style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: '#CEC8BF', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '13px', fontWeight: 500, color: '#1C1C1A', flexShrink: 0 }}>
-                    {t.initials}
-                  </div>
-                  <div>
-                    <p style={{ fontSize: '13px', fontWeight: 500, color: '#1C1C1A', margin: 0 }}>{t.name}</p>
-                    <p style={{ fontSize: '11px', color: '#7A7570', margin: 0 }}>{t.gite}</p>
-                  </div>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', marginBottom: '48px' }}>
+                  <Link href="/sign-up" style={{ fontSize: '14px', fontWeight: 600, padding: '12px 24px', background: tk.white, color: tk.ink, textDecoration: 'none', borderRadius: '8px', letterSpacing: '-0.01em' }}>
+                    Démarrer gratuitement →
+                  </Link>
+                  <a href="#comment-ca-marche" style={{ fontSize: '14px', fontWeight: 400, padding: '12px 24px', background: 'transparent', color: '#9CA3AF', textDecoration: 'none', borderRadius: '8px', border: '1px solid #27272A' }}>
+                    Voir comment ça marche
+                  </a>
+                </div>
+                <div style={{ display: 'flex', gap: '36px', flexWrap: 'wrap' }}>
+                  {[{ v: '2 min', l: 'par réservation' }, { v: '−95%', l: "d'administratif" }, { v: '30 j', l: 'gratuits, sans CB' }].map(s => (
+                    <div key={s.l}>
+                      <div style={{ fontSize: '26px', fontWeight: 700, color: tk.white, letterSpacing: '-0.03em', lineHeight: 1 }}>{s.v}</div>
+                      <div style={{ fontSize: '12px', color: '#6B7280', marginTop: '4px', fontWeight: 400 }}>{s.l}</div>
+                    </div>
+                  ))}
                 </div>
               </div>
-            ))}
-          </div>
-        </section>
 
-        <hr style={S.divider} className="lp-divider" />
-
-        {/* ── Réassurance RGPD ── */}
-        <section style={{ ...S.section, paddingBottom: '48px' }} className="lp-section">
-          <div style={{ display: 'flex', gap: '24px', flexWrap: 'wrap', justifyContent: 'center' }}>
-            {[
-              { icon: '🔒', label: 'Données hébergées en Europe' },
-              { icon: '🇫🇷', label: 'Conforme RGPD' },
-              { icon: '🚫', label: 'Sans engagement' },
-              { icon: '💳', label: 'Sans CB pour l\'essai' },
-            ].map((item) => (
-              <div key={item.label} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', color: '#7A7570', backgroundColor: '#E5DED5', padding: '10px 18px', borderRadius: '100px', border: '1px solid #CEC8BF' }}>
-                <span>{item.icon}</span>
-                <span>{item.label}</span>
+              {/* Product preview */}
+              <div>
+                <AppPreview />
               </div>
-            ))}
+
+            </div>
           </div>
         </section>
 
-        <hr style={S.divider} className="lp-divider" />
+        {/* ── Trust bar ── */}
+        <section style={{ background: tk.surface, borderBottom: `1px solid ${tk.border}` }}>
+          <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '20px 40px' }}>
+            <div className="trust-grid">
+              {[
+                { icon: '🔒', label: 'Données hébergées en Europe' },
+                { icon: '🇫🇷', label: 'Conforme RGPD' },
+                { icon: '🚫', label: 'Sans engagement' },
+                { icon: '💳', label: 'Sans CB pour l\'essai' },
+                { icon: '⚡', label: 'Configuration en 5 min' },
+              ].map(item => (
+                <div key={item.label} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span style={{ fontSize: '14px' }}>{item.icon}</span>
+                  <span style={{ fontSize: '12px', color: tk.inkSoft, fontWeight: 400 }}>{item.label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── Fonctionnalités ── */}
+        <section id="fonctionnalites" style={{ background: tk.white, padding: '96px 40px' }} className="lp-section-pad">
+          <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+            <div style={{ marginBottom: '56px' }}>
+              <p style={{ fontSize: '12px', fontWeight: 600, color: tk.blue, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '12px' }}>Fonctionnalités</p>
+              <h2 style={{ fontFamily: tk.font, fontSize: 'clamp(28px, 4vw, 44px)', fontWeight: 800, color: tk.ink, letterSpacing: '-0.03em', lineHeight: 1.1, marginBottom: '16px', maxWidth: '520px' }}>
+                Tout ce qu&apos;il faut.<br />Rien de plus.
+              </h2>
+              <p style={{ fontSize: '16px', color: tk.inkSoft, fontWeight: 400, maxWidth: '480px', lineHeight: 1.6 }}>
+                Un outil focalisé sur un seul problème : l&apos;administratif de votre location saisonnière.
+              </p>
+            </div>
+            <div className="features-grid" style={{ border: `1px solid ${tk.border}`, borderRadius: '12px', overflow: 'hidden' }}>
+              {features.map((f, i) => (
+                <div key={f.title} style={{ padding: '32px', borderRight: i % 3 !== 2 ? `1px solid ${tk.border}` : 'none', borderBottom: i < 3 ? `1px solid ${tk.border}` : 'none', background: tk.white }}>
+                  <div style={{ fontSize: '22px', marginBottom: '16px' }}>{f.icon}</div>
+                  <h3 style={{ fontFamily: tk.font, fontSize: '15px', fontWeight: 600, color: tk.ink, marginBottom: '8px', letterSpacing: '-0.01em' }}>{f.title}</h3>
+                  <p style={{ fontSize: '13px', color: tk.inkSoft, lineHeight: 1.65, margin: 0, fontWeight: 400 }}>{f.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── Comment ça marche ── */}
+        <section id="comment-ca-marche" style={{ background: tk.surface, padding: '96px 40px', borderTop: `1px solid ${tk.border}` }} className="lp-section-pad">
+          <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+            <div style={{ marginBottom: '56px' }}>
+              <p style={{ fontSize: '12px', fontWeight: 600, color: tk.blue, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '12px' }}>Comment ça marche</p>
+              <h2 style={{ fontFamily: tk.font, fontSize: 'clamp(28px, 4vw, 44px)', fontWeight: 800, color: tk.ink, letterSpacing: '-0.03em', lineHeight: 1.1, maxWidth: '480px' }}>
+                3 étapes,<br />et c&apos;est réglé.
+              </h2>
+            </div>
+            <div className="steps-grid">
+              {steps.map((s) => (
+                <div key={s.n} style={{ background: tk.white, borderRadius: '12px', padding: '32px', border: `1px solid ${tk.border}`, display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                  <span style={{ fontSize: '11px', fontWeight: 600, color: tk.inkMuted, letterSpacing: '0.06em' }}>{s.n}</span>
+                  <h3 style={{ fontFamily: tk.font, fontSize: '17px', fontWeight: 700, color: tk.ink, letterSpacing: '-0.02em', lineHeight: 1.2 }}>{s.title}</h3>
+                  <p style={{ fontSize: '13px', color: tk.inkSoft, lineHeight: 1.65, margin: 0, fontWeight: 400 }}>{s.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── Témoignages ── */}
+        <section style={{ background: tk.white, padding: '96px 40px', borderTop: `1px solid ${tk.border}` }} className="lp-section-pad">
+          <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+            <div style={{ marginBottom: '56px' }}>
+              <p style={{ fontSize: '12px', fontWeight: 600, color: tk.blue, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '12px' }}>Retours</p>
+              <h2 style={{ fontFamily: tk.font, fontSize: 'clamp(28px, 4vw, 44px)', fontWeight: 800, color: tk.ink, letterSpacing: '-0.03em', lineHeight: 1.1 }}>
+                Ce que disent<br />les gérants.
+              </h2>
+            </div>
+            <div className="testimonials-grid">
+              {testimonials.map((t) => (
+                <div key={t.name} style={{ background: tk.surface, borderRadius: '12px', padding: '28px', border: `1px solid ${tk.border}`, display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                  <p style={{ fontSize: '14px', color: tk.ink, lineHeight: 1.7, margin: 0, flexGrow: 1, fontStyle: 'italic', fontWeight: 400 }}>
+                    &ldquo;{t.quote}&rdquo;
+                  </p>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: tk.inkSoft, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                      <span style={{ fontSize: '12px', fontWeight: 600, color: tk.white }}>{t.name[0]}</span>
+                    </div>
+                    <div>
+                      <p style={{ fontSize: '13px', fontWeight: 600, color: tk.ink, margin: 0 }}>{t.name}</p>
+                      <p style={{ fontSize: '11px', color: tk.inkMuted, margin: 0, fontWeight: 400 }}>{t.role}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
 
         {/* ── Tarifs ── */}
-        <section id="tarifs" style={{ ...S.section, textAlign: 'center' }} className="lp-section">
-          <SectionHeader
-            tag="— Tarifs"
-            title={<>Un prix simple,<br /><em>sans surprise.</em></>}
-            sub="Pas de forfait compliqué. Un abonnement mensuel, sans engagement."
-            center
-          />
-          <div style={{ maxWidth: '420px', margin: '0 auto' }} className="lp-pricing-wrap">
-            <div style={S.cardDark}>
-              <p style={{ fontSize: '11px', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#7A7570', marginBottom: '16px' }}>Abonnement mensuel</p>
-              <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px', marginBottom: '4px' }}>
-                <span style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', fontSize: '56px', fontWeight: 300, color: '#EDE8E1', lineHeight: 1 }}>9,99 €</span>
-                <span style={{ fontSize: '13px', color: '#7A7570' }}>HT/mois</span>
-              </div>
-              <p style={{ fontSize: '13px', color: '#7A7570', marginBottom: '32px' }}>Sans engagement · Résiliable à tout moment</p>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '36px' }}>
-                {[
-                  'Réservations illimitées',
-                  'Génération de contrat PDF',
-                  'Envoi email automatique',
-                  'Documents joints (RIB, règlement…)',
-                  'Suivi des acomptes',
-                  'Dashboard de suivi',
-                  'Support par email',
-                ].map((item) => (
-                  <div key={item} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <span style={{ color: '#7A7570', fontSize: '14px' }}>✓</span>
-                    <span style={{ fontSize: '13px', color: '#CEC8BF' }}>{item}</span>
+        <section id="tarifs" style={{ background: tk.surface, padding: '96px 40px', borderTop: `1px solid ${tk.border}` }} className="lp-section-pad">
+          <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+            <div style={{ textAlign: 'center', marginBottom: '56px' }}>
+              <p style={{ fontSize: '12px', fontWeight: 600, color: tk.blue, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '12px' }}>Tarifs</p>
+              <h2 style={{ fontFamily: tk.font, fontSize: 'clamp(28px, 4vw, 44px)', fontWeight: 800, color: tk.ink, letterSpacing: '-0.03em', lineHeight: 1.1, marginBottom: '12px' }}>
+                Un prix. Simple.
+              </h2>
+              <p style={{ fontSize: '16px', color: tk.inkSoft, fontWeight: 400 }}>Sans engagement. Résiliable à tout moment.</p>
+            </div>
+            <div style={{ maxWidth: '440px', margin: '0 auto' }}>
+              <div style={{ background: tk.ink, borderRadius: '16px', padding: '40px', position: 'relative', overflow: 'hidden' }}>
+                {/* Subtle gradient overlay */}
+                <div style={{ position: 'absolute', top: 0, right: 0, width: '200px', height: '200px', background: 'radial-gradient(circle, rgba(37,99,235,0.15) 0%, transparent 70%)', pointerEvents: 'none' }} />
+                <div style={{ position: 'relative' }}>
+                  <p style={{ fontSize: '11px', fontWeight: 600, color: '#6B7280', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '20px' }}>Abonnement mensuel</p>
+                  <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px', marginBottom: '4px' }}>
+                    <span style={{ fontFamily: tk.font, fontSize: '52px', fontWeight: 800, color: tk.white, letterSpacing: '-0.04em', lineHeight: 1 }}>9,99 €</span>
+                    <span style={{ fontSize: '14px', color: '#6B7280', fontWeight: 400 }}>HT / mois</span>
                   </div>
-                ))}
+                  <p style={{ fontSize: '13px', color: '#6B7280', marginBottom: '32px', fontWeight: 400 }}>Sans engagement · Résiliez quand vous voulez</p>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '32px' }}>
+                    {[
+                      'Réservations illimitées',
+                      'Génération de contrat PDF',
+                      'Envoi email automatique',
+                      'Signature électronique',
+                      'Documents centralisés (RIB, règlement…)',
+                      'Suivi des acomptes',
+                      'Support par email',
+                    ].map(item => (
+                      <div key={item} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="7" fill="#16A34A" opacity="0.2"/><path d="M4.5 7l2 2 3-3" stroke="#86EFAC" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                        <span style={{ fontSize: '13px', color: '#D1D5DB', fontWeight: 400 }}>{item}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <Link href="/sign-up" style={{ display: 'block', textAlign: 'center', fontSize: '14px', fontWeight: 600, padding: '14px', background: tk.white, color: tk.ink, textDecoration: 'none', borderRadius: '8px', letterSpacing: '-0.01em' }}>
+                    Démarrer l&apos;essai gratuit →
+                  </Link>
+                  <p style={{ fontSize: '12px', color: '#6B7280', textAlign: 'center', marginTop: '12px', marginBottom: 0, fontWeight: 400 }}>
+                    30 jours gratuits · Aucune carte bancaire requise
+                  </p>
+                </div>
               </div>
-              <Link href="/sign-up" style={{ display: 'block', textAlign: 'center', fontSize: '12px', letterSpacing: '0.12em', textTransform: 'uppercase', padding: '14px 28px', backgroundColor: '#EDE8E1', color: '#1C1C1A', textDecoration: 'none', borderRadius: '100px' }}>
-                Démarrer l&apos;essai gratuit →
-              </Link>
-              <p style={{ fontSize: '11px', color: '#7A7570', textAlign: 'center', marginTop: '12px', marginBottom: 0 }}>
-                30 jours gratuits · Aucune carte bancaire requise
-              </p>
             </div>
           </div>
         </section>
 
         {/* ── CTA final ── */}
-        <section style={{ padding: '80px 32px', backgroundColor: '#E5DED5', borderTop: '1px solid #CEC8BF', borderBottom: '1px solid #CEC8BF' }} className="lp-cta-section">
+        <section style={{ background: tk.ink, padding: '96px 40px', borderTop: `1px solid #1F1F23` }} className="lp-section-pad">
           <div style={{ maxWidth: '640px', margin: '0 auto', textAlign: 'center' }}>
-            <p style={S.sectionTag}>— Prêt à gagner du temps ?</p>
-            <h2 style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', fontSize: 'clamp(32px, 4vw, 52px)', fontWeight: 300, color: '#1C1C1A', lineHeight: 1.2, marginBottom: '24px' }}>
-              Arrêtez de perdre 30 minutes<br /><em>à chaque réservation.</em>
+            <h2 style={{ fontFamily: tk.font, fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: 800, color: tk.white, letterSpacing: '-0.03em', lineHeight: 1.1, marginBottom: '20px' }}>
+              Arrêtez de perdre<br />30 min par réservation.
             </h2>
-            <p style={{ fontSize: '15px', color: '#7A7570', lineHeight: 1.7, marginBottom: '36px' }}>
-              Rejoignez les gérants qui ont automatisé leur administratif. Configuration en 5 minutes. Aucune CB requise.
+            <p style={{ fontSize: '16px', color: '#9CA3AF', lineHeight: 1.7, marginBottom: '36px', fontWeight: 400 }}>
+              Configuration en 5 minutes. 30 jours gratuits. Aucune CB requise.
             </p>
-            <Link href="/sign-up" style={S.ctaPrimary}>
+            <Link href="/sign-up" style={{ display: 'inline-block', fontSize: '15px', fontWeight: 600, padding: '14px 32px', background: tk.white, color: tk.ink, textDecoration: 'none', borderRadius: '8px', letterSpacing: '-0.01em' }}>
               Créer mon compte gratuitement →
             </Link>
           </div>
         </section>
 
         {/* ── Footer ── */}
-        <footer className="lp-footer">
-          <Link href="/" style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', fontSize: '15px', color: '#1C1C1A', textDecoration: 'none' }}>Prysme</Link>
-          <div className="lp-footer-links">
-            <Link href="/legal/mentions-legales" style={{ fontSize: '11px', color: '#7A7570', textDecoration: 'none', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Mentions légales</Link>
-            <Link href="/legal/confidentialite" style={{ fontSize: '11px', color: '#7A7570', textDecoration: 'none', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Confidentialité</Link>
-            <Link href="/legal/cgv" style={{ fontSize: '11px', color: '#7A7570', textDecoration: 'none', letterSpacing: '0.1em', textTransform: 'uppercase' }}>CGV</Link>
-            <Link href="/sign-in" style={{ fontSize: '11px', color: '#7A7570', textDecoration: 'none', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Connexion</Link>
-            <span style={{ fontSize: '11px', color: '#7A7570' }}>© 2026 Prysme</span>
+        <footer style={{ background: tk.white, borderTop: `1px solid ${tk.border}`, padding: '24px 40px' }}>
+          <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+            <div className="footer-inner">
+              <Link href="/" style={{ fontSize: '15px', fontWeight: 700, color: tk.ink, textDecoration: 'none', letterSpacing: '-0.02em' }}>Prysme</Link>
+              <div className="footer-links">
+                <Link href="/legal/mentions-legales" style={{ fontSize: '12px', color: tk.inkMuted, textDecoration: 'none', fontWeight: 400 }}>Mentions légales</Link>
+                <Link href="/legal/confidentialite" style={{ fontSize: '12px', color: tk.inkMuted, textDecoration: 'none', fontWeight: 400 }}>Confidentialité</Link>
+                <Link href="/legal/cgv" style={{ fontSize: '12px', color: tk.inkMuted, textDecoration: 'none', fontWeight: 400 }}>CGV</Link>
+                <Link href="/sign-in" style={{ fontSize: '12px', color: tk.inkMuted, textDecoration: 'none', fontWeight: 400 }}>Connexion</Link>
+                <span style={{ fontSize: '12px', color: tk.inkMuted, fontWeight: 400 }}>© 2026 Prysme</span>
+              </div>
+            </div>
           </div>
         </footer>
 

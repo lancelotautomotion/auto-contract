@@ -1,313 +1,241 @@
 import Link from "next/link";
 import FaqAccordion from "./FaqAccordion";
 
-const nav = { padding: '20px 48px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' } as React.CSSProperties;
-const navLogo = { fontSize: '15px', fontFamily: 'Cormorant Garamond, Georgia, serif', fontWeight: 500, color: '#1C1C1A', textDecoration: 'none', letterSpacing: '0.02em' } as React.CSSProperties;
-const navLink = { fontSize: '12px', letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#7A7570', textDecoration: 'none' };
-const navCta = { fontSize: '11px', letterSpacing: '0.15em', textTransform: 'uppercase' as const, padding: '10px 22px', backgroundColor: '#1C1C1A', color: '#EDE8E1', textDecoration: 'none', borderRadius: '100px' };
-const wrap = { maxWidth: '1200px', margin: '0 auto', padding: '0 48px' } as React.CSSProperties;
-const tag = { fontSize: '11px', letterSpacing: '0.25em', textTransform: 'uppercase' as const, color: '#7A7570' };
+const tk = {
+  ink:      '#0A0A0B',
+  inkSoft:  '#4B5563',
+  inkMuted: '#9CA3AF',
+  white:    '#FFFFFF',
+  surface:  '#F9FAFB',
+  border:   '#E5E7EB',
+  blue:     '#2563EB',
+  font:     'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
+};
 
 const steps = [
   {
-    num: '01',
-    badge: '5 min · une seule fois',
+    n: '01', badge: '5 min · une seule fois',
     title: 'Configurez votre gîte',
-    desc: 'Créez votre compte, renseignez les informations de votre établissement et importez votre logo. Votre template de contrat est déjà prêt — personnalisable avec vos propres clauses en quelques clics.',
-    points: ['Nom, adresse et coordonnées du gîte', 'Logo sur le contrat PDF et dans les emails', 'Options à la carte (ménage, bain nordique…)', 'Template de contrat entièrement modifiable'],
-    visual: (
-      <div style={{ background: '#F7F4F0', borderRadius: '24px', border: '1px solid #CEC8BF', padding: '40px', height: '340px', display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: '16px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px', padding: '16px', background: '#EDE8E1', borderRadius: '12px', border: '1px solid #CEC8BF' }}>
-          <div style={{ width: '48px', height: '48px', borderRadius: '8px', background: '#CEC8BF', flexShrink: 0 }} />
-          <div style={{ flex: 1 }}>
-            <div style={{ height: '10px', background: '#1C1C1A', borderRadius: '4px', width: '60%', marginBottom: '8px' }} />
-            <div style={{ height: '8px', background: '#CEC8BF', borderRadius: '4px', width: '40%' }} />
-          </div>
-        </div>
-        {['Nom du gîte', 'Email', 'Adresse', 'Téléphone'].map((l) => (
-          <div key={l} style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <span style={{ fontSize: '11px', color: '#7A7570', width: '70px', flexShrink: 0 }}>{l}</span>
-            <div style={{ flex: 1, height: '32px', background: '#EDE8E1', borderRadius: '6px', border: '1px solid #CEC8BF' }} />
-          </div>
-        ))}
-      </div>
-    ),
+    desc: 'Créez votre compte, renseignez les informations de votre établissement, importez votre logo et vos documents. Votre template de contrat est prêt à l\'emploi.',
+    points: ['Nom, adresse et coordonnées du gîte', 'Logo sur le contrat et dans les emails', 'RIB et règlement intérieur joints automatiquement', 'Options à la carte (ménage, bain nordique…)'],
   },
   {
-    num: '02',
-    badge: '2 min · par réservation',
+    n: '02', badge: '2 min · par réservation',
     title: 'Saisissez la réservation',
-    desc: 'Pour chaque séjour, renseignez les coordonnées du locataire, les dates, le loyer et les options choisies. Tout est centralisé dans une seule fiche — rien ne s\'oublie.',
-    points: ['Prénom, nom, email, téléphone, adresse', 'Dates d\'arrivée et de départ', 'Loyer, acompte, frais de ménage, taxe de séjour', 'Options à la carte sélectionnables en un clic'],
-    visual: (
-      <div style={{ background: '#F7F4F0', borderRadius: '24px', border: '1px solid #CEC8BF', padding: '40px', height: '340px', display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: '14px' }}>
-        {[
-          { label: 'Locataire', w: '75%' },
-          { label: 'Arrivée', w: '45%' },
-          { label: 'Départ', w: '45%' },
-          { label: 'Loyer', w: '35%' },
-          { label: 'Options', w: '60%' },
-        ].map(({ label, w }) => (
-          <div key={label} style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <span style={{ fontSize: '11px', color: '#7A7570', width: '60px', flexShrink: 0 }}>{label}</span>
-            <div style={{ flex: 1, height: '32px', background: '#EDE8E1', borderRadius: '6px', border: '1px solid #CEC8BF', display: 'flex', alignItems: 'center', padding: '0 12px' }}>
-              <div style={{ height: '8px', background: '#CEC8BF', borderRadius: '3px', width: w }} />
-            </div>
-          </div>
-        ))}
-        <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '4px' }}>
-          <div style={{ background: '#1C1C1A', borderRadius: '8px', padding: '10px 24px' }}>
-            <span style={{ fontSize: '11px', color: '#EDE8E1', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Enregistrer</span>
-          </div>
-        </div>
-      </div>
-    ),
+    desc: 'Pour chaque séjour, renseignez les coordonnées du locataire, les dates, le loyer et les options. Tout centralisé dans une seule fiche.',
+    points: ['Prénom, nom, email, téléphone, adresse', 'Dates d\'arrivée et de départ', 'Loyer, acompte, frais de ménage, taxe de séjour', 'Options sélectionnables en un clic'],
   },
   {
-    num: '03',
-    badge: '1 clic · automatique',
-    title: 'Envoyez le contrat à signer',
-    desc: 'Un seul clic génère le contrat PDF avec toutes les informations pré-remplies et envoie un email professionnel au locataire avec un lien de signature sécurisé.',
-    points: ['Contrat PDF généré instantanément', 'Email avec logo et nom de votre gîte', 'Lien de signature personnel et sécurisé', 'Suivi du statut en temps réel'],
-    visual: (
-      <div style={{ background: '#F7F4F0', borderRadius: '24px', border: '1px solid #CEC8BF', padding: '40px', height: '340px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '24px' }}>
-        <div style={{ background: 'white', borderRadius: '12px', border: '1px solid #CEC8BF', padding: '20px 24px', width: '100%', boxShadow: '0 2px 12px rgba(0,0,0,0.04)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px', paddingBottom: '12px', borderBottom: '1px solid #EDE8E1' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <div style={{ width: '28px', height: '28px', background: '#EDE8E1', borderRadius: '4px' }} />
-              <div style={{ height: '8px', background: '#CEC8BF', borderRadius: '3px', width: '80px' }} />
-            </div>
-            <div style={{ height: '8px', background: '#CEC8BF', borderRadius: '3px', width: '60px' }} />
-          </div>
-          <div style={{ height: '7px', background: '#EDE8E1', borderRadius: '3px', marginBottom: '6px', width: '90%' }} />
-          <div style={{ height: '7px', background: '#EDE8E1', borderRadius: '3px', marginBottom: '6px', width: '75%' }} />
-          <div style={{ height: '7px', background: '#EDE8E1', borderRadius: '3px', width: '85%' }} />
-        </div>
-        <div style={{ background: '#1C1C1A', borderRadius: '10px', padding: '14px 32px', width: '100%', textAlign: 'center' }}>
-          <span style={{ fontSize: '12px', color: '#EDE8E1', letterSpacing: '0.12em', textTransform: 'uppercase' }}>Envoyer à signer →</span>
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#7A7570' }} />
-          <span style={{ fontSize: '12px', color: '#7A7570' }}>Email envoyé · En attente de signature</span>
-        </div>
-      </div>
-    ),
+    n: '03', badge: '1 clic · automatique',
+    title: 'Envoyez le contrat',
+    desc: 'Un clic génère le contrat PDF avec toutes les informations pré-remplies et envoie un email professionnel au locataire avec toutes les pièces jointes.',
+    points: ['Contrat PDF généré instantanément', 'Email avec logo de votre gîte', 'RIB et règlement intérieur joints', 'Suivi du statut en temps réel'],
   },
   {
-    num: '04',
-    badge: 'Côté locataire · mobile friendly',
+    n: '04', badge: 'Côté locataire · mobile',
     title: 'Le locataire signe en ligne',
-    desc: 'Votre locataire reçoit l\'email, lit le contrat dans son navigateur (sur mobile ou ordinateur) et le signe électroniquement. Aucune impression, aucun scan. La signature est horodatée pour valeur légale.',
-    points: ['Accessible depuis n\'importe quel appareil', 'Lecture du contrat complet avant signature', 'Signature en tapant son nom complet', 'Horodatage et IP enregistrés automatiquement'],
-    visual: (
-      <div style={{ background: '#F7F4F0', borderRadius: '24px', border: '1px solid #CEC8BF', padding: '40px', height: '340px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '20px' }}>
-        <div style={{ background: 'white', borderRadius: '16px', border: '1px solid #CEC8BF', padding: '20px', width: '180px', boxShadow: '0 4px 20px rgba(0,0,0,0.06)' }}>
-          <div style={{ height: '6px', background: '#EDE8E1', borderRadius: '3px', marginBottom: '6px', width: '100%' }} />
-          <div style={{ height: '6px', background: '#EDE8E1', borderRadius: '3px', marginBottom: '6px', width: '80%' }} />
-          <div style={{ height: '6px', background: '#EDE8E1', borderRadius: '3px', marginBottom: '16px', width: '90%' }} />
-          <div style={{ borderTop: '1px solid #EDE8E1', paddingTop: '12px' }}>
-            <div style={{ fontSize: '11px', color: '#7A7570', marginBottom: '6px' }}>Signature</div>
-            <div style={{ fontFamily: 'Georgia, serif', fontSize: '16px', color: '#1C1C1A', fontStyle: 'italic', borderBottom: '1px solid #1C1C1A', paddingBottom: '4px' }}>Marie D.</div>
-          </div>
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <div style={{ width: '20px', height: '20px', borderRadius: '50%', background: '#1C1C1A', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <span style={{ fontSize: '10px', color: 'white' }}>✓</span>
-          </div>
-          <span style={{ fontSize: '12px', color: '#7A7570' }}>Signé électroniquement</span>
-        </div>
-      </div>
-    ),
+    desc: 'Votre locataire reçoit l\'email, lit le contrat dans son navigateur et le signe électroniquement. Aucune impression, aucun scan.',
+    points: ['Accessible depuis n\'importe quel appareil', 'Lecture du contrat complet avant signature', 'Signature horodatée pour valeur légale', 'IP enregistrée automatiquement'],
   },
   {
-    num: '05',
-    badge: 'Automatique · immédiat',
+    n: '05', badge: 'Automatique · immédiat',
     title: 'Les deux parties reçoivent le PDF signé',
-    desc: 'Dès la signature, Prysme envoie le contrat signé en PDF à votre locataire et à vous. Le statut passe automatiquement à "Signé" dans votre tableau de bord.',
+    desc: 'Dès la signature, Prysme envoie le contrat signé en PDF au locataire et à vous. Le statut passe à "Signé" dans votre dashboard.',
     points: ['PDF signé envoyé au locataire par email', 'Copie automatique envoyée au gérant', 'Statut mis à jour dans le dashboard', 'Archivé et consultable à tout moment'],
-    visual: (
-      <div style={{ background: '#F7F4F0', borderRadius: '24px', border: '1px solid #CEC8BF', padding: '40px', height: '340px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '20px' }}>
-        <div style={{ display: 'flex', gap: '20px' }}>
-          {[{ emoji: '🏡', label: 'Gérant' }, { emoji: '👤', label: 'Locataire' }].map(({ emoji, label }) => (
-            <div key={label} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
-              <div style={{ background: 'white', borderRadius: '16px', border: '1px solid #CEC8BF', padding: '20px 24px', textAlign: 'center', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
-                <div style={{ fontSize: '28px', marginBottom: '8px' }}>{emoji}</div>
-                <div style={{ fontSize: '11px', color: '#7A7570' }}>{label}</div>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <div style={{ width: '16px', height: '16px', borderRadius: '50%', background: '#1C1C1A', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                  <span style={{ fontSize: '9px', color: 'white' }}>✓</span>
-                </div>
-                <span style={{ fontSize: '11px', color: '#7A7570' }}>PDF reçu</span>
-              </div>
-            </div>
-          ))}
-        </div>
-        <div style={{ background: '#E5DED5', borderRadius: '10px', padding: '12px 20px', border: '1px solid #CEC8BF', display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <span style={{ fontSize: '12px', color: '#1C1C1A' }}>Statut :</span>
-          <span style={{ fontSize: '11px', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#1C1C1A', fontWeight: 500 }}>✓ Signé</span>
-        </div>
-      </div>
-    ),
   },
 ];
 
 export default function CommentCaMarche() {
   return (
-    <main style={{ minHeight: '100vh', backgroundColor: '#EDE8E1', fontFamily: 'Inter, sans-serif' }}>
+    <>
+      <style>{`
+        * { box-sizing: border-box; }
+        .ccm-nav-links { display: flex; align-items: center; gap: 28px; }
+        .ccm-nav-cta-mobile { display: none !important; }
+        .ccm-hero-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; }
+        .ccm-step-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; }
+        .ccm-faq-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 80px; align-items: start; }
 
-      {/* Nav */}
-      <nav style={nav}>
-        <Link href="/" style={navLogo}>Prysme</Link>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '32px' }}>
-          <Link href="/" style={navLink}>Accueil</Link>
-          <Link href="/comment-ca-marche" style={{ ...navLink, color: '#1C1C1A' }}>Comment ça marche</Link>
-          <a href="/#tarifs" style={navLink}>Tarifs</a>
-          <Link href="/sign-in" style={navLink}>Se connecter</Link>
-          <Link href="/sign-up" style={navCta}>Démarrer →</Link>
-        </div>
-      </nav>
+        @media (max-width: 900px) {
+          .ccm-hero-grid { grid-template-columns: 1fr; gap: 40px; }
+          .ccm-step-grid { grid-template-columns: 1fr; gap: 32px; }
+          .ccm-faq-grid { grid-template-columns: 1fr; gap: 32px; }
+        }
+        @media (max-width: 768px) {
+          .ccm-nav-links { display: none !important; }
+          .ccm-nav-cta-mobile { display: block !important; }
+          .ccm-pad { padding-left: 24px !important; padding-right: 24px !important; }
+        }
+      `}</style>
 
-      {/* Hero */}
-      <section style={{ borderBottom: '1px solid #CEC8BF' }}>
-        <div style={{ ...wrap, padding: '80px 48px 100px' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '80px', alignItems: 'center' }}>
+      <main style={{ minHeight: '100vh', backgroundColor: tk.white, fontFamily: tk.font, color: tk.ink }}>
 
-            {/* Texte */}
-            <div>
-              <p style={{ ...tag, marginBottom: '20px' }}>— Comment ça marche</p>
-              <h1 style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', fontSize: 'clamp(40px, 5vw, 68px)', fontWeight: 300, color: '#1C1C1A', lineHeight: 1.05, marginBottom: '28px', letterSpacing: '-0.01em' }}>
-                De la réservation<br />au contrat signé,<br /><em>en moins de 3 minutes.</em>
-              </h1>
-              <p style={{ fontSize: '16px', color: '#7A7570', lineHeight: 1.8, fontWeight: 300, marginBottom: '48px' }}>
-                Prysme automatise tout ce qui suit une réservation. Voici exactement comment ça se passe, étape par étape.
-              </p>
-              <div style={{ display: 'flex', gap: '40px', flexWrap: 'wrap' }}>
-                {[{ num: '5 min', label: 'de configuration initiale' }, { num: '2 min', label: 'par réservation' }, { num: '1 clic', label: 'pour envoyer le contrat' }].map(s => (
-                  <div key={s.label}>
-                    <div style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', fontSize: '36px', fontWeight: 300, color: '#1C1C1A', lineHeight: 1 }}>{s.num}</div>
-                    <div style={{ fontSize: '12px', color: '#7A7570', marginTop: '4px', letterSpacing: '0.05em' }}>{s.label}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Visuel — mini flow */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              {[
-                { step: '01', label: 'Réservation enregistrée', sub: 'Marie Dupont · 3 nuits · 14 juillet', status: null },
-                { step: '02', label: 'Contrat généré & envoyé', sub: 'PDF · lien de signature sécurisé', status: null },
-                { step: '03', label: 'Contrat signé', sub: 'Les deux parties reçoivent le PDF', status: 'Signé' },
-              ].map(({ step, label, sub, status }, i) => (
-                <div key={step} style={{ position: 'relative' }}>
-                  {i < 2 && (
-                    <div style={{ position: 'absolute', left: '19px', top: '48px', width: '1px', height: '28px', background: '#CEC8BF' }} />
-                  )}
-                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: '16px', background: i === 2 ? '#E5DED5' : 'white', borderRadius: '14px', border: '1px solid #CEC8BF', padding: '20px 24px', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
-                    <div style={{ width: '38px', height: '38px', borderRadius: '50%', background: i === 2 ? '#1C1C1A' : '#EDE8E1', border: '1px solid #CEC8BF', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                      <span style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', fontSize: '13px', color: i === 2 ? '#EDE8E1' : '#7A7570' }}>{step}</span>
-                    </div>
-                    <div style={{ flex: 1 }}>
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
-                        <span style={{ fontSize: '14px', color: '#1C1C1A', fontWeight: 500 }}>{label}</span>
-                        {status && (
-                          <span style={{ fontSize: '10px', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#1C1C1A', background: '#CEC8BF', padding: '3px 10px', borderRadius: '100px' }}>{status}</span>
-                        )}
-                      </div>
-                      <div style={{ fontSize: '12px', color: '#7A7570', marginTop: '4px' }}>{sub}</div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-
+        {/* ── Nav ── */}
+        <nav style={{ background: tk.ink, padding: '0 40px', height: '60px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #1F1F23' }} className="ccm-pad">
+          <Link href="/" style={{ fontSize: '16px', fontWeight: 700, color: tk.white, textDecoration: 'none', letterSpacing: '-0.03em' }}>Prysme</Link>
+          <div className="ccm-nav-links">
+            <Link href="/" style={{ fontSize: '13px', color: '#6B7280', textDecoration: 'none', fontWeight: 400 }}>Accueil</Link>
+            <a href="/#tarifs" style={{ fontSize: '13px', color: '#6B7280', textDecoration: 'none', fontWeight: 400 }}>Tarifs</a>
+            <Link href="/sign-in" style={{ fontSize: '13px', color: '#6B7280', textDecoration: 'none', fontWeight: 400 }}>Connexion</Link>
+            <Link href="/sign-up" style={{ fontSize: '13px', fontWeight: 600, padding: '8px 18px', background: tk.white, color: tk.ink, textDecoration: 'none', borderRadius: '8px' }}>
+              Démarrer gratuitement
+            </Link>
           </div>
-        </div>
-      </section>
+          <Link href="/sign-up" className="ccm-nav-cta-mobile" style={{ display: 'none', fontSize: '13px', fontWeight: 600, padding: '8px 16px', background: tk.white, color: tk.ink, textDecoration: 'none', borderRadius: '8px' }}>
+            Démarrer
+          </Link>
+        </nav>
 
-      {/* Étapes */}
-      {steps.map((step, i) => (
-        <section
-          key={step.num}
-          style={{ backgroundColor: i % 2 === 0 ? '#EDE8E1' : '#E5DED5', borderBottom: '1px solid #CEC8BF' }}
-        >
-          <div style={{ ...wrap, padding: '80px 48px' }}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '80px', alignItems: 'center' }}>
-
-              {/* Texte — alterne gauche/droite */}
-              <div style={{ order: i % 2 === 0 ? 0 : 1 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '28px' }}>
-                  <span style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', fontSize: '72px', fontWeight: 300, color: '#CEC8BF', lineHeight: 1 }}>{step.num}</span>
-                  <span style={{ fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#7A7570', backgroundColor: i % 2 === 0 ? '#E5DED5' : '#EDE8E1', padding: '5px 14px', borderRadius: '100px', border: '1px solid #CEC8BF' }}>{step.badge}</span>
-                </div>
-                <h2 style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', fontSize: 'clamp(28px, 3vw, 40px)', fontWeight: 400, color: '#1C1C1A', marginBottom: '20px', lineHeight: 1.2 }}>{step.title}</h2>
-                <p style={{ fontSize: '15px', color: '#7A7570', lineHeight: 1.8, marginBottom: '32px', fontWeight: 300 }}>{step.desc}</p>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                  {step.points.map((pt) => (
-                    <div key={pt} style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
-                      <span style={{ fontSize: '13px', color: '#CEC8BF', marginTop: '2px', flexShrink: 0 }}>—</span>
-                      <span style={{ fontSize: '14px', color: '#1C1C1A', lineHeight: 1.6 }}>{pt}</span>
+        {/* ── Hero ── */}
+        <section style={{ background: tk.ink, padding: '72px 40px 80px', borderBottom: `1px solid #1F1F23` }} className="ccm-pad">
+          <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+            <div className="ccm-hero-grid">
+              {/* Texte */}
+              <div>
+                <p style={{ fontSize: '12px', fontWeight: 600, color: tk.blue, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '16px' }}>Comment ça marche</p>
+                <h1 style={{ fontFamily: tk.font, fontSize: 'clamp(32px, 5vw, 56px)', fontWeight: 800, color: tk.white, lineHeight: 1.05, marginBottom: '24px', letterSpacing: '-0.03em' }}>
+                  De la réservation<br />au contrat signé,<br />en 3 minutes.
+                </h1>
+                <p style={{ fontSize: '16px', color: '#9CA3AF', lineHeight: 1.7, marginBottom: '40px', fontWeight: 400, maxWidth: '420px' }}>
+                  Prysme automatise tout ce qui suit une réservation. Voici exactement comment ça se passe, étape par étape.
+                </p>
+                <div style={{ display: 'flex', gap: '32px', flexWrap: 'wrap' }}>
+                  {[{ v: '5 min', l: 'config initiale' }, { v: '2 min', l: 'par réservation' }, { v: '1 clic', l: 'pour envoyer' }].map(s => (
+                    <div key={s.l}>
+                      <div style={{ fontSize: '24px', fontWeight: 700, color: tk.white, letterSpacing: '-0.03em', lineHeight: 1 }}>{s.v}</div>
+                      <div style={{ fontSize: '11px', color: '#6B7280', marginTop: '4px' }}>{s.l}</div>
                     </div>
                   ))}
                 </div>
               </div>
-
-              {/* Visual */}
-              <div style={{ order: i % 2 === 0 ? 1 : 0 }}>
-                {step.visual}
+              {/* Visuel flow */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                {[
+                  { n: '01', label: 'Réservation enregistrée', sub: 'Marie Dupont · 3 nuits · 14 juillet', done: false },
+                  { n: '02', label: 'Contrat généré & envoyé', sub: 'PDF + email professionnel avec pièces jointes', done: false },
+                  { n: '03', label: 'Contrat signé', sub: 'Les deux parties reçoivent le PDF signé', done: true },
+                ].map(({ n, label, sub, done }, i) => (
+                  <div key={n} style={{ position: 'relative' }}>
+                    {i < 2 && <div style={{ position: 'absolute', left: '17px', top: '44px', width: '1px', height: '20px', background: '#27272A' }} />}
+                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: '14px', background: done ? '#18181B' : '#111113', borderRadius: '10px', border: `1px solid ${done ? '#27272A' : '#1F1F23'}`, padding: '16px 20px' }}>
+                      <div style={{ width: '34px', height: '34px', borderRadius: '50%', background: done ? tk.white : '#18181B', border: '1px solid #27272A', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                        {done
+                          ? <span style={{ fontSize: '14px', color: tk.ink }}>✓</span>
+                          : <span style={{ fontSize: '11px', fontWeight: 600, color: '#52525B' }}>{n}</span>
+                        }
+                      </div>
+                      <div>
+                        <div style={{ fontSize: '13px', fontWeight: 600, color: done ? tk.white : '#E4E4E7', marginBottom: '3px' }}>{label}</div>
+                        <div style={{ fontSize: '11px', color: '#52525B' }}>{sub}</div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
-
             </div>
           </div>
         </section>
-      ))}
 
-      {/* FAQ */}
-      <section style={{ borderBottom: '1px solid #CEC8BF' }}>
-        <div style={{ ...wrap, padding: '96px 48px' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '80px', alignItems: 'start' }}>
-            <div>
-              <p style={{ ...tag, marginBottom: '16px' }}>— Questions fréquentes</p>
-              <h2 style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', fontSize: 'clamp(32px, 3vw, 44px)', fontWeight: 300, color: '#1C1C1A', lineHeight: 1.2, marginBottom: '20px' }}>
-                Tout ce que<br />vous voulez<br /><em>savoir.</em>
-              </h2>
-              <p style={{ fontSize: '14px', color: '#7A7570', lineHeight: 1.7, fontWeight: 300 }}>
-                Une question qui ne figure pas ici ? Écrivez-nous.
-              </p>
+        {/* ── Étapes détaillées ── */}
+        {steps.map((step, i) => (
+          <section key={step.n} style={{ background: i % 2 === 0 ? tk.white : tk.surface, borderBottom: `1px solid ${tk.border}`, padding: '80px 40px' }} className="ccm-pad">
+            <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+              <div className="ccm-step-grid">
+                {/* Texte (alterne gauche/droite) */}
+                <div style={{ order: i % 2 === 0 ? 0 : 1 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
+                    <span style={{ fontSize: '48px', fontWeight: 800, color: tk.border, letterSpacing: '-0.04em', lineHeight: 1, fontFamily: tk.font }}>{step.n}</span>
+                    <span style={{ fontSize: '11px', fontWeight: 600, color: tk.blue, background: '#EFF6FF', padding: '4px 10px', borderRadius: '100px', letterSpacing: '0.04em' }}>{step.badge}</span>
+                  </div>
+                  <h2 style={{ fontFamily: tk.font, fontSize: 'clamp(22px, 3vw, 32px)', fontWeight: 700, color: tk.ink, marginBottom: '16px', letterSpacing: '-0.02em', lineHeight: 1.2 }}>{step.title}</h2>
+                  <p style={{ fontSize: '15px', color: tk.inkSoft, lineHeight: 1.7, marginBottom: '28px', fontWeight: 400 }}>{step.desc}</p>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                    {step.points.map(pt => (
+                      <div key={pt} style={{ display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style={{ marginTop: '2px', flexShrink: 0 }}><circle cx="8" cy="8" r="8" fill="#EFF6FF"/><path d="M5 8l2.5 2.5 3.5-3.5" stroke={tk.blue} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                        <span style={{ fontSize: '14px', color: tk.ink, lineHeight: 1.5, fontWeight: 400 }}>{pt}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                {/* Visuel placeholder card */}
+                <div style={{ order: i % 2 === 0 ? 1 : 0 }}>
+                  <div style={{ background: tk.surface, borderRadius: '12px', border: `1px solid ${tk.border}`, padding: '32px', minHeight: '280px', display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: '12px' }}>
+                    {/* Simulated UI elements */}
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+                      <div style={{ height: '10px', background: tk.border, borderRadius: '4px', width: '40%' }} />
+                      <div style={{ height: '28px', background: tk.ink, borderRadius: '6px', width: '80px' }} />
+                    </div>
+                    {Array.from({ length: 4 }).map((_, j) => (
+                      <div key={j} style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                        <div style={{ height: '8px', background: tk.border, borderRadius: '3px', width: `${55 + j * 10}%` }} />
+                      </div>
+                    ))}
+                    <div style={{ marginTop: '8px', padding: '12px', background: tk.white, borderRadius: '8px', border: `1px solid ${tk.border}`, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <div>
+                        <div style={{ height: '9px', background: tk.ink, borderRadius: '3px', width: '120px', marginBottom: '6px' }} />
+                        <div style={{ height: '7px', background: tk.border, borderRadius: '3px', width: '80px' }} />
+                      </div>
+                      <div style={{ height: '22px', background: '#EFF6FF', borderRadius: '100px', width: '60px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <span style={{ fontSize: '10px', color: tk.blue, fontWeight: 600 }}>Étape {step.n}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-            <FaqAccordion />
+          </section>
+        ))}
+
+        {/* ── FAQ ── */}
+        <section style={{ background: tk.white, padding: '96px 40px', borderBottom: `1px solid ${tk.border}` }} className="ccm-pad">
+          <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+            <div className="ccm-faq-grid">
+              <div>
+                <p style={{ fontSize: '12px', fontWeight: 600, color: tk.blue, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '12px' }}>FAQ</p>
+                <h2 style={{ fontFamily: tk.font, fontSize: 'clamp(24px, 3vw, 36px)', fontWeight: 800, color: tk.ink, letterSpacing: '-0.03em', lineHeight: 1.2, marginBottom: '16px' }}>
+                  Vos questions,<br />nos réponses.
+                </h2>
+                <p style={{ fontSize: '14px', color: tk.inkSoft, lineHeight: 1.6, fontWeight: 400 }}>
+                  Une question absente ? Écrivez-nous à<br />
+                  <a href="mailto:contact@prysme.fr" style={{ color: tk.blue, textDecoration: 'none' }}>contact@prysme.fr</a>
+                </p>
+              </div>
+              <FaqAccordion />
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* CTA */}
-      <section style={{ backgroundColor: '#1C1C1A', padding: '100px 48px' }}>
-        <div style={{ maxWidth: '640px', margin: '0 auto', textAlign: 'center' }}>
-          <p style={{ ...tag, color: '#7A7570', marginBottom: '20px' }}>— Prêt à démarrer ?</p>
-          <h2 style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', fontSize: 'clamp(36px, 4vw, 56px)', fontWeight: 300, color: '#EDE8E1', lineHeight: 1.1, marginBottom: '24px' }}>
-            Arrêtez de perdre du temps<br /><em>sur chaque réservation.</em>
-          </h2>
-          <p style={{ fontSize: '15px', color: '#7A7570', lineHeight: 1.7, marginBottom: '40px', fontWeight: 300 }}>
-            Configuration en 5 minutes. Aucune carte bancaire requise pour commencer.
-          </p>
-          <Link href="/sign-up" style={{ display: 'inline-block', fontSize: '12px', letterSpacing: '0.12em', textTransform: 'uppercase', padding: '16px 36px', backgroundColor: '#EDE8E1', color: '#1C1C1A', textDecoration: 'none', borderRadius: '100px' }}>
-            Créer mon compte gratuitement →
-          </Link>
-        </div>
-      </section>
+        {/* ── CTA ── */}
+        <section style={{ background: tk.ink, padding: '96px 40px' }} className="ccm-pad">
+          <div style={{ maxWidth: '600px', margin: '0 auto', textAlign: 'center' }}>
+            <h2 style={{ fontFamily: tk.font, fontSize: 'clamp(28px, 4vw, 44px)', fontWeight: 800, color: tk.white, letterSpacing: '-0.03em', lineHeight: 1.1, marginBottom: '20px' }}>
+              Prêt à gagner<br />30 min par réservation ?
+            </h2>
+            <p style={{ fontSize: '16px', color: '#9CA3AF', lineHeight: 1.7, marginBottom: '36px', fontWeight: 400 }}>
+              Configuration en 5 minutes. 30 jours gratuits. Aucune CB requise.
+            </p>
+            <Link href="/sign-up" style={{ display: 'inline-block', fontSize: '15px', fontWeight: 600, padding: '14px 32px', background: tk.white, color: tk.ink, textDecoration: 'none', borderRadius: '8px' }}>
+              Créer mon compte gratuitement →
+            </Link>
+          </div>
+        </section>
 
-      {/* Footer */}
-      <footer style={{ padding: '28px 48px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px', borderTop: '1px solid #CEC8BF' }}>
-        <Link href="/" style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', fontSize: '15px', color: '#1C1C1A', textDecoration: 'none' }}>Prysme</Link>
-        <div style={{ display: 'flex', gap: '24px', alignItems: 'center', flexWrap: 'wrap' }}>
-          <Link href="/" style={{ fontSize: '11px', color: '#7A7570', textDecoration: 'none', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Accueil</Link>
-          <Link href="/comment-ca-marche" style={{ fontSize: '11px', color: '#7A7570', textDecoration: 'none', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Comment ça marche</Link>
-          <a href="/#tarifs" style={{ fontSize: '11px', color: '#7A7570', textDecoration: 'none', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Tarifs</a>
-          <Link href="/sign-in" style={{ fontSize: '11px', color: '#7A7570', textDecoration: 'none', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Connexion</Link>
-          <span style={{ fontSize: '11px', color: '#7A7570' }}>© 2026 Prysme</span>
-        </div>
-      </footer>
+        {/* ── Footer ── */}
+        <footer style={{ background: tk.white, borderTop: `1px solid ${tk.border}`, padding: '24px 40px' }} className="ccm-pad">
+          <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
+            <Link href="/" style={{ fontSize: '15px', fontWeight: 700, color: tk.ink, textDecoration: 'none', letterSpacing: '-0.02em' }}>Prysme</Link>
+            <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap', alignItems: 'center' }}>
+              <Link href="/" style={{ fontSize: '12px', color: tk.inkMuted, textDecoration: 'none' }}>Accueil</Link>
+              <Link href="/legal/mentions-legales" style={{ fontSize: '12px', color: tk.inkMuted, textDecoration: 'none' }}>Mentions légales</Link>
+              <Link href="/legal/confidentialite" style={{ fontSize: '12px', color: tk.inkMuted, textDecoration: 'none' }}>Confidentialité</Link>
+              <Link href="/legal/cgv" style={{ fontSize: '12px', color: tk.inkMuted, textDecoration: 'none' }}>CGV</Link>
+              <span style={{ fontSize: '12px', color: tk.inkMuted }}>© 2026 Prysme</span>
+            </div>
+          </div>
+        </footer>
 
-    </main>
+      </main>
+    </>
   );
 }
