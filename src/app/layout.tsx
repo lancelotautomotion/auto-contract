@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
+import Script from "next/script";
 import ThemeProvider from "@/providers/ThemeProvider";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Prysme — Automatisez vos contrats de location saisonnière",
-  description: "Prysme génère, envoie et fait signer vos contrats de location en quelques clics.",
+  title: "Prysme — Contrats de location pour gîtes, automatisés",
+  description: "Automatisez vos contrats de location saisonnière en 2 minutes. Génération PDF, envoi email, suivi acompte. 30 jours gratuits, sans CB.",
 };
 
 export default function RootLayout({
@@ -17,6 +18,7 @@ export default function RootLayout({
     <ClerkProvider afterSignInUrl="/dashboard" afterSignUpUrl="/onboarding">
       <html lang="fr" className="h-full antialiased" suppressHydrationWarning>
         <body className="min-h-full">
+          <Script id="theme-init" strategy="beforeInteractive">{`(function(){try{var t=localStorage.getItem('theme');if(t==='dark')document.documentElement.classList.add('dark');}catch(e){}})();`}</Script>
           <ThemeProvider>
             {children}
           </ThemeProvider>

@@ -304,7 +304,7 @@ export default function CommentCaMarche() {
           <Link href="/comment-ca-marche" style={{ fontSize: '11px', color: '#7A7570', textDecoration: 'none', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Comment ça marche</Link>
           <a href="/#tarifs" style={{ fontSize: '11px', color: '#7A7570', textDecoration: 'none', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Tarifs</a>
           <Link href="/sign-in" style={{ fontSize: '11px', color: '#7A7570', textDecoration: 'none', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Connexion</Link>
-          <span style={{ fontSize: '11px', color: '#7A7570' }}>© 2025 Prysme</span>
+          <span style={{ fontSize: '11px', color: '#7A7570' }}>© 2026 Prysme</span>
         </div>
       </footer>
 
