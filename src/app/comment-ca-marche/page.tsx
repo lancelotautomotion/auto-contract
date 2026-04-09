@@ -123,7 +123,7 @@ const steps = [
     num: '05',
     badge: 'Automatique · immédiat',
     title: 'Les deux parties reçoivent le PDF signé',
-    desc: 'Dès la signature, ContratGîte envoie le contrat signé en PDF à votre locataire et à vous. Le statut passe automatiquement à "Signé" dans votre tableau de bord.',
+    desc: 'Dès la signature, Prysme envoie le contrat signé en PDF à votre locataire et à vous. Le statut passe automatiquement à "Signé" dans votre tableau de bord.',
     points: ['PDF signé envoyé au locataire par email', 'Copie automatique envoyée au gérant', 'Statut mis à jour dans le dashboard', 'Archivé et consultable à tout moment'],
     visual: (
       <div style={{ background: '#F7F4F0', borderRadius: '24px', border: '1px solid #CEC8BF', padding: '40px', height: '340px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '20px' }}>
@@ -158,7 +158,7 @@ export default function CommentCaMarche() {
 
       {/* Nav */}
       <nav style={nav}>
-        <Link href="/" style={navLogo}>ContratGîte</Link>
+        <Link href="/" style={navLogo}>Prysme</Link>
         <div style={{ display: 'flex', alignItems: 'center', gap: '32px' }}>
           <Link href="/" style={navLink}>Accueil</Link>
           <Link href="/comment-ca-marche" style={{ ...navLink, color: '#1C1C1A' }}>Comment ça marche</Link>
@@ -180,7 +180,7 @@ export default function CommentCaMarche() {
                 De la réservation<br />au contrat signé,<br /><em>en moins de 3 minutes.</em>
               </h1>
               <p style={{ fontSize: '16px', color: '#7A7570', lineHeight: 1.8, fontWeight: 300, marginBottom: '48px' }}>
-                ContratGîte automatise tout ce qui suit une réservation. Voici exactement comment ça se passe, étape par étape.
+                Prysme automatise tout ce qui suit une réservation. Voici exactement comment ça se passe, étape par étape.
               </p>
               <div style={{ display: 'flex', gap: '40px', flexWrap: 'wrap' }}>
                 {[{ num: '5 min', label: 'de configuration initiale' }, { num: '2 min', label: 'par réservation' }, { num: '1 clic', label: 'pour envoyer le contrat' }].map(s => (
@@ -298,13 +298,13 @@ export default function CommentCaMarche() {
 
       {/* Footer */}
       <footer style={{ padding: '28px 48px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px', borderTop: '1px solid #CEC8BF' }}>
-        <Link href="/" style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', fontSize: '15px', color: '#1C1C1A', textDecoration: 'none' }}>ContratGîte</Link>
+        <Link href="/" style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', fontSize: '15px', color: '#1C1C1A', textDecoration: 'none' }}>Prysme</Link>
         <div style={{ display: 'flex', gap: '24px', alignItems: 'center', flexWrap: 'wrap' }}>
           <Link href="/" style={{ fontSize: '11px', color: '#7A7570', textDecoration: 'none', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Accueil</Link>
           <Link href="/comment-ca-marche" style={{ fontSize: '11px', color: '#7A7570', textDecoration: 'none', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Comment ça marche</Link>
           <a href="/#tarifs" style={{ fontSize: '11px', color: '#7A7570', textDecoration: 'none', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Tarifs</a>
           <Link href="/sign-in" style={{ fontSize: '11px', color: '#7A7570', textDecoration: 'none', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Connexion</Link>
-          <span style={{ fontSize: '11px', color: '#7A7570' }}>© 2025 ContratGîte</span>
+          <span style={{ fontSize: '11px', color: '#7A7570' }}>© 2026 Prysme</span>
         </div>
       </footer>
 

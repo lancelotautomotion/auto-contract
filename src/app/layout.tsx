@@ -5,8 +5,8 @@ import ThemeProvider from "@/providers/ThemeProvider";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "ContratGîte — Automatisez vos contrats de location",
-  description: "Générez et envoyez vos contrats de location en un clic.",
+  title: "Prysme — Contrats de location pour gîtes, automatisés",
+  description: "Automatisez vos contrats de location saisonnière en 2 minutes. Génération PDF, envoi email, suivi acompte. 30 jours gratuits, sans CB.",
 };
 
 export default function RootLayout({
