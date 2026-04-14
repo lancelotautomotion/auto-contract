@@ -6,25 +6,25 @@ html {
 
 :root {
   /* ── Identité Prysme ────────────────────── */
-  --prisme:  #1D9E75;   /* vert teal — couleur principale */
+  --prisme:  #689D71;   /* vert sauge — couleur principale */
   --spectre: #7F77DD;   /* violet — accent */
-  --clair:   #E1F5EE;   /* mint clair — surfaces */
+  --clair:   #FCFFF2;   /* crème clair — surfaces */
   --graphite:#2C2C2A;   /* quasi-noir — texte / fond sombre */
 
   /* ── UI light mode ──────────────────────── */
   --bg:       #FFFFFF;
-  --bg-card:  #F2FBF7;
+  --bg-card:  #F4F9F4;
   --bg-white: #FFFFFF;
   --text:     #2C2C2A;
   --text-muted: #6B7A73;
-  --border:   #C5E8D6;
+  --border:   #C2D9C4;
 }
 
 .dark {
   --bg:       #1C1C1A;
   --bg-card:  #242422;
   --bg-white: #1A1A18;
-  --text:     #E1F5EE;
+  --text:     #FCFFF2;
   --text-muted: #8A9B96;
   --border:   #334D3E;
 }
