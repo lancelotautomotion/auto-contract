@@ -5,21 +5,28 @@ html {
 }
 
 :root {
-  --bg: #EDE8E1;
-  --bg-card: #E5DED5;
-  --bg-white: #F7F4F0;
-  --text: #1C1C1A;
-  --text-muted: #7A7570;
-  --border: #CEC8BF;
+  /* ── Identité Prysme ────────────────────── */
+  --prisme:  #1D9E75;   /* vert teal — couleur principale */
+  --spectre: #7F77DD;   /* violet — accent */
+  --clair:   #E1F5EE;   /* mint clair — surfaces */
+  --graphite:#2C2C2A;   /* quasi-noir — texte / fond sombre */
+
+  /* ── UI light mode ──────────────────────── */
+  --bg:       #FFFFFF;
+  --bg-card:  #F2FBF7;
+  --bg-white: #FFFFFF;
+  --text:     #2C2C2A;
+  --text-muted: #6B7A73;
+  --border:   #C5E8D6;
 }
 
 .dark {
-  --bg: #1A1A18;
-  --bg-card: #242422;
-  --bg-white: #1E1E1C;
-  --text: #EDE8E1;
-  --text-muted: #8A857F;
-  --border: #3A3835;
+  --bg:       #1C1C1A;
+  --bg-card:  #242422;
+  --bg-white: #1A1A18;
+  --text:     #E1F5EE;
+  --text-muted: #8A9B96;
+  --border:   #334D3E;
 }
 
 body {
