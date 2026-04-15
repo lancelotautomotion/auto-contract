@@ -21,73 +21,88 @@ const C = {
 const serif = 'Cormorant Garamond, Georgia, serif';
 const sans  = 'Inter, -apple-system, BlinkMacSystemFont, sans-serif';
 
-// ─── Illustration prisme ─────────────────────────────────────────────────────
-function PrismIllustration() {
+// ─── Mockup dashboard ────────────────────────────────────────────────────────
+function AppPreview() {
+  const rows = [
+    { name: 'Marie Dupont',  dates: '14 → 17 juil.', status: 'SIGNED'    },
+    { name: 'Pierre Martin', dates: '20 → 25 juil.', status: 'GENERATED' },
+    { name: 'Julie Blanc',   dates: '1 → 8 août',    status: 'SIGNED'    },
+    { name: 'Thomas Leroy',  dates: '12 → 16 août',  status: null        },
+  ];
+  const badge = (s: string | null) =>
+    s === 'SIGNED'    ? { bg: '#D1EDD4', color: '#2D6A31', label: 'Signé ✓'    } :
+    s === 'GENERATED' ? { bg: '#FDECD0', color: '#C47822', label: 'En attente' } :
+                        { bg: '#EDE8E1', color: '#7A7570', label: 'À générer'  };
   return (
-    <svg
-      viewBox="0 0 500 480"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      aria-hidden="true"
-      style={{ width: '100%', maxWidth: '480px', display: 'block' }}
-    >
-      <defs>
-        <radialGradient id="bg-glow" cx="50%" cy="56%" r="46%">
-          <stop offset="0%" stopColor="#EEF5EF" stopOpacity="0.9" />
-          <stop offset="100%" stopColor="#FCFFF2" stopOpacity="0" />
-        </radialGradient>
-      </defs>
-
-      {/* Halo de fond */}
-      <ellipse cx="250" cy="265" rx="228" ry="205" fill="url(#bg-glow)" />
-
-      {/* Prisme principal */}
-      <polygon points="250,58 78,392 422,392" stroke={C.border} strokeWidth="1.5" fill={C.prisme} fillOpacity="0.04" />
-
-      {/* Couches internes */}
-      <polygon points="250,58 164,225 336,225" fill={C.spectre} fillOpacity="0.05" />
-      <polygon points="250,58 207,142 293,142" fill={C.prisme}  fillOpacity="0.09" />
-
-      {/* Apex lumineux */}
-      <circle cx="250" cy="58" r="4"  fill={C.prisme} opacity="0.7" />
-      <circle cx="250" cy="58" r="11" fill={C.prisme} opacity="0.11" />
-
-      {/* Faisceaux gauche */}
-      <line x1="78" y1="392" x2="12"  y2="293" stroke={C.prisme}  strokeWidth="2.5" strokeLinecap="round" opacity="0.88" />
-      <line x1="78" y1="392" x2="5"   y2="330" stroke={C.spectre} strokeWidth="2"   strokeLinecap="round" opacity="0.72" />
-      <line x1="78" y1="392" x2="22"  y2="263" stroke={C.prisme}  strokeWidth="1.5" strokeLinecap="round" opacity="0.52" />
-      <line x1="78" y1="392" x2="3"   y2="358" stroke={C.spectre} strokeWidth="1"   strokeLinecap="round" opacity="0.38" />
-
-      {/* Faisceaux droite */}
-      <line x1="422" y1="392" x2="488" y2="293" stroke={C.spectre} strokeWidth="2.5" strokeLinecap="round" opacity="0.88" />
-      <line x1="422" y1="392" x2="495" y2="330" stroke={C.prisme}  strokeWidth="2"   strokeLinecap="round" opacity="0.72" />
-      <line x1="422" y1="392" x2="478" y2="263" stroke={C.spectre} strokeWidth="1.5" strokeLinecap="round" opacity="0.52" />
-      <line x1="422" y1="392" x2="497" y2="358" stroke={C.prisme}  strokeWidth="1"   strokeLinecap="round" opacity="0.38" />
-
-      {/* Points gauche */}
-      <circle cx="12"  cy="293" r="7"   fill={C.prisme}  opacity="0.85" />
-      <circle cx="5"   cy="330" r="5.5" fill={C.spectre} opacity="0.78" />
-      <circle cx="22"  cy="263" r="4"   fill={C.prisme}  opacity="0.58" />
-      <circle cx="3"   cy="358" r="3"   fill={C.spectre} opacity="0.42" />
-
-      {/* Points droite */}
-      <circle cx="488" cy="293" r="7"   fill={C.spectre} opacity="0.85" />
-      <circle cx="495" cy="330" r="5.5" fill={C.prisme}  opacity="0.78" />
-      <circle cx="478" cy="263" r="4"   fill={C.spectre} opacity="0.58" />
-      <circle cx="497" cy="358" r="3"   fill={C.prisme}  opacity="0.42" />
-
-      {/* Éléments flottants */}
-      <circle cx="390" cy="112" r="10" fill={C.spectre} opacity="0.1" />
-      <circle cx="382" cy="96"  r="5"  fill={C.spectre} opacity="0.2" />
-      <circle cx="118" cy="118" r="8"  fill={C.prisme}  opacity="0.1" />
-      <circle cx="126" cy="103" r="4"  fill={C.prisme}  opacity="0.2" />
-
-      {/* Lignes d'accent */}
-      <line x1="340" y1="178" x2="392" y2="178" stroke={C.border} strokeWidth="1.5" strokeLinecap="round" />
-      <line x1="351" y1="188" x2="381" y2="188" stroke={C.border} strokeWidth="1"   strokeLinecap="round" />
-      <line x1="108" y1="178" x2="160" y2="178" stroke={C.border} strokeWidth="1.5" strokeLinecap="round" />
-      <line x1="119" y1="188" x2="149" y2="188" stroke={C.border} strokeWidth="1"   strokeLinecap="round" />
-    </svg>
+    <div style={{
+      borderRadius: '16px', overflow: 'hidden',
+      border: `1px solid ${C.border}`,
+      boxShadow: '0 32px 80px rgba(44,44,42,0.13), 0 8px 24px rgba(44,44,42,0.07)',
+      fontFamily: sans,
+    }}>
+      {/* Chrome navigateur */}
+      <div style={{ backgroundColor: C.graphite, padding: '10px 16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <div style={{ display: 'flex', gap: '5px' }}>
+          {['#EF4444','#F59E0B','#22C55E'].map(c => (
+            <div key={c} style={{ width: 9, height: 9, borderRadius: '50%', backgroundColor: c, opacity: 0.65 }} />
+          ))}
+        </div>
+        <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
+          <div style={{ backgroundColor: 'rgba(255,255,255,0.07)', borderRadius: '5px', padding: '3px 18px' }}>
+            <span style={{ fontSize: '10px', color: 'rgba(252,255,242,0.28)' }}>prysme.fr/dashboard</span>
+          </div>
+        </div>
+      </div>
+      {/* Barre de nav app */}
+      <div style={{ backgroundColor: C.clair, borderBottom: `1px solid ${C.border}`, padding: '9px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <span style={{ fontSize: '13px', fontWeight: 500, color: C.graphite, letterSpacing: '0.03em' }}>Prysme</span>
+        <div style={{ display: 'flex', gap: '18px' }}>
+          {['Dashboard', 'Réservations', 'Mon établissement'].map(item => (
+            <span key={item} style={{ fontSize: '10px', color: C.muted }}>{item}</span>
+          ))}
+        </div>
+      </div>
+      {/* Contenu */}
+      <div style={{ backgroundColor: '#F7F4F0', padding: '20px 20px 24px' }}>
+        {/* Titre + CTA */}
+        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '16px' }}>
+          <div>
+            <p style={{ fontSize: '9px', letterSpacing: '0.22em', textTransform: 'uppercase', color: '#7A7570', margin: '0 0 4px' }}>— Tableau de bord</p>
+            <p style={{ fontFamily: serif, fontSize: '28px', fontWeight: 300, color: '#1C1C1A', margin: 0, lineHeight: 1 }}>Bonjour.</p>
+          </div>
+          <div style={{ fontSize: '9px', padding: '5px 11px', backgroundColor: C.prisme, color: C.clair, borderRadius: '6px', cursor: 'default', whiteSpace: 'nowrap' }}>
+            + Réservation
+          </div>
+        </div>
+        {/* Stats */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px', marginBottom: '14px' }}>
+          {[{ v: '4', l: 'Réservations' }, { v: '3', l: 'Contrats générés' }, { v: '2', l: 'Contrats signés' }].map(s => (
+            <div key={s.l} style={{ backgroundColor: '#E5DED5', borderRadius: '8px', padding: '10px 12px', border: '1px solid #CEC8BF' }}>
+              <p style={{ fontFamily: serif, fontSize: '22px', fontWeight: 300, color: '#1C1C1A', margin: 0, lineHeight: 1 }}>{s.v}</p>
+              <p style={{ fontSize: '8px', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7A7570', margin: '5px 0 0' }}>{s.l}</p>
+            </div>
+          ))}
+        </div>
+        {/* Liste réservations */}
+        <div style={{ backgroundColor: C.white, borderRadius: '8px', border: '1px solid #CEC8BF', overflow: 'hidden' }}>
+          <div style={{ padding: '8px 14px', borderBottom: '1px solid #CEC8BF', backgroundColor: '#E5DED5' }}>
+            <p style={{ fontSize: '8px', letterSpacing: '0.22em', textTransform: 'uppercase', color: '#7A7570', margin: 0 }}>Réservations</p>
+          </div>
+          {rows.map((r, i) => {
+            const b = badge(r.status);
+            return (
+              <div key={r.name} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '9px 14px', borderBottom: i < rows.length - 1 ? '1px solid #EDE8E1' : 'none', backgroundColor: '#F7F4F0', gap: '8px' }}>
+                <span style={{ fontSize: '11px', fontWeight: 500, color: '#1C1C1A', flex: 1, minWidth: 0 }}>{r.name}</span>
+                <span style={{ fontSize: '9px', color: '#7A7570', whiteSpace: 'nowrap' }}>{r.dates}</span>
+                <span style={{ fontSize: '8px', letterSpacing: '0.06em', textTransform: 'uppercase', padding: '3px 8px', borderRadius: '12px', whiteSpace: 'nowrap', backgroundColor: b.bg, color: b.color }}>
+                  {b.label}
+                </span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -195,7 +210,7 @@ export default function Home() {
         /* Layout helpers */
         .nav-links-desktop { display: flex; }
         .nav-cta-mobile    { display: none !important; }
-        .hero-grid         { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; }
+        .hero-grid         { display: grid; grid-template-columns: 5fr 7fr; gap: 56px; align-items: center; }
         .features-grid     { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
         .steps-grid        { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
         .footer-inner      { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
@@ -281,9 +296,9 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Illustration */}
-            <div className="hero-illustration" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-              <PrismIllustration />
+            {/* Mockup produit */}
+            <div className="hero-illustration">
+              <AppPreview />
             </div>
 
           </div>
