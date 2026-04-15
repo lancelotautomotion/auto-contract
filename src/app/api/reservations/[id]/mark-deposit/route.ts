@@ -57,6 +57,7 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
       signedByIp: reservation.contract.signedByIp ?? "inconnue",
       reservationId: reservation.id,
     });
+    console.log("[mark-deposit] ✓ PDF généré, taille:", pdfBuffer.length);
 
     // Step 2 — Upload PDF to Vercel Blob (stored for later downloads)
     const pdfFilename = `contrats/${reservation.id}/contrat-signe.pdf`;
@@ -64,6 +65,7 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
       access: "public",
       contentType: "application/pdf",
     });
+    console.log("[mark-deposit] ✓ PDF uploadé:", signedPdfUrl);
 
     // Step 3 — Mark deposit received and store PDF URL
     await prisma.contract.update({
@@ -114,7 +116,8 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
 
     return NextResponse.json({ success: true });
   } catch (err) {
-    console.error("[mark-deposit] Erreur:", err);
-    return NextResponse.json({ error: "Erreur interne" }, { status: 500 });
+    const message = err instanceof Error ? err.message : String(err);
+    console.error("[mark-deposit] Erreur:", message, err);
+    return NextResponse.json({ error: "Erreur interne", detail: message }, { status: 500 });
   }
 }
