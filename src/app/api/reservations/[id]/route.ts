@@ -55,3 +55,21 @@ export async function PATCH(
 
   return NextResponse.json(updated);
 }
+
+export async function DELETE(
+  _req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params;
+  const [ctx, err] = await requireAuth();
+  if (err) return err;
+
+  const existing = await prisma.reservation.findFirst({
+    where: { id, gite: { userId: ctx.userId } },
+  });
+  if (!existing) return NextResponse.json({ error: "Réservation introuvable" }, { status: 404 });
+
+  await prisma.reservation.delete({ where: { id } });
+
+  return NextResponse.json({ success: true });
+}

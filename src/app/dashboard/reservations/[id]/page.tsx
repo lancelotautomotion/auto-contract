@@ -2,6 +2,7 @@ import { auth } from "@clerk/nextjs/server";
 import { redirect, notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import ContractActions from "./ContractActions";
+import DeleteReservationButton from "./DeleteReservationButton";
 import Link from "next/link";
 
 const labelStyle = { fontSize: '10px', letterSpacing: '0.18em', textTransform: 'uppercase' as const, color: '#7A7570', marginBottom: '4px', display: 'block' };
@@ -44,6 +45,10 @@ export default async function ReservationDetailPage({ params }: { params: Promis
             <Link href={`/dashboard/reservations/${id}/edit`} style={{ fontSize: '11px', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '8px 16px', border: '1px solid #CEC8BF', backgroundColor: '#E5DED5', color: '#1C1C1A', textDecoration: 'none', borderRadius: '8px' }}>
               Modifier →
             </Link>
+            <DeleteReservationButton
+              reservationId={id}
+              clientName={`${reservation.clientFirstName} ${reservation.clientLastName}`}
+            />
           </div>
         </div>
 
