@@ -21,6 +21,6 @@ export async function POST(req: NextRequest) {
   if (file.size > maxMb * 1024 * 1024)
     return NextResponse.json({ error: `Fichier trop volumineux (max ${maxMb} Mo)` }, { status: 413 });
 
-  const blob = await put(file.name, file, { access: "public" });
+  const blob = await put(file.name, file, { access: "public", allowOverwrite: true });
   return NextResponse.json({ url: blob.url });
 }
