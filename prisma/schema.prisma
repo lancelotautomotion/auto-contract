@@ -4,6 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 // Un compte = un gérant de gîte
@@ -32,7 +33,7 @@ model Gite {
   touristTax  Float   @default(1.32)
   slug                  String? @unique
   contractTemplate      String?
-  logoDataUrl           String?
+  logoUrl               String?
   notificationEmail     String?
   driveTemplateFolderId String?
   driveOutputFolderId   String?
@@ -126,6 +127,10 @@ model Contract {
 
   emailSentAt DateTime?
   emailStatus EmailStatus @default(NOT_SENT)
+
+  depositReceived   Boolean   @default(false)
+  depositReceivedAt DateTime?
+  signedPdfUrl      String?
 
   reservationId String      @unique
   reservation   Reservation @relation(fields: [reservationId], references: [id], onDelete: Cascade)
