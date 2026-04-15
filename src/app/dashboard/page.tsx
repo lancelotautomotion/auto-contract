@@ -4,12 +4,9 @@ import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import CalendarView from "./CalendarView";
 import ReservationFilters from "./ReservationFilters";
+import DashboardReservationRow from "./DashboardReservationRow";
 import { Suspense } from "react";
 
-const SIGNED_BG = '#D1EDD4';
-const SIGNED_TEXT = '#2D6A31';
-const PENDING_BG = '#FDECD0';
-const PENDING_TEXT = '#C47822';
 
 export default async function DashboardPage({ searchParams }: { searchParams: Promise<{ status?: string; sort?: string; search?: string }> }) {
   const { userId } = await auth();
@@ -173,8 +170,8 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
           <Suspense>
             <ReservationFilters currentStatus={filterStatus} currentSort={filterSort} currentSearch={filterSearch} />
           </Suspense>
-          <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 180px', padding: '12px 32px', borderBottom: '1px solid #CEC8BF', backgroundColor: '#EDE8E1' }}>
-            {['Client', 'Arrivée', 'Départ', 'Statut'].map(col => (
+          <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 180px 40px', padding: '12px 32px', borderBottom: '1px solid #CEC8BF', backgroundColor: '#EDE8E1' }}>
+            {['Client', 'Arrivée', 'Départ', 'Statut', ''].map(col => (
               <span key={col} style={{ fontSize: '10px', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#7A7570' }}>{col}</span>
             ))}
           </div>
@@ -184,32 +181,17 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
             </div>
           ) : (
             reservations.map((r, i) => (
-              <Link
+              <DashboardReservationRow
                 key={r.id}
-                href={`/dashboard/reservations/${r.id}`}
-                className="reservation-row"
-                style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 180px', padding: '16px 32px', borderBottom: i < reservations.length - 1 ? '1px solid #CEC8BF' : 'none', backgroundColor: '#F7F4F0', alignItems: 'center', textDecoration: 'none' }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <div>
-                    <p className="client-name" style={{ fontSize: '14px', color: '#1C1C1A', margin: 0 }}>{r.clientFirstName} {r.clientLastName}</p>
-                    <p style={{ fontSize: '12px', color: '#7A7570', margin: '2px 0 0' }}>{r.clientEmail}</p>
-                  </div>
-                  <span className="row-arrow">→</span>
-                </div>
-                <span style={{ fontSize: '13px', color: '#1C1C1A' }}>{fmt(r.checkIn)}</span>
-                <span style={{ fontSize: '13px', color: '#1C1C1A' }}>{fmt(r.checkOut)}</span>
-                <span style={{
-                  fontSize: '10px', letterSpacing: '0.1em', textTransform: 'uppercase',
-                  padding: '4px 8px', whiteSpace: 'nowrap', borderRadius: '20px',
-                  textAlign: 'center', display: 'inline-block',
-                  backgroundColor: r.contract?.status === 'SIGNED' ? SIGNED_BG : r.contract?.status === 'GENERATED' ? PENDING_BG : '#EDE8E1',
-                  color: r.contract?.status === 'SIGNED' ? SIGNED_TEXT : r.contract?.status === 'GENERATED' ? PENDING_TEXT : '#7A7570',
-                  border: `1px solid ${r.contract?.status === 'SIGNED' ? SIGNED_TEXT : r.contract?.status === 'GENERATED' ? PENDING_TEXT : '#CEC8BF'}`,
-                }}>
-                  {r.contract?.status === 'SIGNED' ? 'Signé ✓' : r.contract?.status === 'GENERATED' ? 'En attente de signature' : 'En attente'}
-                </span>
-              </Link>
+                id={r.id}
+                clientFirstName={r.clientFirstName}
+                clientLastName={r.clientLastName}
+                clientEmail={r.clientEmail}
+                checkIn={r.checkIn.toISOString()}
+                checkOut={r.checkOut.toISOString()}
+                contractStatus={r.contract?.status ?? null}
+                isLast={i === reservations.length - 1}
+              />
             ))
           )}
         </div>
