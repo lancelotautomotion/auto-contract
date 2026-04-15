@@ -83,7 +83,7 @@ export default function SignUpPage() {
       {/* Nav */}
       <nav style={{ padding: "20px 48px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <Link href="/" style={{ fontSize: "15px", fontFamily: "Cormorant Garamond, Georgia, serif", fontWeight: 500, color: "#1C1C1A", textDecoration: "none", letterSpacing: "0.02em" }}>
-          ContratGîte
+          Prysme
         </Link>
         <Link href="/sign-in" style={{ fontSize: "11px", letterSpacing: "0.12em", textTransform: "uppercase", color: "#7A7570", textDecoration: "none" }}>
           Déjà un compte ? Se connecter →

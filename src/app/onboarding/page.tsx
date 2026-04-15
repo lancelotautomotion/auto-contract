@@ -19,7 +19,7 @@ export default async function OnboardingPage() {
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#EDE8E1', fontFamily: 'Inter, sans-serif' }}>
       <header style={{ padding: '20px 40px', borderBottom: '1px solid #CEC8BF' }}>
-        <span style={{ fontSize: '11px', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#7A7570' }}>ContratGîte</span>
+        <span style={{ fontSize: '11px', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#7A7570' }}>Prysme</span>
       </header>
 
       <main style={{ maxWidth: '680px', margin: '0 auto', padding: '60px 40px' }}>

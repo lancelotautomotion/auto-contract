@@ -59,6 +59,8 @@ En cas de résiliation par le locataire, l'acompte versé restera acquis au bail
 
 Fait à {{ville_gite}}, le {{date_du_jour}}
 
-Le bailleur :                              Le locataire :
+LE BAILLEUR | LE LOCATAIRE
 
-{{nom_gite}}                               {{prenom_client}} {{nom_client}}`;
+___________________________ | ___________________________
+
+{{nom_gite}} | {{prenom_client}} {{nom_client}}`;

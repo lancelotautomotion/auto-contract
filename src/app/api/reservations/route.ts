@@ -1,33 +1,26 @@
-import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { requireAuth } from "@/lib/auth";
 
 export async function POST(req: NextRequest) {
-  const { userId } = await auth();
-  if (!userId) return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
+  const [ctx, err] = await requireAuth();
+  if (err) return err;
 
   const body = await req.json();
 
-  let user = await prisma.user.findUnique({ where: { clerkId: userId } });
-  if (!user) {
-    user = await prisma.user.create({
-      data: { clerkId: userId, email: body.userEmail ?? "" },
-    });
-  }
-
   let gite = await prisma.gite.findFirst({
-    where: { userId: user.id },
+    where: { userId: ctx.userId },
     include: { options: true },
   });
   if (!gite) {
     gite = await prisma.gite.create({
-      data: { name: "Mon Gîte", userId: user.id },
+      data: { name: "Mon Gîte", userId: ctx.userId },
       include: { options: true },
     });
   }
 
   const selectedIds: string[] = Array.isArray(body.selectedOptionIds) ? body.selectedOptionIds : [];
-  const selectedOptions = gite.options.filter(o => selectedIds.includes(o.id));
+  const selectedOptions = gite.options.filter((o) => selectedIds.includes(o.id));
 
   const reservation = await prisma.reservation.create({
     data: {
@@ -47,7 +40,7 @@ export async function POST(req: NextRequest) {
       touristTax: parseFloat(body.touristTax ?? 1.32),
       notes: body.notes ?? "",
       reservationOptions: {
-        create: selectedOptions.map(o => ({
+        create: selectedOptions.map((o) => ({
           label: o.label,
           price: o.price,
           giteOptionId: o.id,
@@ -60,14 +53,11 @@ export async function POST(req: NextRequest) {
 }
 
 export async function GET() {
-  const { userId } = await auth();
-  if (!userId) return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
-
-  const user = await prisma.user.findUnique({ where: { clerkId: userId } });
-  if (!user) return NextResponse.json([]);
+  const [ctx, err] = await requireAuth();
+  if (err) return err;
 
   const reservations = await prisma.reservation.findMany({
-    where: { gite: { userId: user.id } },
+    where: { gite: { userId: ctx.userId } },
     include: { contract: true, reservationOptions: true },
     orderBy: { createdAt: "desc" },
   });

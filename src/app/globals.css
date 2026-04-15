@@ -1,26 +1,32 @@
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Inter:wght@300;400;500&display=swap');
-@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500;1,600&family=Inter:wght@300;400;500;600;700;800&display=swap');
 
 html {
   overflow-y: scroll;
 }
 
 :root {
-  --bg: #EDE8E1;
-  --bg-card: #E5DED5;
-  --bg-white: #F7F4F0;
-  --text: #1C1C1A;
-  --text-muted: #7A7570;
-  --border: #CEC8BF;
+  /* ── Identité Prysme ────────────────────── */
+  --prisme:  #689D71;   /* vert sauge — couleur principale */
+  --spectre: #7F77DD;   /* violet — accent */
+  --clair:   #FCFFF2;   /* crème clair — surfaces */
+  --graphite:#2C2C2A;   /* quasi-noir — texte / fond sombre */
+
+  /* ── UI light mode ──────────────────────── */
+  --bg:       #FFFFFF;
+  --bg-card:  #F4F9F4;
+  --bg-white: #FFFFFF;
+  --text:     #2C2C2A;
+  --text-muted: #6B7A73;
+  --border:   #C2D9C4;
 }
 
 .dark {
-  --bg: #1A1A18;
-  --bg-card: #242422;
-  --bg-white: #1E1E1C;
-  --text: #EDE8E1;
-  --text-muted: #8A857F;
-  --border: #3A3835;
+  --bg:       #1C1C1A;
+  --bg-card:  #242422;
+  --bg-white: #1A1A18;
+  --text:     #FCFFF2;
+  --text-muted: #8A9B96;
+  --border:   #334D3E;
 }
 
 body {

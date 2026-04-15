@@ -9,6 +9,7 @@ interface Props {
   driveFileUrl: string | null;
   signedAt: Date | null;
   signedByName: string | null;
+  depositReceived: boolean;
 }
 
 const btnPrimary = {
@@ -22,15 +23,23 @@ const btnSecondary = {
   border: '1px solid #CEC8BF', cursor: 'pointer', flex: 1, borderRadius: '8px',
 };
 const btnDisabled = { ...btnPrimary, backgroundColor: '#CEC8BF', cursor: 'not-allowed' as const };
+const btnDeposit = {
+  fontSize: '11px', letterSpacing: '0.15em', textTransform: 'uppercase' as const,
+  padding: '14px 28px', backgroundColor: '#2D6A31', color: '#FFFFFF',
+  border: 'none', cursor: 'pointer', flex: 1, borderRadius: '8px',
+};
 
-export default function ContractActions({ reservationId, contractStatus, emailStatus, signedAt, signedByName }: Props) {
+export default function ContractActions({ reservationId, contractStatus, emailStatus, signedAt, signedByName, depositReceived: initialDepositReceived }: Props) {
   const [status, setStatus] = useState(contractStatus);
   const [mailStatus, setMailStatus] = useState(emailStatus);
   const [loading, setLoading] = useState<string | null>(null);
   const [emailError, setEmailError] = useState<string | null>(null);
+  const [depositError, setDepositError] = useState<string | null>(null);
   const [signed, setSigned] = useState<{ at: Date; byName: string } | null>(
     signedAt ? { at: new Date(signedAt), byName: signedByName ?? '' } : null
   );
+  const [depositReceived, setDepositReceived] = useState(initialDepositReceived);
+  const [remindSent, setRemindSent] = useState(false);
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
@@ -44,6 +53,7 @@ export default function ContractActions({ reservationId, contractStatus, emailSt
         if (data.signedAt && !signed) {
           setSigned({ at: new Date(data.signedAt), byName: data.signedByName ?? '' });
         }
+        if (data.depositReceived) setDepositReceived(true);
       } catch { /* silently ignore */ }
     };
 
@@ -86,17 +96,49 @@ export default function ContractActions({ reservationId, contractStatus, emailSt
     }
   };
 
+  const markDepositReceived = async () => {
+    setLoading('deposit');
+    setDepositError(null);
+    try {
+      const res = await fetch(`/api/reservations/${reservationId}/mark-deposit`, { method: 'POST' });
+      const data = await res.json();
+      if (res.ok) setDepositReceived(true);
+      else setDepositError(data.error ?? "Erreur lors de la confirmation de l'acompte");
+    } finally {
+      setLoading(null);
+    }
+  };
+
   const isSigned = status === 'SIGNED' || signed !== null;
+  const threeDaysAfterSign = signed ? new Date(signed.at.getTime() + 3 * 24 * 60 * 60 * 1000) : null;
+  const canRemind = isSigned && !depositReceived && threeDaysAfterSign !== null && new Date() >= threeDaysAfterSign;
+
+  const remindDeposit = async () => {
+    setLoading('remind');
+    try {
+      const res = await fetch(`/api/reservations/${reservationId}/remind-deposit`, { method: 'POST' });
+      if (res.ok) setRemindSent(true);
+    } finally {
+      setLoading(null);
+    }
+  };
 
   return (
     <div style={{ border: '1px solid #CEC8BF', backgroundColor: '#F7F4F0', borderRadius: '12px', overflow: 'hidden' }}>
       <div style={{ padding: '16px 32px', borderBottom: '1px solid #CEC8BF', backgroundColor: '#E5DED5', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <p style={{ fontSize: '11px', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#7A7570', margin: 0 }}>Contrat</p>
-        {isSigned && (
-          <span style={{ fontSize: '10px', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '4px 12px', backgroundColor: '#1C1C1A', color: '#EDE8E1', borderRadius: '20px' }}>
-            Signé ✓
-          </span>
-        )}
+        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+          {isSigned && (
+            <span style={{ fontSize: '10px', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '4px 12px', backgroundColor: '#1C1C1A', color: '#EDE8E1', borderRadius: '20px' }}>
+              Signé ✓
+            </span>
+          )}
+          {isSigned && depositReceived && (
+            <span style={{ fontSize: '10px', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '4px 12px', backgroundColor: '#2D6A31', color: '#FFFFFF', borderRadius: '20px' }}>
+              Acompte reçu ✓
+            </span>
+          )}
+        </div>
       </div>
 
       {isSigned && signed && (
@@ -104,6 +146,48 @@ export default function ContractActions({ reservationId, contractStatus, emailSt
           <p style={{ fontSize: '12px', color: '#7A7570', margin: 0 }}>
             Signé électroniquement le {signed.at.toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' })} par <strong>{signed.byName}</strong>
           </p>
+        </div>
+      )}
+
+      {/* Bloc relance — visible 3 jours après signature si acompte pas reçu */}
+      {canRemind && (
+        <div style={{ padding: '14px 32px', borderBottom: '1px solid #CEC8BF', backgroundColor: '#FEF9F0', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px' }}>
+          <p style={{ fontSize: '12px', color: '#7A7570', margin: 0, lineHeight: 1.5 }}>
+            {remindSent
+              ? '✓ Rappel envoyé au locataire.'
+              : 'Plus de 3 jours sans réception de l\'acompte — vous pouvez relancer le locataire.'}
+          </p>
+          {!remindSent && (
+            <button
+              onClick={remindDeposit}
+              disabled={loading !== null}
+              style={{ ...btnSecondary, flex: 'none', whiteSpace: 'nowrap' as const, borderColor: '#C47822', color: '#C47822', opacity: loading === 'remind' ? 0.6 : 1 }}
+            >
+              {loading === 'remind' ? 'Envoi...' : 'Relancer le locataire →'}
+            </button>
+          )}
+        </div>
+      )}
+
+      {/* Bloc acompte — visible quand signé mais acompte pas encore confirmé */}
+      {isSigned && !depositReceived && (
+        <div style={{ padding: '16px 32px', borderBottom: '1px solid #CEC8BF', backgroundColor: '#FFFBF0', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px' }}>
+          <p style={{ fontSize: '12px', color: '#7A7570', margin: 0, lineHeight: 1.5 }}>
+            En attente de réception de l'acompte. Le contrat signé sera envoyé au locataire dès confirmation.
+          </p>
+          <button
+            onClick={markDepositReceived}
+            disabled={loading !== null}
+            style={loading === 'deposit' ? { ...btnDisabled, flex: 'none', whiteSpace: 'nowrap' as const } : { ...btnDeposit, flex: 'none', whiteSpace: 'nowrap' as const }}
+          >
+            {loading === 'deposit' ? 'Envoi en cours...' : 'Acompte reçu — envoyer le contrat →'}
+          </button>
+        </div>
+      )}
+
+      {depositError && (
+        <div style={{ padding: '0 32px 16px', borderBottom: '1px solid #CEC8BF' }}>
+          <p style={{ fontSize: '12px', color: '#c0392b', margin: 0 }}>{depositError}</p>
         </div>
       )}
 

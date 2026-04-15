@@ -1,25 +1,28 @@
 /**
- * Template email partagé — ContratGîte
+ * Template email partagé — Prysme
  * Compatible Gmail, Apple Mail, Outlook (table-based)
  */
 
 interface EmailTemplateOptions {
   giteName: string;
-  logoDataUrl?: string | null;
-  logoPublicUrl?: string | null;  // URL publique prioritaire sur dataUrl
+  logoPublicUrl?: string | null;  // Vercel Blob URL
   preheader?: string;
   body: string;
   footer?: string;
 }
 
 export function buildEmailHtml(opts: EmailTemplateOptions): string {
-  const { giteName, logoDataUrl, logoPublicUrl, preheader, body, footer } = opts;
+  const { giteName, logoPublicUrl, preheader, body, footer } = opts;
 
-  // Priorité : URL publique (fonctionne dans Gmail) > data URL > texte
-  const logoSrc = logoPublicUrl ?? (logoDataUrl?.startsWith('http') ? logoDataUrl : null);
+  const logoSrc = logoPublicUrl ?? null;
   const logoBlock = logoSrc
     ? `<img src="${logoSrc}" alt="${giteName}" style="max-height:48px; max-width:160px; object-fit:contain; display:block;" />`
     : `<span style="font-family:Georgia,serif; font-size:18px; font-weight:400; color:#1C1C1A; letter-spacing:0.02em;">${giteName}</span>`;
+
+  const appUrl = (process.env.NEXT_PUBLIC_APP_URL ?? '').replace(/\/$/, '');
+  const prysmeLogoBlock = appUrl
+    ? `<img src="${appUrl}/logotype_prysme.png" alt="Prysme" style="height:20px; display:block; margin:0 auto;" />`
+    : `<span style="font-size:10px; color:#7A7570; letter-spacing:0.1em; text-transform:uppercase;">Prysme</span>`;
 
   const preheaderHtml = preheader
     ? `<div style="display:none;max-height:0;overflow:hidden;font-size:1px;color:#F7F4F0;">${preheader}</div>`
@@ -76,7 +79,7 @@ export function buildEmailHtml(opts: EmailTemplateOptions): string {
               <table width="100%" cellpadding="0" cellspacing="0" border="0">
                 <tr>
                   <td style="font-family:Inter,sans-serif; font-size:11px; color:#7A7570; line-height:1.6;">
-                    ${footer ?? `Cet email a été envoyé par <strong>${giteName}</strong> via ContratGîte.`}
+                    ${footer ?? `Cet email a été envoyé par <strong>${giteName}</strong> via Prysme.`}
                   </td>
                 </tr>
               </table>
@@ -90,7 +93,7 @@ export function buildEmailHtml(opts: EmailTemplateOptions): string {
     </tr>
     <tr>
       <td align="center" style="padding:20px 16px 40px;">
-        <span style="font-size:10px; color:#7A7570; letter-spacing:0.1em; text-transform:uppercase;">ContratGîte</span>
+        ${prysmeLogoBlock}
       </td>
     </tr>
   </table>

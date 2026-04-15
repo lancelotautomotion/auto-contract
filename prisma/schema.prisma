@@ -33,7 +33,7 @@ model Gite {
   touristTax  Float   @default(1.32)
   slug                  String? @unique
   contractTemplate      String?
-  logoUrl               String?
+  logoUrl               String?  // Vercel Blob URL (formerly logoDataUrl base64)
   notificationEmail     String?
   driveTemplateFolderId String?
   driveOutputFolderId   String?
@@ -47,6 +47,7 @@ model Gite {
 
   reservations Reservation[]
   options      GiteOption[]
+  documents    GiteDocument[]
 }
 
 // Options configurées par le gérant (dynamiques)
@@ -125,15 +126,28 @@ model Contract {
   signedByName   String?
   signedByIp     String?
 
+  depositReceived   Boolean   @default(false)
+  depositReceivedAt DateTime?
+  signedPdfUrl      String?   // Vercel Blob URL of the signed PDF
+
   emailSentAt DateTime?
   emailStatus EmailStatus @default(NOT_SENT)
 
-  depositReceived   Boolean   @default(false)
-  depositReceivedAt DateTime?
-  signedPdfUrl      String?
-
   reservationId String      @unique
   reservation   Reservation @relation(fields: [reservationId], references: [id], onDelete: Cascade)
+}
+
+// Documents joints aux emails (RIB, règlement intérieur, etc.)
+model GiteDocument {
+  id        String   @id @default(cuid())
+  label     String
+  fileName  String
+  mimeType  String
+  fileUrl   String   // Vercel Blob URL (formerly fileDataUrl base64)
+  createdAt DateTime @default(now())
+
+  giteId String
+  gite   Gite   @relation(fields: [giteId], references: [id], onDelete: Cascade)
 }
 
 enum ReservationStatus {
