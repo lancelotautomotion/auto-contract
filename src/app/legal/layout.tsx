@@ -29,7 +29,9 @@ export default function LegalLayout({ children }: { children: React.ReactNode })
 
         {/* Nav */}
         <nav style={{ padding: '0 40px', height: '60px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: `1px solid ${tk.border}` }} className="legal-pad">
-          <Link href="/" style={{ fontSize: '16px', fontWeight: 700, color: tk.ink, textDecoration: 'none', letterSpacing: '-0.03em' }}>Prysme</Link>
+          <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
+            <img src="/logotype_prysme.png" alt="Prysme" height={24} style={{ display: 'block' }} />
+          </Link>
           <Link href="/" style={{ fontSize: '13px', color: tk.inkSoft, textDecoration: 'none', fontWeight: 400, display: 'flex', alignItems: 'center', gap: '6px' }}>
             ← Retour
           </Link>
@@ -44,7 +46,9 @@ export default function LegalLayout({ children }: { children: React.ReactNode })
         <footer style={{ borderTop: `1px solid ${tk.border}`, padding: '20px 40px' }} className="legal-pad">
           <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
             <div className="legal-footer-inner">
-              <Link href="/" style={{ fontSize: '14px', fontWeight: 700, color: tk.ink, textDecoration: 'none', letterSpacing: '-0.02em' }}>Prysme</Link>
+              <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
+                <img src="/logotype_prysme.png" alt="Prysme" height={20} style={{ display: 'block' }} />
+              </Link>
               <div className="legal-footer-links">
                 <Link href="/legal/mentions-legales" style={{ fontSize: '12px', color: tk.inkMuted, textDecoration: 'none' }}>Mentions légales</Link>
                 <Link href="/legal/confidentialite" style={{ fontSize: '12px', color: tk.inkMuted, textDecoration: 'none' }}>Confidentialité</Link>

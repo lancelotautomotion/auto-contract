@@ -72,7 +72,9 @@ export default function CommentCaMarche() {
 
         {/* ── Nav ── */}
         <nav style={{ background: tk.ink, padding: '0 40px', height: '60px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #1F1F23' }} className="ccm-pad">
-          <Link href="/" style={{ fontSize: '16px', fontWeight: 700, color: tk.white, textDecoration: 'none', letterSpacing: '-0.03em' }}>Prysme</Link>
+          <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
+            <img src="/logotype_prysme.png" alt="Prysme" height={26} style={{ display: 'block', filter: 'brightness(0) invert(1)' }} />
+          </Link>
           <div className="ccm-nav-links">
             <Link href="/" style={{ fontSize: '13px', color: '#6B7280', textDecoration: 'none', fontWeight: 400 }}>Accueil</Link>
             <a href="/#tarifs" style={{ fontSize: '13px', color: '#6B7280', textDecoration: 'none', fontWeight: 400 }}>Tarifs</a>
@@ -224,7 +226,9 @@ export default function CommentCaMarche() {
         {/* ── Footer ── */}
         <footer style={{ background: tk.white, borderTop: `1px solid ${tk.border}`, padding: '24px 40px' }} className="ccm-pad">
           <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
-            <Link href="/" style={{ fontSize: '15px', fontWeight: 700, color: tk.ink, textDecoration: 'none', letterSpacing: '-0.02em' }}>Prysme</Link>
+            <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
+              <img src="/logotype_prysme.png" alt="Prysme" height={22} style={{ display: 'block' }} />
+            </Link>
             <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap', alignItems: 'center' }}>
               <Link href="/" style={{ fontSize: '12px', color: tk.inkMuted, textDecoration: 'none' }}>Accueil</Link>
               <Link href="/legal/mentions-legales" style={{ fontSize: '12px', color: tk.inkMuted, textDecoration: 'none' }}>Mentions légales</Link>

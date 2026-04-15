@@ -100,7 +100,9 @@ function Nav({ theme = 'light' }: { theme?: 'light' | 'dark' }) {
   const ctaColor = theme === 'dark' ? tk.ink : tk.white;
   return (
     <nav style={{ background: bg, padding: '0 40px', height: '60px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: `1px solid ${theme === 'dark' ? '#1F1F23' : tk.border}` }}>
-      <Link href="/" style={{ fontSize: '16px', fontWeight: 700, color: logo, textDecoration: 'none', letterSpacing: '-0.03em', fontFamily: tk.font }}>Prysme</Link>
+      <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
+        <img src="/logotype_prysme.png" alt="Prysme" height={26} style={{ display: 'block', filter: theme === 'dark' ? 'brightness(0) invert(1)' : 'none' }} />
+      </Link>
       <div className="nav-links" style={{ display: 'flex', alignItems: 'center', gap: '28px' }}>
         <a href="#fonctionnalites" style={{ fontSize: '13px', color: link, textDecoration: 'none', fontFamily: tk.font, fontWeight: 400 }}>Fonctionnalités</a>
         <a href="#tarifs" style={{ fontSize: '13px', color: link, textDecoration: 'none', fontFamily: tk.font, fontWeight: 400 }}>Tarifs</a>
@@ -386,7 +388,9 @@ export default function Home() {
         <footer style={{ background: tk.white, borderTop: `1px solid ${tk.border}`, padding: '24px 40px' }}>
           <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
             <div className="footer-inner">
-              <Link href="/" style={{ fontSize: '15px', fontWeight: 700, color: tk.ink, textDecoration: 'none', letterSpacing: '-0.02em' }}>Prysme</Link>
+              <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
+                <img src="/logotype_prysme.png" alt="Prysme" height={22} style={{ display: 'block' }} />
+              </Link>
               <div className="footer-links">
                 <Link href="/legal/mentions-legales" style={{ fontSize: '12px', color: tk.inkMuted, textDecoration: 'none', fontWeight: 400 }}>Mentions légales</Link>
                 <Link href="/legal/confidentialite" style={{ fontSize: '12px', color: tk.inkMuted, textDecoration: 'none', fontWeight: 400 }}>Confidentialité</Link>
