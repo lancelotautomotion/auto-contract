@@ -25,7 +25,9 @@ const clerkAppearance = {
     fontSize: '14px',
   },
   elements: {
-    card: { boxShadow: 'none', border: 'none', padding: '0', borderRadius: '0', background: 'transparent' },
+    rootBox: { width: '100%' },
+    cardBox: { boxShadow: 'none', border: 'none', width: '100%' },
+    card: { boxShadow: 'none', border: 'none', padding: '0', borderRadius: '0', background: 'transparent', width: '100%' },
     headerTitle: {
       fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
       fontSize: '26px',
