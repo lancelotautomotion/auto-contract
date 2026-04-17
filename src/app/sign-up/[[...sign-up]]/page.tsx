@@ -1,4 +1,5 @@
 import { SignUp } from '@clerk/nextjs';
+import { frFR } from '@clerk/localizations';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Plus_Jakarta_Sans } from 'next/font/google';
@@ -83,8 +84,8 @@ export default function SignUpPage() {
           <div className="orb orb-2" />
           <div className="orb orb-3" />
           <div className="ab-content">
-            <div className="ab-logo">
-              <Image src="/mark_prysme.png" alt="Prysme" width={72} height={72} style={{ objectFit: 'contain' }} />
+            <div className="ab-mark">
+              <Image src="/mark_prysme.png" alt="Prysme" width={44} height={44} style={{ objectFit: 'contain' }} />
             </div>
             <div className="ab-headline">
               Gérez votre gîte<br />
@@ -138,7 +139,7 @@ export default function SignUpPage() {
             <div className="mobile-logo">
               <Link href="/"><Image src="/logotype_prysme.png" alt="Prysme" width={96} height={24} /></Link>
             </div>
-            <SignUp appearance={clerkAppearance} />
+            <SignUp appearance={clerkAppearance} localization={frFR} />
           </div>
         </div>
 
