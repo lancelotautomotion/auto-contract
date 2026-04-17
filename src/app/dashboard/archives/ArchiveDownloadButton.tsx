@@ -36,20 +36,14 @@ export default function ArchiveDownloadButton({
       onClick={handleDownload}
       disabled={loading}
       title="Télécharger le contrat signé"
-      style={{
-        padding: '8px 14px',
-        fontSize: '11px',
-        letterSpacing: '0.1em',
-        textTransform: 'uppercase',
-        backgroundColor: loading ? '#CEC8BF' : '#1C1C1A',
-        color: '#EDE8E1',
-        border: 'none',
-        borderRadius: '8px',
-        cursor: loading ? 'not-allowed' : 'pointer',
-        whiteSpace: 'nowrap',
-      }}
+      className="pdf-btn"
+      style={{ opacity: loading ? 0.6 : 1, cursor: loading ? 'not-allowed' : 'pointer' }}
     >
-      {loading ? '...' : 'PDF ↓'}
+      <svg width="12" height="12" fill="none" viewBox="0 0 12 12">
+        <path d="M6 2v6m0 0L3.5 5.5M6 8l2.5-2.5" stroke="#fff" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M2 9v1.5a.5.5 0 00.5.5h7a.5.5 0 00.5-.5V9" stroke="#fff" strokeWidth="1.2" strokeLinecap="round"/>
+      </svg>
+      {loading ? '...' : 'PDF'}
     </button>
   );
 }

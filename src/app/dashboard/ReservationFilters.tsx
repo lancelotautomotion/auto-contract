@@ -11,23 +11,10 @@ const STATUTS = [
 ];
 
 const SORT_OPTIONS = [
-  { value: 'asc', label: 'Arrivée la plus proche en premier' },
-  { value: 'desc', label: 'Arrivée la plus lointaine en premier' },
-  { value: 'recent', label: 'Dernière réservation créée' },
+  { value: 'asc', label: 'Arrivée la plus proche' },
+  { value: 'desc', label: 'Arrivée la plus lointaine' },
+  { value: 'recent', label: 'Dernière réservation' },
 ];
-
-const SIGNED_BG = '#D1EDD4';
-const SIGNED_TEXT = '#2D6A31';
-const PENDING_BG = '#FDECD0';
-const PENDING_TEXT = '#C47822';
-
-function getBadgeStyle(value: string, active: boolean) {
-  if (!active) return { backgroundColor: '#EDE8E1', color: '#7A7570', border: '1px solid #CEC8BF' };
-  if (value === 'SIGNED') return { backgroundColor: SIGNED_BG, color: SIGNED_TEXT, border: `1px solid ${SIGNED_TEXT}` };
-  if (value === 'GENERATED') return { backgroundColor: PENDING_BG, color: PENDING_TEXT, border: `1px solid ${PENDING_TEXT}` };
-  if (value === 'none') return { backgroundColor: '#EDE8E1', color: '#1C1C1A', border: '1px solid #1C1C1A' };
-  return { backgroundColor: '#1C1C1A', color: '#EDE8E1', border: '1px solid #1C1C1A' };
-}
 
 export default function ReservationFilters({ currentStatus, currentSort, currentSearch }: {
   currentStatus: string;
@@ -55,55 +42,35 @@ export default function ReservationFilters({ currentStatus, currentSort, current
   const currentSortLabel = SORT_OPTIONS.find(o => o.value === currentSort)?.label ?? SORT_OPTIONS[0].label;
 
   return (
-    <div style={{ display: 'flex', gap: '10px', alignItems: 'center', padding: '12px 32px', borderBottom: '1px solid #CEC8BF', backgroundColor: '#EDE8E1' }}>
-
-      {/* Recherche */}
+    <div className="resa-toolbar">
       <input
         type="text"
-        placeholder="Rechercher..."
+        placeholder="Rechercher un client..."
         defaultValue={currentSearch}
         onChange={e => handleSearch(e.target.value)}
-        style={{
-          padding: '6px 12px', border: '1px solid #CEC8BF', backgroundColor: '#F7F4F0',
-          fontSize: '13px', color: '#1C1C1A', outline: 'none', borderRadius: '8px', width: '150px', flexShrink: 0,
-        }}
+        className="resa-search"
       />
 
-      {/* Filtres statut */}
-      <div style={{ display: 'flex', gap: '6px', flex: 1 }}>
-        {STATUTS.map(s => {
-          const active = currentStatus === s.value;
-          return (
-            <button
-              key={s.value}
-              onClick={() => updateParam('status', s.value)}
-              style={{
-                fontSize: '10px', letterSpacing: '0.1em', textTransform: 'uppercase',
-                padding: '5px 12px', borderRadius: '20px', cursor: 'pointer',
-                fontWeight: active ? 600 : 400, whiteSpace: 'nowrap',
-                ...getBadgeStyle(s.value, active),
-              }}
-            >
-              {s.label}
-            </button>
-          );
-        })}
+      <div className="filter-pills">
+        {STATUTS.map(s => (
+          <button
+            key={s.value}
+            onClick={() => updateParam('status', s.value)}
+            className={`filter-pill${currentStatus === s.value ? ' active' : ''}`}
+          >
+            {s.label}
+          </button>
+        ))}
       </div>
 
-      {/* Tri — icône + dropdown custom */}
-      <div style={{ position: 'relative', flexShrink: 0 }}>
-        <button
-          onClick={() => setSortOpen(o => !o)}
-          title={currentSortLabel}
-          style={{
-            padding: '6px 10px', border: '1px solid #CEC8BF', backgroundColor: '#F7F4F0',
-            borderRadius: '8px', cursor: 'pointer', fontSize: '14px', color: '#1C1C1A',
-            display: 'flex', alignItems: 'center', gap: '4px',
-          }}
-        >
-          ↕ <span style={{ fontSize: '10px', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#7A7570' }}>
-            {currentSort === 'asc' ? 'Proche' : currentSort === 'desc' ? 'Lointain' : 'Récent'}
-          </span>
+      <div className="resa-spacer" />
+
+      <div style={{ position: 'relative' }}>
+        <button className="resa-sort" onClick={() => setSortOpen(o => !o)} title={currentSortLabel}>
+          <svg width="12" height="12" fill="none" viewBox="0 0 12 12">
+            <path d="M2 3h8M3 6h6M4 9h4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
+          </svg>
+          {currentSort === 'asc' ? 'Proche' : currentSort === 'desc' ? 'Lointain' : 'Récent'}
         </button>
 
         {sortOpen && (
@@ -111,8 +78,8 @@ export default function ReservationFilters({ currentStatus, currentSort, current
             <div onClick={() => setSortOpen(false)} style={{ position: 'fixed', inset: 0, zIndex: 10 }} />
             <div style={{
               position: 'absolute', right: 0, top: 'calc(100% + 6px)', zIndex: 20,
-              backgroundColor: '#F7F4F0', border: '1px solid #CEC8BF', borderRadius: '10px',
-              overflow: 'hidden', minWidth: '240px', boxShadow: '0 4px 16px rgba(0,0,0,0.08)',
+              background: 'var(--dash-white)', border: '1px solid var(--line)', borderRadius: '10px',
+              overflow: 'hidden', minWidth: '220px', boxShadow: '0 4px 16px rgba(0,0,0,0.08)',
             }}>
               {SORT_OPTIONS.map(o => (
                 <button
@@ -121,8 +88,9 @@ export default function ReservationFilters({ currentStatus, currentSort, current
                   style={{
                     display: 'block', width: '100%', textAlign: 'left',
                     padding: '10px 16px', fontSize: '12px', cursor: 'pointer', border: 'none',
-                    backgroundColor: currentSort === o.value ? '#E5DED5' : 'transparent',
-                    color: currentSort === o.value ? '#1C1C1A' : '#7A7570',
+                    fontFamily: 'var(--ff)',
+                    backgroundColor: currentSort === o.value ? 'var(--violet-light)' : 'transparent',
+                    color: currentSort === o.value ? 'var(--violet-dark)' : 'var(--ink-soft)',
                     fontWeight: currentSort === o.value ? 600 : 400,
                   }}
                 >

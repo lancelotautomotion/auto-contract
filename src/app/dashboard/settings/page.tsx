@@ -14,19 +14,43 @@ export default async function SettingsPage() {
   const gite = await prisma.gite.findFirst({ where: { userId: dbUser.id } });
   if (!gite) redirect("/onboarding");
 
+  const userEmail = user?.emailAddresses[0]?.emailAddress ?? '';
+
   return (
-    <main style={{ maxWidth: '680px', margin: '0 auto', padding: '48px 40px' }}>
-      <div style={{ marginBottom: '40px' }}>
-        <p style={{ fontSize: '11px', letterSpacing: '0.25em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '10px' }}>— Paramètres</p>
-        <h1 style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', fontSize: '44px', fontWeight: 300, color: 'var(--text)', margin: 0 }}>
-          Paramètres
-        </h1>
+    <>
+      {/* Topbar */}
+      <div className="topbar">
+        <div className="topbar-left">
+          <div className="topbar-breadcrumb">Prysme / <span>Paramètres</span></div>
+        </div>
+        <div className="topbar-right">
+          <button className="topbar-btn">
+            <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
+              <circle cx="7" cy="7" r="4.5" stroke="currentColor" strokeWidth="1.3"/>
+              <path d="M10.5 10.5l3 3" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
+            </svg>
+          </button>
+          <button className="topbar-btn">
+            <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
+              <path d="M4 6a4 4 0 018 0v3l1.5 2H2.5L4 9V6z" stroke="currentColor" strokeWidth="1.3"/>
+              <path d="M6.5 13a1.5 1.5 0 003 0" stroke="currentColor" strokeWidth="1.3"/>
+            </svg>
+          </button>
+        </div>
       </div>
 
-      <SettingsForm
-        notificationEmail={gite.notificationEmail ?? ''}
-        userEmail={user?.emailAddresses[0]?.emailAddress ?? ''}
-      />
-    </main>
+      {/* Content */}
+      <div className="content" style={{ maxWidth: '700px', width: '100%' }}>
+        <div className="page-title">
+          <h1>Paramètres<span className="v">.</span></h1>
+          <div className="sub">Gérez vos préférences et votre compte</div>
+        </div>
+
+        <SettingsForm
+          notificationEmail={gite.notificationEmail ?? ''}
+          userEmail={userEmail}
+        />
+      </div>
+    </>
   );
 }
