@@ -43,186 +43,237 @@ export default async function ArchivesPage({
     orderBy,
   });
 
-  // Filtrer par année côté JS (évite une requête prisma complexe sur champ Date)
   const archives = year
     ? allSigned.filter(r => new Date(r.checkIn).getFullYear().toString() === year)
     : allSigned;
 
-  // Années disponibles pour le filtre
   const years = [...new Set(allSigned.map(r => new Date(r.checkIn).getFullYear()))].sort((a, b) => b - a);
 
-  const fmt = (d: Date) => new Date(d).toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' });
+  const fmt = (d: Date) => new Date(d).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
   const fmtShort = (d: Date) => new Date(d).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
   const fmtPrice = (n: number | null) => n != null ? `${n.toFixed(2).replace('.', ',')} €` : '—';
 
   const totalLoyer = archives.reduce((sum, r) => sum + (r.rent ?? 0), 0);
   const totalAcompte = archives.reduce((sum, r) => sum + (r.deposit ?? 0), 0);
 
+  const avColors = ['g', 'v'];
+
   return (
-    <main style={{ maxWidth: '1100px', margin: '0 auto', padding: '48px 40px' }}>
-
-      {/* Header */}
-      <div style={{ marginBottom: '40px' }}>
-        <p style={{ fontSize: '11px', letterSpacing: '0.25em', textTransform: 'uppercase', color: '#7A7570', marginBottom: '10px' }}>— Archives</p>
-        <h1 style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', fontSize: '48px', fontWeight: 300, color: '#1C1C1A', margin: 0 }}>
-          Contrats signés
-        </h1>
-        <p style={{ fontSize: '13px', color: '#7A7570', marginTop: '8px' }}>
-          {archives.length} contrat{archives.length > 1 ? 's' : ''} archivé{archives.length > 1 ? 's' : ''}
-          {year ? ` en ${year}` : ''}
-        </p>
-      </div>
-
-      {/* Stats synthèse */}
-      {archives.length > 0 && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', marginBottom: '32px' }}>
-          {[
-            { label: 'Contrats archivés', value: archives.length.toString() },
-            { label: 'Loyer total', value: fmtPrice(totalLoyer) },
-            { label: 'Acomptes encaissés', value: fmtPrice(totalAcompte) },
-          ].map(s => (
-            <div key={s.label} style={{ padding: '24px 28px', backgroundColor: '#E5DED5', borderRadius: '12px', border: '1px solid #CEC8BF' }}>
-              <p style={{ fontSize: '10px', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#7A7570', marginBottom: '10px' }}>{s.label}</p>
-              <p style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', fontSize: '36px', fontWeight: 300, color: '#1C1C1A', margin: 0 }}>{s.value}</p>
-            </div>
-          ))}
+    <>
+      {/* Topbar */}
+      <div className="topbar">
+        <div className="topbar-left">
+          <div className="topbar-breadcrumb">Prysme / <span>Archives</span></div>
         </div>
-      )}
-
-      {/* Filtres */}
-      <div style={{ display: 'flex', gap: '12px', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap' }}>
-
-        {/* Recherche */}
-        <form method="GET" style={{ display: 'flex', gap: '8px', alignItems: 'center', flex: 1, minWidth: '200px' }}>
-          <input
-            type="hidden" name="year" value={year}
-          />
-          <input
-            type="hidden" name="sort" value={sort}
-          />
-          <input
-            name="search"
-            defaultValue={search}
-            placeholder="Rechercher un locataire..."
-            style={{
-              flex: 1, padding: '10px 14px', border: '1px solid #CEC8BF',
-              backgroundColor: '#F7F4F0', fontSize: '13px', color: '#1C1C1A',
-              outline: 'none', borderRadius: '8px',
-            }}
-          />
-          <button type="submit" style={{ padding: '10px 18px', backgroundColor: '#1C1C1A', color: '#EDE8E1', border: 'none', borderRadius: '8px', fontSize: '11px', letterSpacing: '0.1em', textTransform: 'uppercase', cursor: 'pointer' }}>
-            Chercher
+        <div className="topbar-right">
+          <button className="topbar-btn">
+            <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
+              <circle cx="7" cy="7" r="4.5" stroke="currentColor" strokeWidth="1.3"/>
+              <path d="M10.5 10.5l3 3" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
+            </svg>
           </button>
-          {search && (
-            <Link href={`/dashboard/archives?year=${year}&sort=${sort}`} style={{ fontSize: '12px', color: '#7A7570', textDecoration: 'none' }}>
-              ✕ Effacer
-            </Link>
-          )}
-        </form>
-
-        {/* Filtre année */}
-        <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
-          <Link
-            href={`/dashboard/archives?search=${search}&sort=${sort}`}
-            style={{ fontSize: '11px', letterSpacing: '0.1em', textTransform: 'uppercase', padding: '8px 14px', borderRadius: '20px', textDecoration: 'none', backgroundColor: !year ? '#1C1C1A' : '#E5DED5', color: !year ? '#EDE8E1' : '#7A7570', border: `1px solid ${!year ? '#1C1C1A' : '#CEC8BF'}` }}
-          >
-            Toutes
-          </Link>
-          {years.map(y => (
-            <Link
-              key={y}
-              href={`/dashboard/archives?search=${search}&sort=${sort}&year=${y}`}
-              style={{ fontSize: '11px', letterSpacing: '0.1em', textTransform: 'uppercase', padding: '8px 14px', borderRadius: '20px', textDecoration: 'none', backgroundColor: year === y.toString() ? '#1C1C1A' : '#E5DED5', color: year === y.toString() ? '#EDE8E1' : '#7A7570', border: `1px solid ${year === y.toString() ? '#1C1C1A' : '#CEC8BF'}` }}
-            >
-              {y}
-            </Link>
-          ))}
-        </div>
-
-        {/* Tri */}
-        <div style={{ display: 'flex', gap: '6px' }}>
-          {[
-            { value: 'checkin_desc', label: 'Arrivée ↓' },
-            { value: 'checkin_asc', label: 'Arrivée ↑' },
-            { value: 'name_asc', label: 'Nom A→Z' },
-          ].map(o => (
-            <Link
-              key={o.value}
-              href={`/dashboard/archives?search=${search}&year=${year}&sort=${o.value}`}
-              style={{ fontSize: '10px', letterSpacing: '0.08em', textTransform: 'uppercase', padding: '8px 12px', borderRadius: '20px', textDecoration: 'none', backgroundColor: sort === o.value ? '#E5DED5' : 'transparent', color: sort === o.value ? '#1C1C1A' : '#7A7570', border: '1px solid #CEC8BF' }}
-            >
-              {o.label}
-            </Link>
-          ))}
+          <button className="topbar-btn">
+            <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
+              <path d="M4 6a4 4 0 018 0v3l1.5 2H2.5L4 9V6z" stroke="currentColor" strokeWidth="1.3"/>
+              <path d="M6.5 13a1.5 1.5 0 003 0" stroke="currentColor" strokeWidth="1.3"/>
+            </svg>
+          </button>
         </div>
       </div>
 
-      {/* Table */}
-      <div style={{ border: '1px solid #CEC8BF', borderRadius: '12px', overflow: 'hidden' }}>
-        {/* Colonnes */}
-        <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr 80px', padding: '12px 28px', borderBottom: '1px solid #CEC8BF', backgroundColor: '#E5DED5' }}>
-          {['Locataire', 'Arrivée', 'Départ', 'Loyer', ''].map(col => (
-            <span key={col} style={{ fontSize: '10px', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#7A7570' }}>{col}</span>
-          ))}
+      {/* Content */}
+      <div className="content" style={{ maxWidth: '1200px', width: '100%' }}>
+
+        <div className="page-title">
+          <h1>Contrats <span className="v">signés</span></h1>
+          <div className="sub">
+            {archives.length} contrat{archives.length > 1 ? 's' : ''} archivé{archives.length > 1 ? 's' : ''}
+            {year ? ` en ${year}` : ''}
+          </div>
         </div>
 
-        {archives.length === 0 ? (
-          <div style={{ padding: '56px 28px', textAlign: 'center', backgroundColor: '#F7F4F0' }}>
-            <p style={{ fontSize: '13px', color: '#7A7570', margin: 0 }}>
-              {search ? `Aucun contrat trouvé pour "${search}"` : 'Aucun contrat archivé pour l\'instant.'}
-            </p>
-            {!search && (
-              <p style={{ fontSize: '12px', color: '#CEC8BF', marginTop: '8px' }}>
-                Les contrats apparaissent ici une fois signés et l'acompte confirmé.
-              </p>
+        {/* Stats */}
+        <div className="stats-row-3">
+          <div className="stat-card green">
+            <div className="sc-top">
+              <div className="sc-label">Contrats archivés</div>
+              <div className="sc-icon g">
+                <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
+                  <rect x="3" y="5" width="10" height="8" rx="1.5" stroke="#4A7353" strokeWidth="1.2"/>
+                  <path d="M3 7.5l5 3 5-3" stroke="#4A7353" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </div>
+            </div>
+            <div className="sc-num">{archives.length}</div>
+          </div>
+          <div className="stat-card violet">
+            <div className="sc-top">
+              <div className="sc-label">Loyer total</div>
+              <div className="sc-icon v">
+                <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
+                  <circle cx="8" cy="8" r="5.5" stroke="#5B52B5" strokeWidth="1.2"/>
+                  <path d="M8 4.5v7M5.5 6.5h4a1.5 1.5 0 010 3H6" stroke="#5B52B5" strokeWidth="1.2" strokeLinecap="round"/>
+                </svg>
+              </div>
+            </div>
+            <div className="sc-num">{fmtPrice(totalLoyer)}</div>
+          </div>
+          <div className="stat-card amber">
+            <div className="sc-top">
+              <div className="sc-label">Acomptes encaissés</div>
+              <div className="sc-icon a">
+                <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
+                  <path d="M2 12l4-4 3 3 5-6" stroke="#8C6A00" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </div>
+            </div>
+            <div className="sc-num">{fmtPrice(totalAcompte)}</div>
+          </div>
+        </div>
+
+        {/* Table card */}
+        <div className="card">
+          <div className="card-header">
+            <div className="card-title">
+              <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
+                <rect x="3" y="5" width="10" height="8" rx="1.5" stroke="#7F77DD" strokeWidth="1.2"/>
+                <path d="M3 7.5l5 3 5-3" stroke="#7F77DD" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+              Archives
+            </div>
+          </div>
+
+          {/* Toolbar */}
+          <div className="toolbar">
+            <form method="GET" style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+              <input type="hidden" name="year" value={year} />
+              <input type="hidden" name="sort" value={sort} />
+              <input
+                name="search"
+                defaultValue={search}
+                placeholder="Rechercher un locataire..."
+                className="t-search"
+              />
+              <button type="submit" className="btn btn-violet" style={{ padding: '7px 14px', fontSize: '12px' }}>
+                Chercher
+              </button>
+              {search && (
+                <Link href={`/dashboard/archives?year=${year}&sort=${sort}`} style={{ fontSize: '12px', color: 'var(--ink-lighter)', textDecoration: 'none' }}>
+                  ✕
+                </Link>
+              )}
+            </form>
+
+            <div style={{ display: 'flex', gap: '4px' }}>
+              <Link
+                href={`/dashboard/archives?search=${search}&sort=${sort}`}
+                className={`fpill${!year ? ' active' : ''}`}
+              >
+                Toutes
+              </Link>
+              {years.map(y => (
+                <Link
+                  key={y}
+                  href={`/dashboard/archives?search=${search}&sort=${sort}&year=${y}`}
+                  className={`fpill${year === y.toString() ? ' active' : ''}`}
+                >
+                  {y}
+                </Link>
+              ))}
+            </div>
+
+            <div className="t-spacer" />
+
+            <div style={{ display: 'flex', gap: '4px' }}>
+              {[
+                { value: 'checkin_desc', label: 'Arrivée ↓' },
+                { value: 'checkin_asc', label: 'Arrivée ↑' },
+                { value: 'name_asc', label: 'Nom A-Z' },
+              ].map(o => (
+                <Link
+                  key={o.value}
+                  href={`/dashboard/archives?search=${search}&year=${year}&sort=${o.value}`}
+                  className={`fpill${sort === o.value ? ' active' : ''}`}
+                >
+                  {o.label}
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          {/* Table */}
+          <table className="a-table">
+            <thead>
+              <tr>
+                <th>Locataire</th>
+                <th>Arrivée</th>
+                <th>Départ</th>
+                <th>Loyer</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {archives.length === 0 ? (
+                <tr>
+                  <td colSpan={5} style={{ textAlign: 'center', padding: '56px 20px', color: 'var(--ink-lighter)' }}>
+                    {search ? `Aucun contrat trouvé pour "${search}"` : 'Aucun contrat archivé pour l\'instant.'}
+                  </td>
+                </tr>
+              ) : (
+                archives.map((r, i) => {
+                  const avClass = avColors[i % 2] as 'g' | 'v';
+                  const initials = `${r.clientLastName[0] ?? ''}${r.clientFirstName[0] ?? ''}`.toUpperCase();
+                  return (
+                    <tr key={r.id}>
+                      <td>
+                        <div className="loc-cell">
+                          <div className={`loc-av ${avClass}`}>{initials}</div>
+                          <div>
+                            <div className="loc-name">{r.clientLastName} {r.clientFirstName}</div>
+                            <div className="loc-signed">
+                              Signé le {r.contract?.signedAt ? fmtShort(r.contract.signedAt) : '—'}
+                              {r.contract?.signedByName ? ` par ${r.contract.signedByName}` : ''}
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                      <td>{fmt(r.checkIn)}</td>
+                      <td>{fmt(r.checkOut)}</td>
+                      <td><span className="loyer">{fmtPrice(r.rent)}</span></td>
+                      <td>
+                        <ArchiveDownloadButton
+                          reservationId={r.id}
+                          filename={`contrat-signe-${r.clientLastName}-${r.clientFirstName}.pdf`}
+                        />
+                      </td>
+                    </tr>
+                  );
+                })
+              )}
+            </tbody>
+          </table>
+
+          {/* Footer */}
+          <div className="table-footer">
+            <div className="table-footer-info">
+              {archives.length} contrat{archives.length > 1 ? 's' : ''} sur {allSigned.length}
+            </div>
+            {archives.length > 0 && (
+              <a
+                href={`/api/archives/export-csv?year=${year}&search=${search}`}
+                className="export-btn"
+              >
+                <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
+                  <path d="M7 2v7m0 0L4.5 6.5M7 9l2.5-2.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M2 10v1.5a1 1 0 001 1h8a1 1 0 001-1V10" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
+                </svg>
+                Exporter en CSV
+              </a>
             )}
           </div>
-        ) : (
-          archives.map((r, i) => (
-            <div
-              key={r.id}
-              style={{
-                display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr 80px',
-                padding: '18px 28px',
-                borderBottom: i < archives.length - 1 ? '1px solid #CEC8BF' : 'none',
-                backgroundColor: '#F7F4F0', alignItems: 'center',
-              }}
-            >
-              <div>
-                <Link href={`/dashboard/reservations/${r.id}`} style={{ textDecoration: 'none' }}>
-                  <p style={{ fontSize: '14px', color: '#1C1C1A', margin: 0, fontWeight: 500 }}>
-                    {r.clientLastName} {r.clientFirstName}
-                  </p>
-                </Link>
-                <p style={{ fontSize: '11px', color: '#7A7570', margin: '3px 0 0' }}>
-                  Signé le {r.contract?.signedAt ? fmtShort(r.contract.signedAt) : '—'}
-                  {r.contract?.signedByName ? ` par ${r.contract.signedByName}` : ''}
-                </p>
-              </div>
-              <span style={{ fontSize: '13px', color: '#1C1C1A' }}>{fmt(r.checkIn)}</span>
-              <span style={{ fontSize: '13px', color: '#1C1C1A' }}>{fmt(r.checkOut)}</span>
-              <span style={{ fontSize: '13px', color: '#1C1C1A' }}>{fmtPrice(r.rent)}</span>
-              <ArchiveDownloadButton
-                reservationId={r.id}
-                filename={`contrat-signe-${r.clientLastName}-${r.clientFirstName}.pdf`}
-              />
-            </div>
-          ))
-        )}
-      </div>
-
-      {/* Export CSV */}
-      {archives.length > 0 && (
-        <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'flex-end' }}>
-          <a
-            href={`/api/archives/export-csv?year=${year}&search=${search}`}
-            style={{ fontSize: '11px', letterSpacing: '0.12em', textTransform: 'uppercase', padding: '10px 20px', border: '1px solid #CEC8BF', backgroundColor: '#E5DED5', color: '#1C1C1A', textDecoration: 'none', borderRadius: '8px' }}
-          >
-            Exporter en CSV →
-          </a>
         </div>
-      )}
 
-    </main>
+      </div>
+    </>
   );
 }

@@ -1,32 +1,20 @@
-import Nav from "./Sidebar";
+import { Plus_Jakarta_Sans } from 'next/font/google';
+import Sidebar from "./Sidebar";
+import '@/styles/dashboard.css';
+
+const font = Plus_Jakarta_Sans({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700', '800'],
+  display: 'swap',
+});
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div style={{
-      display: 'grid',
-      gridTemplateColumns: '260px 1fr',
-      minHeight: '100vh',
-      backgroundColor: 'var(--bg)',
-    }}>
-
-      {/* Colonne nav */}
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'flex-end',
-        paddingRight: '48px',
-        position: 'sticky',
-        top: 0,
-        height: '100vh',
-      }}>
-        <Nav />
-      </div>
-
-      {/* Contenu */}
-      <div style={{ minWidth: 0, paddingRight: '48px' }}>
+    <div className={`${font.className} app`}>
+      <Sidebar />
+      <div className="main">
         {children}
       </div>
-
     </div>
   );
 }
