@@ -169,6 +169,14 @@ footer{background:var(--ink);color:rgba(255,255,255,.5);padding:56px 28px 28px}
 .auth-form-panel .mobile-logo{display:none;margin-bottom:32px}
 .auth-form-panel .mobile-logo img{height:28px}
 
+/* ═══ CLERK OVERRIDES ═══ */
+.auth-form-panel .cl-rootBox{width:100%}
+.auth-form-panel .cl-card{box-shadow:none!important;border:none!important;padding:0!important;background:transparent!important;border-radius:0!important}
+.auth-form-panel .cl-cardBox{box-shadow:none!important;border:none!important}
+.auth-form-panel .cl-header{padding:0 0 20px}
+.auth-form-panel .cl-main{padding:0}
+.auth-form-panel .cl-footer{padding:20px 0 0}
+
 /* ═══ MOBILE ═══ */
 @media(max-width:900px){
   .contact-inner{grid-template-columns:1fr;gap:40px}
