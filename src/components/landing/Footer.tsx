@@ -15,18 +15,18 @@ export default function Footer() {
           <div className="footer-col">
             <h4>Produit</h4>
             <ul>
-              <li><a href="#fonctionnalites">Fonctionnalités</a></li>
-              <li><a href="#tarifs">Tarifs</a></li>
-              <li><a href="#fonctionnalites">Sécurité &amp; eIDAS</a></li>
-              <li><a href="#fonctionnalites">Nouveautés</a></li>
+              <li><a href="/#fonctionnalites">Fonctionnalités</a></li>
+              <li><a href="/#tarifs">Tarifs</a></li>
+              <li><a href="/#fonctionnalites">Sécurité &amp; eIDAS</a></li>
+              <li><a href="/#fonctionnalites">Nouveautés</a></li>
             </ul>
           </div>
 
           <div className="footer-col">
             <h4>Société</h4>
             <ul>
-              <li><a href="#">À propos</a></li>
-              <li><a href="#">Contact</a></li>
+              <li><Link href="/a-propos">À propos</Link></li>
+              <li><Link href="/contact">Contact</Link></li>
               <li><Link href="/legal/cgv">CGU</Link></li>
               <li><Link href="/legal/confidentialite">Confidentialité</Link></li>
             </ul>
