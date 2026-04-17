@@ -1,100 +1,146 @@
-import { SignUp } from "@clerk/nextjs";
-import Link from "next/link";
+import { SignUp } from '@clerk/nextjs';
+import Link from 'next/link';
+import Image from 'next/image';
+import { Plus_Jakarta_Sans } from 'next/font/google';
+
+import '@/styles/pages.css';
+
+const font = Plus_Jakarta_Sans({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700', '800'],
+  display: 'swap',
+});
 
 const clerkAppearance = {
   variables: {
-    colorBackground: "#F7F4F0",
-    colorInputBackground: "#EDE8E1",
-    colorInputText: "#1C1C1A",
-    colorText: "#1C1C1A",
-    colorTextSecondary: "#7A7570",
-    colorPrimary: "#1C1C1A",
-    colorDanger: "#c0392b",
-    borderRadius: "8px",
-    fontFamily: "Inter, sans-serif",
-    fontSize: "14px",
+    colorBackground: '#FFFFFF',
+    colorInputBackground: '#FFFFFF',
+    colorInputText: '#2C2C2A',
+    colorText: '#2C2C2A',
+    colorTextSecondary: '#71716E',
+    colorPrimary: '#689D71',
+    colorDanger: '#c0392b',
+    borderRadius: '10px',
+    fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
+    fontSize: '14px',
   },
   elements: {
-    card: {
-      boxShadow: "0 4px 32px rgba(0,0,0,0.08)",
-      border: "1px solid #CEC8BF",
-      borderRadius: "16px",
-      padding: "40px",
-    },
+    card: { boxShadow: 'none', border: 'none', padding: '0', borderRadius: '0', background: 'transparent' },
     headerTitle: {
-      fontFamily: "Cormorant Garamond, Georgia, serif",
-      fontSize: "26px",
-      fontWeight: "300",
-      color: "#1C1C1A",
+      fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
+      fontSize: '26px',
+      fontWeight: '800',
+      letterSpacing: '-0.03em',
+      color: '#2C2C2A',
     },
-    headerSubtitle: {
-      color: "#7A7570",
-      fontSize: "13px",
-    },
-    formFieldLabel: {
-      color: "#7A7570",
-      fontSize: "11px",
-      letterSpacing: "0.1em",
-      textTransform: "uppercase",
-    },
+    headerSubtitle: { color: '#71716E', fontSize: '14px' },
+    formFieldLabel: { color: '#2C2C2A', fontSize: '13px', fontWeight: '600' },
     formFieldInput: {
-      border: "1px solid #CEC8BF",
-      borderRadius: "8px",
-      padding: "10px 14px",
-      fontSize: "14px",
-      color: "#1C1C1A",
+      border: '1.5px solid #E8E6E1',
+      borderRadius: '10px',
+      padding: '11px 14px',
+      fontSize: '14px',
+      color: '#2C2C2A',
+      fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
     },
     formButtonPrimary: {
-      backgroundColor: "#1C1C1A",
-      borderRadius: "100px",
-      fontSize: "11px",
-      letterSpacing: "0.12em",
-      textTransform: "uppercase",
-      padding: "14px 24px",
-      fontFamily: "Inter, sans-serif",
+      backgroundColor: '#689D71',
+      borderRadius: '10px',
+      fontSize: '15px',
+      fontWeight: '600',
+      padding: '13px 28px',
+      fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
+      letterSpacing: 'normal',
+      textTransform: 'none' as const,
     },
-    footerActionLink: {
-      color: "#1C1C1A",
-      fontWeight: "500",
-    },
-    footerActionText: {
-      color: "#7A7570",
-    },
-    dividerLine: {
-      backgroundColor: "#CEC8BF",
-    },
-    dividerText: {
-      color: "#7A7570",
-      fontSize: "12px",
-    },
-    identityPreviewText: {
-      color: "#1C1C1A",
-    },
-    formResendCodeLink: {
-      color: "#1C1C1A",
+    footerActionLink: { color: '#689D71', fontWeight: '600' },
+    footerActionText: { color: '#71716E' },
+    dividerLine: { backgroundColor: '#E8E6E1' },
+    dividerText: { color: '#A3A3A0', fontSize: '12px' },
+    identityPreviewText: { color: '#2C2C2A' },
+    formResendCodeLink: { color: '#689D71' },
+    socialButtonsBlockButton: {
+      border: '1.5px solid #E8E6E1',
+      borderRadius: '10px',
+      fontSize: '13px',
+      fontWeight: '600',
+      color: '#2C2C2A',
+      fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
     },
   },
 };
 
 export default function SignUpPage() {
   return (
-    <div style={{ minHeight: "100vh", backgroundColor: "#EDE8E1", display: "flex", flexDirection: "column" }}>
+    <div className={font.className}>
+      <div className="auth-layout">
 
-      {/* Nav */}
-      <nav style={{ padding: "20px 48px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-        <Link href="/" style={{ fontSize: "15px", fontFamily: "Cormorant Garamond, Georgia, serif", fontWeight: 500, color: "#1C1C1A", textDecoration: "none", letterSpacing: "0.02em" }}>
-          Prysme
-        </Link>
-        <Link href="/sign-in" style={{ fontSize: "11px", letterSpacing: "0.12em", textTransform: "uppercase", color: "#7A7570", textDecoration: "none" }}>
-          Déjà un compte ? Se connecter →
-        </Link>
-      </nav>
+        {/* Left brand panel */}
+        <div className="auth-brand">
+          <div className="orb orb-1" />
+          <div className="orb orb-2" />
+          <div className="orb orb-3" />
+          <div className="ab-content">
+            <div className="ab-mark">
+              <Image src="/logotype_prysme.png" alt="Prysme" width={44} height={44} style={{ objectFit: 'contain' }} />
+            </div>
+            <div className="ab-headline">
+              Gérez votre gîte<br />
+              <span className="g">sans la paperasse.</span>
+            </div>
+            <div className="ab-desc">Contrats auto-générés, signature en ligne, suivi centralisé. Tout ce qu&apos;il faut pour louer l&apos;esprit libre.</div>
+            <div className="ab-pills">
+              <div className="ab-pill">
+                <div className="ab-pill-icon g">
+                  <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
+                    <path d="M4 7h6M7 4v6" stroke="#689D71" strokeWidth="1.3" strokeLinecap="round"/>
+                  </svg>
+                </div>
+                Contrat généré en 3 minutes
+              </div>
+              <div className="ab-pill">
+                <div className="ab-pill-icon v">
+                  <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
+                    <rect x="2.5" y="2" width="9" height="10" rx="1.5" stroke="#7F77DD" strokeWidth="1.2"/>
+                    <path d="M5 6l1.5 1.5L10 4.5" stroke="#7F77DD" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </div>
+                Signature électronique eIDAS
+              </div>
+              <div className="ab-pill">
+                <div className="ab-pill-icon g">
+                  <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
+                    <rect x="1.5" y="3" width="11" height="9" rx="1.5" stroke="#689D71" strokeWidth="1.2"/>
+                    <path d="M1.5 6h11" stroke="#689D71" strokeWidth="1.2"/>
+                  </svg>
+                </div>
+                Calendrier et suivi en temps réel
+              </div>
+              <div className="ab-pill">
+                <div className="ab-pill-icon v">
+                  <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
+                    <circle cx="7" cy="7" r="5" stroke="#7F77DD" strokeWidth="1.2"/>
+                    <path d="M7 4.5v2.5l2 1.5" stroke="#7F77DD" strokeWidth="1.2" strokeLinecap="round"/>
+                  </svg>
+                </div>
+                Essai gratuit 1 mois, sans CB
+              </div>
+            </div>
+          </div>
+          <div className="ab-footer">© 2026 Prysme · Fait avec soin en France</div>
+        </div>
 
-      {/* Form */}
-      <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: "40px 24px" }}>
-        <SignUp appearance={clerkAppearance} />
+        {/* Right form panel */}
+        <div className="auth-form-panel">
+          <div style={{ width: '100%', maxWidth: '420px' }}>
+            <div className="mobile-logo">
+              <Link href="/"><Image src="/logotype_prysme.png" alt="Prysme" width={96} height={24} /></Link>
+            </div>
+            <SignUp appearance={clerkAppearance} />
+          </div>
+        </div>
+
       </div>
-
     </div>
   );
 }
