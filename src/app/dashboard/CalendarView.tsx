@@ -39,11 +39,7 @@ export default function CalendarView({ reservations }: { reservations: Reservati
   const today = new Date();
   const [baseMonth, setBaseMonth] = useState({ year: today.getFullYear(), month: today.getMonth() });
 
-  const months = [0, 1, 2].map(offset => {
-    const m = (baseMonth.month + offset) % 12;
-    const y = baseMonth.year + Math.floor((baseMonth.month + offset) / 12);
-    return { year: y, month: m };
-  });
+  const months = [{ year: baseMonth.year, month: baseMonth.month }];
 
   function getReservationForDay(year: number, month: number, day: number): Reservation | null {
     const date = new Date(year, month, day);
@@ -95,8 +91,8 @@ export default function CalendarView({ reservations }: { reservations: Reservati
         </button>
       </div>
 
-      {/* Grille 3 mois */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' }}>
+      {/* Calendrier 1 mois */}
+      <div>
         {months.map(({ year, month }) => {
           const daysInMonth = getDaysInMonth(year, month);
           const firstDay = getFirstDayOfWeek(year, month);
