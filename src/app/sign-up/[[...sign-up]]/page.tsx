@@ -84,7 +84,7 @@ export default function SignUpPage() {
           <div className="orb orb-3" />
           <div className="ab-content">
             <div className="ab-logo">
-              <Image src="/logotype_prysme.png" alt="Prysme" width={140} height={35} style={{ objectFit: 'contain' }} />
+              <Image src="/mark_prysme.png" alt="Prysme" width={72} height={72} style={{ objectFit: 'contain' }} />
             </div>
             <div className="ab-headline">
               Gérez votre gîte<br />
