@@ -1,0 +1,43 @@
+import Link from 'next/link';
+import Image from 'next/image';
+
+export default function Footer() {
+  return (
+    <footer>
+      <div className="footer-inner">
+        <div className="footer-top">
+
+          <div className="footer-brand">
+            <Image src="/logotype_prysme.png" alt="Prysme" width={96} height={24} />
+            <p>La gestion administrative de votre gîte, enfin simple. Contrats, signatures, suivi — tout au même endroit.</p>
+          </div>
+
+          <div className="footer-col">
+            <h4>Produit</h4>
+            <ul>
+              <li><a href="#fonctionnalites">Fonctionnalités</a></li>
+              <li><a href="#tarifs">Tarifs</a></li>
+              <li><a href="#fonctionnalites">Sécurité &amp; eIDAS</a></li>
+              <li><a href="#fonctionnalites">Nouveautés</a></li>
+            </ul>
+          </div>
+
+          <div className="footer-col">
+            <h4>Société</h4>
+            <ul>
+              <li><a href="#">À propos</a></li>
+              <li><a href="#">Contact</a></li>
+              <li><Link href="/legal/cgv">CGU</Link></li>
+              <li><Link href="/legal/confidentialite">Confidentialité</Link></li>
+            </ul>
+          </div>
+
+        </div>
+        <div className="footer-bottom">
+          <span>© 2026 Prysme. Tous droits réservés.</span>
+          <span>Fait avec soin en France</span>
+        </div>
+      </div>
+    </footer>
+  );
+}
