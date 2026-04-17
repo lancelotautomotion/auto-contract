@@ -83,8 +83,8 @@ export default function SignInPage() {
           <div className="orb orb-2" />
           <div className="orb orb-3" />
           <div className="ab-content">
-            <div className="ab-mark">
-              <Image src="/logotype_prysme.png" alt="Prysme" width={44} height={44} style={{ objectFit: 'contain' }} />
+            <div className="ab-logo">
+              <Image src="/logotype_prysme.png" alt="Prysme" width={140} height={35} style={{ objectFit: 'contain' }} />
             </div>
             <div className="ab-headline">
               Gérez votre gîte<br />
