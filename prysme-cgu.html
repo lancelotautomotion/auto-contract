@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Conditions Générales d'Utilisation — Prysme</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --green:#689D71;--green-light:#EEF5EF;--green-dark:#4A7353;
+  --violet:#7F77DD;--violet-light:#EFEEF9;--violet-dark:#5B52B5;
+  --cream:#FCFFF2;--ink:#2C2C2A;--ink-soft:#71716E;--ink-lighter:#A3A3A0;
+  --line:#E8E6E1;--line-light:#F3F2EE;--white:#FFFFFF;
+  --ff:'Plus Jakarta Sans',system-ui,sans-serif;--max:1140px;
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--ff);color:var(--ink);background:var(--white);-webkit-font-smoothing:antialiased;overflow-x:hidden;line-height:1.6;min-height:100vh;display:flex;flex-direction:column}
+
+/* NAV */
+.nav{position:sticky;top:0;z-index:100;background:rgba(255,255,255,0.85);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--line-light)}
+.nav-inner{max-width:var(--max);margin:0 auto;padding:0 28px;height:68px;display:flex;align-items:center;justify-content:space-between}
+.nav-logo img{height:28px;display:block}
+.nav-links{display:flex;gap:28px;list-style:none}
+.nav-links a{text-decoration:none;font-size:14px;font-weight:500;color:var(--ink-soft);transition:color .2s}.nav-links a:hover{color:var(--ink)}
+.nav-cta{display:flex;align-items:center;gap:10px}
+.btn{font-family:var(--ff);font-size:14px;font-weight:600;cursor:pointer;border:none;border-radius:10px;padding:10px 22px;transition:all .25s ease;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.btn-ghost{background:transparent;color:var(--ink);padding:10px 16px}.btn-ghost:hover{background:var(--line-light)}
+.btn-violet{background:var(--violet);color:#fff}.btn-violet:hover{background:var(--violet-dark);transform:translateY(-1px);box-shadow:0 4px 16px rgba(127,119,221,.3)}
+
+/* PAGE HEADER */
+.page-header{padding:72px 28px 56px;background:var(--cream);border-bottom:1px solid var(--line)}
+.page-header-inner{max-width:760px;margin:0 auto}
+.ph-tag{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--violet-dark);margin-bottom:16px}
+.ph-tag::before{content:'';width:16px;height:2px;border-radius:1px;background:var(--violet)}
+.page-header h1{font-weight:800;font-size:clamp(32px,4.5vw,46px);letter-spacing:-0.035em;line-height:1.1;margin-bottom:14px}
+.page-header h1 .v{color:var(--violet)}
+.page-header p{font-size:16px;color:var(--ink-soft);line-height:1.7}
+.ph-meta{display:flex;gap:24px;margin-top:16px;font-size:13px;color:var(--ink-lighter)}
+.ph-meta-item{display:flex;align-items:center;gap:6px}
+
+/* LEGAL LAYOUT */
+.legal-layout{flex:1;max-width:var(--max);margin:0 auto;padding:56px 28px 96px;display:grid;grid-template-columns:220px 1fr;gap:56px;align-items:start}
+
+/* SIDEBAR NAV */
+.legal-nav{position:sticky;top:88px}
+.legal-nav-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--ink-lighter);margin-bottom:14px}
+.legal-nav ul{list-style:none;display:flex;flex-direction:column;gap:2px}
+.legal-nav a{display:block;font-size:13px;font-weight:500;color:var(--ink-soft);text-decoration:none;padding:7px 12px;border-radius:8px;border-left:2px solid transparent;transition:all .2s}
+.legal-nav a:hover{color:var(--ink);background:var(--line-light)}
+.legal-nav a.active{color:var(--violet);background:var(--violet-light);border-left-color:var(--violet);font-weight:600}
+
+/* LEGAL CONTENT */
+.legal-content{max-width:720px}
+.legal-content h2{font-weight:700;font-size:20px;letter-spacing:-0.02em;margin-top:48px;margin-bottom:16px;padding-top:24px;border-top:1px solid var(--line);color:var(--ink);scroll-margin-top:88px}
+.legal-content h2:first-of-type{margin-top:0;padding-top:0;border-top:none}
+.legal-content h2 .num{color:var(--violet);margin-right:8px}
+.legal-content h3{font-weight:600;font-size:15px;margin-top:24px;margin-bottom:8px;color:var(--ink)}
+.legal-content p{font-size:14px;color:var(--ink-soft);line-height:1.8;margin-bottom:14px}
+.legal-content p:last-child{margin-bottom:0}
+.legal-content strong{color:var(--ink);font-weight:600}
+.legal-content a{color:var(--violet);text-decoration:none;font-weight:500}.legal-content a:hover{text-decoration:underline}
+.legal-callout{background:var(--violet-light);border-left:3px solid var(--violet);padding:14px 18px;border-radius:0 10px 10px 0;margin:20px 0;font-size:13px;color:var(--violet-dark);line-height:1.7}
+.legal-callout svg{vertical-align:middle;margin-right:6px}
+
+/* FOOTER */
+footer{background:var(--ink);color:rgba(255,255,255,.5);padding:56px 28px 28px}
+.footer-inner{max-width:var(--max);margin:0 auto}
+.footer-top{display:grid;grid-template-columns:2fr 1fr 1fr;gap:60px;padding-bottom:40px;border-bottom:1px solid rgba(255,255,255,.08)}
+.footer-brand p{font-size:14px;line-height:1.7;max-width:280px;margin-top:16px}
+.footer-brand img{height:24px}
+.footer-col h4{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.3);margin-bottom:16px}
+.footer-col ul{list-style:none;display:flex;flex-direction:column;gap:10px}
+.footer-col a{text-decoration:none;font-size:14px;color:rgba(255,255,255,.5);transition:color .2s}.footer-col a:hover{color:#fff}
+.footer-bottom{display:flex;justify-content:space-between;align-items:center;padding-top:20px;font-size:12px;color:rgba(255,255,255,.25)}
+
+@media(max-width:900px){
+  .legal-layout{grid-template-columns:1fr;gap:32px}
+  .legal-nav{position:static;border-bottom:1px solid var(--line);padding-bottom:20px}
+  .legal-nav ul{flex-direction:row;flex-wrap:wrap;gap:4px}
+  .legal-nav a{font-size:12px;padding:5px 10px;border-left:none;border-bottom:2px solid transparent}
+  .legal-nav a.active{border-left:none;border-bottom-color:var(--violet)}
+  .footer-top{grid-template-columns:1fr;gap:32px}
+  .nav-links{display:none}
+  .ph-meta{flex-direction:column;gap:8px}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="nav-logo" href="prysme-landing-v3.html"><img src="data:image/png;base64,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" alt="Prysme"/></a>
+    <ul class="nav-links">
+      <li><a href="prysme-landing-v3.html#fonctionnalites">Fonctionnalités</a></li>
+      <li><a href="prysme-landing-v3.html#tarifs">Tarifs</a></li>
+      <li><a href="prysme-contact.html">Contact</a></li>
+      <li><a href="prysme-a-propos.html">À propos</a></li>
+    </ul>
+    <div class="nav-cta">
+      <a class="btn btn-ghost" href="#">Se connecter</a>
+      <a class="btn btn-violet" href="#">Essai gratuit</a>
+    </div>
+  </div>
+</nav>
+
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="ph-tag">Juridique</div>
+    <h1>Conditions Générales <span class="v">d'Utilisation</span></h1>
+    <p>Les présentes CGU régissent l'utilisation de la plateforme Prysme. En créant un compte, vous acceptez ces conditions dans leur intégralité.</p>
+    <div class="ph-meta">
+      <div class="ph-meta-item"><svg width="14" height="14" fill="none" viewBox="0 0 14 14"><rect x="2" y="3" width="10" height="9" rx="1.5" stroke="#A3A3A0" stroke-width="1.1"/><path d="M2 6h10M5 1.5v3M9 1.5v3" stroke="#A3A3A0" stroke-width="1.1" stroke-linecap="round"/></svg>Dernière mise à jour : 17 avril 2026</div>
+      <div class="ph-meta-item"><svg width="14" height="14" fill="none" viewBox="0 0 14 14"><circle cx="7" cy="7" r="5.5" stroke="#A3A3A0" stroke-width="1.1"/><path d="M7 4v3l2 1.5" stroke="#A3A3A0" stroke-width="1.1" stroke-linecap="round"/></svg>Lecture : 8 min</div>
+    </div>
+  </div>
+</div>
+
+<div class="legal-layout">
+  <!-- SIDEBAR -->
+  <aside class="legal-nav">
+    <div class="legal-nav-title">Sommaire</div>
+    <ul>
+      <li><a href="#art1" class="active">1. Objet</a></li>
+      <li><a href="#art2">2. Définitions</a></li>
+      <li><a href="#art3">3. Inscription</a></li>
+      <li><a href="#art4">4. Services</a></li>
+      <li><a href="#art5">5. Tarifs & Paiement</a></li>
+      <li><a href="#art6">6. Obligations</a></li>
+      <li><a href="#art7">7. Propriété intellectuelle</a></li>
+      <li><a href="#art8">8. Données personnelles</a></li>
+      <li><a href="#art9">9. Responsabilité</a></li>
+      <li><a href="#art10">10. Résiliation</a></li>
+      <li><a href="#art11">11. Droit applicable</a></li>
+      <li><a href="#art12">12. Contact</a></li>
+    </ul>
+  </aside>
+
+  <!-- CONTENT -->
+  <div class="legal-content">
+
+    <h2 id="art1"><span class="num">01.</span> Objet</h2>
+    <p>Les présentes Conditions Générales d'Utilisation (ci-après « CGU ») ont pour objet de définir les modalités et conditions d'accès et d'utilisation de la plateforme <strong>Prysme</strong>, accessible à l'adresse <a href="#">app.prysme.fr</a>.</p>
+    <p>Prysme est un service en ligne destiné aux propriétaires de gîtes et hébergements saisonniers. Il permet la génération automatique de contrats de location saisonnière, leur envoi, leur signature électronique et le suivi centralisé des réservations.</p>
+
+    <h2 id="art2"><span class="num">02.</span> Définitions</h2>
+    <p><strong>« Plateforme »</strong> désigne le site web et l'application Prysme, accessibles à l'adresse app.prysme.fr.</p>
+    <p><strong>« Éditeur »</strong> désigne la société ou personne physique exploitant la Plateforme, identifiée dans les mentions légales.</p>
+    <p><strong>« Utilisateur »</strong> désigne toute personne physique ou morale inscrite sur la Plateforme et disposant d'un compte actif.</p>
+    <p><strong>« Locataire »</strong> désigne la personne recevant un contrat de location généré via la Plateforme et invitée à le signer électroniquement.</p>
+    <p><strong>« Contrat de location »</strong> désigne le document généré automatiquement par la Plateforme à partir des informations de réservation saisies par l'Utilisateur.</p>
+
+    <h2 id="art3"><span class="num">03.</span> Inscription et compte utilisateur</h2>
+    <p>L'accès aux services de Prysme nécessite la création d'un compte. L'Utilisateur s'engage à fournir des informations exactes, complètes et à jour lors de son inscription.</p>
+    <p>Chaque compte est strictement personnel. L'Utilisateur est responsable de la confidentialité de ses identifiants de connexion et de toute activité effectuée depuis son compte.</p>
+    <p>L'Éditeur se réserve le droit de suspendre ou supprimer tout compte en cas de violation des présentes CGU, d'utilisation frauduleuse ou de fourniture d'informations inexactes.</p>
+
+    <h2 id="art4"><span class="num">04.</span> Description des services</h2>
+    <p>Prysme propose les services suivants :</p>
+    <h3>Génération de contrats</h3>
+    <p>L'Utilisateur saisit les informations relatives à une réservation (dates, montant, identité du locataire, clauses particulières). La Plateforme génère automatiquement un contrat de location saisonnière personnalisé et conforme aux dispositions de la loi ALUR.</p>
+    <h3>Signature électronique</h3>
+    <p>Le contrat est envoyé par email au Locataire, qui peut le signer électroniquement depuis n'importe quel appareil. La signature est réalisée conformément au règlement européen <strong>eIDAS (UE n°910/2014)</strong> et produit les mêmes effets juridiques qu'une signature manuscrite.</p>
+    <div class="legal-callout">
+      <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6" stroke="#5B52B5" stroke-width="1.2"/><path d="M8 5v3M8 10v.5" stroke="#5B52B5" stroke-width="1.3" stroke-linecap="round"/></svg>
+      Chaque signature est horodatée, associée à l'adresse IP du signataire, et le document signé est archivé en PDF inaltérable constituant une preuve recevable devant les juridictions françaises.
+    </div>
+    <h3>Suivi et archivage</h3>
+    <p>La Plateforme offre un tableau de bord centralisant l'ensemble des contrats et leur statut (généré, envoyé, signé), un calendrier des réservations, ainsi qu'un système d'archivage automatique des contrats signés en format PDF horodaté.</p>
+
+    <h2 id="art5"><span class="num">05.</span> Tarifs et paiement</h2>
+    <p>Prysme propose plusieurs formules d'abonnement dont les tarifs en vigueur sont disponibles sur la page <a href="#">Tarifs</a> de la Plateforme.</p>
+    <p>Une période d'essai gratuite d'un (1) mois est proposée à tout nouvel Utilisateur, sans engagement et sans nécessité de fournir un moyen de paiement.</p>
+    <p>À l'issue de la période d'essai, l'Utilisateur peut souscrire à un abonnement mensuel. Le paiement s'effectue par carte bancaire via un prestataire de paiement sécurisé. L'abonnement est renouvelé tacitement chaque mois, sauf résiliation par l'Utilisateur.</p>
+    <p>Les tarifs peuvent être modifiés à tout moment. L'Utilisateur en sera informé par email au moins <strong>30 jours</strong> avant l'entrée en vigueur des nouveaux tarifs.</p>
+
+    <h2 id="art6"><span class="num">06.</span> Obligations de l'Utilisateur</h2>
+    <p>L'Utilisateur s'engage à utiliser la Plateforme conformément à sa destination et aux présentes CGU. Il s'interdit notamment de :</p>
+    <p>— Utiliser la Plateforme à des fins illicites ou contraires à l'ordre public ;<br/>
+    — Fournir des informations fausses ou trompeuses dans les contrats générés ;<br/>
+    — Tenter d'accéder aux systèmes informatiques de la Plateforme ou de porter atteinte à leur intégrité ;<br/>
+    — Revendre, sous-licencier ou mettre à disposition de tiers l'accès à son compte.</p>
+    <p>L'Utilisateur est seul responsable du contenu des contrats générés via la Plateforme, et notamment de l'exactitude des informations qui y figurent.</p>
+
+    <h2 id="art7"><span class="num">07.</span> Propriété intellectuelle</h2>
+    <p>L'ensemble des éléments composant la Plateforme (textes, graphismes, logiciels, base de données, marques, logos, design) est protégé par les lois relatives à la propriété intellectuelle et reste la propriété exclusive de l'Éditeur.</p>
+    <p>Toute reproduction, représentation, modification ou exploitation non autorisée, même partielle, est strictement interdite et pourra faire l'objet de poursuites.</p>
+    <p>L'Utilisateur conserve l'intégralité des droits sur les contenus qu'il saisit sur la Plateforme (informations de réservation, clauses personnalisées).</p>
+
+    <h2 id="art8"><span class="num">08.</span> Données personnelles</h2>
+    <p>La collecte et le traitement des données personnelles des Utilisateurs et Locataires sont réalisés conformément au Règlement Général sur la Protection des Données (<strong>RGPD — UE 2016/679</strong>) et à la loi Informatique et Libertés du 6 janvier 1978 modifiée.</p>
+    <p>Les modalités de collecte, de traitement, de conservation et les droits des personnes concernées sont détaillés dans la <a href="prysme-confidentialite.html">Politique de confidentialité</a> de Prysme.</p>
+
+    <h2 id="art9"><span class="num">09.</span> Limitation de responsabilité</h2>
+    <p>L'Éditeur met en œuvre tous les moyens raisonnables pour assurer la disponibilité et le bon fonctionnement de la Plateforme. Toutefois, il ne saurait garantir un accès ininterrompu ni être tenu responsable des éventuelles interruptions de service, quelles qu'en soient les causes.</p>
+    <p>L'Éditeur ne saurait être tenu responsable de l'utilisation faite par l'Utilisateur des contrats générés, ni des conséquences découlant d'informations inexactes ou incomplètes saisies par l'Utilisateur.</p>
+    <p>La Plateforme fournit un outil de génération documentaire. Elle <strong>ne se substitue pas aux conseils d'un professionnel du droit</strong>. En cas de doute sur la conformité d'un contrat, l'Utilisateur est invité à consulter un avocat ou un juriste spécialisé.</p>
+
+    <h2 id="art10"><span class="num">10.</span> Résiliation</h2>
+    <p>L'Utilisateur peut résilier son abonnement à tout moment depuis les paramètres de son compte. La résiliation prend effet à la fin de la période d'abonnement en cours. Aucun remboursement au prorata ne sera effectué.</p>
+    <p>À la résiliation, l'Utilisateur conserve l'accès en lecture seule à ses contrats archivés pendant une durée de <strong>12 mois</strong>, après quoi les données pourront être supprimées conformément à la politique de conservation des données.</p>
+    <p>L'Éditeur se réserve le droit de résilier un compte en cas de violation grave des présentes CGU, avec notification préalable par email.</p>
+
+    <h2 id="art11"><span class="num">11.</span> Droit applicable et juridiction</h2>
+    <p>Les présentes CGU sont régies par le droit français. En cas de litige relatif à l'interprétation ou à l'exécution des présentes, les parties s'efforceront de trouver une solution amiable.</p>
+    <p>À défaut d'accord amiable, tout litige sera soumis à la compétence exclusive des tribunaux de <strong>Paris</strong>, sauf dispositions d'ordre public contraires.</p>
+
+    <h2 id="art12"><span class="num">12.</span> Contact</h2>
+    <p>Pour toute question relative aux présentes CGU, vous pouvez contacter l'Éditeur :</p>
+    <p><strong>Email :</strong> <a href="mailto:contact@prysme.fr">contact@prysme.fr</a><br/>
+    <strong>Adresse :</strong> Paris, France</p>
+
+  </div>
+</div>
+
+<footer>
+<div class="footer-inner">
+  <div class="footer-top">
+    <div class="footer-brand">
+      <img src="data:image/png;base64,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" alt="Prysme"/>
+      <p>La gestion administrative de votre gîte, enfin simple. Contrats, signatures, suivi — tout au même endroit.</p>
+    </div>
+    <div class="footer-col"><h4>Produit</h4><ul><li><a href="#">Fonctionnalités</a></li><li><a href="#">Tarifs</a></li><li><a href="#">Sécurité & eIDAS</a></li><li><a href="#">Nouveautés</a></li></ul></div>
+    <div class="footer-col"><h4>Société</h4><ul><li><a href="#">À propos</a></li><li><a href="#">Contact</a></li><li><a href="#">CGU</a></li><li><a href="#">Confidentialité</a></li></ul></div>
+  </div>
+  <div class="footer-bottom"><span>&copy; 2026 Prysme. Tous droits réservés.</span><span>Fait avec soin en France</span></div>
+</div>
+</footer>
+
+<script>
+// Sidebar active state on scroll
+const sections = document.querySelectorAll('.legal-content h2[id]');
+const navLinks = document.querySelectorAll('.legal-nav a');
+const obs = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      navLinks.forEach(l => l.classList.remove('active'));
+      const active = document.querySelector('.legal-nav a[href="#' + entry.target.id + '"]');
+      if (active) active.classList.add('active');
+    }
+  });
+}, { threshold: 0, rootMargin: '-80px 0px -70% 0px' });
+sections.forEach(s => obs.observe(s));
+</script>
+</body>
+</html>
