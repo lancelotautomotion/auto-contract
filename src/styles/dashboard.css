@@ -465,6 +465,8 @@
 .info-box strong { font-weight: 700; }
 
 .contract-split { display: grid; grid-template-columns: 1.3fr 1fr; gap: 20px; }
+.contract-right-col { display: flex; flex-direction: column; gap: 16px; }
+.contract-right-col .info-box { margin-bottom: 0; }
 .contract-editor {
   border: 1px solid var(--line); border-radius: 12px; padding: 24px;
   background: var(--dash-white); min-height: 400px; font-size: 14px;

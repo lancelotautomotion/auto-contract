@@ -456,11 +456,6 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
             </div>
           </div>
 
-          <div className="info-box">
-            <strong>Comment fonctionnent les variables ?</strong><br />
-            Les balises ci-dessus représentent les informations de votre client et les vôtres. Cliquez dessus (ou glissez-les) pour les insérer dans votre contrat. Lors de la génération, elles se transformeront automatiquement avec les vraies données.
-          </div>
-
           <div className="contract-split">
             <div
               ref={editorRef}
@@ -474,24 +469,30 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
               onDrop={handleEditorDrop}
               onDragOver={e => e.preventDefault()}
             />
-            <div className="contract-preview">
-              <div className="cp-header">
-                <span>Aperçu en direct</span>
-                <span className="cp-sub">données d&apos;exemple</span>
+            <div className="contract-right-col">
+              <div className="info-box">
+                <strong>Comment fonctionnent les variables ?</strong><br />
+                Les balises ci-dessus représentent les informations de votre client et les vôtres. Cliquez dessus (ou glissez-les) pour les insérer dans votre contrat. Lors de la génération, elles se transformeront automatiquement avec les vraies données.
               </div>
-              <div className="cp-body">
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', paddingBottom: '8px', borderBottom: '0.5px solid #CEC8BF', marginBottom: '8px' }}>
-                  <div style={{ width: '50px', height: '20px', backgroundColor: '#EDE8E1', borderRadius: '2px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <span style={{ fontSize: '6px', color: '#7A7570' }}>LOGO</span>
-                  </div>
-                  <div style={{ textAlign: 'right' }}>
-                    <p style={{ fontSize: '8.5px', fontWeight: 700, color: '#1C1C1A', margin: '0 0 1px' }}>{form.giteName || 'Nom du gîte'}</p>
-                    <p style={{ fontSize: '7px', color: '#7A7570', margin: 0, lineHeight: 1.4 }}>{form.address || 'Adresse'}<br />{form.city || 'Ville'}</p>
-                  </div>
+              <div className="contract-preview">
+                <div className="cp-header">
+                  <span>Aperçu en direct</span>
+                  <span className="cp-sub">données d&apos;exemple</span>
                 </div>
-                <p style={{ fontSize: '8.5px', fontWeight: 700, textAlign: 'center', letterSpacing: '0.8px', color: '#1C1C1A', margin: '0 0 2px' }}>CONTRAT DE LOCATION SAISONNIÈRE</p>
-                <p style={{ fontSize: '7px', textAlign: 'center', color: '#7A7570', margin: '0 0 8px' }}>Établi le {EXAMPLE_DATA.date_du_jour}</p>
-                {previewLines.map((line, i) => <PreviewLine key={i} line={line} i={i} />)}
+                <div className="cp-body">
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', paddingBottom: '8px', borderBottom: '0.5px solid #CEC8BF', marginBottom: '8px' }}>
+                    <div style={{ width: '50px', height: '20px', backgroundColor: '#EDE8E1', borderRadius: '2px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <span style={{ fontSize: '6px', color: '#7A7570' }}>LOGO</span>
+                    </div>
+                    <div style={{ textAlign: 'right' }}>
+                      <p style={{ fontSize: '8.5px', fontWeight: 700, color: '#1C1C1A', margin: '0 0 1px' }}>{form.giteName || 'Nom du gîte'}</p>
+                      <p style={{ fontSize: '7px', color: '#7A7570', margin: 0, lineHeight: 1.4 }}>{form.address || 'Adresse'}<br />{form.city || 'Ville'}</p>
+                    </div>
+                  </div>
+                  <p style={{ fontSize: '8.5px', fontWeight: 700, textAlign: 'center', letterSpacing: '0.8px', color: '#1C1C1A', margin: '0 0 2px' }}>CONTRAT DE LOCATION SAISONNIÈRE</p>
+                  <p style={{ fontSize: '7px', textAlign: 'center', color: '#7A7570', margin: '0 0 8px' }}>Établi le {EXAMPLE_DATA.date_du_jour}</p>
+                  {previewLines.map((line, i) => <PreviewLine key={i} line={line} i={i} />)}
+                </div>
               </div>
             </div>
           </div>
