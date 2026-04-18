@@ -183,8 +183,7 @@ export default function NewReservationForm({ defaultCleaningFee, defaultTouristT
             {availableOptions.map(opt => {
               const checked = selectedOptions.has(opt.id);
               return (
-                <label key={opt.id} className={`option-check${checked ? ' checked' : ''}`} onClick={() => toggleOption(opt.id)}>
-                  <input type="checkbox" checked={checked} onChange={() => {}} style={{ display: 'none' }} />
+                <div key={opt.id} className={`option-check${checked ? ' checked' : ''}`} onClick={() => toggleOption(opt.id)} role="checkbox" aria-checked={checked}>
                   <div className="oc-box">
                     {checked && (
                       <svg width="12" height="12" fill="none" viewBox="0 0 12 12">
@@ -194,7 +193,7 @@ export default function NewReservationForm({ defaultCleaningFee, defaultTouristT
                   </div>
                   <span className="oc-name">{opt.label}</span>
                   {opt.price > 0 && <span className="oc-price">{opt.price} €</span>}
-                </label>
+                </div>
               );
             })}
           </div>
