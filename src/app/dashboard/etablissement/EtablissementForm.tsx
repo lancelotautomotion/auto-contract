@@ -297,7 +297,7 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
   );
 
   return (
-    <form onSubmit={handleSubmit} style={{ width: '100%' }}>
+    <form onSubmit={handleSubmit} className="etab-form">
 
       {/* TABS */}
       <div className="tabs">
