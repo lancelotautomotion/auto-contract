@@ -123,6 +123,7 @@
 .page-title { margin-bottom: 24px; }
 .page-title h1 { font-weight: 800; font-size: 26px; letter-spacing: -0.03em; line-height: 1.2; }
 .page-title h1 .v { color: var(--violet); }
+.v { color: var(--violet); }
 .page-title .sub { font-size: 13px; color: var(--ink-lighter); margin-top: 4px; font-weight: 500; }
 
 /* ═══ BUTTONS ═══ */
