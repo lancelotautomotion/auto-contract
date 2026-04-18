@@ -501,13 +501,20 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
               </div>
             </div>
 
-          </div>
+              {/* Actions pinned at bottom of right column */}
+              <div className="contract-actions">
+                <button type="button" onClick={handleReset} className="btn btn-outline contract-action-btn">
+                  Réinitialiser le modèle
+                </button>
+                <button type="submit" disabled={loading} className="btn btn-violet contract-action-btn">
+                  {loading ? 'Enregistrement...' : 'Sauvegarder'}
+                  {!loading && <svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M3 7h8m-3-3l3 3-3 3" stroke="#fff" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/></svg>}
+                </button>
+                {saved && <span style={{ fontSize: '12px', color: 'var(--green)', fontWeight: 600 }}>✓ Sauvegardé</span>}
+              </div>
+            </div>
 
-          <SaveBar extra={
-            <button type="button" onClick={handleReset} className="btn btn-outline">
-              Réinitialiser le modèle
-            </button>
-          } />
+          </div>
         </div>
       )}
 
