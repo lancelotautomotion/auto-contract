@@ -430,9 +430,23 @@
 .oc-price { font-size: 14px; font-weight: 700; color: var(--ink-soft); }
 .option-check.checked .oc-price { color: var(--violet-dark); }
 
+.form-layout {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 24px;
+  align-items: start;
+}
+.form-aside {
+  position: sticky;
+  top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.form-aside .form-section { margin-bottom: 0; }
+
 .summary-card {
   background: var(--ink); border-radius: 14px; padding: 24px; color: #fff;
-  position: sticky; bottom: 0; margin-top: 8px;
 }
 .summary-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
 .summary-title { font-size: 14px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
@@ -476,4 +490,6 @@
   .form-row { grid-template-columns: 1fr; }
   .options-grid { grid-template-columns: 1fr; }
   .summary-grid { grid-template-columns: 1fr 1fr; }
+  .form-layout { grid-template-columns: 1fr; }
+  .form-aside { position: static; }
 }

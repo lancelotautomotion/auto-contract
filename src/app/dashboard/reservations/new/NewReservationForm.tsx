@@ -60,6 +60,8 @@ export default function NewReservationForm({ defaultCleaningFee, defaultTouristT
 
   return (
     <form onSubmit={handleSubmit}>
+    <div className="form-layout">
+    <div className="form-main">
 
       {/* CLIENT */}
       <div className="form-section">
@@ -207,6 +209,11 @@ export default function NewReservationForm({ defaultCleaningFee, defaultTouristT
         )}
       </div>
 
+    </div>{/* end form-main */}
+
+    {/* RIGHT ASIDE */}
+    <div className="form-aside">
+
       {/* NOTES */}
       <div className="form-section">
         <div className="fs-title">
@@ -239,7 +246,7 @@ export default function NewReservationForm({ defaultCleaningFee, defaultTouristT
             Récapitulatif
           </div>
         </div>
-        <div className="summary-grid">
+        <div className="summary-grid" style={{ gridTemplateColumns: '1fr 1fr' }}>
           <div className="sg-item">
             <div className="sg-label">Loyer</div>
             <div className="sg-value">{fmtMoney(loyer)}</div>
@@ -272,6 +279,8 @@ export default function NewReservationForm({ defaultCleaningFee, defaultTouristT
         </button>
       </div>
 
+    </div>{/* end form-aside */}
+    </div>{/* end form-layout */}
     </form>
   );
 }

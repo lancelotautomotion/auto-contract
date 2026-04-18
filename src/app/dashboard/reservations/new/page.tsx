@@ -35,7 +35,7 @@ export default async function NewReservationPage() {
       </div>
 
       {/* Content */}
-      <div className="content" style={{ maxWidth: '800px', width: '100%' }}>
+      <div className="content" style={{ maxWidth: '1100px', width: '100%' }}>
 
         <Link href="/dashboard" className="back-link">
           <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
