@@ -3,11 +3,8 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import CalendarView from "./CalendarView";
-import ReservationFilters from "./ReservationFilters";
-import DashboardReservationRow from "./DashboardReservationRow";
-import { Suspense } from "react";
 
-export default async function DashboardPage({ searchParams }: { searchParams: Promise<{ status?: string; sort?: string; search?: string }> }) {
+export default async function DashboardPage() {
   const { userId } = await auth();
   if (!userId) redirect("/sign-in");
 
@@ -18,21 +15,16 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
   const dateStr = today.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
   const dateLabel = dateStr.charAt(0).toUpperCase() + dateStr.slice(1);
 
-  const { status: filterStatus = '', sort: filterSort = 'asc', search: filterSearch = '' } = await searchParams;
-
   let pendingReservations: Array<{
     id: string; clientFirstName: string; clientLastName: string;
-    clientEmail: string; checkIn: Date; checkOut: Date;
-    reservationOptions: { label: string; price: number }[];
+    checkIn: Date; checkOut: Date;
   }> = [];
 
   let reservations: Array<{
     id: string; clientFirstName: string; clientLastName: string;
-    clientEmail: string; checkIn: Date; checkOut: Date;
+    checkIn: Date; checkOut: Date;
     contract: { status: string; emailStatus: string } | null;
   }> = [];
-
-  let giteSlug: string | null = null;
 
   try {
     const dbUser = await prisma.user.findUnique({ where: { clerkId: userId } });
@@ -40,40 +32,15 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
       const gite = await prisma.gite.findFirst({ where: { userId: dbUser.id } });
       if (!gite || gite.name === "Mon Gîte") redirect("/onboarding");
 
-      giteSlug = gite.slug ?? null;
-
       pendingReservations = await prisma.reservation.findMany({
         where: { gite: { userId: dbUser.id }, status: 'PENDING_REVIEW' },
-        include: { reservationOptions: true },
         orderBy: { createdAt: 'desc' },
       });
 
-      const contractFilter = filterStatus === 'none'
-        ? { contract: null }
-        : filterStatus === 'GENERATED' || filterStatus === 'SIGNED'
-          ? { contract: { status: filterStatus as 'GENERATED' | 'SIGNED' } }
-          : {};
-
-      const searchFilter = filterSearch
-        ? {
-            OR: [
-              { clientFirstName: { contains: filterSearch, mode: 'insensitive' as const } },
-              { clientLastName: { contains: filterSearch, mode: 'insensitive' as const } },
-              { clientEmail: { contains: filterSearch, mode: 'insensitive' as const } },
-            ]
-          }
-        : {};
-
-      const orderBy = filterSort === 'desc'
-        ? { checkIn: 'desc' as const }
-        : filterSort === 'recent'
-          ? { createdAt: 'desc' as const }
-          : { checkIn: 'asc' as const };
-
       reservations = await prisma.reservation.findMany({
-        where: { gite: { userId: dbUser.id }, status: { not: 'PENDING_REVIEW' }, ...contractFilter, ...searchFilter },
+        where: { gite: { userId: dbUser.id }, status: { not: 'PENDING_REVIEW' } },
         include: { contract: true },
-        orderBy,
+        orderBy: { checkIn: 'asc' },
       });
     } else {
       redirect("/onboarding");
@@ -101,8 +68,6 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
 
   const fmt = (d: Date) => new Date(d).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
   const fmtShort = (d: Date) => `${new Date(d).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' })}/${new Date(d).getFullYear()}`;
-
-  void giteSlug;
 
   return (
     <>
@@ -145,6 +110,37 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
             Nouvelle réservation
           </Link>
         </div>
+
+        {/* Pending banner */}
+        {pendingReservations.length > 0 && (
+          <div className="pending-banner">
+            <div className="pb-header">
+              <div className="pb-icon">
+                <svg width="18" height="18" fill="none" viewBox="0 0 18 18">
+                  <circle cx="9" cy="9" r="7" stroke="currentColor" strokeWidth="1.4"/>
+                  <path d="M9 6v4M9 12v.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
+                </svg>
+              </div>
+              <div>
+                <div className="pb-title">
+                  {pendingReservations.length} nouvelle{pendingReservations.length > 1 ? 's' : ''} demande{pendingReservations.length > 1 ? 's' : ''} à valider
+                </div>
+                <div className="pb-sub">Des clients ont soumis une demande via votre formulaire de réservation.</div>
+              </div>
+            </div>
+            <div className="pb-items">
+              {pendingReservations.map(r => (
+                <Link key={r.id} href={`/dashboard/reservations/${r.id}/complete`} className="pb-item">
+                  <div className="pb-item-left">
+                    <span className="pb-item-name">{r.clientFirstName} {r.clientLastName}</span>
+                    <span className="pb-item-dates">{fmt(r.checkIn)} → {fmt(r.checkOut)}</span>
+                  </div>
+                  <span className="pb-item-cta">Compléter →</span>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Stats */}
         <div className="stats-row">
@@ -267,89 +263,6 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
           </div>
         </div>
 
-        {/* Reservations table */}
-        <div className="card resa-card">
-          <div className="card-header">
-            <div className="card-title">
-              <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
-                <rect x="1.5" y="3" width="13" height="10" rx="1.5" stroke="#7F77DD" strokeWidth="1.2"/>
-                <path d="M1.5 6.5h13" stroke="#7F77DD" strokeWidth="1.2"/>
-              </svg>
-              Réservations
-            </div>
-            <Link href="/dashboard/reservations/new" className="btn btn-violet" style={{ fontSize: '12px', padding: '7px 14px' }}>
-              <svg width="12" height="12" fill="none" viewBox="0 0 12 12">
-                <path d="M6 1v10M1 6h10" stroke="#fff" strokeWidth="1.5" strokeLinecap="round"/>
-              </svg>
-              Nouvelle
-            </Link>
-          </div>
-
-          <Suspense>
-            <ReservationFilters currentStatus={filterStatus} currentSort={filterSort} currentSearch={filterSearch} />
-          </Suspense>
-
-          <table className="resa-table">
-            <thead>
-              <tr>
-                <th>Client</th>
-                <th>Arrivée</th>
-                <th>Départ</th>
-                <th>Statut</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              {reservations.length === 0 ? (
-                <tr>
-                  <td colSpan={5} style={{ textAlign: 'center', padding: '48px 20px', color: 'var(--ink-lighter)' }}>
-                    Aucune réservation pour l&apos;instant.
-                  </td>
-                </tr>
-              ) : (
-                reservations.map((r, i) => (
-                  <DashboardReservationRow
-                    key={r.id}
-                    id={r.id}
-                    clientFirstName={r.clientFirstName}
-                    clientLastName={r.clientLastName}
-                    clientEmail={r.clientEmail}
-                    checkIn={r.checkIn.toISOString()}
-                    checkOut={r.checkOut.toISOString()}
-                    contractStatus={r.contract?.status ?? null}
-                    isLast={i === reservations.length - 1}
-                  />
-                ))
-              )}
-            </tbody>
-          </table>
-
-          {/* Pending reservations section */}
-          {pendingReservations.length > 0 && (
-            <div style={{ borderTop: '1px solid var(--line)', padding: '14px 20px', background: 'var(--amber-light)' }}>
-              <div style={{ fontSize: '12px', fontWeight: '700', color: 'var(--amber-dark)', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '.06em' }}>
-                Nouvelles demandes — {pendingReservations.length} à valider
-              </div>
-              {pendingReservations.map(r => (
-                <Link
-                  key={r.id}
-                  href={`/dashboard/reservations/${r.id}/complete`}
-                  style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '8px 0', textDecoration: 'none', borderBottom: '1px solid rgba(255,189,46,.2)' }}
-                >
-                  <div style={{ flex: 1 }}>
-                    <span style={{ fontSize: '13px', fontWeight: '600', color: 'var(--ink)' }}>
-                      {r.clientFirstName} {r.clientLastName}
-                    </span>
-                    <span style={{ fontSize: '11px', color: 'var(--ink-soft)', marginLeft: '8px' }}>
-                      {fmt(r.checkIn)} → {fmt(r.checkOut)}
-                    </span>
-                  </div>
-                  <span className="pill pill-a">À compléter →</span>
-                </Link>
-              ))}
-            </div>
-          )}
-        </div>
 
       </div>
     </>
