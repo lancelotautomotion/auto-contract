@@ -100,13 +100,25 @@ const VAR_LABELS: Record<string, string> = Object.fromEntries(
   VARIABLES.map(([v, label]) => [v.slice(2, -2), label])
 );
 
+const VAR_CATEGORY: Record<string, 'client' | 'booking' | 'gite'> = Object.fromEntries(
+  VARIABLES.map(([v, , cat]) => [v.slice(2, -2), cat])
+);
+
+const CHIP_COLORS = {
+  client:  { bg: 'rgba(217,119,6,0.13)',   border: 'rgba(217,119,6,0.45)',   color: 'rgb(146,57,0)' },
+  booking: { bg: 'rgba(127,119,221,0.13)', border: 'rgba(127,119,221,0.45)', color: '#5B52B5' },
+  gite:    { bg: 'rgba(74,115,83,0.13)',   border: 'rgba(74,115,83,0.45)',   color: '#4A7353' },
+};
+
 function makeChipHTML(varName: string): string {
   const label = VAR_LABELS[varName] || varName;
+  const cat = VAR_CATEGORY[varName] || 'client';
+  const { bg, border, color } = CHIP_COLORS[cat];
   return (
     `<span contenteditable="false" data-var="${varName}" style="` +
     `display:inline-flex;align-items:center;` +
-    `background:rgba(217,119,6,0.13);border:1px solid rgba(217,119,6,0.45);` +
-    `border-radius:20px;padding:2px 6px 2px 10px;font-size:11.5px;color:rgb(146,57,0);` +
+    `background:${bg};border:1px solid ${border};` +
+    `border-radius:20px;padding:2px 6px 2px 10px;font-size:11.5px;color:${color};` +
     `font-family:Inter,ui-sans-serif,sans-serif;font-weight:500;` +
     `cursor:default;user-select:none;white-space:nowrap;line-height:1.5;vertical-align:middle;margin:0 2px;` +
     `">${label}` +
@@ -298,7 +310,7 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
 
       {/* ═══ INFORMATIONS ═══ */}
       {activeTab === 'Informations' && (
-        <div>
+        <div style={{ maxWidth: '860px' }}>
           {form.slug && (
             <div className="link-box">
               <div className="link-box-info">
@@ -388,7 +400,7 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
 
       {/* ═══ OPTIONS ═══ */}
       {activeTab === 'Options' && (
-        <div>
+        <div style={{ maxWidth: '860px' }}>
           <div className="form-card">
             <div className="form-card-title">
               <svg width="14" height="14" fill="none" viewBox="0 0 14 14"><rect x="1.5" y="3" width="11" height="8" rx="1.5" stroke="currentColor" strokeWidth="1.2"/><path d="M5 7l1.5 1.5L10 5.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/></svg>
@@ -494,7 +506,7 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
 
       {/* ═══ LOGO ═══ */}
       {activeTab === 'Logo' && (
-        <div>
+        <div style={{ maxWidth: '860px' }}>
           <div className="form-card">
             <div className="form-card-title">
               <svg width="14" height="14" fill="none" viewBox="0 0 14 14"><rect x="1.5" y="2" width="11" height="10" rx="1.5" stroke="currentColor" strokeWidth="1.2"/><circle cx="5" cy="6" r="1.5" stroke="currentColor" strokeWidth="1.2"/><path d="M1.5 10l3-3 2 2 2.5-3L11.5 10" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/></svg>
