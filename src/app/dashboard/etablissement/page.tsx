@@ -43,7 +43,7 @@ export default async function EtablissementPage() {
       </div>
 
       {/* Content */}
-      <div className="content" style={{ width: '100%' }}>
+      <div className="content">
         <div className="page-title">
           <h1>{gite.name} <span className="v">.</span></h1>
           <div className="sub">Gérez les informations de votre hébergement</div>
