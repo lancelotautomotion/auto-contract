@@ -499,7 +499,6 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
                   {previewLines.map((line, i) => <PreviewLine key={i} line={line} i={i} />)}
                 </div>
               </div>
-            </div>
 
               {/* Actions pinned at bottom of right column */}
               <div className="contract-actions">
@@ -508,7 +507,7 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
                 </button>
                 <button type="submit" disabled={loading} className="btn btn-violet contract-action-btn">
                   {loading ? 'Enregistrement...' : 'Sauvegarder'}
-                  {!loading && <svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M3 7h8m-3-3l3 3-3 3" stroke="#fff" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/></svg>}
+                  {!loading && <svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M3 7h8M8 4l3 3-3 3" stroke="#fff" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/></svg>}
                 </button>
                 {saved && <span style={{ fontSize: '12px', color: 'var(--green)', fontWeight: 600 }}>✓ Sauvegardé</span>}
               </div>
