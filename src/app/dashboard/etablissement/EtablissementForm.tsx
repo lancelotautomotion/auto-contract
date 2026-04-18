@@ -432,43 +432,48 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
       {/* ═══ CONTRAT ═══ */}
       {activeTab === 'Contrat' && (
         <div>
-          <div className="form-card">
-            <div className="form-card-title">
-              <svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M4 2h6a1 1 0 011 1v8a1 1 0 01-1 1H4a1 1 0 01-1-1V3a1 1 0 011-1z" stroke="currentColor" strokeWidth="1.2"/><path d="M5 5h4M5 7h3M5 9h2" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/></svg>
-              Balises dynamiques
-            </div>
-            <div className="variables-bar">
-              {VARIABLES.map(([v, label, cat]) => {
-                const varName = v.slice(2, -2);
-                return (
-                  <button
-                    key={v}
-                    type="button"
-                    className={`var-tag ${cat}`}
-                    draggable
-                    onDragStart={e => e.dataTransfer.setData('text/plain', varName)}
-                    onClick={() => insertVariable(varName)}
-                  >
-                    {label}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
           <div className="contract-split">
-            <div
-              ref={editorRef}
-              contentEditable
-              suppressContentEditableWarning
-              className="contract-editor"
-              onInput={handleEditorInput}
-              onClick={handleEditorClick}
-              onPaste={handleEditorPaste}
-              onKeyDown={handleEditorKeyDown}
-              onDrop={handleEditorDrop}
-              onDragOver={e => e.preventDefault()}
-            />
+
+            {/* LEFT: variables + editor */}
+            <div className="contract-left-col">
+              <div className="form-card">
+                <div className="form-card-title">
+                  <svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M4 2h6a1 1 0 011 1v8a1 1 0 01-1 1H4a1 1 0 01-1-1V3a1 1 0 011-1z" stroke="currentColor" strokeWidth="1.2"/><path d="M5 5h4M5 7h3M5 9h2" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/></svg>
+                  Balises dynamiques
+                </div>
+                <div className="variables-bar">
+                  {VARIABLES.map(([v, label, cat]) => {
+                    const varName = v.slice(2, -2);
+                    return (
+                      <button
+                        key={v}
+                        type="button"
+                        className={`var-tag ${cat}`}
+                        draggable
+                        onDragStart={e => e.dataTransfer.setData('text/plain', varName)}
+                        onClick={() => insertVariable(varName)}
+                      >
+                        {label}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+              <div
+                ref={editorRef}
+                contentEditable
+                suppressContentEditableWarning
+                className="contract-editor"
+                onInput={handleEditorInput}
+                onClick={handleEditorClick}
+                onPaste={handleEditorPaste}
+                onKeyDown={handleEditorKeyDown}
+                onDrop={handleEditorDrop}
+                onDragOver={e => e.preventDefault()}
+              />
+            </div>
+
+            {/* RIGHT: info box + preview */}
             <div className="contract-right-col">
               <div className="info-box">
                 <strong>Comment fonctionnent les variables ?</strong><br />
@@ -495,6 +500,7 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
                 </div>
               </div>
             </div>
+
           </div>
 
           <SaveBar extra={
