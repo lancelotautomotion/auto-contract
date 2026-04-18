@@ -1,127 +1,201 @@
 /**
  * Template email partagé — Prysme
+ * Design: prysme-email-contrat.html
  * Compatible Gmail, Apple Mail, Outlook (table-based)
  */
 
 interface EmailTemplateOptions {
   giteName: string;
-  logoPublicUrl?: string | null;  // Vercel Blob URL
+  giteAddress?: string | null;
+  docLabel?: string;    // Header right label, e.g. "Contrat de location"
   preheader?: string;
+  greeting?: string;    // First name only → renders "Bonjour [greeting]."
   body: string;
-  footer?: string;
 }
 
 export function buildEmailHtml(opts: EmailTemplateOptions): string {
-  const { giteName, logoPublicUrl, preheader, body, footer } = opts;
-
-  const logoSrc = logoPublicUrl ?? null;
-  const logoBlock = logoSrc
-    ? `<img src="${logoSrc}" alt="${giteName}" style="max-height:48px; max-width:160px; object-fit:contain; display:block;" />`
-    : `<span style="font-family:Georgia,serif; font-size:18px; font-weight:400; color:#1C1C1A; letter-spacing:0.02em;">${giteName}</span>`;
-
-  const appUrl = (process.env.NEXT_PUBLIC_APP_URL ?? '').replace(/\/$/, '');
-  const prysmeLogoBlock = appUrl
-    ? `<img src="${appUrl}/logotype_prysme.png" alt="Prysme" style="height:20px; display:block; margin:0 auto;" />`
-    : `<span style="font-size:10px; color:#7A7570; letter-spacing:0.1em; text-transform:uppercase;">Prysme</span>`;
+  const { giteName, giteAddress, preheader, greeting, body, docLabel = 'Prysme' } = opts;
 
   const preheaderHtml = preheader
-    ? `<div style="display:none;max-height:0;overflow:hidden;font-size:1px;color:#F7F4F0;">${preheader}</div>`
+    ? `<div style="display:none;max-height:0;overflow:hidden;font-size:1px;color:#F3F2EE;">${preheader}</div>`
+    : '';
+
+  const greetingHtml = greeting ? `
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+      <tr><td style="font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif;font-size:22px;font-weight:800;color:#2C2C2A;letter-spacing:-0.03em;padding-bottom:20px;line-height:1.3;">
+        Bonjour ${greeting}<span style="color:#7F77DD">.</span>
+      </td></tr>
+    </table>` : '';
+
+  const footerAddress = giteAddress
+    ? `<tr><td style="font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif;font-size:11px;color:#A3A3A0;padding-bottom:4px;">${giteAddress}</td></tr>`
     : '';
 
   return `<!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" xmlns="http://www.w3.org/1999/xhtml">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>${giteName}</title>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>${giteName}</title>
+<style>
+  body,table,td,a{-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%}
+  table,td{mso-table-lspace:0pt;mso-table-rspace:0pt}
+  img{-ms-interpolation-mode:bicubic;border:0;outline:none;text-decoration:none}
+  body{margin:0;padding:0;width:100%!important;background-color:#F3F2EE;font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif}
+  @media only screen and (max-width:620px){
+    .email-wrap{width:100%!important;padding:12px!important}
+    .card{border-radius:12px!important}
+    .inner{padding:28px 20px!important}
+    .recap-col{display:block!important;width:100%!important;padding-bottom:16px!important}
+  }
+</style>
 </head>
-<body style="margin:0;padding:0;background-color:#EDE8E1;font-family:Inter,'Helvetica Neue',Arial,sans-serif;">
-  ${preheaderHtml}
-  <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#EDE8E1;">
-    <tr>
-      <td align="center" style="padding:40px 16px 0;">
+<body style="margin:0;padding:0;background-color:#F3F2EE;font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif;">
+${preheaderHtml}
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#F3F2EE;">
+<tr><td align="center" style="padding:40px 20px;">
 
-        <!-- Carte principale -->
-        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:560px;">
+  <table role="presentation" class="email-wrap" width="560" cellpadding="0" cellspacing="0" border="0">
 
-          <!-- Header logo + nom gîte -->
-          <tr>
-            <td style="background-color:#F7F4F0; padding:28px 36px 24px; border-bottom:1px solid #CEC8BF;">
-              <table width="100%" cellpadding="0" cellspacing="0" border="0">
-                <tr>
-                  <td style="vertical-align:middle;">
-                    ${logoBlock}
-                  </td>
-                  <td align="right" style="vertical-align:middle;">
-                    <span style="font-family:Inter,sans-serif; font-size:11px; letter-spacing:0.15em; text-transform:uppercase; color:#7A7570;">${giteName}</span>
-                  </td>
-                </tr>
-              </table>
-            </td>
-          </tr>
+    <!-- HEADER BAR -->
+    <tr><td style="padding:0 0 24px;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td style="font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif;font-size:15px;font-weight:800;color:#2C2C2A;letter-spacing:-0.02em;">${giteName}</td>
+          <td align="right" style="font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif;font-size:11px;font-weight:600;color:#A3A3A0;text-transform:uppercase;letter-spacing:0.08em;">${docLabel}</td>
+        </tr>
+      </table>
+    </td></tr>
 
-          <!-- Corps -->
-          <tr>
-            <td style="background-color:#F7F4F0; padding:36px 36px 32px;">
-              <table width="100%" cellpadding="0" cellspacing="0" border="0">
-                <tr>
-                  <td style="font-family:Inter,sans-serif; font-size:14px; line-height:1.75; color:#1C1C1A; font-weight:300;">
-                    ${body}
-                  </td>
-                </tr>
-              </table>
-            </td>
-          </tr>
+    <!-- MAIN CARD -->
+    <tr><td>
+      <table role="presentation" class="card" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#FFFFFF;border-radius:16px;overflow:hidden;border:1px solid #E8E6E1;">
 
-          <!-- Footer -->
-          <tr>
-            <td style="background-color:#EDE8E1; padding:20px 36px; border-top:1px solid #CEC8BF;">
-              <table width="100%" cellpadding="0" cellspacing="0" border="0">
-                <tr>
-                  <td style="font-family:Inter,sans-serif; font-size:11px; color:#7A7570; line-height:1.6;">
-                    ${footer ?? `Cet email a été envoyé par <strong>${giteName}</strong> via Prysme.`}
-                  </td>
-                </tr>
-              </table>
-            </td>
-          </tr>
+        <!-- VIOLET ACCENT LINE -->
+        <tr><td style="height:4px;background-color:#7F77DD;font-size:1px;line-height:1px;">&nbsp;</td></tr>
 
-        </table>
-        <!-- /carte -->
+        <!-- BODY -->
+        <tr><td class="inner" style="padding:36px 36px 32px;">
+          ${greetingHtml}
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+            <tr>
+              <td style="font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif;font-size:15px;line-height:1.7;color:#71716E;">
+                ${body}
+              </td>
+            </tr>
+          </table>
+        </td></tr>
 
-      </td>
-    </tr>
-    <tr>
-      <td align="center" style="padding:20px 16px 40px;">
-        ${prysmeLogoBlock}
-      </td>
-    </tr>
+      </table>
+    </td></tr>
+
+    <!-- FOOTER -->
+    <tr><td style="padding:24px 0 0;text-align:center;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr><td style="font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif;font-size:12px;color:#A3A3A0;line-height:1.6;padding-bottom:8px;">
+          Cet email a été envoyé par <strong style="color:#71716E;">${giteName}</strong> via Prysme.
+        </td></tr>
+        ${footerAddress}
+        <tr><td style="padding-top:12px;">
+          <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center">
+            <tr><td style="font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif;font-size:11px;font-weight:700;color:#7F77DD;letter-spacing:0.02em;">
+              Prysme
+            </td></tr>
+          </table>
+        </td></tr>
+      </table>
+    </td></tr>
+
   </table>
+
+</td></tr>
+</table>
 </body>
 </html>`;
 }
 
-/** Bouton CTA centré */
-export function ctaButton(label: string, url: string): string {
+/** Carte récap 2 colonnes (dates | montants) */
+interface RecapItem {
+  label: string;
+  value: string;
+  valueColor?: string; // e.g. '#689D71' for green amounts
+}
+
+export function recapCard(left: RecapItem[], right: RecapItem[]): string {
+  const col = (items: RecapItem[]) => items.map(({ label, value, valueColor }) => `
+    <tr><td style="font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif;font-size:10px;font-weight:700;color:#A3A3A0;text-transform:uppercase;letter-spacing:0.08em;padding-bottom:6px;">${label}</td></tr>
+    <tr><td style="font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif;font-size:15px;font-weight:700;color:${valueColor ?? '#2C2C2A'};padding-bottom:16px;">${value}</td></tr>
+  `).join('');
+
   return `
-    <table width="100%" cellpadding="0" cellspacing="0" border="0">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#FCFFF2;border:1px solid #E8E6E1;border-radius:12px;margin-bottom:28px;">
+  <tr><td style="padding:20px 24px;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
       <tr>
-        <td align="center" style="padding:28px 0 20px;">
-          <a href="${url}"
-             style="display:inline-block; background-color:#1C1C1A; color:#EDE8E1; padding:14px 36px; text-decoration:none; font-family:Inter,sans-serif; font-size:12px; letter-spacing:0.12em; text-transform:uppercase; border-radius:6px;">
-            ${label} →
-          </a>
+        <td class="recap-col" width="50%" valign="top" style="padding-right:16px;">
+          <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+            ${col(left)}
+          </table>
+        </td>
+        <td class="recap-col" width="50%" valign="top" style="border-left:1px solid #E8E6E1;padding-left:24px;">
+          <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+            ${col(right)}
+          </table>
         </td>
       </tr>
-    </table>`;
+    </table>
+  </td></tr>
+</table>`;
 }
 
-/** Ligne de séparation légère */
+/** Bouton CTA centré (vert) */
+export function ctaButton(label: string, url: string): string {
+  return `
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr>
+    <td align="center" style="padding:4px 0 32px;">
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+        <tr><td align="center" style="background-color:#689D71;border-radius:11px;">
+          <a href="${url}" target="_blank" style="display:inline-block;font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif;font-size:15px;font-weight:700;color:#ffffff;text-decoration:none;padding:14px 36px;letter-spacing:0.01em;">${label} →</a>
+        </td></tr>
+      </table>
+    </td>
+  </tr>
+</table>`;
+}
+
+/** Boîte info violette (acompte, infos clés) */
+export function infoBox(content: string): string {
+  return `
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#EFEEF9;border-radius:10px;margin-bottom:20px;">
+  <tr><td style="padding:16px 20px;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+      <tr>
+        <td width="32" valign="top" style="padding-right:12px;padding-top:2px;">
+          <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+            <tr><td style="width:28px;height:28px;background-color:rgba(127,119,221,0.15);border-radius:7px;text-align:center;line-height:28px;font-size:14px;color:#5B52B5;">€</td></tr>
+          </table>
+        </td>
+        <td style="font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif;font-size:13px;color:#5B52B5;line-height:1.7;">
+          ${content}
+        </td>
+      </tr>
+    </table>
+  </td></tr>
+</table>`;
+}
+
+/** Ligne de séparation */
 export function divider(): string {
-  return `<div style="border-top:1px solid #CEC8BF; margin:24px 0;"></div>`;
+  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:24px 0 20px;"><tr><td style="border-top:1px solid #E8E6E1;font-size:1px;line-height:1px;">&nbsp;</td></tr></table>`;
 }
 
-/** Texte en muted small */
+/** Texte secondaire centré (petite police grise) */
 export function muted(text: string): string {
-  return `<p style="font-size:12px; color:#7A7570; line-height:1.6; margin:0;">${text}</p>`;
+  return `<p style="font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif;font-size:12px;color:#A3A3A0;line-height:1.6;text-align:center;margin:0 0 8px;">${text}</p>`;
+}
+
+/** Sign-off "Cordialement, [name]" */
+export function signOff(name: string): string {
+  return `<p style="font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif;font-size:14px;color:#71716E;line-height:1.7;margin:24px 0 0;">Cordialement,<br/><strong style="color:#2C2C2A;">${name}</strong></p>`;
 }

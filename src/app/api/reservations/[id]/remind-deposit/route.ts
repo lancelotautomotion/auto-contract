@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { buildEmailHtml, divider, muted } from "@/lib/emailTemplate";
+import { buildEmailHtml, divider, infoBox, muted, signOff } from "@/lib/emailTemplate";
 import { Resend } from "resend";
 import { requireAuth } from "@/lib/auth";
 
@@ -22,29 +22,28 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
 
     const resend = new Resend(process.env.RESEND_API_KEY);
     const fromEmail = process.env.RESEND_FROM_EMAIL ?? "onboarding@resend.dev";
-    const logoPublicUrl = reservation.gite.logoUrl ?? null;
     const fmt = (d: Date) => new Date(d).toLocaleDateString("fr-FR", { day: "2-digit", month: "long", year: "numeric" });
     const dateEntree = fmt(reservation.checkIn);
     const dateSortie = fmt(reservation.checkOut);
-    const montantAcompte = reservation.deposit != null
+    const depositFormatted = reservation.deposit != null
       ? `${reservation.deposit.toFixed(2).replace(".", ",")} €`
       : null;
     const hasRib = reservation.gite.documents.some((d) => /rib/i.test(d.label));
+    const giteAddress = [reservation.gite.address, reservation.gite.zipCode, reservation.gite.city]
+      .filter(Boolean).join(', ') || undefined;
 
     const body = `
-      <p style="margin:0 0 16px;">Bonjour <strong>${reservation.clientFirstName}</strong>,</p>
-      <p style="margin:0 0 16px;">Nous vous rappelons que vous avez signé votre contrat de location pour le séjour du <strong>${dateEntree}</strong> au <strong>${dateSortie}</strong> au <strong>${reservation.gite.name}</strong>.</p>
-      ${montantAcompte
-        ? `<p style="margin:0 0 16px;">Afin de finaliser votre réservation et de recevoir votre exemplaire du contrat signé, nous vous invitons à procéder au règlement de l'acompte de <strong>${montantAcompte}</strong> par virement bancaire${hasRib ? " sur le RIB joint à ce mail" : ""}.</p>`
-        : `<p style="margin:0 0 16px;">Afin de finaliser votre réservation, nous vous invitons à procéder au règlement de l'acompte par virement bancaire${hasRib ? " sur le RIB joint à ce mail" : ""}.</p>`
+      <p style="margin:0 0 20px;">Nous vous rappelons que vous avez signé votre contrat de location pour le séjour du <strong style="color:#2C2C2A;">${dateEntree}</strong> au <strong style="color:#2C2C2A;">${dateSortie}</strong> au <strong style="color:#2C2C2A;">${reservation.gite.name}</strong>.</p>
+      <p style="margin:0 0 20px;">Afin de finaliser votre réservation et de recevoir votre exemplaire du contrat signé, merci de procéder au règlement de l'acompte.</p>
+      ${depositFormatted
+        ? infoBox(`<strong style="color:#5B52B5;">Acompte de ${depositFormatted}</strong> à régler par virement bancaire${hasRib ? " sur le RIB joint à ce mail" : ""}. Votre exemplaire du contrat signé vous sera envoyé dès réception de celui-ci.`)
+        : `<p style="margin:0 0 20px;">L'acompte est à régler par virement bancaire${hasRib ? " sur le RIB joint à ce mail" : ""}.</p>`
       }
-      <p style="margin:0 0 16px;">Pour toute question, n'hésitez pas à nous contacter directement.</p>
       ${divider()}
-      ${muted(`Séjour du ${dateEntree} au ${dateSortie} · ${reservation.gite.name}`)}
-      <p style="margin:24px 0 0; font-size:14px; color:#1C1C1A;">Cordialement,<br/><strong>${reservation.gite.name}</strong></p>
+      ${muted("Pour toute question, contactez directement votre hébergeur.")}
+      ${signOff(reservation.gite.name)}
     `;
 
-    // Fetch document files from Blob and attach them
     const attachments = await Promise.all(
       reservation.gite.documents.map(async (doc) => {
         const res = await fetch(doc.fileUrl);
@@ -59,8 +58,10 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
       subject: `Rappel acompte — ${reservation.gite.name}`,
       html: buildEmailHtml({
         giteName: reservation.gite.name,
-        logoPublicUrl,
-        preheader: `Rappel : votre acompte${montantAcompte ? ` de ${montantAcompte}` : ""} est en attente pour finaliser votre réservation.`,
+        giteAddress,
+        docLabel: 'Rappel acompte',
+        preheader: `Rappel : votre acompte${depositFormatted ? ` de ${depositFormatted}` : ""} est en attente pour finaliser votre réservation.`,
+        greeting: reservation.clientFirstName,
         body,
       }),
       attachments,
