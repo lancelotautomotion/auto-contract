@@ -1,7 +1,9 @@
 import { auth } from "@clerk/nextjs/server";
 import { redirect, notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import Link from "next/link";
 import CompleteReservationForm from "./CompleteReservationForm";
+import RejectReservationButton from "./RejectReservationButton";
 
 export default async function CompleteReservationPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -20,66 +22,109 @@ export default async function CompleteReservationPage({ params }: { params: Prom
   const fmt = (d: Date) => new Date(d).toISOString().split('T')[0];
   const fmtDisplay = (d: Date) => new Date(d).toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' });
 
-  return (
-    <main style={{ maxWidth: '800px', margin: '0 auto', padding: '48px 40px' }}>
+  const address = [reservation.clientAddress, reservation.clientZipCode, reservation.clientCity]
+    .filter(Boolean).join(', ') || '—';
 
-        <div style={{ marginBottom: '32px' }}>
-          <p style={{ fontSize: '11px', letterSpacing: '0.25em', textTransform: 'uppercase', color: '#7A7570', marginBottom: '10px' }}>— Nouvelle demande client</p>
-          <h1 style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', fontSize: '44px', fontWeight: 300, color: '#1C1C1A', margin: 0 }}>
-            {reservation.clientFirstName} {reservation.clientLastName}
-          </h1>
-          <p style={{ fontSize: '13px', color: '#7A7570', marginTop: '6px' }}>{reservation.clientEmail} · {reservation.clientPhone}</p>
+  return (
+    <>
+      {/* Topbar */}
+      <div className="topbar">
+        <div className="topbar-left">
+          <div className="topbar-breadcrumb">
+            Réservations / <span>Nouvelle demande</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Content */}
+      <div className="content" style={{ maxWidth: '820px' }}>
+
+        <Link href="/dashboard/reservations" className="back-link">
+          <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
+            <path d="M9 3L5 7l4 4" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+          Retour aux réservations
+        </Link>
+
+        {/* Header */}
+        <div className="req-header">
+          <div className="rh-left">
+            <div className="rh-tag">
+              <svg width="12" height="12" fill="none" viewBox="0 0 12 12">
+                <circle cx="6" cy="6" r="3" stroke="currentColor" strokeWidth="1.2"/>
+                <path d="M6 4v2l1.5 1" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
+              </svg>
+              Nouvelle demande client
+            </div>
+            <h1>{reservation.clientFirstName} <span className="v">{reservation.clientLastName}</span></h1>
+            <div className="rh-contact">
+              <a href={`mailto:${reservation.clientEmail}`}>{reservation.clientEmail}</a>
+              {' · '}{reservation.clientPhone}
+            </div>
+          </div>
+          <div className="rh-right">
+            <RejectReservationButton id={id} />
+          </div>
         </div>
 
-        {/* Récap infos client */}
-        <div style={{ backgroundColor: '#F7F4F0', borderRadius: '12px', border: '1px solid #CEC8BF', padding: '24px 28px', marginBottom: '32px' }}>
-          <p style={{ fontSize: '11px', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#7A7570', marginBottom: '16px', paddingBottom: '10px', borderBottom: '1px solid #CEC8BF' }}>
-            Informations transmises par le client
-          </p>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-            <div>
-              <span style={{ fontSize: '10px', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#7A7570', display: 'block', marginBottom: '4px' }}>Adresse</span>
-              <span style={{ fontSize: '13px', color: '#1C1C1A' }}>{reservation.clientAddress || '—'}, {reservation.clientZipCode} {reservation.clientCity}</span>
+        {/* Client info card */}
+        <div className="req-info-card">
+          <div className="cc-header">
+            <span className="req-info-title">
+              <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
+                <circle cx="7" cy="5" r="3" stroke="currentColor" strokeWidth="1.2"/>
+                <path d="M2 13c0-2.8 2.2-5 5-5s5 2.2 5 5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
+              </svg>
+              Informations transmises par le client
+            </span>
+          </div>
+          <div className="req-info-body">
+            <div className="req-info-grid">
+              <div>
+                <div className="req-field-label">Adresse</div>
+                <div className="req-field-value">{address}</div>
+              </div>
+              <div>
+                <div className="req-field-label">Dates souhaitées</div>
+                <div className="req-field-value">{fmtDisplay(reservation.checkIn)} → {fmtDisplay(reservation.checkOut)}</div>
+              </div>
             </div>
-            <div>
-              <span style={{ fontSize: '10px', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#7A7570', display: 'block', marginBottom: '4px' }}>Dates souhaitées</span>
-              <span style={{ fontSize: '13px', color: '#1C1C1A' }}>{fmtDisplay(reservation.checkIn)} → {fmtDisplay(reservation.checkOut)}</span>
-            </div>
+
             {reservation.reservationOptions.length > 0 && (
-              <div style={{ gridColumn: '1 / -1' }}>
-                <span style={{ fontSize: '10px', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#7A7570', display: 'block', marginBottom: '8px' }}>Options demandées</span>
-                <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+              <div style={{ marginBottom: '20px' }}>
+                <div className="req-field-label">Options demandées</div>
+                <div className="req-opt-pills">
                   {reservation.reservationOptions.map(o => (
-                    <span key={o.id} style={{ fontSize: '12px', padding: '4px 12px', backgroundColor: '#E5DED5', color: '#1C1C1A', borderRadius: '20px', border: '1px solid #CEC8BF' }}>
+                    <span key={o.id} className="req-opt-pill">
+                      <svg width="12" height="12" fill="none" viewBox="0 0 12 12">
+                        <path d="M3 6l2 2 4-4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
                       {o.label}{o.price > 0 ? ` — ${o.price} €` : ''}
                     </span>
                   ))}
                 </div>
               </div>
             )}
+
             {reservation.notes && (
-              <div style={{ gridColumn: '1 / -1' }}>
-                <span style={{ fontSize: '10px', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#7A7570', display: 'block', marginBottom: '4px' }}>Message du client</span>
-                <span style={{ fontSize: '13px', color: '#1C1C1A', fontStyle: 'italic' }}>{reservation.notes}</span>
+              <div>
+                <div className="req-message-label">Message du client</div>
+                <div className="req-message">{reservation.notes}</div>
               </div>
             )}
           </div>
         </div>
 
-        {/* Formulaire de complétion */}
-        <div style={{ backgroundColor: '#E5DED5', borderRadius: '12px', border: '1px solid #CEC8BF', padding: '24px 28px' }}>
-          <p style={{ fontSize: '11px', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#7A7570', marginBottom: '20px', paddingBottom: '10px', borderBottom: '1px solid #CEC8BF' }}>
-            Compléter et valider la réservation
-          </p>
-          <CompleteReservationForm
-            id={id}
-            defaultCheckIn={fmt(reservation.checkIn)}
-            defaultCheckOut={fmt(reservation.checkOut)}
-            defaultCleaningFee={reservation.gite.cleaningFee.toString()}
-            defaultTouristTax={reservation.gite.touristTax.toString()}
-          />
-        </div>
+        {/* Validate form */}
+        <CompleteReservationForm
+          id={id}
+          defaultCheckIn={fmt(reservation.checkIn)}
+          defaultCheckOut={fmt(reservation.checkOut)}
+          defaultCleaningFee={reservation.gite.cleaningFee.toString()}
+          defaultTouristTax={reservation.gite.touristTax.toString()}
+        />
 
-    </main>
+      </div>
+    </>
   );
 }
