@@ -297,7 +297,7 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
   );
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} style={{ width: '100%' }}>
 
       {/* TABS */}
       <div className="tabs">
@@ -431,8 +431,8 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
 
       {/* ═══ CONTRAT ═══ */}
       {activeTab === 'Contrat' && (
-        <div>
-          <div className="contract-split">
+        <div style={{ width: '100%' }}>
+          <div className="contract-split" style={{ width: '100%' }}>
 
             {/* LEFT: variables + editor */}
             <div className="contract-left-col">
