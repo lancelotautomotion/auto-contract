@@ -87,7 +87,7 @@
 .sb-user-plan { font-size: 10px; color: rgba(255,255,255,.3); font-weight: 500; }
 
 /* ═══ MAIN ═══ */
-.main { flex: 1; overflow-y: auto; display: flex; flex-direction: column; }
+.main { flex: 1; min-width: 0; overflow-y: auto; display: flex; flex-direction: column; }
 
 /* ═══ TOPBAR ═══ */
 .topbar {
@@ -111,7 +111,7 @@
 }
 
 /* ═══ CONTENT ═══ */
-.content { padding: 28px 32px 40px; }
+.content { padding: 28px 32px 40px; box-sizing: border-box; width: 100%; }
 
 /* ═══ PAGE HEADER ═══ */
 .dash-header {
@@ -464,10 +464,10 @@
 }
 .info-box strong { font-weight: 700; }
 
-.etab-form { width: 100%; }
-.contract-split { display: grid; grid-template-columns: 1.3fr 1fr; gap: 20px; align-items: start; width: 100%; }
-.contract-left-col { display: flex; flex-direction: column; gap: 20px; }
-.contract-right-col { display: flex; flex-direction: column; gap: 16px; position: sticky; top: 20px; }
+.etab-form { width: 100%; min-width: 0; }
+.contract-split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px; align-items: start; width: 100%; }
+.contract-left-col { display: flex; flex-direction: column; gap: 20px; min-width: 0; overflow: hidden; }
+.contract-right-col { display: flex; flex-direction: column; gap: 16px; position: sticky; top: 20px; min-width: 0; overflow: hidden; }
 .contract-right-col .info-box { margin-bottom: 0; }
 .contract-editor {
   border: 1px solid var(--line); border-radius: 12px; padding: 24px;

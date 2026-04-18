@@ -431,8 +431,8 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
 
       {/* ═══ CONTRAT ═══ */}
       {activeTab === 'Contrat' && (
-        <div style={{ width: '100%' }}>
-          <div className="contract-split" style={{ width: '100%' }}>
+        <div>
+          <div className="contract-split">
 
             {/* LEFT: variables + editor */}
             <div className="contract-left-col">
