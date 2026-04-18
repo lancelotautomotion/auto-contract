@@ -10,26 +10,49 @@ interface Props {
   signedAt: Date | null;
   signedByName: string | null;
   depositReceived: boolean;
+  createdAt: string;
 }
 
-const btnPrimary = {
-  fontSize: '11px', letterSpacing: '0.15em', textTransform: 'uppercase' as const,
-  padding: '14px 28px', backgroundColor: '#1C1C1A', color: '#EDE8E1',
-  border: 'none', cursor: 'pointer', flex: 1, borderRadius: '8px',
-};
-const btnSecondary = {
-  fontSize: '11px', letterSpacing: '0.15em', textTransform: 'uppercase' as const,
-  padding: '14px 28px', backgroundColor: '#E5DED5', color: '#1C1C1A',
-  border: '1px solid #CEC8BF', cursor: 'pointer', flex: 1, borderRadius: '8px',
-};
-const btnDisabled = { ...btnPrimary, backgroundColor: '#CEC8BF', cursor: 'not-allowed' as const };
-const btnDeposit = {
-  fontSize: '11px', letterSpacing: '0.15em', textTransform: 'uppercase' as const,
-  padding: '14px 28px', backgroundColor: '#2D6A31', color: '#FFFFFF',
-  border: 'none', cursor: 'pointer', flex: 1, borderRadius: '8px',
-};
+const fmtDate = (d: Date) =>
+  d.toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' });
 
-export default function ContractActions({ reservationId, contractStatus, emailStatus, signedAt, signedByName, depositReceived: initialDepositReceived }: Props) {
+function TlDot({ state }: { state: 'done' | 'current' | 'pending' }) {
+  if (state === 'done') {
+    return (
+      <div className="tl-dot done">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+          <path d="M4 7l2.5 2.5L10 5" stroke="#4A7353" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+      </div>
+    );
+  }
+  if (state === 'current') {
+    return (
+      <div className="tl-dot current">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+          <path d="M7 4v3l2 1.5" stroke="#5B52B5" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+      </div>
+    );
+  }
+  return (
+    <div className="tl-dot pending">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+        <circle cx="7" cy="7" r="2" fill="#D4D4D0"/>
+      </svg>
+    </div>
+  );
+}
+
+export default function ContractActions({
+  reservationId,
+  contractStatus,
+  emailStatus,
+  signedAt,
+  signedByName,
+  depositReceived: initialDepositReceived,
+  createdAt,
+}: Props) {
   const [status, setStatus] = useState(contractStatus);
   const [mailStatus, setMailStatus] = useState(emailStatus);
   const [loading, setLoading] = useState<string | null>(null);
@@ -123,113 +146,205 @@ export default function ContractActions({ reservationId, contractStatus, emailSt
     }
   };
 
+  // ── Timeline step states ──
+  const step0State: 'done' | 'current' | 'pending' = 'done';
+
+  const step1State: 'done' | 'current' | 'pending' =
+    (status === 'GENERATED' || status === 'SIGNED' || isSigned) ? 'done' :
+    (status === 'GENERATING') ? 'current' : 'pending';
+
+  const step2State: 'done' | 'current' | 'pending' =
+    isSigned ? 'done' :
+    (status === 'GENERATED' && mailStatus === 'SENT') ? 'current' : 'pending';
+
+  const step3State: 'done' | 'current' | 'pending' =
+    isSigned ? 'done' : 'pending';
+
+  const step4State: 'done' | 'current' | 'pending' =
+    depositReceived ? 'done' :
+    (isSigned && !depositReceived) ? 'current' : 'pending';
+
+  // ── Timeline date labels ──
+  const step0Date = fmtDate(new Date(createdAt));
+
+  const step1Date =
+    step1State === 'done' ? 'PDF généré' :
+    step1State === 'current' ? 'Génération en cours...' : '—';
+
+  const step2Date =
+    step2State === 'current' ? 'Lien de signature envoyé par email' :
+    step2State === 'done' ? 'Email envoyé' : '—';
+
+  const step3Date =
+    step3State === 'done' && signed ? fmtDate(signed.at) : '—';
+
+  const step4Date =
+    step4State === 'done' ? 'Contrat signé envoyé au locataire' : '—';
+
   return (
-    <div style={{ border: '1px solid #CEC8BF', backgroundColor: '#F7F4F0', borderRadius: '12px', overflow: 'hidden' }}>
-      <div style={{ padding: '16px 32px', borderBottom: '1px solid #CEC8BF', backgroundColor: '#E5DED5', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <p style={{ fontSize: '11px', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#7A7570', margin: 0 }}>Contrat</p>
-        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-          {isSigned && (
-            <span style={{ fontSize: '10px', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '4px 12px', backgroundColor: '#1C1C1A', color: '#EDE8E1', borderRadius: '20px' }}>
-              Signé ✓
-            </span>
-          )}
-          {isSigned && depositReceived && (
-            <span style={{ fontSize: '10px', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '4px 12px', backgroundColor: '#2D6A31', color: '#FFFFFF', borderRadius: '20px' }}>
-              Acompte reçu ✓
-            </span>
-          )}
+    <>
+      {/* Timeline card */}
+      <div className="timeline-card">
+        <div className="tc-header">
+          <div className="tc-title">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <circle cx="8" cy="8" r="6.5" stroke="currentColor" strokeWidth="1.3"/>
+              <path d="M8 5v3l2 1.5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+            Suivi du contrat
+          </div>
+        </div>
+        <div className="timeline">
+          <div className={`tl-item ${step0State}`}>
+            <TlDot state={step0State} />
+            <div className="tl-content">
+              <div className="tl-label">Réservation créée</div>
+              <div className="tl-date">{step0Date}</div>
+            </div>
+          </div>
+          <div className={`tl-item ${step1State}`}>
+            <TlDot state={step1State} />
+            <div className="tl-content">
+              <div className="tl-label">Contrat généré</div>
+              <div className="tl-date">{step1Date}</div>
+            </div>
+          </div>
+          <div className={`tl-item ${step2State}`}>
+            <TlDot state={step2State} />
+            <div className="tl-content">
+              <div className="tl-label">En attente de signature</div>
+              <div className="tl-date">{step2Date}</div>
+            </div>
+          </div>
+          <div className={`tl-item ${step3State}`}>
+            <TlDot state={step3State} />
+            <div className="tl-content">
+              <div className="tl-label">Signature du locataire</div>
+              <div className="tl-date">{step3Date}</div>
+            </div>
+          </div>
+          <div className={`tl-item ${step4State}`}>
+            <TlDot state={step4State} />
+            <div className="tl-content">
+              <div className="tl-label">Archivage PDF</div>
+              <div className="tl-date">{step4Date}</div>
+            </div>
+          </div>
         </div>
       </div>
 
-      {isSigned && signed && (
-        <div style={{ padding: '16px 32px', borderBottom: '1px solid #CEC8BF', backgroundColor: '#F0EDE8' }}>
-          <p style={{ fontSize: '12px', color: '#7A7570', margin: 0 }}>
-            Signé électroniquement le {signed.at.toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' })} par <strong>{signed.byName}</strong>
-          </p>
+      {/* Contract card */}
+      <div className="contract-card">
+        <div className="cc-header">
+          <div className="cc-title">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M4 2h6l4 4v8a1 1 0 01-1 1H4a1 1 0 01-1-1V3a1 1 0 011-1z" stroke="currentColor" strokeWidth="1.3"/>
+              <path d="M9 2v4h4" stroke="currentColor" strokeWidth="1.3"/>
+              <path d="M5 8h6M5 11h4" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
+            </svg>
+            Contrat
+          </div>
         </div>
-      )}
 
-      {/* Bloc relance — visible 3 jours après signature si acompte pas reçu */}
-      {canRemind && (
-        <div style={{ padding: '14px 32px', borderBottom: '1px solid #CEC8BF', backgroundColor: '#FEF9F0', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px' }}>
-          <p style={{ fontSize: '12px', color: '#7A7570', margin: 0, lineHeight: 1.5 }}>
-            {remindSent
-              ? '✓ Rappel envoyé au locataire.'
-              : 'Plus de 3 jours sans réception de l\'acompte — vous pouvez relancer le locataire.'}
-          </p>
-          {!remindSent && (
-            <button
-              onClick={remindDeposit}
-              disabled={loading !== null}
-              style={{ ...btnSecondary, flex: 'none', whiteSpace: 'nowrap' as const, borderColor: '#C47822', color: '#C47822', opacity: loading === 'remind' ? 0.6 : 1 }}
-            >
-              {loading === 'remind' ? 'Envoi...' : 'Relancer le locataire →'}
-            </button>
-          )}
-        </div>
-      )}
-
-      {/* Bloc acompte — visible quand signé mais acompte pas encore confirmé */}
-      {isSigned && !depositReceived && (
-        <div style={{ padding: '16px 32px', borderBottom: '1px solid #CEC8BF', backgroundColor: '#FFFBF0', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px' }}>
-          <p style={{ fontSize: '12px', color: '#7A7570', margin: 0, lineHeight: 1.5 }}>
-            En attente de réception de l'acompte. Le contrat signé sera envoyé au locataire dès confirmation.
-          </p>
+        <div className="cc-actions">
+          {/* PDF download card */}
           <button
-            onClick={markDepositReceived}
+            className="action-card pdf"
+            onClick={downloadContract}
             disabled={loading !== null}
-            style={loading === 'deposit' ? { ...btnDisabled, flex: 'none', whiteSpace: 'nowrap' as const } : { ...btnDeposit, flex: 'none', whiteSpace: 'nowrap' as const }}
           >
-            {loading === 'deposit' ? 'Envoi en cours...' : 'Acompte reçu — envoyer le contrat →'}
+            <div className="ac-icon g">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path d="M5 3h7l5 5v9a1 1 0 01-1 1H5a1 1 0 01-1-1V4a1 1 0 011-1z" stroke="#4A7353" strokeWidth="1.4"/>
+                <path d="M12 3v5h5" stroke="#4A7353" strokeWidth="1.4"/>
+                <path d="M10 10v5M7.5 12.5L10 15l2.5-2.5" stroke="#4A7353" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
+            <div className="ac-label">
+              {loading === 'generate' ? 'Génération...' : isSigned ? 'PDF signé' : 'Télécharger PDF'}
+            </div>
+            <div className="ac-desc">
+              {isSigned ? 'Télécharger le contrat signé' : 'Générer et télécharger le contrat'}
+            </div>
           </button>
-        </div>
-      )}
 
-      {depositError && (
-        <div style={{ padding: '0 32px 16px', borderBottom: '1px solid #CEC8BF' }}>
-          <p style={{ fontSize: '12px', color: '#c0392b', margin: 0 }}>{depositError}</p>
-        </div>
-      )}
-
-      <div style={{ padding: '28px 32px', display: 'flex', gap: '16px', flexWrap: 'wrap' as const }}>
-        <button
-          style={loading === 'generate' ? btnDisabled : btnPrimary}
-          onClick={downloadContract}
-          disabled={loading !== null}
-        >
-          {loading === 'generate' ? 'Génération...' : isSigned ? 'Télécharger le PDF signé →' : 'Télécharger le contrat PDF →'}
-        </button>
-
-        {mailStatus === 'SENT' && !isSigned ? (
-          <button style={btnSecondary} onClick={sendEmail} disabled={loading !== null}>
-            Renvoyer le lien →
-          </button>
-        ) : mailStatus === 'SENT' && isSigned ? (
-          <button style={btnSecondary} disabled>Lien envoyé ✓</button>
-        ) : (
+          {/* Signature link card */}
           <button
-            style={loading === 'email' ? btnDisabled : btnPrimary}
+            className="action-card sign"
             onClick={sendEmail}
             disabled={loading !== null}
           >
-            {loading === 'email' ? 'Envoi...' : 'Envoyer le lien de signature →'}
+            <div className="ac-icon v">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path d="M3 4h14a1 1 0 011 1v10a1 1 0 01-1 1H3a1 1 0 01-1-1V5a1 1 0 011-1z" stroke="#5B52B5" strokeWidth="1.4"/>
+                <path d="M2 5l8 6 8-6" stroke="#5B52B5" strokeWidth="1.4" strokeLinecap="round"/>
+              </svg>
+            </div>
+            <div className="ac-label">
+              {loading === 'email' ? 'Envoi...' :
+               mailStatus === 'SENT' && isSigned ? 'Lien envoyé' :
+               mailStatus === 'SENT' ? 'Renvoyer le lien' : 'Envoyer le lien'}
+            </div>
+            <div className="ac-desc">
+              {mailStatus === 'SENT' && isSigned ? 'Contrat déjà signé' :
+               mailStatus === 'SENT' ? 'Lien de signature envoyé' : 'Envoyer le lien de signature par email'}
+            </div>
           </button>
+        </div>
+
+        {/* Deposit block — visible when signed but deposit not confirmed */}
+        {isSigned && !depositReceived && (
+          <div style={{ margin: '0 24px 16px', padding: '14px 18px', background: 'var(--amber-light)', border: '1px solid rgba(255,189,46,.2)', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px' }}>
+            <p style={{ fontSize: '13px', color: 'var(--amber-dark)', margin: 0, lineHeight: 1.5 }}>
+              En attente de réception de l&apos;acompte. Le contrat signé sera envoyé au locataire dès confirmation.
+            </p>
+            <button
+              onClick={markDepositReceived}
+              disabled={loading !== null}
+              className="btn btn-green"
+              style={{ whiteSpace: 'nowrap', flexShrink: 0 }}
+            >
+              {loading === 'deposit' ? 'Envoi en cours...' : 'Acompte reçu →'}
+            </button>
+          </div>
+        )}
+
+        {/* Remind block — visible 3 days after signature if deposit not received */}
+        {canRemind && (
+          <div style={{ margin: depositReceived ? '0 24px 16px' : '0 24px 16px', padding: '14px 18px', background: 'var(--line-light)', border: '1px solid var(--line)', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px' }}>
+            <p style={{ fontSize: '13px', color: 'var(--ink-soft)', margin: 0, lineHeight: 1.5 }}>
+              {remindSent
+                ? 'Rappel envoyé au locataire.'
+                : "Plus de 3 jours sans réception de l'acompte — vous pouvez relancer le locataire."}
+            </p>
+            {!remindSent && (
+              <button
+                onClick={remindDeposit}
+                disabled={loading !== null}
+                className="btn btn-outline"
+                style={{ whiteSpace: 'nowrap', flexShrink: 0 }}
+              >
+                {loading === 'remind' ? 'Envoi...' : 'Relancer →'}
+              </button>
+            )}
+          </div>
+        )}
+
+        {/* Signed info */}
+        {isSigned && signed && (
+          <p style={{ fontSize: '12px', color: 'var(--ink-lighter)', fontStyle: 'italic', margin: '0 24px 16px' }}>
+            Signé électroniquement le {signed.at.toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' })} par <strong>{signed.byName}</strong>
+          </p>
+        )}
+
+        {/* Errors */}
+        {emailError && (
+          <p style={{ fontSize: '12px', color: 'var(--red)', margin: '0 24px 16px' }}>{emailError}</p>
+        )}
+        {depositError && (
+          <p style={{ fontSize: '12px', color: 'var(--red)', margin: '0 24px 16px' }}>{depositError}</p>
         )}
       </div>
-
-      {emailError && (
-        <div style={{ padding: '0 32px 20px' }}>
-          <p style={{ fontSize: '12px', color: '#c0392b', margin: 0 }}>{emailError}</p>
-        </div>
-      )}
-
-      {mailStatus === 'SENT' && !isSigned && (
-        <div style={{ padding: '0 32px 20px' }}>
-          <p style={{ fontSize: '12px', color: '#7A7570', margin: 0 }}>
-            Le lien de signature a été envoyé au client. En attente de sa signature.
-          </p>
-        </div>
-      )}
-    </div>
+    </>
   );
 }
