@@ -139,6 +139,8 @@
 .btn-outline:hover { border-color: var(--ink-soft); color: var(--ink); }
 .btn-danger { background: var(--dash-white); color: var(--red); border: 1.5px solid var(--red-light); }
 .btn-danger:hover { background: var(--red-light); border-color: var(--red); }
+.btn-danger-outline { background: var(--dash-white); color: var(--red); border: 1.5px solid var(--red-light); }
+.btn-danger-outline:hover { background: var(--red-light); border-color: var(--red); }
 .btn-lg { padding: 11px 24px; font-size: 14px; border-radius: 10px; }
 
 /* ═══ STAT CARDS ═══ */
@@ -201,6 +203,8 @@
 .pill-g { background: var(--green-light); color: var(--green-dark); }
 .pill-v { background: var(--violet-light); color: var(--violet-dark); }
 .pill-a { background: var(--amber-light); color: var(--amber-dark); }
+.pill-r { background: var(--red-light); color: var(--red); }
+.pill-lg { font-size: 13px; padding: 8px 20px; }
 
 /* ═══ RESERVATIONS TABLE ═══ */
 .resa-card { margin-bottom: 24px; }

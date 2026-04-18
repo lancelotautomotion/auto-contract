@@ -5,9 +5,6 @@ import ContractActions from "./ContractActions";
 import DeleteReservationButton from "./DeleteReservationButton";
 import Link from "next/link";
 
-const labelStyle = { fontSize: '10px', letterSpacing: '0.18em', textTransform: 'uppercase' as const, color: '#7A7570', marginBottom: '4px', display: 'block' };
-const valueStyle = { fontSize: '14px', color: '#1C1C1A' };
-
 export default async function ReservationDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const { userId } = await auth();
@@ -23,79 +20,178 @@ export default async function ReservationDetailPage({ params }: { params: Promis
   if (!reservation) notFound();
 
   const fmt = (d: Date) => new Date(d).toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' });
-  const fmtPrice = (n: number) => `${n.toFixed(2).replace('.', ',')} €`;
+  const fmtMoney = (n: number) => n.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '\u00a0€';
+
+  const contractStatus = reservation.contract?.status ?? null;
+  const pillClass =
+    contractStatus === 'GENERATED' ? 'pill pill-v pill-lg' :
+    contractStatus === 'SIGNED' ? 'pill pill-g pill-lg' :
+    'pill pill-a pill-lg';
+  const pillLabel =
+    contractStatus === null ? 'En attente' :
+    contractStatus === 'GENERATING' ? 'En cours...' :
+    contractStatus === 'GENERATED' ? 'Contrat généré' :
+    contractStatus === 'SIGNED' ? 'Signé' : 'En attente';
+
+  const optionsTotal = reservation.reservationOptions.reduce((sum, o) => sum + (o.price || 0), 0);
 
   return (
-    <main style={{ maxWidth: '1000px', margin: '0 auto', padding: '48px 40px' }}>
-
-        {/* Title + statut + bouton modifier */}
-        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '40px' }}>
-          <div>
-            <p style={{ fontSize: '11px', letterSpacing: '0.25em', textTransform: 'uppercase', color: '#7A7570', marginBottom: '10px' }}>— Détail réservation</p>
-            <h1 style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', fontSize: '44px', fontWeight: 300, color: '#1C1C1A', margin: 0 }}>
-              {reservation.clientFirstName} {reservation.clientLastName}
-            </h1>
-            <p style={{ fontSize: '13px', color: '#7A7570', marginTop: '6px' }}>{reservation.clientEmail} · {reservation.clientPhone}</p>
+    <>
+      {/* Topbar */}
+      <div className="topbar">
+        <div className="topbar-left">
+          <div className="topbar-breadcrumb">
+            Réservations &rsaquo; <span>{reservation.clientFirstName} {reservation.clientLastName}</span>
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '10px' }}>
-            <span style={{ fontSize: '10px', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '6px 14px', backgroundColor: reservation.contract?.status === 'GENERATED' ? '#1C1C1A' : '#E5DED5', color: reservation.contract?.status === 'GENERATED' ? '#EDE8E1' : '#7A7570', display: 'inline-block', borderRadius: '20px' }}>
-              {reservation.contract?.status === 'GENERATED' ? 'Contrat généré' :
-               reservation.contract?.status === 'GENERATING' ? 'En cours...' : 'En attente'}
-            </span>
-            <Link href={`/dashboard/reservations/${id}/edit`} style={{ fontSize: '11px', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '8px 16px', border: '1px solid #CEC8BF', backgroundColor: '#E5DED5', color: '#1C1C1A', textDecoration: 'none', borderRadius: '8px' }}>
-              Modifier →
-            </Link>
-            <DeleteReservationButton
-              reservationId={id}
-              clientName={`${reservation.clientFirstName} ${reservation.clientLastName}`}
-            />
+        </div>
+      </div>
+
+      {/* Content */}
+      <div className="content" style={{ maxWidth: '900px' }}>
+
+        {/* Back link */}
+        <Link href="/dashboard/reservations" className="back-link">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M10 12L6 8l4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+          Retour aux réservations
+        </Link>
+
+        {/* Detail header */}
+        <div className="detail-header">
+          <div className="dh-left">
+            <h1>
+              {reservation.clientFirstName} <span className="v">{reservation.clientLastName}</span>
+            </h1>
+            <div className="dh-contact">
+              <a href={`mailto:${reservation.clientEmail}`}>{reservation.clientEmail}</a>
+              <span>·</span>
+              <span>{reservation.clientPhone}</span>
+            </div>
+          </div>
+          <div className="dh-right">
+            <span className={pillClass}>{pillLabel}</span>
+            <div className="dh-actions">
+              <Link href={`/dashboard/reservations/${id}/edit`} className="btn btn-outline">
+                Modifier
+              </Link>
+              <DeleteReservationButton
+                reservationId={id}
+                clientName={`${reservation.clientFirstName} ${reservation.clientLastName}`}
+              />
+            </div>
           </div>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1px', border: '1px solid #CEC8BF', backgroundColor: '#CEC8BF', marginBottom: '32px', borderRadius: '12px', overflow: 'hidden' }}>
-          <div style={{ backgroundColor: '#F7F4F0', padding: '28px 32px' }}>
-            <p style={{ fontSize: '11px', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#7A7570', marginBottom: '20px', paddingBottom: '10px', borderBottom: '1px solid #CEC8BF' }}>Séjour</p>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-              <div><span style={labelStyle}>Arrivée</span><span style={valueStyle}>{fmt(reservation.checkIn)}</span></div>
-              <div><span style={labelStyle}>Départ</span><span style={valueStyle}>{fmt(reservation.checkOut)}</span></div>
+        {/* Detail grid */}
+        <div className="detail-grid">
+          {/* Séjour */}
+          <div className="detail-block">
+            <div className="db-title">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                <rect x="1" y="2.5" width="12" height="10" rx="2" stroke="currentColor" strokeWidth="1.3"/>
+                <path d="M1 5.5h12" stroke="currentColor" strokeWidth="1.3"/>
+                <path d="M4.5 1v3M9.5 1v3" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
+              </svg>
+              Séjour
+            </div>
+            <div className="db-row">
+              <div className="db-item">
+                <div className="db-label">Arrivée</div>
+                <div className="db-value">{fmt(reservation.checkIn)}</div>
+              </div>
+              <div className="db-item">
+                <div className="db-label">Départ</div>
+                <div className="db-value">{fmt(reservation.checkOut)}</div>
+              </div>
             </div>
           </div>
-          <div style={{ backgroundColor: '#F7F4F0', padding: '28px 32px' }}>
-            <p style={{ fontSize: '11px', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#7A7570', marginBottom: '20px', paddingBottom: '10px', borderBottom: '1px solid #CEC8BF' }}>Client</p>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-              <div><span style={labelStyle}>Adresse</span><span style={valueStyle}>{reservation.clientAddress || '—'}</span></div>
-              <div><span style={labelStyle}>Ville</span><span style={valueStyle}>{reservation.clientCity ? `${reservation.clientCity} ${reservation.clientZipCode}` : '—'}</span></div>
+
+          {/* Client */}
+          <div className="detail-block">
+            <div className="db-title">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                <circle cx="7" cy="4.5" r="2.5" stroke="currentColor" strokeWidth="1.3"/>
+                <path d="M1.5 12.5c0-2.485 2.462-4.5 5.5-4.5s5.5 2.015 5.5 4.5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
+              </svg>
+              Client
+            </div>
+            <div className="db-row">
+              <div className="db-item">
+                <div className="db-label">Adresse</div>
+                <div className="db-value">{reservation.clientAddress || '—'}</div>
+              </div>
+              <div className="db-item">
+                <div className="db-label">Ville</div>
+                <div className="db-value">
+                  {reservation.clientCity ? `${reservation.clientCity} ${reservation.clientZipCode ?? ''}`.trim() : '—'}
+                </div>
+              </div>
             </div>
           </div>
-          <div style={{ backgroundColor: '#E5DED5', padding: '28px 32px' }}>
-            <p style={{ fontSize: '11px', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#7A7570', marginBottom: '20px', paddingBottom: '10px', borderBottom: '1px solid #CEC8BF' }}>Tarifs</p>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-              <div><span style={labelStyle}>Loyer</span><span style={valueStyle}>{reservation.rent != null ? fmtPrice(reservation.rent) : '—'}</span></div>
-              <div><span style={labelStyle}>Acompte</span><span style={valueStyle}>{reservation.deposit != null ? fmtPrice(reservation.deposit) : '—'}</span></div>
-              <div><span style={labelStyle}>Ménage</span><span style={valueStyle}>{reservation.cleaningFee != null ? fmtPrice(reservation.cleaningFee) : '—'}</span></div>
-              <div><span style={labelStyle}>Taxe de séjour</span><span style={valueStyle}>{reservation.touristTax != null ? `${fmtPrice(reservation.touristTax)}/nuit` : '—'}</span></div>
+
+          {/* Tarifs */}
+          <div className="detail-block">
+            <div className="db-title">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                <circle cx="7" cy="7" r="5.5" stroke="currentColor" strokeWidth="1.3"/>
+                <path d="M7 4v6M5 8.5c0 .83.672 1.5 2 1.5s2-.67 2-1.5S8.328 7 7 7s-2-.67-2-1.5S5.672 4 7 4s2 .67 2 1.5" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round"/>
+              </svg>
+              Tarifs
+            </div>
+            <div className="db-row">
+              <div className="db-item">
+                <div className="db-label">Loyer</div>
+                <div className="db-value big">{reservation.rent != null ? fmtMoney(reservation.rent) : '—'}</div>
+              </div>
+              <div className="db-item">
+                <div className="db-label">Acompte</div>
+                <div className="db-value big">{reservation.deposit != null ? fmtMoney(reservation.deposit) : '—'}</div>
+              </div>
+              <div className="db-item">
+                <div className="db-label">Ménage</div>
+                <div className="db-value">{reservation.cleaningFee != null ? fmtMoney(reservation.cleaningFee) : '—'}</div>
+              </div>
+              <div className="db-item">
+                <div className="db-label">Taxe de séjour</div>
+                <div className="db-value">{reservation.touristTax != null ? `${fmtMoney(reservation.touristTax)}/nuit` : '—'}</div>
+              </div>
             </div>
           </div>
-          <div style={{ backgroundColor: '#E5DED5', padding: '28px 32px' }}>
-            <p style={{ fontSize: '11px', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#7A7570', marginBottom: '20px', paddingBottom: '10px', borderBottom: '1px solid #CEC8BF' }}>Options</p>
+
+          {/* Options */}
+          <div className="detail-block">
+            <div className="db-title">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                <path d="M2 4h10M2 7h7M2 10h5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
+              </svg>
+              Options
+            </div>
             {reservation.reservationOptions.length === 0 ? (
-              <p style={{ fontSize: '13px', color: '#7A7570', fontStyle: 'italic' }}>Aucune option sélectionnée</p>
+              <p style={{ fontSize: '13px', color: 'var(--ink-lighter)', fontStyle: 'italic' }}>Aucune option sélectionnée</p>
             ) : (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              <div className="opt-list">
                 {reservation.reservationOptions.map(opt => (
-                  <div key={opt.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                      <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#1C1C1A', display: 'inline-block', flexShrink: 0 }} />
-                      <span style={{ fontSize: '13px', color: '#1C1C1A' }}>{opt.label}</span>
+                  <div key={opt.id} className="opt-item">
+                    <div className="opt-name">
+                      <span className="opt-dot" />
+                      {opt.label}
                     </div>
-                    {opt.price > 0 && <span style={{ fontSize: '12px', color: '#7A7570' }}>{fmtPrice(opt.price)}</span>}
+                    {opt.price > 0 && <span className="opt-price">{fmtMoney(opt.price)}</span>}
                   </div>
                 ))}
+                {optionsTotal > 0 && (
+                  <div className="opt-total">
+                    <span className="opt-total-label">Total options</span>
+                    <span className="opt-total-val">{fmtMoney(optionsTotal)}</span>
+                  </div>
+                )}
               </div>
             )}
           </div>
         </div>
 
+        {/* Contract Actions (Timeline + Contract card) */}
         <ContractActions
           reservationId={reservation.id}
           contractStatus={reservation.contract?.status ?? null}
@@ -104,7 +200,25 @@ export default async function ReservationDetailPage({ params }: { params: Promis
           signedAt={reservation.contract?.signedAt ?? null}
           signedByName={reservation.contract?.signedByName ?? null}
           depositReceived={reservation.contract?.depositReceived ?? false}
+          createdAt={reservation.createdAt.toISOString()}
         />
-    </main>
+
+        {/* Notes card */}
+        <div className="notes-card">
+          <div className="notes-title">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M3 2h10a1 1 0 011 1v10a1 1 0 01-1 1H3a1 1 0 01-1-1V3a1 1 0 011-1z" stroke="currentColor" strokeWidth="1.3"/>
+              <path d="M5 6h6M5 9h4" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
+            </svg>
+            Notes
+          </div>
+          {reservation.notes
+            ? <div className="notes-text">{reservation.notes}</div>
+            : <div className="notes-empty">Aucune note pour cette réservation.</div>
+          }
+        </div>
+
+      </div>
+    </>
   );
 }

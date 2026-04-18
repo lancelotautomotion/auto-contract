@@ -28,19 +28,11 @@ export default function DeleteReservationButton({ reservationId, clientName }: {
     <button
       onClick={handleDelete}
       disabled={loading}
-      style={{
-        fontSize: '11px',
-        letterSpacing: '0.15em',
-        textTransform: 'uppercase',
-        padding: '8px 16px',
-        border: '1px solid #CEC8BF',
-        backgroundColor: 'transparent',
-        color: loading ? '#CEC8BF' : '#B04040',
-        borderColor: loading ? '#CEC8BF' : '#D4A0A0',
-        borderRadius: '8px',
-        cursor: loading ? 'not-allowed' : 'pointer',
-      }}
+      className="btn btn-danger-outline"
     >
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+        <path d="M2 3.5h10M5.5 3.5V2.5h3v1M6 6v4M8 6v4M3 3.5l.5 7.5a1 1 0 001 1h5a1 1 0 001-1l.5-7.5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
+      </svg>
       {loading ? 'Suppression...' : 'Supprimer'}
     </button>
   );
