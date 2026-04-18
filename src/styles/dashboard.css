@@ -776,6 +776,82 @@
 .notes-text { font-size: 14px; color: var(--ink-soft); line-height: 1.7; white-space: pre-wrap; }
 .notes-empty { font-size: 13px; color: var(--ink-lighter); font-style: italic; }
 
+/* ═══ RESERVATIONS LIST PAGE ═══ */
+.page-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 24px; }
+.page-header h1 { font-weight: 800; font-size: 26px; letter-spacing: -0.03em; }
+.page-header .sub { font-size: 13px; color: var(--ink-lighter); margin-top: 2px; }
+
+.pb-desc { font-size: 13px; color: var(--amber-dark); opacity: .7; margin-left: 36px; margin-bottom: 12px; }
+.pb-item-card {
+  display: flex; align-items: center; gap: 12px;
+  background: var(--dash-white); border: 1px solid var(--line);
+  border-radius: 10px; padding: 12px 16px; margin-left: 36px; margin-top: 8px; transition: all .2s;
+}
+.pb-item-card:hover { border-color: var(--violet-light); box-shadow: 0 4px 12px rgba(44,44,42,.04); }
+.pb-item-av { width: 32px; height: 32px; border-radius: 50%; background: var(--amber-light); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: var(--amber-dark); flex-shrink: 0; }
+.pb-item-info { flex: 1; }
+.pb-item-action {
+  font-family: var(--ff); font-size: 12px; font-weight: 600; color: var(--violet);
+  text-decoration: none; padding: 6px 14px; border-radius: 7px;
+  border: 1.5px solid var(--violet-light); background: var(--dash-white);
+  cursor: pointer; transition: all .2s; display: inline-flex; align-items: center; gap: 4px;
+}
+.pb-item-action:hover { background: var(--violet-light); border-color: var(--violet); }
+
+.view-tabs { display: flex; gap: 0; border-bottom: 2px solid var(--line); margin-bottom: 0; }
+.view-tab {
+  font-family: var(--ff); font-size: 13px; font-weight: 600; color: var(--ink-lighter);
+  padding: 12px 20px; border: none; background: none; cursor: pointer;
+  position: relative; transition: color .2s; display: flex; align-items: center; gap: 6px;
+}
+.view-tab:hover { color: var(--ink); }
+.view-tab.active { color: var(--violet); }
+.view-tab.active::after { content: ''; position: absolute; bottom: -2px; left: 0; right: 0; height: 2px; background: var(--violet); border-radius: 1px 1px 0 0; }
+.view-tab .count { font-size: 10px; font-weight: 700; background: var(--line-light); color: var(--ink-lighter); padding: 2px 7px; border-radius: 100px; }
+.view-tab.active .count { background: var(--violet-light); color: var(--violet-dark); }
+
+.table-card { background: var(--dash-white); border: 1px solid var(--line); border-top: none; border-radius: 0 0 14px 14px; overflow: hidden; }
+
+.t-sort {
+  font-family: var(--ff); font-size: 12px; font-weight: 500; padding: 6px 12px;
+  border: 1px solid var(--line); border-radius: 8px; background: var(--dash-white);
+  color: var(--ink-soft); cursor: pointer; display: flex; align-items: center; gap: 4px; transition: all .2s;
+}
+.t-sort:hover { border-color: var(--ink-soft); color: var(--ink); }
+.t-view { display: flex; gap: 0; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.t-view-btn {
+  font-family: var(--ff); width: 32px; height: 30px; border: none; background: var(--dash-white);
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  color: var(--ink-lighter); transition: all .15s;
+}
+.t-view-btn:not(:last-child) { border-right: 1px solid var(--line); }
+.t-view-btn.active { background: var(--violet-light); color: var(--violet-dark); }
+.t-view-btn:hover { color: var(--ink); }
+
+.r-table { width: 100%; border-collapse: collapse; }
+.r-table thead th { text-align: left; font-size: 11px; font-weight: 700; color: var(--ink-lighter); text-transform: uppercase; letter-spacing: .06em; padding: 10px 20px; border-bottom: 1px solid var(--line); background: var(--line-light); }
+.r-table tbody td { padding: 14px 20px; border-bottom: 1px solid var(--line-light); font-size: 13px; vertical-align: middle; }
+.r-table tbody tr { transition: background .15s; cursor: pointer; }
+.r-table tbody tr:hover { background: rgba(127,119,221,.02); }
+.r-table tbody tr:last-child td { border: none; }
+
+.cl-av { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; flex-shrink: 0; }
+.cl-name { font-weight: 600; color: var(--ink); }
+.cl-email { font-size: 11px; color: var(--ink-lighter); }
+.amount { font-weight: 700; color: var(--ink); }
+.date { color: var(--ink-soft); }
+
+.row-actions { display: flex; gap: 4px; }
+.row-btn { width: 28px; height: 28px; border-radius: 7px; border: 1px solid var(--line); background: var(--dash-white); display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--ink-lighter); transition: all .15s; text-decoration: none; }
+.row-btn:hover { background: var(--violet-light); color: var(--violet-dark); border-color: var(--violet-light); }
+.row-btn.del:hover { background: var(--red-light); color: var(--red); border-color: var(--red-light); }
+
+.tf-info { font-size: 12px; color: var(--ink-lighter); }
+.tf-pages { display: flex; gap: 4px; }
+.tf-page { font-family: var(--ff); width: 28px; height: 28px; border-radius: 7px; border: 1px solid var(--line); background: var(--dash-white); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: var(--ink-soft); cursor: pointer; transition: all .15s; }
+.tf-page:hover { border-color: var(--violet-light); color: var(--ink); }
+.tf-page.active { background: var(--violet); border-color: var(--violet); color: #fff; }
+
 /* ═══ RESPONSIVE ═══ */
 @media (max-width: 1024px) {
   .sidebar { display: none; }
