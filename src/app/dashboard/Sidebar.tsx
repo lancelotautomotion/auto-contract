@@ -5,7 +5,7 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 
-export default function Sidebar() {
+export default function Sidebar({ pendingCount = 0 }: { pendingCount?: number }) {
   const pathname = usePathname();
   const { user } = useUser();
 
@@ -46,7 +46,7 @@ export default function Sidebar() {
             Tableau de bord
           </Link>
 
-          <Link href="/dashboard" className={`sb-link${active('/dashboard/reservations') ? ' active' : ''}`}>
+          <Link href="/dashboard/reservations" className={`sb-link${active('/dashboard/reservations') ? ' active' : ''}`}>
             <span className="sb-icon">
               <svg width="18" height="18" fill="none" viewBox="0 0 18 18">
                 <rect x="2" y="3" width="14" height="12" rx="2" stroke="currentColor" strokeWidth="1.3"/>
@@ -55,6 +55,9 @@ export default function Sidebar() {
               </svg>
             </span>
             Réservations
+            {pendingCount > 0 && (
+              <span className="sb-badge">{pendingCount}</span>
+            )}
           </Link>
 
           <Link href="/dashboard/etablissement" className={`sb-link${active('/dashboard/etablissement') ? ' active' : ''}`}>
