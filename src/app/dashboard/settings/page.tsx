@@ -1,6 +1,7 @@
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import { getTrialInfo } from "@/lib/trial";
 import SettingsForm from "./SettingsForm";
 
 export default async function SettingsPage() {
@@ -15,6 +16,10 @@ export default async function SettingsPage() {
   if (!gite) redirect("/onboarding");
 
   const userEmail = user?.emailAddresses[0]?.emailAddress ?? '';
+
+  let trialInfo = null;
+  try { trialInfo = getTrialInfo(dbUser); } catch {}
+  const hasCustomer = Boolean(dbUser.stripeCustomerId);
 
   return (
     <>
@@ -49,6 +54,9 @@ export default async function SettingsPage() {
         <SettingsForm
           notificationEmail={gite.notificationEmail ?? ''}
           userEmail={userEmail}
+          planStatus={trialInfo?.planStatus ?? 'TRIAL'}
+          daysLeft={trialInfo?.daysLeft ?? null}
+          hasStripeCustomer={hasCustomer}
         />
       </div>
     </>

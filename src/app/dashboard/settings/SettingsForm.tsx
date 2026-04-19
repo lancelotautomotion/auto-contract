@@ -11,14 +11,37 @@ const secTitle = { fontSize: '11px', letterSpacing: '0.25em', textTransform: 'up
 interface Props {
   notificationEmail: string;
   userEmail: string;
+  planStatus: 'TRIAL' | 'ACTIVE' | 'EXPIRED';
+  daysLeft: number | null;
+  hasStripeCustomer: boolean;
 }
 
-export default function SettingsForm({ notificationEmail, userEmail }: Props) {
+export default function SettingsForm({ notificationEmail, userEmail, planStatus, daysLeft, hasStripeCustomer }: Props) {
   const { dark, toggle } = useTheme();
   const { signOut } = useClerk();
   const [notifEmail, setNotifEmail] = useState(notificationEmail);
   const [loading, setLoading] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [portalLoading, setPortalLoading] = useState(false);
+  const [portalError, setPortalError] = useState<string | null>(null);
+
+  const handleManageSubscription = async () => {
+    setPortalLoading(true);
+    setPortalError(null);
+    try {
+      const res = await fetch('/api/stripe/portal', { method: 'POST' });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.url) {
+        setPortalError(data.error ?? "Impossible d'ouvrir le portail client.");
+        setPortalLoading(false);
+        return;
+      }
+      window.location.href = data.url;
+    } catch {
+      setPortalError("Erreur réseau. Réessayez.");
+      setPortalLoading(false);
+    }
+  };
 
   const handleSaveNotif = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -105,6 +128,68 @@ export default function SettingsForm({ notificationEmail, userEmail }: Props) {
               display: 'block',
             }} />
           </button>
+        </div>
+      </section>
+
+      {/* Abonnement */}
+      <section>
+        <p style={secTitle}>Abonnement</p>
+        <div style={{ padding: '20px', backgroundColor: 'var(--bg-white)', borderRadius: '10px', border: '1px solid var(--border)' }}>
+          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '16px', flexWrap: 'wrap' }}>
+            <div style={{ minWidth: 0 }}>
+              <p style={{ fontSize: '11px', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--text-muted)', margin: '0 0 6px' }}>
+                Plan actuel
+              </p>
+              {planStatus === 'ACTIVE' && (
+                <>
+                  <p style={{ fontSize: '15px', fontWeight: 700, color: 'var(--text)', margin: '0 0 4px' }}>Plan Essentiel — 29 € / mois</p>
+                  <p style={{ fontSize: '12px', color: 'var(--text-muted)', margin: 0, lineHeight: 1.5 }}>
+                    Facturation mensuelle via Stripe. Annulable à tout moment depuis le portail.
+                  </p>
+                </>
+              )}
+              {planStatus === 'TRIAL' && (
+                <>
+                  <p style={{ fontSize: '15px', fontWeight: 700, color: 'var(--text)', margin: '0 0 4px' }}>
+                    Période d'essai {daysLeft !== null ? `— ${daysLeft <= 0 ? '0' : daysLeft}j restant${daysLeft > 1 ? 's' : ''}` : ''}
+                  </p>
+                  <p style={{ fontSize: '12px', color: 'var(--text-muted)', margin: 0, lineHeight: 1.5 }}>
+                    Accès complet pendant 14 jours. Passez à l'abonnement pour continuer sans interruption.
+                  </p>
+                </>
+              )}
+              {planStatus === 'EXPIRED' && (
+                <>
+                  <p style={{ fontSize: '15px', fontWeight: 700, color: '#B23A3A', margin: '0 0 4px' }}>Essai expiré</p>
+                  <p style={{ fontSize: '12px', color: 'var(--text-muted)', margin: 0, lineHeight: 1.5 }}>
+                    Souscrivez pour réactiver votre accès.
+                  </p>
+                </>
+              )}
+            </div>
+            <div style={{ display: 'flex', gap: '8px', flexShrink: 0 }}>
+              {planStatus === 'ACTIVE' || hasStripeCustomer ? (
+                <button
+                  type="button"
+                  onClick={handleManageSubscription}
+                  disabled={portalLoading}
+                  style={{ fontSize: '11px', letterSpacing: '0.12em', textTransform: 'uppercase', padding: '10px 18px', border: '1px solid var(--border)', backgroundColor: 'transparent', color: 'var(--text)', cursor: portalLoading ? 'not-allowed' : 'pointer', borderRadius: '8px', fontWeight: 600 }}
+                >
+                  {portalLoading ? 'Ouverture…' : 'Gérer mon abonnement'}
+                </button>
+              ) : (
+                <a
+                  href="/upgrade"
+                  style={{ fontSize: '11px', letterSpacing: '0.12em', textTransform: 'uppercase', padding: '10px 18px', backgroundColor: '#7F77DD', color: '#FFFFFF', borderRadius: '8px', textDecoration: 'none', fontWeight: 700 }}
+                >
+                  Souscrire →
+                </a>
+              )}
+            </div>
+          </div>
+          {portalError && (
+            <p style={{ fontSize: '12px', color: '#B23A3A', margin: '12px 0 0', lineHeight: 1.5 }}>{portalError}</p>
+          )}
         </div>
       </section>
 
