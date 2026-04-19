@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 
+const sansSerif = "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif";
+
 export default function SigningForm({ token, clientName }: { token: string; clientName: string }) {
   const [name, setName] = useState('');
   const [consent, setConsent] = useState(false);
@@ -29,71 +31,114 @@ export default function SigningForm({ token, clientName }: { token: string; clie
 
   if (done) {
     return (
-      <div style={{ padding: '32px', backgroundColor: '#1C1C1A', borderRadius: '12px', textAlign: 'center' }}>
-        <p style={{ fontSize: '20px', color: '#EDE8E1', fontFamily: 'Cormorant Garamond, Georgia, serif', marginBottom: '12px' }}>Contrat signé ✓</p>
-        <p style={{ fontSize: '13px', color: '#7A7570', margin: 0 }}>
-          Merci {name}. Vous allez recevoir une confirmation avec le contrat signé par email.
-        </p>
+      <div style={{ backgroundColor: '#FFFFFF', borderRadius: '16px', border: '1px solid #E8E6E1', overflow: 'hidden', fontFamily: sansSerif }}>
+        <div style={{ height: '4px', backgroundColor: '#689D71' }} />
+        <div style={{ padding: '40px 36px', textAlign: 'center' }}>
+          <div style={{ width: '56px', height: '56px', borderRadius: '14px', backgroundColor: 'rgba(104,157,113,0.15)', color: '#689D71', fontSize: '26px', fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
+            ✓
+          </div>
+          <h2 style={{ fontSize: '22px', fontWeight: 800, color: '#2C2C2A', letterSpacing: '-0.02em', margin: '0 0 10px', lineHeight: 1.3 }}>
+            Contrat signé<span style={{ color: '#689D71' }}>.</span>
+          </h2>
+          <p style={{ fontSize: '14px', color: '#71716E', lineHeight: 1.6, margin: 0 }}>
+            Merci <strong style={{ color: '#2C2C2A' }}>{name}</strong>. Une confirmation vient de vous être envoyée par email.
+          </p>
+        </div>
       </div>
     );
   }
 
-  const inputStyle = {
-    width: '100%', padding: '12px 14px', border: '1px solid #CEC8BF',
-    backgroundColor: '#F7F4F0', fontSize: '14px', color: '#1C1C1A',
-    outline: 'none', borderRadius: '8px', boxSizing: 'border-box' as const,
-  };
+  const disabled = !name.trim() || !consent || loading;
 
   return (
-    <div style={{ backgroundColor: '#F7F4F0', border: '1px solid #CEC8BF', borderRadius: '12px', overflow: 'hidden' }}>
-      <div style={{ padding: '16px 32px', borderBottom: '1px solid #CEC8BF', backgroundColor: '#E5DED5' }}>
-        <p style={{ fontSize: '11px', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#7A7570', margin: 0 }}>Signature électronique</p>
-      </div>
-      <div style={{ padding: '28px 32px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-        <div>
-          <p style={{ fontSize: '12px', color: '#7A7570', margin: '0 0 4px' }}>
-            En signant ce contrat, vous confirmez avoir lu et accepté l'intégralité des conditions ci-dessus.
-            Cette signature électronique a la même valeur légale qu'une signature manuscrite (règlement eIDAS).
-          </p>
-        </div>
-        <div>
-          <label style={{ fontSize: '11px', letterSpacing: '0.12em', textTransform: 'uppercase', color: '#7A7570', display: 'block', marginBottom: '6px' }}>
-            Tapez votre nom complet pour signer *
+    <div style={{ backgroundColor: '#FFFFFF', borderRadius: '16px', border: '1px solid #E8E6E1', overflow: 'hidden', fontFamily: sansSerif }}>
+      {/* Violet accent bar */}
+      <div style={{ height: '4px', backgroundColor: '#7F77DD' }} />
+
+      <div style={{ padding: '32px 36px 36px' }}>
+        <p style={{ fontSize: '10px', fontWeight: 700, color: '#A3A3A0', textTransform: 'uppercase', letterSpacing: '0.08em', margin: '0 0 8px' }}>
+          Signature électronique
+        </p>
+        <h2 style={{ fontSize: '20px', fontWeight: 800, color: '#2C2C2A', letterSpacing: '-0.02em', margin: '0 0 14px', lineHeight: 1.3 }}>
+          Signer le contrat<span style={{ color: '#7F77DD' }}>.</span>
+        </h2>
+        <p style={{ fontSize: '14px', color: '#71716E', lineHeight: 1.6, margin: '0 0 24px' }}>
+          En signant ce contrat, vous confirmez avoir lu et accepté l'intégralité des conditions ci-dessus. Cette signature électronique a la même valeur légale qu'une signature manuscrite.
+        </p>
+
+        {/* Name input */}
+        <div style={{ marginBottom: '18px' }}>
+          <label style={{ display: 'block', fontSize: '10px', fontWeight: 700, color: '#A3A3A0', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '8px' }}>
+            Tapez votre nom complet pour signer
           </label>
           <input
             type="text"
             placeholder={clientName}
             value={name}
             onChange={e => setName(e.target.value)}
-            style={inputStyle}
+            style={{
+              width: '100%',
+              padding: '14px 16px',
+              border: '1px solid #E8E6E1',
+              backgroundColor: '#FAFAF7',
+              fontSize: '15px',
+              fontFamily: sansSerif,
+              color: '#2C2C2A',
+              outline: 'none',
+              borderRadius: '10px',
+              boxSizing: 'border-box',
+              transition: 'border-color 0.15s',
+            }}
+            onFocus={e => { e.currentTarget.style.borderColor = '#7F77DD'; }}
+            onBlur={e => { e.currentTarget.style.borderColor = '#E8E6E1'; }}
           />
         </div>
-        <label style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', cursor: 'pointer' }}>
+
+        {/* Consent checkbox */}
+        <label style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', cursor: 'pointer', padding: '14px 16px', backgroundColor: '#FAFAF7', border: '1px solid #E8E6E1', borderRadius: '10px', marginBottom: '20px' }}>
           <input
             type="checkbox"
             checked={consent}
             onChange={e => setConsent(e.target.checked)}
-            style={{ marginTop: '3px', flexShrink: 0, accentColor: '#1C1C1A' }}
+            style={{ marginTop: '3px', flexShrink: 0, width: '16px', height: '16px', accentColor: '#7F77DD', cursor: 'pointer' }}
           />
-          <span style={{ fontSize: '12px', color: '#1C1C1A', lineHeight: 1.6 }}>
+          <span style={{ fontSize: '13px', color: '#2C2C2A', lineHeight: 1.6 }}>
             J'ai lu et j'accepte les conditions du contrat de location. Je reconnais que cette signature électronique engage ma responsabilité au même titre qu'une signature manuscrite.
           </span>
         </label>
 
-        {error && <p style={{ fontSize: '12px', color: '#c0392b', margin: 0 }}>{error}</p>}
+        {/* Error */}
+        {error && (
+          <div style={{ padding: '12px 16px', backgroundColor: '#FBECEC', border: '1px solid #F3D1D1', borderRadius: '10px', marginBottom: '20px' }}>
+            <p style={{ fontSize: '13px', color: '#B23A3A', margin: 0, lineHeight: 1.5 }}>{error}</p>
+          </div>
+        )}
 
+        {/* Submit button */}
         <button
           onClick={handleSign}
-          disabled={!name.trim() || !consent || loading}
+          disabled={disabled}
           style={{
-            padding: '14px', fontSize: '11px', letterSpacing: '0.15em', textTransform: 'uppercase',
-            backgroundColor: (!name.trim() || !consent || loading) ? '#CEC8BF' : '#1C1C1A',
-            color: '#EDE8E1', border: 'none', borderRadius: '8px',
-            cursor: (!name.trim() || !consent || loading) ? 'not-allowed' : 'pointer',
+            width: '100%',
+            padding: '16px',
+            fontFamily: sansSerif,
+            fontSize: '15px',
+            fontWeight: 700,
+            letterSpacing: '0.01em',
+            backgroundColor: disabled ? '#C9D4CC' : '#689D71',
+            color: '#FFFFFF',
+            border: 'none',
+            borderRadius: '11px',
+            cursor: disabled ? 'not-allowed' : 'pointer',
+            transition: 'background-color 0.15s',
           }}
         >
-          {loading ? 'Signature en cours...' : 'Signer le contrat →'}
+          {loading ? 'Signature en cours…' : 'Signer le contrat →'}
         </button>
+
+        <p style={{ fontSize: '11px', color: '#A3A3A0', textAlign: 'center', lineHeight: 1.5, margin: '16px 0 0' }}>
+          Votre IP et l'horodatage seront enregistrés pour garantir la validité légale de la signature.
+        </p>
       </div>
     </div>
   );
