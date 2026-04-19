@@ -171,6 +171,7 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
     cleaningFee: gite.cleaningFee.toString(),
     touristTax: gite.touristTax.toString(),
   });
+  const [savedSlug, setSavedSlug] = useState(gite.slug);
   const [contractTemplate, setContractTemplate] = useState(gite.contractTemplate || DEFAULT_CONTRACT_TEMPLATE);
   const [options, setOptions] = useState<GiteOption[]>(gite.options);
   const [logoUrl, setLogoUrl] = useState(gite.logoUrl || '');
@@ -275,9 +276,11 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
   };
 
   const bookingUrl = form.slug ? `${origin}/book/${form.slug}` : '';
+  const savedBookingUrl = savedSlug ? `${origin}/book/${savedSlug}` : '';
+  const slugPendingSave = form.slug !== savedSlug;
   const handleCopy = () => {
-    if (!bookingUrl) return;
-    navigator.clipboard?.writeText(bookingUrl);
+    if (!savedBookingUrl) return;
+    navigator.clipboard?.writeText(savedBookingUrl);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -303,7 +306,7 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
     setLoading(true); setSaved(false);
     try {
       const res = await fetch('/api/etablissement', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...form, contractTemplate, options, logoUrl }) });
-      if (res.ok) setSaved(true);
+      if (res.ok) { setSaved(true); setSavedSlug(form.slug); }
     } finally { setLoading(false); }
   };
 
@@ -363,7 +366,7 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
                   <span>{bookingUrl}</span>
                 </div>
                 <div className="booking-card-actions">
-                  <button type="button" className="lb-btn ghost" onClick={handleCopy}>
+                  <button type="button" className="lb-btn ghost" onClick={handleCopy} disabled={slugPendingSave || !savedSlug}>
                     {copied ? (
                       <>
                         <svg width="12" height="12" fill="none" viewBox="0 0 12 12"><path d="M2 6l3 3 5-5" stroke="#689D71" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/></svg>
@@ -376,11 +379,24 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
                       </>
                     )}
                   </button>
-                  <a href={`/book/${form.slug}`} target="_blank" rel="noreferrer" className="lb-btn primary">
-                    <svg width="12" height="12" fill="none" viewBox="0 0 12 12"><path d="M4 8L8 4m0 0H5m3 0v3" stroke="#fff" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                    Voir la page
-                  </a>
+                  {slugPendingSave || !savedSlug ? (
+                    <span className="lb-btn primary" style={{ opacity: 0.5, cursor: 'not-allowed' }} aria-disabled="true">
+                      <svg width="12" height="12" fill="none" viewBox="0 0 12 12"><path d="M4 8L8 4m0 0H5m3 0v3" stroke="#fff" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                      Voir la page
+                    </span>
+                  ) : (
+                    <a href={`/book/${savedSlug}`} target="_blank" rel="noreferrer" className="lb-btn primary">
+                      <svg width="12" height="12" fill="none" viewBox="0 0 12 12"><path d="M4 8L8 4m0 0H5m3 0v3" stroke="#fff" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                      Voir la page
+                    </a>
+                  )}
                 </div>
+                {slugPendingSave && (
+                  <div className="booking-card-pending">
+                    <svg width="12" height="12" fill="none" viewBox="0 0 12 12"><circle cx="6" cy="6" r="5" stroke="#D97706" strokeWidth="1.2"/><path d="M6 3.5V6l1.5 1" stroke="#D97706" strokeWidth="1.2" strokeLinecap="round"/></svg>
+                    Sauvegardez pour activer ce nouveau lien.
+                  </div>
+                )}
               </div>
             ) : (
               <div className="booking-card-empty">

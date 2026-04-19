@@ -34,11 +34,24 @@ export default function OnboardingForm({ defaultEmail }: { defaultEmail: string 
     if (!form.giteName.trim()) { setError("Le nom de l'hébergement est requis."); return; }
     setLoading(true);
     setError(null);
+
+    const slug = form.giteName.toLowerCase()
+      .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+
+    const options = OPTIONS
+      .filter(opt => form[opt.key as keyof typeof form])
+      .map(opt => ({
+        label: opt.label,
+        price: parseFloat(String(form[opt.priceKey as keyof typeof form] ?? '0')) || 0,
+      }));
+
     try {
       const res = await fetch('/api/onboarding', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ ...form, slug, options }),
       });
       if (res.ok) {
         router.push('/dashboard');
