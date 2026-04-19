@@ -1,6 +1,7 @@
 import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { TRIAL_DAYS } from "@/lib/trial";
 
 export async function POST(req: NextRequest) {
   const { userId } = await auth();
@@ -24,8 +25,10 @@ export async function POST(req: NextRequest) {
 
   let user = await prisma.user.findUnique({ where: { clerkId: userId } });
   if (!user) {
+    const trialEndsAt = new Date();
+    trialEndsAt.setDate(trialEndsAt.getDate() + TRIAL_DAYS);
     user = await prisma.user.create({
-      data: { clerkId: userId, email: body.email, name: body.giteName },
+      data: { clerkId: userId, email: body.email, name: body.giteName, trialEndsAt },
     });
   }
 
