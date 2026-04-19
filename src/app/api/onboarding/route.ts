@@ -23,13 +23,20 @@ export async function POST(req: NextRequest) {
     touristTax: parseFloat(body.touristTax ?? "1.32"),
   };
 
-  let user = await prisma.user.findUnique({ where: { clerkId: userId } });
+  let user = await prisma.user.findUnique({ where: { clerkId: userId } }).catch(() => null);
   if (!user) {
     const trialEndsAt = new Date();
     trialEndsAt.setDate(trialEndsAt.getDate() + TRIAL_DAYS);
-    user = await prisma.user.create({
-      data: { clerkId: userId, email: body.email, name: body.giteName, trialEndsAt },
-    });
+    try {
+      user = await prisma.user.create({
+        data: { clerkId: userId, email: body.email, name: body.giteName, trialEndsAt },
+      });
+    } catch {
+      // Fallback: migration may not be applied yet — create without new fields
+      user = await prisma.user.create({
+        data: { clerkId: userId, email: body.email, name: body.giteName },
+      });
+    }
   }
 
   let gite = await prisma.gite.findFirst({ where: { userId: user.id } });

@@ -3,31 +3,27 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-const label = { fontSize: '11px', letterSpacing: '0.15em', textTransform: 'uppercase' as const, color: '#7A7570', display: 'block', marginBottom: '6px' };
-const input = { width: '100%', padding: '10px 14px', border: '1px solid #CEC8BF', backgroundColor: '#F7F4F0', fontSize: '14px', color: '#1C1C1A', outline: 'none', boxSizing: 'border-box' as const, borderRadius: '8px' };
-const section = { marginBottom: '36px' };
-const sectionTitle = { fontSize: '11px', letterSpacing: '0.25em', textTransform: 'uppercase' as const, color: '#7A7570', marginBottom: '20px', paddingBottom: '10px', borderBottom: '1px solid #CEC8BF' };
-const grid2 = { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' };
+const sans = "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif";
 
 const OPTIONS = [
   { key: 'offerNordicBath', priceKey: 'nordicBathPrice', label: 'Bain nordique' },
-  { key: 'offerSheet160',   priceKey: 'sheet160Price',   label: 'Draps 160x200' },
-  { key: 'offerSheet90',    priceKey: 'sheet90Price',    label: 'Draps 90x190' },
+  { key: 'offerSheet160',   priceKey: 'sheet160Price',   label: 'Draps 160×200' },
+  { key: 'offerSheet90',    priceKey: 'sheet90Price',    label: 'Draps 90×190' },
   { key: 'offerTowels',     priceKey: 'towelsPrice',     label: 'Linge de toilette' },
 ];
 
 export default function OnboardingForm({ defaultEmail }: { defaultEmail: string }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [form, setForm] = useState({
     giteName: '', email: defaultEmail, phone: '',
     address: '', city: '', zipCode: '',
     capacity: '12', cleaningFee: '90', touristTax: '1.32',
-    n8nWebhookUrl: '', driveTemplateFolderId: '', driveOutputFolderId: '',
-    offerNordicBath: true,  nordicBathPrice: '120',
-    offerSheet160: true,    sheet160Price: '0',
-    offerSheet90: true,     sheet90Price: '0',
-    offerTowels: true,      towelsPrice: '0',
+    offerNordicBath: false, nordicBathPrice: '120',
+    offerSheet160: false,   sheet160Price: '0',
+    offerSheet90: false,    sheet90Price: '0',
+    offerTowels: false,     towelsPrice: '0',
   });
 
   const set = (k: string, v: string) => setForm(f => ({ ...f, [k]: v }));
@@ -35,99 +31,216 @@ export default function OnboardingForm({ defaultEmail }: { defaultEmail: string 
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!form.giteName.trim()) { setError("Le nom de l'hébergement est requis."); return; }
     setLoading(true);
+    setError(null);
     try {
       const res = await fetch('/api/onboarding', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form),
       });
-      if (res.ok) router.push('/dashboard');
+      if (res.ok) {
+        router.push('/dashboard');
+      } else {
+        const data = await res.json().catch(() => ({}));
+        setError(data.error ?? "Une erreur est survenue. Veuillez réessayer.");
+      }
+    } catch {
+      setError("Impossible de contacter le serveur. Vérifiez votre connexion.");
     } finally {
       setLoading(false);
     }
   };
 
+  const inputStyle: React.CSSProperties = {
+    width: '100%', padding: '13px 16px',
+    border: '1px solid #E8E6E1', backgroundColor: '#FAFAF7',
+    fontSize: '15px', fontFamily: sans, color: '#2C2C2A',
+    outline: 'none', borderRadius: '10px', boxSizing: 'border-box',
+  };
+
+  const labelStyle: React.CSSProperties = {
+    display: 'block', fontSize: '10px', fontWeight: 700,
+    color: '#A3A3A0', textTransform: 'uppercase', letterSpacing: '0.08em',
+    marginBottom: '7px',
+  };
+
+  const sectionTitle: React.CSSProperties = {
+    fontSize: '12px', fontWeight: 700, color: '#2C2C2A',
+    textTransform: 'uppercase', letterSpacing: '0.06em',
+    marginBottom: '16px', paddingBottom: '10px',
+    borderBottom: '1px solid #F0EDEA',
+  };
+
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
 
-      <div style={section}>
-        <p style={sectionTitle}>Votre gîte</p>
-        <div style={{ ...grid2, marginBottom: '16px' }}>
-          <div style={{ gridColumn: '1 / -1' }}>
-            <label style={label}>Nom du gîte *</label>
-            <input required style={input} placeholder="Le Clos du Marida" value={form.giteName} onChange={e => set('giteName', e.target.value)} />
+      {/* Section 1 — Hébergement */}
+      <div>
+        <p style={sectionTitle}>Votre hébergement</p>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+          <div>
+            <label style={labelStyle}>Nom de l'hébergement *</label>
+            <input
+              required style={inputStyle} placeholder="Le Clos du Marida"
+              value={form.giteName} onChange={e => set('giteName', e.target.value)}
+              onFocus={e => { e.currentTarget.style.borderColor = '#7F77DD'; }}
+              onBlur={e => { e.currentTarget.style.borderColor = '#E8E6E1'; }}
+            />
           </div>
-          <div><label style={label}>Email de contact *</label><input required type="email" style={input} value={form.email} onChange={e => set('email', e.target.value)} /></div>
-          <div><label style={label}>Téléphone</label><input style={input} value={form.phone} onChange={e => set('phone', e.target.value)} /></div>
-        </div>
-        <div style={{ marginBottom: '16px' }}><label style={label}>Adresse</label><input style={input} value={form.address} onChange={e => set('address', e.target.value)} /></div>
-        <div style={grid2}>
-          <div><label style={label}>Ville</label><input style={input} value={form.city} onChange={e => set('city', e.target.value)} /></div>
-          <div><label style={label}>Code postal</label><input style={input} value={form.zipCode} onChange={e => set('zipCode', e.target.value)} /></div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+            <div>
+              <label style={labelStyle}>Email de contact *</label>
+              <input
+                required type="email" style={inputStyle}
+                value={form.email} onChange={e => set('email', e.target.value)}
+                onFocus={e => { e.currentTarget.style.borderColor = '#7F77DD'; }}
+                onBlur={e => { e.currentTarget.style.borderColor = '#E8E6E1'; }}
+              />
+            </div>
+            <div>
+              <label style={labelStyle}>Téléphone</label>
+              <input
+                style={inputStyle} placeholder="06 12 34 56 78"
+                value={form.phone} onChange={e => set('phone', e.target.value)}
+                onFocus={e => { e.currentTarget.style.borderColor = '#7F77DD'; }}
+                onBlur={e => { e.currentTarget.style.borderColor = '#E8E6E1'; }}
+              />
+            </div>
+          </div>
+          <div>
+            <label style={labelStyle}>Adresse</label>
+            <input
+              style={inputStyle} placeholder="12 chemin des Pins"
+              value={form.address} onChange={e => set('address', e.target.value)}
+              onFocus={e => { e.currentTarget.style.borderColor = '#7F77DD'; }}
+              onBlur={e => { e.currentTarget.style.borderColor = '#E8E6E1'; }}
+            />
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+            <div>
+              <label style={labelStyle}>Ville</label>
+              <input
+                style={inputStyle} placeholder="Bordeaux"
+                value={form.city} onChange={e => set('city', e.target.value)}
+                onFocus={e => { e.currentTarget.style.borderColor = '#7F77DD'; }}
+                onBlur={e => { e.currentTarget.style.borderColor = '#E8E6E1'; }}
+              />
+            </div>
+            <div>
+              <label style={labelStyle}>Code postal</label>
+              <input
+                style={inputStyle} placeholder="33000"
+                value={form.zipCode} onChange={e => set('zipCode', e.target.value)}
+                onFocus={e => { e.currentTarget.style.borderColor = '#7F77DD'; }}
+                onBlur={e => { e.currentTarget.style.borderColor = '#E8E6E1'; }}
+              />
+            </div>
+          </div>
         </div>
       </div>
 
-      <div style={section}>
+      {/* Section 2 — Tarifs */}
+      <div>
         <p style={sectionTitle}>Tarifs par défaut</p>
-        <div style={grid2}>
-          <div><label style={label}>Capacité (personnes)</label><input type="number" style={input} value={form.capacity} onChange={e => set('capacity', e.target.value)} /></div>
-          <div><label style={label}>Frais de ménage (€)</label><input type="number" step="0.01" style={input} value={form.cleaningFee} onChange={e => set('cleaningFee', e.target.value)} /></div>
-          <div><label style={label}>Taxe de séjour (€/nuit)</label><input type="number" step="0.01" style={input} value={form.touristTax} onChange={e => set('touristTax', e.target.value)} /></div>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px' }}>
+          <div>
+            <label style={labelStyle}>Capacité (pers.)</label>
+            <input
+              type="number" min="1" style={inputStyle}
+              value={form.capacity} onChange={e => set('capacity', e.target.value)}
+              onFocus={e => { e.currentTarget.style.borderColor = '#7F77DD'; }}
+              onBlur={e => { e.currentTarget.style.borderColor = '#E8E6E1'; }}
+            />
+          </div>
+          <div>
+            <label style={labelStyle}>Frais de ménage (€)</label>
+            <input
+              type="number" step="0.01" min="0" style={inputStyle}
+              value={form.cleaningFee} onChange={e => set('cleaningFee', e.target.value)}
+              onFocus={e => { e.currentTarget.style.borderColor = '#7F77DD'; }}
+              onBlur={e => { e.currentTarget.style.borderColor = '#E8E6E1'; }}
+            />
+          </div>
+          <div>
+            <label style={labelStyle}>Taxe de séjour (€/nuit)</label>
+            <input
+              type="number" step="0.01" min="0" style={inputStyle}
+              value={form.touristTax} onChange={e => set('touristTax', e.target.value)}
+              onFocus={e => { e.currentTarget.style.borderColor = '#7F77DD'; }}
+              onBlur={e => { e.currentTarget.style.borderColor = '#E8E6E1'; }}
+            />
+          </div>
         </div>
       </div>
 
-      <div style={section}>
-        <p style={sectionTitle}>Options proposées aux clients</p>
-        <p style={{ fontSize: '12px', color: '#7A7570', marginBottom: '16px', lineHeight: 1.6 }}>
-          Sélectionnez les options disponibles dans votre gîte. Indiquez 0 € si l&apos;option est incluse dans le loyer.
-        </p>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+      {/* Section 3 — Options */}
+      <div>
+        <p style={sectionTitle}>Options proposées <span style={{ fontWeight: 400, color: '#A3A3A0', textTransform: 'none', letterSpacing: 0 }}>— facultatif, modifiable plus tard</span></p>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
           {OPTIONS.map(opt => (
-            <div key={opt.key} style={{ display: 'flex', alignItems: 'center', gap: '16px', padding: '14px 16px', border: '1px solid #CEC8BF', borderRadius: '8px', backgroundColor: form[opt.key as keyof typeof form] ? '#E5DED5' : '#F7F4F0' }}>
+            <label
+              key={opt.key}
+              style={{
+                display: 'flex', alignItems: 'center', gap: '14px',
+                padding: '13px 16px', borderRadius: '10px',
+                border: `1px solid ${form[opt.key as keyof typeof form] ? 'rgba(127,119,221,.3)' : '#E8E6E1'}`,
+                backgroundColor: form[opt.key as keyof typeof form] ? '#EFEEF9' : '#FAFAF7',
+                cursor: 'pointer', transition: 'all .15s',
+              }}
+            >
               <input
                 type="checkbox"
                 checked={form[opt.key as keyof typeof form] as boolean}
                 onChange={() => toggle(opt.key)}
-                style={{ width: '16px', height: '16px', accentColor: '#1C1C1A', flexShrink: 0, cursor: 'pointer' }}
+                style={{ width: '16px', height: '16px', accentColor: '#7F77DD', flexShrink: 0, cursor: 'pointer' }}
               />
-              <span style={{ flex: 1, fontSize: '13px', color: '#1C1C1A', fontWeight: form[opt.key as keyof typeof form] ? 500 : 400 }}>{opt.label}</span>
+              <span style={{ flex: 1, fontSize: '14px', color: '#2C2C2A', fontWeight: form[opt.key as keyof typeof form] ? 600 : 400 }}>
+                {opt.label}
+              </span>
               {form[opt.key as keyof typeof form] && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <span style={{ fontSize: '11px', color: '#7A7570', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Prix</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                   <input
                     type="number" step="0.01" min="0"
                     value={form[opt.priceKey as keyof typeof form] as string}
                     onChange={e => set(opt.priceKey, e.target.value)}
-                    style={{ width: '80px', padding: '6px 10px', border: '1px solid #CEC8BF', backgroundColor: '#EDE8E1', fontSize: '13px', color: '#1C1C1A', outline: 'none', borderRadius: '6px', textAlign: 'right' }}
+                    onClick={e => e.preventDefault()}
+                    style={{ width: '72px', padding: '6px 10px', border: '1px solid rgba(127,119,221,.3)', backgroundColor: '#fff', fontSize: '14px', fontFamily: sans, color: '#2C2C2A', outline: 'none', borderRadius: '8px', textAlign: 'right' }}
                   />
-                  <span style={{ fontSize: '13px', color: '#7A7570' }}>€</span>
+                  <span style={{ fontSize: '13px', color: '#A3A3A0' }}>€</span>
                 </div>
               )}
-            </div>
+            </label>
           ))}
         </div>
       </div>
 
-      <div style={section}>
-        <p style={sectionTitle}>Automatisation n8n</p>
-        <p style={{ fontSize: '12px', color: '#7A7570', marginBottom: '16px', lineHeight: 1.6 }}>
-          Optionnel pour commencer — vous pourrez le configurer plus tard dans les paramètres.
-        </p>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          <div><label style={label}>URL Webhook n8n (génération contrat)</label><input style={input} placeholder="https://votre-n8n.com/webhook/..." value={form.n8nWebhookUrl} onChange={e => set('n8nWebhookUrl', e.target.value)} /></div>
-          <div><label style={label}>ID Dossier Drive (template)</label><input style={input} placeholder="1YVny7v79gQ..." value={form.driveTemplateFolderId} onChange={e => set('driveTemplateFolderId', e.target.value)} /></div>
-          <div><label style={label}>ID Dossier Drive (contrats générés)</label><input style={input} placeholder="1keNh6CvAH..." value={form.driveOutputFolderId} onChange={e => set('driveOutputFolderId', e.target.value)} /></div>
+      {/* Error */}
+      {error && (
+        <div style={{ padding: '12px 16px', backgroundColor: '#FBECEC', border: '1px solid #F3D1D1', borderRadius: '10px' }}>
+          <p style={{ fontSize: '13px', color: '#B23A3A', margin: 0, lineHeight: 1.5 }}>{error}</p>
         </div>
-      </div>
+      )}
 
+      {/* Submit */}
       <button
         type="submit"
         disabled={loading}
-        style={{ width: '100%', fontSize: '11px', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '14px', backgroundColor: loading ? '#CEC8BF' : '#1C1C1A', color: '#EDE8E1', border: 'none', cursor: loading ? 'not-allowed' : 'pointer', borderRadius: '8px' }}
+        style={{
+          width: '100%', padding: '16px',
+          fontFamily: sans, fontSize: '15px', fontWeight: 700,
+          backgroundColor: loading ? '#C9D4CC' : '#689D71',
+          color: '#FFFFFF', border: 'none', borderRadius: '11px',
+          cursor: loading ? 'not-allowed' : 'pointer',
+        }}
       >
-        {loading ? 'Enregistrement...' : 'Accéder au tableau de bord →'}
+        {loading ? 'Configuration en cours…' : 'Accéder au tableau de bord →'}
       </button>
+
+      <p style={{ fontSize: '12px', color: '#A3A3A0', textAlign: 'center', margin: '-12px 0 0', lineHeight: 1.5 }}>
+        Vous pourrez compléter et modifier toutes ces informations dans vos paramètres.
+      </p>
     </form>
   );
 }

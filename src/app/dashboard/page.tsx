@@ -26,27 +26,27 @@ export default async function DashboardPage() {
     contract: { status: string; emailStatus: string } | null;
   }> = [];
 
-  try {
-    const dbUser = await prisma.user.findUnique({ where: { clerkId: userId } });
-    if (dbUser) {
-      const gite = await prisma.gite.findFirst({ where: { userId: dbUser.id } });
-      if (!gite || gite.name === "Mon Gîte") redirect("/onboarding");
+  // Use .catch(() => null) so Prisma errors don't silently swallow redirects
+  const dbUser = await prisma.user.findUnique({ where: { clerkId: userId } }).catch(() => null);
+  if (!dbUser) redirect("/onboarding");
 
-      pendingReservations = await prisma.reservation.findMany({
+  const gite = await prisma.gite.findFirst({ where: { userId: dbUser.id } }).catch(() => null);
+  if (!gite || gite.name === "Mon Gîte") redirect("/onboarding");
+
+  try {
+    [pendingReservations, reservations] = await Promise.all([
+      prisma.reservation.findMany({
         where: { gite: { userId: dbUser.id }, status: 'PENDING_REVIEW' },
         orderBy: { createdAt: 'desc' },
-      });
-
-      reservations = await prisma.reservation.findMany({
+      }),
+      prisma.reservation.findMany({
         where: { gite: { userId: dbUser.id }, status: { not: 'PENDING_REVIEW' } },
         include: { contract: true },
         orderBy: { checkIn: 'asc' },
-      });
-    } else {
-      redirect("/onboarding");
-    }
-  } catch (e: unknown) {
-    if (e && typeof e === 'object' && 'digest' in e) throw e;
+      }),
+    ]);
+  } catch {
+    // If reservation queries fail, render with empty state rather than crashing
   }
 
   const contractsGenerated = reservations.filter(r => r.contract?.status === 'GENERATED' || r.contract?.status === 'SIGNED').length;
