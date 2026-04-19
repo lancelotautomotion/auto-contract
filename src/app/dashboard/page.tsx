@@ -31,7 +31,7 @@ export default async function DashboardPage() {
   if (!dbUser) redirect("/onboarding");
 
   const gite = await prisma.gite.findFirst({ where: { userId: dbUser.id } }).catch(() => null);
-  if (!gite || gite.name === "Mon Gîte") redirect("/onboarding");
+  if (!gite || !gite.name?.trim() || gite.name === "Mon Gîte") redirect("/onboarding");
 
   try {
     [pendingReservations, reservations] = await Promise.all([
