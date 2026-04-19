@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   description: "CGV Prysme : abonnement 9,99 € HT/mois, essai 30 jours sans CB, résiliation à tout moment.",
 };
 
-const tk = { ink: '#0A0A0B', inkSoft: '#4B5563', inkMuted: '#9CA3AF', border: '#E5E7EB', surface: '#F9FAFB', blue: '#2563EB', green: '#16A34A', greenBg: '#F0FDF4', font: 'Inter, -apple-system, sans-serif' };
+const tk = { ink: '#2C2C2A', inkSoft: '#71716E', inkMuted: '#A3A3A0', border: '#E8E6E1', surface: '#F3F2EE', blue: '#7F77DD', green: '#689D71', greenBg: '#EEF5EF', font: "'Plus Jakarta Sans', system-ui, sans-serif" };
 const h1s: React.CSSProperties = { fontFamily: tk.font, fontSize: 'clamp(28px, 4vw, 40px)', fontWeight: 800, color: tk.ink, marginBottom: '8px', lineHeight: 1.1, letterSpacing: '-0.03em' };
 const dates: React.CSSProperties = { fontSize: '12px', color: tk.inkMuted, fontWeight: 400, letterSpacing: '0.04em', textTransform: 'uppercase', marginBottom: '48px', display: 'block', paddingBottom: '32px', borderBottom: `1px solid ${tk.border}` };
 const h2s: React.CSSProperties = { fontFamily: tk.font, fontSize: '18px', fontWeight: 700, color: tk.ink, marginTop: '40px', marginBottom: '10px', letterSpacing: '-0.02em' };

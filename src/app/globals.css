@@ -1,66 +1,66 @@
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500;1,600&family=Inter:wght@300;400;500;600;700;800&display=swap');
+/* ═══ PRYSME GLOBAL BASE ═══
+   Font loaded via next/font (Plus Jakarta Sans) in each layout.
+   This file only handles cascade reset, dark-mode tokens, and shared utilities.
+══════════════════════════════════════════════════════════════════════════ */
 
 html {
   overflow-y: scroll;
 }
 
+/* ── Light-mode tokens used by SettingsForm + dark-mode toggle ── */
 :root {
-  /* ── Identité Prysme ────────────────────── */
-  --prisme:  #689D71;   /* vert sauge — couleur principale */
-  --spectre: #7F77DD;   /* violet — accent */
-  --clair:   #FCFFF2;   /* crème clair — surfaces */
-  --graphite:#2C2C2A;   /* quasi-noir — texte / fond sombre */
-
-  /* ── UI light mode ──────────────────────── */
-  --bg:       #FFFFFF;
-  --bg-card:  #F4F9F4;
-  --bg-white: #FFFFFF;
-  --text:     #2C2C2A;
-  --text-muted: #6B7A73;
-  --border:   #C2D9C4;
+  --bg:         #FFFFFF;
+  --bg-card:    #F3F2EE;
+  --bg-white:   #FFFFFF;
+  --text:       #2C2C2A;
+  --text-muted: #71716E;
+  --border:     #E8E6E1;
 }
 
 .dark {
-  --bg:       #1C1C1A;
-  --bg-card:  #242422;
-  --bg-white: #1A1A18;
-  --text:     #FCFFF2;
-  --text-muted: #8A9B96;
-  --border:   #334D3E;
+  --bg:         #1C1C1A;
+  --bg-card:    #242422;
+  --bg-white:   #1A1A18;
+  --text:       #EDECEA;
+  --text-muted: #8A8A87;
+  --border:     #3A3A37;
 }
 
+/* ── Body base ──
+   font-family cascades from the Next.js Plus Jakarta Sans class on the layout div.
+   We declare the same stack here as a reliable fallback.
+── */
 body {
-  background-color: var(--bg);
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  font-weight: 400;
   color: var(--text);
-  font-family: 'Inter', sans-serif;
-  font-weight: 300;
+  background-color: var(--bg);
+  -webkit-font-smoothing: antialiased;
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-h1, h2, h3 {
-  font-family: 'Cormorant Garamond', serif;
+/* Headings must never switch to a serif — they follow the body font */
+h1, h2, h3, h4, h5, h6 {
+  font-family: inherit;
 }
 
+/* ── Reservation table rows ── */
 .reservation-row {
   transition: background-color 0.15s ease;
 }
-
 .reservation-row:hover {
   background-color: var(--bg) !important;
 }
-
 .reservation-row:hover .client-name {
   text-decoration: underline;
   text-underline-offset: 3px;
 }
-
 .reservation-row:hover .row-arrow {
   opacity: 1;
 }
-
 .row-arrow {
   opacity: 0;
   transition: opacity 0.15s ease;
   font-size: 14px;
-  color: #7A7570;
+  color: #A3A3A0;
 }
