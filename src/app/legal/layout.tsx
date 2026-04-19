@@ -1,14 +1,14 @@
 import Link from "next/link";
 
 const tk = {
-  ink:     '#0A0A0B',
-  inkSoft: '#4B5563',
-  inkMuted:'#9CA3AF',
+  ink:     '#2C2C2A',
+  inkSoft: '#71716E',
+  inkMuted:'#A3A3A0',
   white:   '#FFFFFF',
-  surface: '#F9FAFB',
-  border:  '#E5E7EB',
-  blue:    '#2563EB',
-  font:    'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
+  surface: '#F3F2EE',
+  border:  '#E8E6E1',
+  blue:    '#7F77DD',
+  font:    "'Plus Jakarta Sans', system-ui, sans-serif",
 };
 
 export default function LegalLayout({ children }: { children: React.ReactNode }) {

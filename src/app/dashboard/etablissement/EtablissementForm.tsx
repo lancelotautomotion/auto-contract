@@ -119,7 +119,7 @@ function makeChipHTML(varName: string): string {
     `display:inline-flex;align-items:center;` +
     `background:${bg};border:1px solid ${border};` +
     `border-radius:20px;padding:2px 6px 2px 10px;font-size:11.5px;color:${color};` +
-    `font-family:Inter,ui-sans-serif,sans-serif;font-weight:500;` +
+    `font-family:'Plus Jakarta Sans',system-ui,sans-serif;font-weight:500;` +
     `cursor:default;user-select:none;white-space:nowrap;line-height:1.5;vertical-align:middle;margin:0 2px;` +
     `">${label}` +
     `<span data-del="${varName}" style="cursor:pointer;opacity:0.4;font-size:15px;line-height:1;padding:0 5px 0 4px;">&times;</span>` +

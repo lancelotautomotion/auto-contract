@@ -27,8 +27,8 @@ export default async function EditReservationPage({ params }: { params: Promise<
   return (
     <main style={{ maxWidth: '800px', margin: '0 auto', padding: '48px 40px' }}>
         <div style={{ marginBottom: '40px' }}>
-          <p style={{ fontSize: '11px', letterSpacing: '0.25em', textTransform: 'uppercase', color: '#7A7570', marginBottom: '10px' }}>— Modifier la réservation</p>
-          <h1 style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', fontSize: '44px', fontWeight: 300, color: '#1C1C1A', margin: 0 }}>
+          <p style={{ fontSize: '11px', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#A3A3A0', fontWeight: 700, marginBottom: '10px' }}>Modifier la réservation</p>
+          <h1 style={{ fontSize: '28px', fontWeight: 800, letterSpacing: '-0.03em', lineHeight: 1.2, color: '#2C2C2A', margin: 0 }}>
             {reservation.clientFirstName} {reservation.clientLastName}
           </h1>
         </div>

@@ -1,10 +1,10 @@
 "use client";
 import { useState } from "react";
 
-const pine = '#174532';
-const ink  = '#0D1117';
-const muted = '#6B7280';
-const border = '#D9E5DC';
+const pine = '#4A7353';
+const ink  = '#2C2C2A';
+const muted = '#71716E';
+const border = '#E8E6E1';
 
 const faqs = [
   { q: "La signature électronique est-elle légalement valable ?", a: "Oui. La signature est horodatée et l'adresse IP est enregistrée, ce qui constitue une preuve de consentement conforme au droit français pour les locations saisonnières." },
@@ -19,7 +19,7 @@ const faqs = [
 export default function LandingFaq() {
   const [open, setOpen] = useState<number | null>(null);
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', fontFamily: 'Inter, -apple-system, sans-serif' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif" }}>
       {faqs.map((faq, i) => (
         <div key={i} style={{ borderTop: `1px solid ${border}` }}>
           <button
