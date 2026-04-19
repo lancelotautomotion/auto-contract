@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { getTrialInfo } from "@/lib/trial";
 import { UserButton } from "@clerk/nextjs";
 import { Plus_Jakarta_Sans } from "next/font/google";
+import SubscribeButton from "./SubscribeButton";
 
 const font = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -21,7 +22,7 @@ const features = [
   "Support prioritaire",
 ];
 
-export default async function UpgradePage() {
+export default async function UpgradePage({ searchParams }: { searchParams: Promise<{ canceled?: string }> }) {
   const { userId: clerkId } = await auth();
   let trialInfo = null;
   if (clerkId) {
@@ -30,6 +31,9 @@ export default async function UpgradePage() {
   }
 
   const isExpired = trialInfo?.isExpired ?? false;
+  const isActive = trialInfo?.isActive ?? false;
+  const { canceled } = await searchParams;
+  const showCanceled = canceled === "1";
 
   return (
     <div className={`${font.className}`} style={{ minHeight: '100vh', backgroundColor: '#F3F2EE', display: 'flex', flexDirection: 'column' }}>
@@ -48,6 +52,25 @@ export default async function UpgradePage() {
             </p>
             <p style={{ fontSize: '13px', color: '#92400E', margin: '4px 0 0', lineHeight: 1.6, opacity: 0.8 }}>
               Pour continuer à utiliser Prysme et accéder à vos données, souscrivez à un abonnement.
+            </p>
+          </div>
+        )}
+
+        {showCanceled && !isActive && (
+          <div style={{ marginBottom: '24px', padding: '12px 20px', backgroundColor: '#FBECEC', border: '1px solid #F3D1D1', borderRadius: '10px', maxWidth: '520px', width: '100%' }}>
+            <p style={{ fontSize: '13px', color: '#B23A3A', margin: 0, lineHeight: 1.5 }}>
+              Paiement annulé. Vous pouvez réessayer quand vous voulez.
+            </p>
+          </div>
+        )}
+
+        {isActive && (
+          <div style={{ marginBottom: '32px', padding: '16px 24px', backgroundColor: 'rgba(104,157,113,.12)', border: '1.5px solid rgba(104,157,113,.35)', borderRadius: '12px', maxWidth: '520px', width: '100%' }}>
+            <p style={{ fontSize: '14px', color: '#3F6B4A', margin: 0, lineHeight: 1.6, fontWeight: 600 }}>
+              ✓ Votre abonnement est actif.
+            </p>
+            <p style={{ fontSize: '13px', color: '#3F6B4A', margin: '4px 0 0', lineHeight: 1.6, opacity: 0.85 }}>
+              Gérez votre abonnement depuis vos <a href="/dashboard/settings" style={{ color: '#3F6B4A', fontWeight: 600 }}>paramètres</a>.
             </p>
           </div>
         )}
@@ -79,16 +102,10 @@ export default async function UpgradePage() {
               ))}
             </ul>
 
-            {/* CTA — Stripe will be wired in Sprint 3 */}
-            <button
-              disabled
-              style={{ width: '100%', padding: '16px', fontSize: '15px', fontWeight: 700, backgroundColor: '#7F77DD', color: '#FFFFFF', border: 'none', borderRadius: '11px', cursor: 'not-allowed', opacity: 0.7 }}
-            >
-              Souscrire — bientôt disponible
-            </button>
+            <SubscribeButton disabled={isActive} />
 
             <p style={{ fontSize: '11px', color: '#A3A3A0', textAlign: 'center', margin: '14px 0 0', lineHeight: 1.5 }}>
-              Le paiement en ligne sera disponible très prochainement. Contactez-nous pour activer votre compte manuellement.
+              Paiement sécurisé par Stripe. TVA incluse. Vous recevrez une facture par email.
             </p>
           </div>
         </div>
