@@ -875,3 +875,33 @@
   .detail-header { flex-direction: column; gap: 16px; }
   .dh-right { align-items: flex-start; }
 }
+
+/* ═══ TRIAL BANNER ═══ */
+.trial-banner {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 11px 24px; background: rgba(127,119,221,.06);
+  border-bottom: 1px solid rgba(127,119,221,.18);
+  gap: 12px; flex-wrap: wrap;
+}
+.trial-banner-left { display: flex; align-items: center; gap: 8px; }
+.trial-banner-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.trial-banner-text { font-size: 13px; color: var(--ink-soft); font-weight: 500; }
+.trial-banner-cta {
+  font-size: 12px; font-weight: 700; color: var(--violet); text-decoration: none;
+  padding: 6px 14px; border: 1.5px solid rgba(127,119,221,.35); border-radius: 8px;
+  white-space: nowrap; transition: all .15s;
+}
+.trial-banner-cta:hover { background: var(--violet); color: #fff; border-color: var(--violet); }
+
+/* ═══ SIDEBAR TRIAL CARD ═══ */
+.sb-trial-card {
+  margin: 12px 12px 0;
+  background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.1);
+  border-radius: 12px; padding: 14px 16px; display: flex; align-items: center; gap: 12px;
+}
+.sb-trial-days { font-size: 28px; font-weight: 800; color: #fff; line-height: 1; letter-spacing: -0.03em; flex-shrink: 0; }
+.sb-trial-days-label { font-size: 13px; font-weight: 600; color: rgba(255,255,255,.5); margin-left: 1px; }
+.sb-trial-info { flex: 1; min-width: 0; }
+.sb-trial-title { font-size: 11px; font-weight: 600; color: rgba(255,255,255,.45); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; }
+.sb-trial-link { font-size: 11px; font-weight: 600; color: var(--violet-medium, #9B95E8); text-decoration: none; line-height: 1.4; display: block; }
+.sb-trial-link:hover { color: #fff; }
