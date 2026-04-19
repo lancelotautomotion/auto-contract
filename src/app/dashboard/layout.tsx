@@ -22,19 +22,22 @@ export default async function DashboardLayout({ children }: { children: React.Re
   if (clerkId) {
     try {
       const dbUser = await prisma.user.findUnique({ where: { clerkId } }).catch(() => null);
-      if (dbUser) {
-        pendingCount = await prisma.reservation.count({
-          where: { gite: { userId: dbUser.id }, status: 'PENDING_REVIEW' },
-        }).catch(() => 0);
+      if (!dbUser) redirect('/onboarding');
 
-        // planStatus may not exist if migration hasn't been applied yet
-        try {
-          trialInfo = getTrialInfo(dbUser);
-          if (trialInfo.isExpired) redirect('/upgrade');
-        } catch (trialErr) {
-          if ((trialErr as { digest?: string })?.digest?.startsWith('NEXT_')) throw trialErr;
-          // planStatus column missing — skip trial check
-        }
+      const gite = await prisma.gite.findFirst({ where: { userId: dbUser.id } }).catch(() => null);
+      if (!gite || !gite.name?.trim() || gite.name === 'Mon Gîte') redirect('/onboarding');
+
+      pendingCount = await prisma.reservation.count({
+        where: { gite: { userId: dbUser.id }, status: 'PENDING_REVIEW' },
+      }).catch(() => 0);
+
+      // planStatus may not exist if migration hasn't been applied yet
+      try {
+        trialInfo = getTrialInfo(dbUser);
+        if (trialInfo.isExpired) redirect('/upgrade');
+      } catch (trialErr) {
+        if ((trialErr as { digest?: string })?.digest?.startsWith('NEXT_')) throw trialErr;
+        // planStatus column missing — skip trial check
       }
     } catch (err) {
       if ((err as { digest?: string })?.digest?.startsWith('NEXT_')) throw err;
