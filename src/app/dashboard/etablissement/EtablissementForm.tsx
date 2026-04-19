@@ -161,6 +161,8 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
   const [activeTab, setActiveTab] = useState<Tab>('Informations');
   const [loading, setLoading] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [origin, setOrigin] = useState('');
+  const [copied, setCopied] = useState(false);
   const [form, setForm] = useState({
     giteName: gite.name, email: gite.email, phone: gite.phone,
     address: gite.address, city: gite.city, zipCode: gite.zipCode,
@@ -172,6 +174,8 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
   const [contractTemplate, setContractTemplate] = useState(gite.contractTemplate || DEFAULT_CONTRACT_TEMPLATE);
   const [options, setOptions] = useState<GiteOption[]>(gite.options);
   const [logoUrl, setLogoUrl] = useState(gite.logoUrl || '');
+
+  useEffect(() => { setOrigin(window.location.origin); }, []);
   const [logoLoading, setLogoLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const editorRef = useRef<HTMLDivElement>(null);
@@ -257,6 +261,26 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
   }, []);
 
   const set = (k: string, v: string) => { setForm(f => ({ ...f, [k]: v })); setSaved(false); };
+
+  const handleGiteNameChange = (v: string) => {
+    set('giteName', v);
+    // Auto-suggest slug when it's still empty
+    if (!form.slug) {
+      const suggested = v.toLowerCase()
+        .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+      if (suggested) set('slug', suggested);
+    }
+  };
+
+  const bookingUrl = form.slug ? `${origin}/book/${form.slug}` : '';
+  const handleCopy = () => {
+    if (!bookingUrl) return;
+    navigator.clipboard?.writeText(bookingUrl);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
   const addOption = () => setOptions(o => [...o, { label: '', price: 0 }]);
   const removeOption = (i: number) => setOptions(o => o.filter((_, idx) => idx !== i));
   const updateOption = (i: number, field: 'label' | 'price', value: string) =>
@@ -311,24 +335,60 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
       {/* ═══ INFORMATIONS ═══ */}
       {activeTab === 'Informations' && (
         <div style={{ maxWidth: '860px' }}>
-          {form.slug && (
-            <div className="link-box">
-              <div className="link-box-info">
-                <div className="link-box-label">Lien de réservation client</div>
-                <div className="link-box-url">prysme.app/book/{form.slug}</div>
+
+          {/* ── Lien de réservation — carte explicative ── */}
+          <div className="booking-card">
+            <div className="booking-card-header">
+              <div className="booking-card-icon">
+                <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
+                  <path d="M8 1.5A6.5 6.5 0 1 0 14.5 8 6.507 6.507 0 0 0 8 1.5z" stroke="#7F77DD" strokeWidth="1.3"/>
+                  <path d="M5.5 8.5l2 2 3.5-4" stroke="#7F77DD" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
               </div>
-              <div className="link-box-actions">
-                <button type="button" className="lb-btn ghost" onClick={() => navigator.clipboard?.writeText(`https://prysme.app/book/${form.slug}`)}>
-                  <svg width="12" height="12" fill="none" viewBox="0 0 12 12"><rect x="1" y="4" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.1"/><path d="M4 4V2.5A1.5 1.5 0 015.5 1h5A1.5 1.5 0 0112 2.5v5A1.5 1.5 0 0110.5 9H9" stroke="currentColor" strokeWidth="1.1"/></svg>
-                  Copier
-                </button>
-                <a href={`/book/${form.slug}`} target="_blank" rel="noreferrer" className="lb-btn primary">
-                  <svg width="12" height="12" fill="none" viewBox="0 0 12 12"><path d="M4 8L8 4m0 0H5m3 0v3" stroke="#fff" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                  Voir
-                </a>
+              <div>
+                <div className="booking-card-title">Formulaire de réservation client</div>
+                <div className="booking-card-desc">
+                  Partagez ce lien sur votre site, par email ou sur vos réseaux. Vos futurs locataires remplissent leurs dates et coordonnées — vous recevez une notification et validez la réservation depuis votre tableau de bord.
+                </div>
               </div>
             </div>
-          )}
+
+            {bookingUrl ? (
+              <div className="booking-card-link">
+                <div className="booking-card-url">
+                  <svg width="12" height="12" fill="none" viewBox="0 0 12 12" style={{ flexShrink: 0, color: '#7F77DD' }}>
+                    <path d="M4.5 7.5l3-3m0 0H5.5m2 0V6.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                    <rect x="1" y="1" width="10" height="10" rx="2" stroke="currentColor" strokeWidth="1.1"/>
+                  </svg>
+                  <span>{bookingUrl}</span>
+                </div>
+                <div className="booking-card-actions">
+                  <button type="button" className="lb-btn ghost" onClick={handleCopy}>
+                    {copied ? (
+                      <>
+                        <svg width="12" height="12" fill="none" viewBox="0 0 12 12"><path d="M2 6l3 3 5-5" stroke="#689D71" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                        Copié !
+                      </>
+                    ) : (
+                      <>
+                        <svg width="12" height="12" fill="none" viewBox="0 0 12 12"><rect x="1" y="4" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.1"/><path d="M4 4V2.5A1.5 1.5 0 015.5 1h5A1.5 1.5 0 0112 2.5v5A1.5 1.5 0 0110.5 9H9" stroke="currentColor" strokeWidth="1.1"/></svg>
+                        Copier le lien
+                      </>
+                    )}
+                  </button>
+                  <a href={`/book/${form.slug}`} target="_blank" rel="noreferrer" className="lb-btn primary">
+                    <svg width="12" height="12" fill="none" viewBox="0 0 12 12"><path d="M4 8L8 4m0 0H5m3 0v3" stroke="#fff" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                    Voir la page
+                  </a>
+                </div>
+              </div>
+            ) : (
+              <div className="booking-card-empty">
+                <svg width="14" height="14" fill="none" viewBox="0 0 14 14"><circle cx="7" cy="7" r="5.5" stroke="#A3A3A0" strokeWidth="1.2"/><path d="M7 5v2.5l1.5 1" stroke="#A3A3A0" strokeWidth="1.2" strokeLinecap="round"/></svg>
+                Définissez un identifiant ci-dessous pour générer votre lien de réservation.
+              </div>
+            )}
+          </div>
 
           <div className="form-card">
             <div className="form-card-title">
@@ -337,7 +397,7 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
             </div>
             <div className="form-group">
               <label className="form-label">Nom du gîte <span className="req">*</span></label>
-              <input required className="form-input" type="text" value={form.giteName} onChange={e => set('giteName', e.target.value)} />
+              <input required className="form-input" type="text" value={form.giteName} onChange={e => handleGiteNameChange(e.target.value)} />
             </div>
             <div className="form-row">
               <div className="form-group">
@@ -350,12 +410,19 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
               </div>
             </div>
             <div className="form-group">
-              <label className="form-label">Slug (lien public) <span className="req">*</span></label>
+              <label className="form-label">Identifiant de votre page de réservation <span className="req">*</span></label>
               <div className="form-prefix">
                 <span className="form-prefix-text">/book/</span>
-                <input required className="form-input" type="text" value={form.slug} onChange={e => set('slug', e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '-'))} />
+                <input
+                  required className="form-input" type="text"
+                  placeholder="mon-gite"
+                  value={form.slug}
+                  onChange={e => set('slug', e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '-'))}
+                />
               </div>
-              <div className="form-hint">Ce slug définit l&apos;URL de votre page de réservation.</div>
+              <div className="form-hint">
+                Cet identifiant unique apparaît dans l'URL partagée à vos clients. Choisissez quelque chose de court et mémorisable, ex. <em>les-3-epices</em>.
+              </div>
             </div>
             <div className="form-group">
               <label className="form-label">Adresse</label>
