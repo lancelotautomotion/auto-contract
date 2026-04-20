@@ -142,7 +142,7 @@ export default function SettingsForm({ notificationEmail, userEmail, planStatus,
               </p>
               {planStatus === 'ACTIVE' && (
                 <>
-                  <p style={{ fontSize: '15px', fontWeight: 700, color: 'var(--text)', margin: '0 0 4px' }}>Plan Essentiel — 29 € / mois</p>
+                  <p style={{ fontSize: '15px', fontWeight: 700, color: 'var(--text)', margin: '0 0 4px' }}>Plan Essentiel — 9,99 € HT / mois</p>
                   <p style={{ fontSize: '12px', color: 'var(--text-muted)', margin: 0, lineHeight: 1.5 }}>
                     Facturation mensuelle via Stripe. Annulable à tout moment depuis le portail.
                   </p>
