@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
+import { frFR } from "@clerk/localizations";
 import ThemeProvider from "@/providers/ThemeProvider";
 import "./globals.css";
 
@@ -14,7 +15,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <ClerkProvider afterSignInUrl="/dashboard" afterSignUpUrl="/onboarding">
+    <ClerkProvider localization={frFR}>
       <html lang="fr" className="h-full antialiased" suppressHydrationWarning>
         <head>
           {/* eslint-disable-next-line @next/next/no-sync-scripts */}

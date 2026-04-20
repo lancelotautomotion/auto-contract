@@ -50,7 +50,7 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
     update: { status: "GENERATED" },
   });
 
-  return new NextResponse(pdfBuffer, {
+  return new NextResponse(new Uint8Array(pdfBuffer), {
     headers: {
       "Content-Type": "application/pdf",
       "Content-Disposition": `attachment; filename="contrat-${reservation.clientLastName}-${reservation.clientFirstName}.pdf"`,
