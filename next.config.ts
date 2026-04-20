@@ -5,6 +5,14 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
+  async rewrites() {
+    return [
+      {
+        source: "/clerk-proxy/(.*)",
+        destination: "https://clerk.prysme.app/$1",
+      },
+    ];
+  },
   experimental: {
     serverActions: {
       allowedOrigins: [
@@ -13,8 +21,8 @@ const nextConfig: NextConfig = {
         "*.app.github.dev",
         "*.github.dev",
         "*.vercel.app",
-        "prysme.fr",
-        "www.prysme.fr",
+        "prysme.app",
+        "www.prysme.app",
       ],
     },
   },
