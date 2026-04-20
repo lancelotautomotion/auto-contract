@@ -1,6 +1,6 @@
 import { PlanStatus } from "@prisma/client";
 
-export const TRIAL_DAYS = 14;
+export const TRIAL_DAYS = 30;
 
 export interface TrialInfo {
   planStatus: PlanStatus;
