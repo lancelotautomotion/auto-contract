@@ -68,7 +68,7 @@ export default function CguPage() {
 
           <h2 id="art5"><span className="num">05.</span> Tarifs et paiement</h2>
           <p>Prysme propose plusieurs formules d&apos;abonnement dont les tarifs en vigueur sont disponibles sur la page <a href="/upgrade">Tarifs</a> de la Plateforme.</p>
-          <p>Une période d&apos;essai gratuite de quatorze (14) jours est proposée à tout nouvel Utilisateur, sans engagement et sans nécessité de fournir un moyen de paiement.</p>
+          <p>Une période d&apos;essai gratuite de trente (30) jours est proposée à tout nouvel Utilisateur, sans engagement et sans nécessité de fournir un moyen de paiement.</p>
           <p>À l&apos;issue de la période d&apos;essai, l&apos;Utilisateur peut souscrire à un abonnement mensuel. Le paiement s&apos;effectue par carte bancaire via un prestataire de paiement sécurisé. L&apos;abonnement est renouvelé tacitement chaque mois, sauf résiliation par l&apos;Utilisateur.</p>
           <p>Les tarifs peuvent être modifiés à tout moment. L&apos;Utilisateur en sera informé par email au moins <strong>30 jours</strong> avant l&apos;entrée en vigueur des nouveaux tarifs.</p>
 

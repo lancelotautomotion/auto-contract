@@ -3,7 +3,7 @@ import LegalSidebarClient from "../_components/LegalSidebarClient";
 
 export const metadata: Metadata = {
   title: "Conditions Générales de Vente — Prysme",
-  description: "CGV Prysme : abonnement 9,99 € HT/mois, essai 14 jours sans CB, résiliation à tout moment.",
+  description: "CGV Prysme : abonnement 9,99 € HT/mois, essai 30 jours sans CB, résiliation à tout moment.",
 };
 
 export default function CGVPage() {
@@ -13,7 +13,7 @@ export default function CGVPage() {
         <div className="ph-inner">
           <div className="ph-tag violet">Juridique</div>
           <h1 className="ph-title">Conditions Générales <span className="v">de Vente</span></h1>
-          <p className="ph-subtitle">Conditions applicables à l&apos;abonnement Prysme. Essai gratuit 14 jours, sans engagement, sans carte bancaire.</p>
+          <p className="ph-subtitle">Conditions applicables à l&apos;abonnement Prysme. Essai gratuit 30 jours, sans engagement, sans carte bancaire.</p>
           <div className="ph-meta">
             <span>Version en vigueur : avril 2026</span>
           </div>
@@ -38,7 +38,7 @@ export default function CGVPage() {
         <div className="legal-content">
 
           <div className="legal-callout green" style={{ marginTop: 0 }}>
-            <strong>En résumé :</strong> abonnement mensuel à <strong>9,99 € HT/mois</strong>, avec <strong>14 jours d&apos;essai gratuit</strong> sans carte bancaire. Sans engagement, résiliable à tout moment.
+            <strong>En résumé :</strong> abonnement mensuel à <strong>9,99 € HT/mois</strong>, avec <strong>30 jours d&apos;essai gratuit</strong> sans carte bancaire. Sans engagement, résiliable à tout moment.
           </div>
 
           <h2 id="art1"><span className="num">01.</span> Objet</h2>
@@ -50,8 +50,8 @@ export default function CGVPage() {
           Paris, France<br/>
           Email : <a href="mailto:contact@prysme.fr">contact@prysme.fr</a></p>
 
-          <h2 id="art3"><span className="num">03.</span> Essai gratuit (14 jours)</h2>
-          <p>— Tout nouveau compte bénéficie de <strong>14 jours d&apos;essai gratuit</strong> à compter de l&apos;inscription.<br/>
+          <h2 id="art3"><span className="num">03.</span> Essai gratuit (30 jours)</h2>
+          <p>— Tout nouveau compte bénéficie de <strong>30 jours d&apos;essai gratuit</strong> à compter de l&apos;inscription.<br/>
           — Aucune carte bancaire n&apos;est requise pour accéder à l&apos;essai.<br/>
           — Toutes les fonctionnalités sont accessibles pendant la période d&apos;essai.<br/>
           — À l&apos;issue de l&apos;essai, l&apos;accès est suspendu jusqu&apos;à souscription d&apos;un abonnement.<br/>

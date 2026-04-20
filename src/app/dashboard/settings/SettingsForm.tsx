@@ -154,7 +154,7 @@ export default function SettingsForm({ notificationEmail, userEmail, planStatus,
                     Période d'essai {daysLeft !== null ? `— ${daysLeft <= 0 ? '0' : daysLeft}j restant${daysLeft > 1 ? 's' : ''}` : ''}
                   </p>
                   <p style={{ fontSize: '12px', color: 'var(--text-muted)', margin: 0, lineHeight: 1.5 }}>
-                    Accès complet pendant 14 jours. Passez à l'abonnement pour continuer sans interruption.
+                    Accès complet pendant 30 jours. Passez à l'abonnement pour continuer sans interruption.
                   </p>
                 </>
               )}
