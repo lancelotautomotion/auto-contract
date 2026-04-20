@@ -8,8 +8,8 @@ const nextConfig: NextConfig = {
   async rewrites() {
     return [
       {
-        source: "/clerk-proxy/(.*)",
-        destination: "https://clerk.prysme.app/$1",
+        source: "/clerk-proxy/:path*",
+        destination: "https://clerk.prysme.app/:path*",
       },
     ];
   },
