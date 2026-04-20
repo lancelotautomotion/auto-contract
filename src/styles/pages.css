@@ -170,6 +170,12 @@ footer{background:var(--ink);color:rgba(255,255,255,.5);padding:56px 28px 28px}
 .auth-form-panel .mobile-logo{display:none;margin-bottom:32px}
 .auth-form-panel .mobile-logo img{height:28px}
 
+/* ═══ AUTH TABS ═══ */
+.auth-tabs{display:flex;background:#F4F3F0;border-radius:12px;padding:4px;margin-bottom:28px;gap:4px}
+.auth-tab{flex:1;text-align:center;padding:10px 16px;border-radius:9px;font-size:13px;font-weight:600;color:#71716E;text-decoration:none;transition:all .2s ease}
+.auth-tab--active{background:#fff;color:#2C2C2A;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.auth-tab:hover:not(.auth-tab--active){color:#2C2C2A}
+
 /* ═══ CLERK OVERRIDES ═══ */
 .auth-form-panel .cl-rootBox{width:100%}
 .auth-form-panel .cl-card{box-shadow:none!important;border:none!important;padding:0!important;background:transparent!important;border-radius:0!important}
