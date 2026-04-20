@@ -48,7 +48,7 @@ export default function CGVPage() {
           <p><strong>Lancelot Loubier</strong><br/>
           Entrepreneur individuel<br/>
           Paris, France<br/>
-          Email : <a href="mailto:contact@prysme.fr">contact@prysme.fr</a></p>
+          Email : <a href="mailto:contact@prysme.app">contact@prysme.app</a></p>
 
           <h2 id="art3"><span className="num">03.</span> Essai gratuit (30 jours)</h2>
           <p>— Tout nouveau compte bénéficie de <strong>30 jours d&apos;essai gratuit</strong> à compter de l&apos;inscription.<br/>
@@ -76,7 +76,7 @@ export default function CGVPage() {
 
           <h2 id="art7"><span className="num">07.</span> Droit de rétractation</h2>
           <p>Conformément à l&apos;article L.221-28 du Code de la consommation, le droit de rétractation ne s&apos;applique pas aux services entièrement exécutés avec l&apos;accord préalable du consommateur.</p>
-          <p>Dans un esprit de satisfaction client, Prysme étudie toute demande de remboursement formulée dans les <strong>7 jours</strong> suivant la première souscription, à adresser à <a href="mailto:contact@prysme.fr">contact@prysme.fr</a>.</p>
+          <p>Dans un esprit de satisfaction client, Prysme étudie toute demande de remboursement formulée dans les <strong>7 jours</strong> suivant la première souscription, à adresser à <a href="mailto:contact@prysme.app">contact@prysme.app</a>.</p>
 
           <h2 id="art8"><span className="num">08.</span> Obligations et responsabilités</h2>
           <p><strong>Client :</strong> utiliser le service conformément à la loi et aux <a href="/legal/cgu">CGU</a>, ne pas partager ses identifiants, vérifier la conformité légale de ses contrats. Prysme est un outil de génération documentaire et ne fournit pas de conseil juridique.</p>
@@ -90,7 +90,7 @@ export default function CGVPage() {
 
           <h2 id="art11"><span className="num">11.</span> Contact</h2>
           <p>Pour toute question relative aux présentes CGV :<br/>
-          <strong>Email :</strong> <a href="mailto:contact@prysme.fr">contact@prysme.fr</a></p>
+          <strong>Email :</strong> <a href="mailto:contact@prysme.app">contact@prysme.app</a></p>
         </div>
       </div>
     </>

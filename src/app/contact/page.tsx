@@ -47,8 +47,8 @@ export default function ContactPage() {
               </div>
               <div className="ci-card-title">Email</div>
               <div className="ci-card-desc">Pour toute question commerciale ou support technique.</div>
-              <a className="ci-card-link" href="mailto:contact@prysme.fr">
-                contact@prysme.fr
+              <a className="ci-card-link" href="mailto:contact@prysme.app">
+                contact@prysme.app
                 <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
                   <path d="M3 7h8m-3-3l3 3-3 3" stroke="#7F77DD" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
@@ -74,7 +74,7 @@ export default function ContactPage() {
               </div>
               <div className="ci-card-title">Démo personnalisée</div>
               <div className="ci-card-desc">Envie de voir Prysme en action ? Demandez une démo de 15 min et on vous montre tout.</div>
-              <a className="ci-card-link" href="mailto:contact@prysme.fr?subject=Demande%20de%20démo">
+              <a className="ci-card-link" href="mailto:contact@prysme.app?subject=Demande%20de%20démo">
                 Réserver un créneau
                 <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
                   <path d="M3 7h8m-3-3l3 3-3 3" stroke="#7F77DD" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>

@@ -40,7 +40,7 @@ export default function ConfidentialitePage() {
         <div className="legal-content">
           <h2 id="art1"><span className="num-g">01.</span> Responsable du traitement</h2>
           <p>Le responsable du traitement des données personnelles collectées via la plateforme Prysme est :</p>
-          <p><strong>Lancelot Loubier</strong><br/>Entrepreneur individuel<br/>Paris, France<br/>Email : <a href="mailto:contact@prysme.fr">contact@prysme.fr</a></p>
+          <p><strong>Lancelot Loubier</strong><br/>Entrepreneur individuel<br/>Paris, France<br/>Email : <a href="mailto:contact@prysme.app">contact@prysme.app</a></p>
 
           <h2 id="art2"><span className="num-g">02.</span> Données personnelles collectées</h2>
           <p>Prysme collecte différentes catégories de données selon votre interaction avec la plateforme :</p>
@@ -150,7 +150,7 @@ export default function ConfidentialitePage() {
           <p><strong>— Droit à la limitation :</strong> demander la suspension du traitement dans certains cas.</p>
           <p><strong>— Droit à la portabilité :</strong> recevoir vos données dans un format structuré et lisible par machine.</p>
           <p><strong>— Droit d&apos;opposition :</strong> vous opposer au traitement fondé sur l&apos;intérêt légitime.</p>
-          <p>Pour exercer ces droits, adressez votre demande par email à <a href="mailto:contact@prysme.fr">contact@prysme.fr</a>. Nous y répondrons dans un délai maximum de <strong>30 jours</strong>.</p>
+          <p>Pour exercer ces droits, adressez votre demande par email à <a href="mailto:contact@prysme.app">contact@prysme.app</a>. Nous y répondrons dans un délai maximum de <strong>30 jours</strong>.</p>
 
           <div className="legal-callout">
             En cas de différend non résolu, vous avez le droit d&apos;introduire une réclamation auprès de la <strong>CNIL</strong> — <a href="https://www.cnil.fr" target="_blank" rel="noreferrer">www.cnil.fr</a>.
@@ -174,7 +174,7 @@ export default function ConfidentialitePage() {
           <p>La date de dernière mise à jour est indiquée en haut de cette page. Nous vous invitons à la consulter régulièrement.</p>
 
           <h2 id="art12"><span className="num-g">12.</span> Contact</h2>
-          <p><strong>Email :</strong> <a href="mailto:contact@prysme.fr">contact@prysme.fr</a><br/>
+          <p><strong>Email :</strong> <a href="mailto:contact@prysme.app">contact@prysme.app</a><br/>
           <strong>Adresse :</strong> Paris, France</p>
         </div>
       </div>

@@ -143,12 +143,12 @@ export default function AProposPage() {
             <div className="role">Fondateur de Prysme</div>
             <p>Passionné d&apos;automatisation et de produits bien pensés, j&apos;ai créé Prysme après avoir constaté que des milliers de propriétaires de gîtes gèrent encore leurs contrats à la main — sur Word, par email, sans suivi.</p>
             <p>Mon objectif : donner à chaque propriétaire indépendant les mêmes outils qu&apos;un professionnel, en gardant la simplicité au centre de tout.</p>
-            <a className="founder-link" href="mailto:contact@prysme.fr">
+            <a className="founder-link" href="mailto:contact@prysme.app">
               <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
                 <rect x="1.5" y="3" width="11" height="8" rx="1.5" stroke="#7F77DD" strokeWidth="1.1"/>
                 <path d="M2 4l5 3.5L12 4" stroke="#7F77DD" strokeWidth="1.1" strokeLinecap="round"/>
               </svg>
-              contact@prysme.fr
+              contact@prysme.app
             </a>
           </div>
         </div>

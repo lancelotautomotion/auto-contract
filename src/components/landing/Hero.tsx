@@ -52,7 +52,7 @@ export default function Hero() {
               <div className="m-d m-r" />
               <div className="m-d m-y" />
               <div className="m-d m-g" />
-              <div className="mockup-url">app.prysme.fr</div>
+              <div className="mockup-url">prysme.app</div>
             </div>
             <div className="mockup-body">
               <div className="db-top">

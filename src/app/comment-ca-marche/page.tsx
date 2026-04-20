@@ -200,7 +200,7 @@ export default function CommentCaMarche() {
                 </h2>
                 <p style={{ fontSize: '14px', color: tk.inkSoft, lineHeight: 1.6, fontWeight: 400 }}>
                   Une question absente ? Écrivez-nous à<br />
-                  <a href="mailto:contact@prysme.fr" style={{ color: tk.blue, textDecoration: 'none' }}>contact@prysme.fr</a>
+                  <a href="mailto:contact@prysme.app" style={{ color: tk.blue, textDecoration: 'none' }}>contact@prysme.app</a>
                 </p>
               </div>
               <FaqAccordion />

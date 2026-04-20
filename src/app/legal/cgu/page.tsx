@@ -39,11 +39,11 @@ export default function CguPage() {
 
         <div className="legal-content">
           <h2 id="art1"><span className="num">01.</span> Objet</h2>
-          <p>Les présentes Conditions Générales d&apos;Utilisation (ci-après « CGU ») ont pour objet de définir les modalités et conditions d&apos;accès et d&apos;utilisation de la plateforme <strong>Prysme</strong>, accessible à l&apos;adresse <a href="https://app.prysme.fr">app.prysme.fr</a>.</p>
+          <p>Les présentes Conditions Générales d&apos;Utilisation (ci-après « CGU ») ont pour objet de définir les modalités et conditions d&apos;accès et d&apos;utilisation de la plateforme <strong>Prysme</strong>, accessible à l&apos;adresse <a href="https://prysme.app">prysme.app</a>.</p>
           <p>Prysme est un service en ligne destiné aux propriétaires de gîtes et hébergements saisonniers. Il permet la génération automatique de contrats de location saisonnière, leur envoi, leur signature électronique et le suivi centralisé des réservations.</p>
 
           <h2 id="art2"><span className="num">02.</span> Définitions</h2>
-          <p><strong>« Plateforme »</strong> désigne le site web et l&apos;application Prysme, accessibles à l&apos;adresse app.prysme.fr.</p>
+          <p><strong>« Plateforme »</strong> désigne le site web et l&apos;application Prysme, accessibles à l&apos;adresse prysme.app.</p>
           <p><strong>« Éditeur »</strong> désigne la société ou personne physique exploitant la Plateforme, identifiée dans les mentions légales.</p>
           <p><strong>« Utilisateur »</strong> désigne toute personne physique ou morale inscrite sur la Plateforme et disposant d&apos;un compte actif.</p>
           <p><strong>« Locataire »</strong> désigne la personne recevant un contrat de location généré via la Plateforme et invitée à le signer électroniquement.</p>
@@ -105,7 +105,7 @@ export default function CguPage() {
 
           <h2 id="art12"><span className="num">12.</span> Contact</h2>
           <p>Pour toute question relative aux présentes CGU, vous pouvez contacter l&apos;Éditeur :</p>
-          <p><strong>Email :</strong> <a href="mailto:contact@prysme.fr">contact@prysme.fr</a><br/>
+          <p><strong>Email :</strong> <a href="mailto:contact@prysme.app">contact@prysme.app</a><br/>
           <strong>Adresse :</strong> Paris, France</p>
         </div>
       </div>
