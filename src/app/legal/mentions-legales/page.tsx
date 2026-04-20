@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import LegalSidebarClient from "../_components/LegalSidebarClient";
 
 export const metadata: Metadata = {
   title: "Mentions légales — Prysme",
@@ -20,20 +21,17 @@ export default function MentionsLegalesPage() {
       </div>
 
       <div className="legal-layout">
-        <aside className="legal-sidebar">
-          <div className="legal-sidebar-title">Sommaire</div>
-          <ul>
-            <li><a href="#art1">1. Éditeur du site</a></li>
-            <li><a href="#art2">2. Hébergement</a></li>
-            <li><a href="#art3">3. Propriété intellectuelle</a></li>
-            <li><a href="#art4">4. Données personnelles</a></li>
-            <li><a href="#art5">5. Cookies</a></li>
-            <li><a href="#art6">6. Responsabilité</a></li>
-            <li><a href="#art7">7. Liens hypertextes</a></li>
-            <li><a href="#art8">8. Droit applicable</a></li>
-            <li><a href="#art9">9. Contact</a></li>
-          </ul>
-        </aside>
+        <LegalSidebarClient links={[
+          { href: "#art1", label: "1. Éditeur du site" },
+          { href: "#art2", label: "2. Hébergement" },
+          { href: "#art3", label: "3. Propriété intellectuelle" },
+          { href: "#art4", label: "4. Données personnelles" },
+          { href: "#art5", label: "5. Cookies" },
+          { href: "#art6", label: "6. Responsabilité" },
+          { href: "#art7", label: "7. Liens hypertextes" },
+          { href: "#art8", label: "8. Droit applicable" },
+          { href: "#art9", label: "9. Contact" },
+        ]} />
 
         <div className="legal-content">
           <h2 id="art1"><span className="num">01.</span> Éditeur du site</h2>
