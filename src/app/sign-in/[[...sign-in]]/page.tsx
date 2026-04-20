@@ -1,5 +1,4 @@
 import { SignIn } from '@clerk/nextjs';
-import { frFR } from '@clerk/localizations';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Plus_Jakarta_Sans } from 'next/font/google';
@@ -139,7 +138,7 @@ export default function SignInPage() {
             <div className="mobile-logo">
               <Link href="/"><Image src="/logotype_prysme.png" alt="Prysme" width={96} height={24} /></Link>
             </div>
-            <SignIn appearance={clerkAppearance} localization={frFR} />
+            <SignIn appearance={clerkAppearance} />
           </div>
         </div>
 

@@ -46,10 +46,10 @@ export default async function EditReservationPage({ params }: { params: Promise<
             clientZipCode: reservation.clientZipCode ?? '',
             checkIn: fmt(reservation.checkIn),
             checkOut: fmt(reservation.checkOut),
-            rent: reservation.rent.toString(),
-            deposit: reservation.deposit.toString(),
-            cleaningFee: reservation.cleaningFee.toString(),
-            touristTax: reservation.touristTax.toString(),
+            rent: (reservation.rent ?? 0).toString(),
+            deposit: (reservation.deposit ?? 0).toString(),
+            cleaningFee: (reservation.cleaningFee ?? 0).toString(),
+            touristTax: (reservation.touristTax ?? 0).toString(),
             notes: reservation.notes ?? '',
           }}
         />

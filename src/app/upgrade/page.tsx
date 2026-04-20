@@ -85,8 +85,8 @@ export default async function UpgradePage({ searchParams }: { searchParams: Prom
               Plan Essentiel
             </p>
             <div style={{ display: 'flex', alignItems: 'flex-end', gap: '6px', marginBottom: '6px' }}>
-              <span style={{ fontSize: '44px', fontWeight: 800, color: '#2C2C2A', letterSpacing: '-0.04em', lineHeight: 1 }}>29 €</span>
-              <span style={{ fontSize: '13px', color: '#A3A3A0', paddingBottom: '8px' }}>/mois</span>
+              <span style={{ fontSize: '44px', fontWeight: 800, color: '#2C2C2A', letterSpacing: '-0.04em', lineHeight: 1 }}>9,99 €</span>
+              <span style={{ fontSize: '13px', color: '#A3A3A0', paddingBottom: '8px' }}>HT / mois</span>
             </div>
             <p style={{ fontSize: '13px', color: '#71716E', margin: '0 0 28px', lineHeight: 1.5 }}>
               Tout inclus. Sans engagement. Annulable à tout moment.
