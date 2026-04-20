@@ -21,6 +21,12 @@ model User {
   stripeCustomerId     String? @unique
   stripeSubscriptionId String? @unique
 
+  // Tracking emails de rappel trial (évite les doublons)
+  trialEmailSent7  Boolean @default(false)
+  trialEmailSent3  Boolean @default(false)
+  trialEmailSent1  Boolean @default(false)
+  trialEmailSent0  Boolean @default(false)
+
   gites Gite[]
 }
 
