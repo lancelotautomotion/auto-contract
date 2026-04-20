@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import LegalSidebarClient from "../_components/LegalSidebarClient";
 
 export const metadata: Metadata = {
   title: "Politique de confidentialité — Prysme",
@@ -21,23 +22,20 @@ export default function ConfidentialitePage() {
       </div>
 
       <div className="legal-layout">
-        <aside className="legal-sidebar">
-          <div className="legal-sidebar-title">Sommaire</div>
-          <ul>
-            <li><a href="#art1">1. Responsable</a></li>
-            <li><a href="#art2">2. Données collectées</a></li>
-            <li><a href="#art3">3. Finalités</a></li>
-            <li><a href="#art4">4. Base juridique</a></li>
-            <li><a href="#art5">5. Durée de conservation</a></li>
-            <li><a href="#art6">6. Destinataires</a></li>
-            <li><a href="#art7">7. Transferts hors UE</a></li>
-            <li><a href="#art8">8. Sécurité</a></li>
-            <li><a href="#art9">9. Vos droits</a></li>
-            <li><a href="#art10">10. Cookies</a></li>
-            <li><a href="#art11">11. Modifications</a></li>
-            <li><a href="#art12">12. Contact</a></li>
-          </ul>
-        </aside>
+        <LegalSidebarClient links={[
+          { href: "#art1", label: "1. Responsable" },
+          { href: "#art2", label: "2. Données collectées" },
+          { href: "#art3", label: "3. Finalités" },
+          { href: "#art4", label: "4. Base juridique" },
+          { href: "#art5", label: "5. Durée de conservation" },
+          { href: "#art6", label: "6. Destinataires" },
+          { href: "#art7", label: "7. Transferts hors UE" },
+          { href: "#art8", label: "8. Sécurité" },
+          { href: "#art9", label: "9. Vos droits" },
+          { href: "#art10", label: "10. Cookies" },
+          { href: "#art11", label: "11. Modifications" },
+          { href: "#art12", label: "12. Contact" },
+        ]} />
 
         <div className="legal-content">
           <h2 id="art1"><span className="num-g">01.</span> Responsable du traitement</h2>

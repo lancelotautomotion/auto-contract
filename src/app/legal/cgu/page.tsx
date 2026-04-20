@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import LegalSidebarClient from "../_components/LegalSidebarClient";
 
 export const metadata: Metadata = {
   title: "Conditions Générales d'Utilisation — Prysme",
@@ -21,23 +22,20 @@ export default function CguPage() {
       </div>
 
       <div className="legal-layout">
-        <aside className="legal-sidebar">
-          <div className="legal-sidebar-title">Sommaire</div>
-          <ul>
-            <li><a href="#art1">1. Objet</a></li>
-            <li><a href="#art2">2. Définitions</a></li>
-            <li><a href="#art3">3. Inscription</a></li>
-            <li><a href="#art4">4. Services</a></li>
-            <li><a href="#art5">5. Tarifs &amp; Paiement</a></li>
-            <li><a href="#art6">6. Obligations</a></li>
-            <li><a href="#art7">7. Propriété intellectuelle</a></li>
-            <li><a href="#art8">8. Données personnelles</a></li>
-            <li><a href="#art9">9. Responsabilité</a></li>
-            <li><a href="#art10">10. Résiliation</a></li>
-            <li><a href="#art11">11. Droit applicable</a></li>
-            <li><a href="#art12">12. Contact</a></li>
-          </ul>
-        </aside>
+        <LegalSidebarClient links={[
+          { href: "#art1", label: "1. Objet" },
+          { href: "#art2", label: "2. Définitions" },
+          { href: "#art3", label: "3. Inscription" },
+          { href: "#art4", label: "4. Services" },
+          { href: "#art5", label: "5. Tarifs & Paiement" },
+          { href: "#art6", label: "6. Obligations" },
+          { href: "#art7", label: "7. Propriété intellectuelle" },
+          { href: "#art8", label: "8. Données personnelles" },
+          { href: "#art9", label: "9. Responsabilité" },
+          { href: "#art10", label: "10. Résiliation" },
+          { href: "#art11", label: "11. Droit applicable" },
+          { href: "#art12", label: "12. Contact" },
+        ]} />
 
         <div className="legal-content">
           <h2 id="art1"><span className="num">01.</span> Objet</h2>

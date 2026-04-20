@@ -27,7 +27,15 @@ export default function Footer() {
             <ul>
               <li><Link href="/a-propos">À propos</Link></li>
               <li><Link href="/contact">Contact</Link></li>
-              <li><Link href="/legal/cgv">CGU</Link></li>
+            </ul>
+          </div>
+
+          <div className="footer-col">
+            <h4>Légal</h4>
+            <ul>
+              <li><Link href="/legal/mentions-legales">Mentions légales</Link></li>
+              <li><Link href="/legal/cgu">CGU</Link></li>
+              <li><Link href="/legal/cgv">CGV</Link></li>
               <li><Link href="/legal/confidentialite">Confidentialité</Link></li>
             </ul>
           </div>

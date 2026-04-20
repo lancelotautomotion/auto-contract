@@ -34,8 +34,9 @@ export default function LegalLayout({ children }: { children: React.ReactNode })
         .legal-sidebar { position: sticky; top: 72px; }
         .legal-sidebar-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: ${tk.inkMuted}; margin-bottom: 14px; }
         .legal-sidebar ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 2px; }
-        .legal-sidebar a { display: block; font-size: 13px; font-weight: 500; color: ${tk.inkSoft}; text-decoration: none; padding: 7px 12px; border-radius: 8px; border-left: 2px solid transparent; transition: all .2s; }
-        .legal-sidebar a:hover { color: ${tk.ink}; background: ${tk.surface}; }
+        .legal-sidebar a { display: block; font-size: 13px; font-weight: 500; color: ${tk.inkSoft}; text-decoration: none; padding: 7px 12px; border-radius: 8px; border-left: 2px solid transparent; transition: color .2s, background .2s, border-color .2s; }
+        .legal-sidebar a:hover { color: ${tk.ink}; background: ${tk.surface}; border-left-color: ${tk.border}; }
+        .legal-sidebar a.active { color: ${tk.violet}; background: ${tk.violetLight}; border-left-color: ${tk.violet}; font-weight: 600; }
 
         /* CONTENT */
         .legal-content { max-width: 720px; }
