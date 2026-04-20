@@ -15,7 +15,7 @@ const strongs: React.CSSProperties = { color: tk.ink, fontWeight: 600 };
 
 export default function CGVPage() {
   return (
-    <>
+    <div className="legal-narrow">
       <h1 style={h1s}>Conditions Générales de Vente</h1>
       <span style={dates}>Version en vigueur : avril 2026</span>
 
@@ -79,6 +79,6 @@ export default function CGVPage() {
 
       <h2 style={h2s}>11. Contact</h2>
       <p style={ps}><a href="mailto:contact@prysme.fr" style={{ color: tk.blue, textDecoration: 'none', fontWeight: 500 }}>contact@prysme.fr</a></p>
-    </>
+    </div>
   );
 }
