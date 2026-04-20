@@ -43,7 +43,7 @@ export default function SubscribeButton({ disabled }: { disabled?: boolean }) {
           transition: "background-color .15s",
         }}
       >
-        {loading ? "Redirection vers le paiement…" : "Souscrire — 29 € / mois"}
+        {loading ? "Redirection vers le paiement…" : "Souscrire — 9,99 € HT / mois"}
       </button>
       {error && (
         <p style={{ fontSize: "12px", color: "#B23A3A", textAlign: "center", margin: "10px 0 0", lineHeight: 1.5 }}>
