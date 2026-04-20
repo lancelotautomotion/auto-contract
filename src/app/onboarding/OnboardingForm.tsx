@@ -25,6 +25,7 @@ export default function OnboardingForm({ defaultEmail }: { defaultEmail: string 
     offerSheet90: false,    sheet90Price: '0',
     offerTowels: false,     towelsPrice: '0',
   });
+  const [cguAccepted, setCguAccepted] = useState(false);
 
   const set = (k: string, v: string) => setForm(f => ({ ...f, [k]: v }));
   const toggle = (k: string) => setForm(f => ({ ...f, [k]: !f[k as keyof typeof f] }));
@@ -32,6 +33,7 @@ export default function OnboardingForm({ defaultEmail }: { defaultEmail: string 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.giteName.trim()) { setError("Le nom de l'hébergement est requis."); return; }
+    if (!cguAccepted) { setError("Vous devez accepter les CGU pour continuer."); return; }
     setLoading(true);
     setError(null);
 
@@ -228,6 +230,19 @@ export default function OnboardingForm({ defaultEmail }: { defaultEmail: string 
           ))}
         </div>
       </div>
+
+      {/* CGU */}
+      <label style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', cursor: 'pointer' }}>
+        <input
+          type="checkbox"
+          checked={cguAccepted}
+          onChange={e => setCguAccepted(e.target.checked)}
+          style={{ width: '16px', height: '16px', accentColor: '#7F77DD', flexShrink: 0, marginTop: '2px', cursor: 'pointer' }}
+        />
+        <span style={{ fontSize: '13px', color: '#71716E', lineHeight: 1.5 }}>
+          J'accepte les <a href="/legal/cgu" target="_blank" style={{ color: '#7F77DD', fontWeight: 600 }}>CGU</a> et la <a href="/legal/confidentialite" target="_blank" style={{ color: '#7F77DD', fontWeight: 600 }}>Politique de confidentialité</a> de Prysme.
+        </span>
+      </label>
 
       {/* Error */}
       {error && (

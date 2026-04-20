@@ -47,7 +47,7 @@ export default async function OnboardingPage() {
         <div style={{ backgroundColor: '#EFEEF9', border: '1px solid rgba(127,119,221,.2)', borderRadius: '12px', padding: '14px 18px', marginBottom: '28px', display: 'flex', alignItems: 'center', gap: '12px' }}>
           <span style={{ fontSize: '18px' }}>🎉</span>
           <p style={{ fontSize: '13px', color: '#5B52B5', margin: 0, lineHeight: 1.5 }}>
-            Votre période d'essai de <strong>14 jours</strong> commence maintenant — accès complet, sans engagement.
+            Votre période d'essai de <strong>30 jours</strong> commence maintenant — accès complet, sans engagement.
           </p>
         </div>
 
