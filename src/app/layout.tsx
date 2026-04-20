@@ -15,7 +15,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <ClerkProvider localization={frFR} proxyUrl="/clerk-proxy">
+    <ClerkProvider localization={frFR} proxyUrl={`${process.env.NEXT_PUBLIC_APP_URL ?? 'https://prysme.app'}/clerk-proxy`}>
       <html lang="fr" className="h-full antialiased" suppressHydrationWarning>
         <head>
           {/* eslint-disable-next-line @next/next/no-sync-scripts */}
