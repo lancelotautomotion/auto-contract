@@ -105,16 +105,19 @@ export default function Sidebar({ pendingCount = 0, trialInfo }: { pendingCount?
         {/* Trial upgrade CTA in sidebar */}
         {trialInfo?.isTrial && !trialInfo.isExpired && (
           <div className="sb-trial-card">
-            <div className="sb-trial-days">
-              {trialInfo.daysLeft <= 0 ? '0' : trialInfo.daysLeft}
-              <span className="sb-trial-days-label">j</span>
+            <div className="sb-trial-header">
+              <span className="sb-trial-dot" />
+              <span className="sb-trial-label">Essai gratuit</span>
             </div>
-            <div className="sb-trial-info">
-              <div className="sb-trial-title">Période d'essai</div>
-              <Link href="/upgrade" className="sb-trial-link">
-                Passer à la version complète →
-              </Link>
+            <div className="sb-trial-days-text">
+              <strong>{trialInfo.daysLeft <= 0 ? '0' : trialInfo.daysLeft}</strong> jours restants
             </div>
+            <div className="sb-trial-bar">
+              <div className="sb-trial-bar-fill" style={{ width: `${Math.min(100, ((trialInfo.daysLeft <= 0 ? 0 : trialInfo.daysLeft) / 30) * 100)}%` }} />
+            </div>
+            <Link href="/upgrade" className="sb-trial-link">
+              Passer à Pro
+            </Link>
           </div>
         )}
       </nav>

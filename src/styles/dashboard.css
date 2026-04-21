@@ -896,15 +896,20 @@
 /* ═══ SIDEBAR TRIAL CARD ═══ */
 .sb-trial-card {
   margin: 12px 12px 0;
-  background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.1);
-  border-radius: 12px; padding: 14px 16px; display: flex; align-items: center; gap: 12px;
+  background: rgba(127,119,221,.1);
+  border: 1px solid rgba(127,119,221,.22);
+  border-radius: 12px;
+  padding: 14px 16px;
 }
-.sb-trial-days { font-size: 28px; font-weight: 800; color: #fff; line-height: 1; letter-spacing: -0.03em; flex-shrink: 0; }
-.sb-trial-days-label { font-size: 13px; font-weight: 600; color: rgba(255,255,255,.5); margin-left: 1px; }
-.sb-trial-info { flex: 1; min-width: 0; }
-.sb-trial-title { font-size: 11px; font-weight: 600; color: rgba(255,255,255,.45); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; }
-.sb-trial-link { font-size: 11px; font-weight: 600; color: var(--violet-medium, #9B95E8); text-decoration: none; line-height: 1.4; display: block; }
-.sb-trial-link:hover { color: #fff; }
+.sb-trial-header { display: flex; align-items: center; gap: 7px; margin-bottom: 9px; }
+.sb-trial-dot { width: 6px; height: 6px; border-radius: 50%; background: #9B95E8; flex-shrink: 0; }
+.sb-trial-label { font-size: 11px; font-weight: 700; color: #9B95E8; text-transform: uppercase; letter-spacing: 0.07em; }
+.sb-trial-days-text { font-size: 13px; color: rgba(255,255,255,.75); margin-bottom: 10px; line-height: 1.4; }
+.sb-trial-days-text strong { color: #fff; font-weight: 700; }
+.sb-trial-bar { height: 3px; background: rgba(255,255,255,.1); border-radius: 2px; margin-bottom: 12px; overflow: hidden; }
+.sb-trial-bar-fill { height: 100%; background: #9B95E8; border-radius: 2px; transition: width .3s ease; }
+.sb-trial-link { display: block; text-align: center; font-size: 12px; font-weight: 600; color: #9B95E8; text-decoration: none; padding: 7px 12px; border-radius: 8px; background: rgba(127,119,221,.15); transition: background .15s, color .15s; }
+.sb-trial-link:hover { background: rgba(127,119,221,.28); color: #fff; }
 
 /* ═══ BOOKING CARD (lien de réservation) ═══ */
 .booking-card {
