@@ -1,6 +1,7 @@
 import { auth } from "@clerk/nextjs/server";
 import { redirect, notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import Link from "next/link";
 import EditReservationForm from "./EditReservationForm";
 
 export default async function EditReservationPage({ params }: { params: Promise<{ id: string }> }) {
@@ -25,13 +26,35 @@ export default async function EditReservationPage({ params }: { params: Promise<
   const fmt = (d: Date) => new Date(d).toISOString().split('T')[0];
 
   return (
-    <main style={{ maxWidth: '800px', margin: '0 auto', padding: '48px 40px' }}>
-        <div style={{ marginBottom: '40px' }}>
-          <p style={{ fontSize: '11px', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#A3A3A0', fontWeight: 700, marginBottom: '10px' }}>Modifier la réservation</p>
-          <h1 style={{ fontSize: '28px', fontWeight: 800, letterSpacing: '-0.03em', lineHeight: 1.2, color: '#2C2C2A', margin: 0 }}>
-            {reservation.clientFirstName} {reservation.clientLastName}
-          </h1>
+    <>
+      <div className="topbar">
+        <div className="topbar-left">
+          <div className="topbar-breadcrumb">Prysme / Réservations / <span>Modifier</span></div>
         </div>
+        <div className="topbar-right">
+          <button className="topbar-btn">
+            <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
+              <circle cx="7" cy="7" r="4.5" stroke="currentColor" strokeWidth="1.3"/>
+              <path d="M10.5 10.5l3 3" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div className="content" style={{ maxWidth: '1100px', width: '100%' }}>
+
+        <Link href={`/dashboard/reservations/${id}`} className="back-link">
+          <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
+            <path d="M9 3L5 7l4 4" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+          Retour à la réservation
+        </Link>
+
+        <div className="page-title">
+          <h1>Modifier <span className="v">{reservation.clientFirstName} {reservation.clientLastName}</span></h1>
+          <div className="sub">Mettez à jour les informations du séjour, les tarifs ou les options</div>
+        </div>
+
         <EditReservationForm
           id={id}
           availableOptions={gite?.options.map(o => ({ id: o.id, label: o.label, price: o.price })) ?? []}
@@ -53,6 +76,7 @@ export default async function EditReservationPage({ params }: { params: Promise<
             notes: reservation.notes ?? '',
           }}
         />
-    </main>
+      </div>
+    </>
   );
 }
