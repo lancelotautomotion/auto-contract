@@ -70,7 +70,7 @@ export default async function UpgradePage({ searchParams }: { searchParams: Prom
               ✓ Votre abonnement est actif.
             </p>
             <p style={{ fontSize: '13px', color: '#3F6B4A', margin: '4px 0 0', lineHeight: 1.6, opacity: 0.85 }}>
-              Gérez votre abonnement depuis vos <a href="/dashboard/settings" style={{ color: '#3F6B4A', fontWeight: 600 }}>paramètres</a>.
+              Gérez votre abonnement depuis <a href="/dashboard/compte" style={{ color: '#3F6B4A', fontWeight: 600 }}>Mon compte</a>.
             </p>
           </div>
         )}

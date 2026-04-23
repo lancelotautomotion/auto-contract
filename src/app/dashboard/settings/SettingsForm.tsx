@@ -1,47 +1,18 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useTheme } from "@/providers/ThemeProvider";
-import { useClerk } from "@clerk/nextjs";
-
-const lbl = { fontSize: '11px', letterSpacing: '0.15em', textTransform: 'uppercase' as const, color: 'var(--text-muted)', display: 'block', marginBottom: '6px' };
-const inp = { width: '100%', padding: '10px 14px', border: '1px solid var(--border)', backgroundColor: 'var(--bg-white)', fontSize: '14px', color: 'var(--text)', outline: 'none', boxSizing: 'border-box' as const, borderRadius: '8px' };
-const secTitle = { fontSize: '11px', letterSpacing: '0.25em', textTransform: 'uppercase' as const, color: 'var(--text-muted)', marginBottom: '20px', paddingBottom: '10px', borderBottom: '1px solid var(--border)' };
 
 interface Props {
   notificationEmail: string;
-  userEmail: string;
-  planStatus: 'TRIAL' | 'ACTIVE' | 'EXPIRED';
-  daysLeft: number | null;
-  hasStripeCustomer: boolean;
 }
 
-export default function SettingsForm({ notificationEmail, userEmail, planStatus, daysLeft, hasStripeCustomer }: Props) {
+export default function SettingsForm({ notificationEmail }: Props) {
   const { dark, toggle } = useTheme();
-  const { signOut } = useClerk();
   const [notifEmail, setNotifEmail] = useState(notificationEmail);
   const [loading, setLoading] = useState(false);
   const [saved, setSaved] = useState(false);
-  const [portalLoading, setPortalLoading] = useState(false);
-  const [portalError, setPortalError] = useState<string | null>(null);
-
-  const handleManageSubscription = async () => {
-    setPortalLoading(true);
-    setPortalError(null);
-    try {
-      const res = await fetch('/api/stripe/portal', { method: 'POST' });
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok || !data.url) {
-        setPortalError(data.error ?? "Impossible d'ouvrir le portail client.");
-        setPortalLoading(false);
-        return;
-      }
-      window.location.href = data.url;
-    } catch {
-      setPortalError("Erreur réseau. Réessayez.");
-      setPortalLoading(false);
-    }
-  };
 
   const handleSaveNotif = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -60,57 +31,87 @@ export default function SettingsForm({ notificationEmail, userEmail, planStatus,
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '40px' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
 
-      {/* Notifications */}
-      <section>
-        <p style={secTitle}>Notifications</p>
-        <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '20px', lineHeight: 1.6 }}>
-          Recevez un email lorsqu&apos;un client soumet une nouvelle demande de réservation.
-        </p>
+      {/* NOTIFICATIONS */}
+      <div className="form-section" style={{ marginBottom: 0 }}>
+        <div className="fs-title">
+          <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
+            <path d="M3.5 5.5a3.5 3.5 0 117 0v2.2l1 1.3H2.5l1-1.3V5.5z" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round"/>
+            <path d="M5.5 11.5a1.5 1.5 0 003 0" stroke="currentColor" strokeWidth="1.2"/>
+          </svg>
+          Notifications
+        </div>
+        <div className="fs-divider" />
         <form onSubmit={handleSaveNotif}>
-          <div style={{ marginBottom: '16px' }}>
-            <label style={lbl}>Email de notification</label>
-            <input
-              type="email"
-              style={inp}
-              value={notifEmail}
-              onChange={e => { setNotifEmail(e.target.value); setSaved(false); }}
-              placeholder="votre@email.com"
-            />
-          </div>
-          <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
-            <button
-              type="submit"
-              disabled={loading}
-              style={{ fontSize: '11px', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '12px 24px', backgroundColor: loading ? 'var(--text-muted)' : 'var(--text)', color: 'var(--bg)', border: 'none', cursor: loading ? 'not-allowed' : 'pointer', borderRadius: '8px' }}
-            >
-              {loading ? 'Enregistrement...' : 'Sauvegarder →'}
-            </button>
-            {saved && <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>✓ Sauvegardé</span>}
+          <div className="form-card">
+            <p style={{ fontSize: '13px', color: 'var(--ink-soft)', margin: '0 0 18px', lineHeight: 1.6 }}>
+              Recevez un email lorsqu&apos;un client soumet une nouvelle demande de réservation.
+            </p>
+            <div className="form-group">
+              <label className="form-label">Email de notification</label>
+              <input
+                type="email"
+                className="form-input"
+                value={notifEmail}
+                onChange={e => { setNotifEmail(e.target.value); setSaved(false); }}
+                placeholder="votre@email.com"
+              />
+            </div>
+            <div style={{ display: 'flex', gap: '12px', alignItems: 'center', marginTop: '4px' }}>
+              <button
+                type="submit"
+                disabled={loading}
+                className="btn btn-green"
+                style={{ fontSize: '13px', padding: '10px 20px', borderRadius: '10px' }}
+              >
+                {loading ? 'Enregistrement…' : 'Sauvegarder'}
+                {!loading && (
+                  <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
+                    <path d="M3 7l3 3 5-6" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                )}
+              </button>
+              {saved && (
+                <span style={{ fontSize: '12px', color: 'var(--green-dark)', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                  <svg width="12" height="12" fill="none" viewBox="0 0 12 12">
+                    <path d="M3 6l2 2 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                  Sauvegardé
+                </span>
+              )}
+            </div>
           </div>
         </form>
-      </section>
+      </div>
 
-      {/* Apparence */}
-      <section>
-        <p style={secTitle}>Apparence</p>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px', backgroundColor: 'var(--bg-white)', borderRadius: '10px', border: '1px solid var(--border)' }}>
-          <div>
-            <p style={{ fontSize: '13px', color: 'var(--text)', margin: '0 0 4px' }}>Mode nuit</p>
-            <p style={{ fontSize: '12px', color: 'var(--text-muted)', margin: 0 }}>
+      {/* APPARENCE */}
+      <div className="form-section" style={{ marginBottom: 0 }}>
+        <div className="fs-title">
+          <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
+            <path d="M11 7.5a4.5 4.5 0 01-5.5-5.5A5 5 0 107 12.5c0 0 .7-.04 1.4-.19" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+          Apparence
+        </div>
+        <div className="fs-divider" />
+        <div className="form-card" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px', padding: '18px 24px' }}>
+          <div style={{ minWidth: 0 }}>
+            <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--ink)', marginBottom: '2px' }}>Mode nuit</div>
+            <div style={{ fontSize: '12px', color: 'var(--ink-soft)' }}>
               {dark ? 'Activé — interface sombre' : 'Désactivé — interface claire'}
-            </p>
+            </div>
           </div>
           <button
             type="button"
             onClick={toggle}
+            aria-label="Basculer le mode nuit"
+            aria-pressed={dark}
             style={{
               width: '48px', height: '26px',
               borderRadius: '13px',
               border: 'none',
               cursor: 'pointer',
-              backgroundColor: dark ? '#1C1C1A' : 'var(--border)',
+              backgroundColor: dark ? 'var(--violet)' : 'var(--line)',
               position: 'relative',
               transition: 'background-color 0.2s ease',
               flexShrink: 0,
@@ -122,94 +123,43 @@ export default function SettingsForm({ notificationEmail, userEmail, planStatus,
               left: dark ? '25px' : '3px',
               width: '20px', height: '20px',
               borderRadius: '50%',
-              backgroundColor: dark ? '#EDE8E1' : '#F7F4F0',
-              border: '1px solid rgba(0,0,0,0.1)',
+              backgroundColor: '#fff',
+              boxShadow: '0 1px 3px rgba(0,0,0,.15)',
               transition: 'left 0.2s ease',
               display: 'block',
             }} />
           </button>
         </div>
-      </section>
+      </div>
 
-      {/* Abonnement */}
-      <section>
-        <p style={secTitle}>Abonnement</p>
-        <div style={{ padding: '20px', backgroundColor: 'var(--bg-white)', borderRadius: '10px', border: '1px solid var(--border)' }}>
-          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '16px', flexWrap: 'wrap' }}>
-            <div style={{ minWidth: 0 }}>
-              <p style={{ fontSize: '11px', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--text-muted)', margin: '0 0 6px' }}>
-                Plan actuel
-              </p>
-              {planStatus === 'ACTIVE' && (
-                <>
-                  <p style={{ fontSize: '15px', fontWeight: 700, color: 'var(--text)', margin: '0 0 4px' }}>Plan Essentiel — 9,99 € HT / mois</p>
-                  <p style={{ fontSize: '12px', color: 'var(--text-muted)', margin: 0, lineHeight: 1.5 }}>
-                    Facturation mensuelle via Stripe. Annulable à tout moment depuis le portail.
-                  </p>
-                </>
-              )}
-              {planStatus === 'TRIAL' && (
-                <>
-                  <p style={{ fontSize: '15px', fontWeight: 700, color: 'var(--text)', margin: '0 0 4px' }}>
-                    Période d'essai {daysLeft !== null ? `— ${daysLeft <= 0 ? '0' : daysLeft}j restant${daysLeft > 1 ? 's' : ''}` : ''}
-                  </p>
-                  <p style={{ fontSize: '12px', color: 'var(--text-muted)', margin: 0, lineHeight: 1.5 }}>
-                    Accès complet pendant 30 jours. Passez à l'abonnement pour continuer sans interruption.
-                  </p>
-                </>
-              )}
-              {planStatus === 'EXPIRED' && (
-                <>
-                  <p style={{ fontSize: '15px', fontWeight: 700, color: '#B23A3A', margin: '0 0 4px' }}>Essai expiré</p>
-                  <p style={{ fontSize: '12px', color: 'var(--text-muted)', margin: 0, lineHeight: 1.5 }}>
-                    Souscrivez pour réactiver votre accès.
-                  </p>
-                </>
-              )}
-            </div>
-            <div style={{ display: 'flex', gap: '8px', flexShrink: 0 }}>
-              {planStatus === 'ACTIVE' || hasStripeCustomer ? (
-                <button
-                  type="button"
-                  onClick={handleManageSubscription}
-                  disabled={portalLoading}
-                  style={{ fontSize: '11px', letterSpacing: '0.12em', textTransform: 'uppercase', padding: '10px 18px', border: '1px solid var(--border)', backgroundColor: 'transparent', color: 'var(--text)', cursor: portalLoading ? 'not-allowed' : 'pointer', borderRadius: '8px', fontWeight: 600 }}
-                >
-                  {portalLoading ? 'Ouverture…' : 'Gérer mon abonnement'}
-                </button>
-              ) : (
-                <a
-                  href="/upgrade"
-                  style={{ fontSize: '11px', letterSpacing: '0.12em', textTransform: 'uppercase', padding: '10px 18px', backgroundColor: '#7F77DD', color: '#FFFFFF', borderRadius: '8px', textDecoration: 'none', fontWeight: 700 }}
-                >
-                  Souscrire →
-                </a>
-              )}
-            </div>
-          </div>
-          {portalError && (
-            <p style={{ fontSize: '12px', color: '#B23A3A', margin: '12px 0 0', lineHeight: 1.5 }}>{portalError}</p>
-          )}
+      {/* COMPTE LINK */}
+      <div className="form-section" style={{ marginBottom: 0 }}>
+        <div className="fs-title">
+          <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
+            <circle cx="7" cy="5" r="3" stroke="currentColor" strokeWidth="1.2"/>
+            <path d="M2 13c0-2.8 2.2-5 5-5s5 2.2 5 5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
+          </svg>
+          Compte & Facturation
         </div>
-      </section>
-
-      {/* Compte */}
-      <section>
-        <p style={secTitle}>Compte</p>
-        <div style={{ padding: '16px 20px', backgroundColor: 'var(--bg-white)', borderRadius: '10px', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <div>
-            <p style={{ fontSize: '11px', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '4px' }}>Email</p>
-            <p style={{ fontSize: '13px', color: 'var(--text)', margin: 0 }}>{userEmail}</p>
+        <div className="fs-divider" />
+        <Link
+          href="/dashboard/compte"
+          className="form-card"
+          style={{
+            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+            padding: '18px 24px', gap: '16px', textDecoration: 'none', color: 'inherit',
+            transition: 'border-color .2s',
+          }}
+        >
+          <div style={{ minWidth: 0 }}>
+            <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--ink)', marginBottom: '2px' }}>Gérer votre compte et votre abonnement</div>
+            <div style={{ fontSize: '12px', color: 'var(--ink-soft)' }}>Profil, plan, portail de facturation Stripe</div>
           </div>
-          <button
-            type="button"
-            onClick={() => signOut({ redirectUrl: '/' })}
-            style={{ fontSize: '11px', letterSpacing: '0.12em', textTransform: 'uppercase', padding: '8px 16px', border: '1px solid var(--border)', backgroundColor: 'transparent', color: 'var(--text-muted)', cursor: 'pointer', borderRadius: '8px' }}
-          >
-            Déconnexion
-          </button>
-        </div>
-      </section>
+          <svg width="16" height="16" fill="none" viewBox="0 0 16 16" style={{ color: 'var(--violet)', flexShrink: 0 }}>
+            <path d="M6 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </Link>
+      </div>
 
     </div>
   );

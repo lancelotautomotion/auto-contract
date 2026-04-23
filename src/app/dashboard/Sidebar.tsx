@@ -100,6 +100,17 @@ export default function Sidebar({ pendingCount = 0, trialInfo }: { pendingCount?
             </span>
             Archives
           </Link>
+
+          <Link href="/dashboard/compte" className={`sb-link${active('/dashboard/compte') ? ' active' : ''}`}>
+            <span className="sb-icon">
+              <svg width="18" height="18" fill="none" viewBox="0 0 18 18">
+                <rect x="2" y="4" width="14" height="10" rx="2" stroke="currentColor" strokeWidth="1.3"/>
+                <path d="M2 8h14" stroke="currentColor" strokeWidth="1.3"/>
+                <path d="M4.5 11.5h2.5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
+              </svg>
+            </span>
+            Mon compte
+          </Link>
         </div>
 
         {/* Trial upgrade CTA in sidebar */}
