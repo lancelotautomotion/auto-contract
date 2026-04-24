@@ -9,7 +9,7 @@
 
 /* ─── HERO ─── */
 .ct-hero {
-  background: var(--line-light);
+  background: var(--cream);
   border-bottom: 1px solid var(--line);
   padding: 72px 28px 64px;
   text-align: center;
