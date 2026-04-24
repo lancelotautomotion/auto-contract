@@ -864,12 +864,13 @@
 }
 .mobile-menu-btn {
   width: 36px; height: 36px; border-radius: 8px;
-  border: none; background: rgba(255,255,255,.08);
-  color: rgba(255,255,255,.65);
+  border: none; background: var(--green);
+  color: #fff;
   display: flex; align-items: center; justify-content: center;
   cursor: pointer; transition: background .2s;
+  box-shadow: 0 2px 8px rgba(104,157,113,.35);
 }
-.mobile-menu-btn:hover { background: rgba(255,255,255,.14); }
+.mobile-menu-btn:hover { background: var(--green-dark); }
 .sb-close-btn {
   display: none;
   width: 30px; height: 30px; border-radius: 7px; border: none;
@@ -922,33 +923,30 @@
 
 /* ═══ SMALL MOBILE ≤640px ═══ */
 @media (max-width: 640px) {
-  /* Dashboard header : stack vertical, CTA en dessous et compact */
-  .dash-header {
+  /* Dashboard header : stack vertical, CTA compact en-dessous */
+  .dash-header,
+  .page-header {
     flex-direction: column;
     align-items: stretch;
     gap: 14px;
   }
-  .dash-greeting {
+  .dash-greeting,
+  .page-header h1,
+  .page-title h1 {
     font-size: 22px;
     line-height: 1.15;
     word-break: break-word;
     overflow-wrap: anywhere;
   }
   .dash-header .btn,
-  .dash-header .btn-lg {
+  .dash-header .btn-lg,
+  .page-header .btn {
     align-self: flex-start;
     padding: 10px 18px;
     font-size: 13px;
   }
 
-  /* Page title */
-  .page-title h1 {
-    font-size: 22px;
-    word-break: break-word;
-    overflow-wrap: anywhere;
-  }
-
-  /* Topbar : ellipsis breadcrumb, pas de debordement */
+  /* Topbar : ellipsis breadcrumb */
   .topbar { padding: 0 14px; height: 48px; gap: 8px; }
   .topbar-left { min-width: 0; flex: 1; }
   .topbar-breadcrumb {
@@ -960,8 +958,9 @@
   }
   .topbar-btn { width: 32px; height: 32px; }
 
-  /* Etablissement tabs : scroll horizontal interne, gomme la scrollbar */
-  .tabs {
+  /* Onglets Etablissement + Reservations : scroll horizontal interne */
+  .tabs,
+  .view-tabs {
     overflow-x: auto;
     overflow-y: hidden;
     flex-wrap: nowrap;
@@ -971,15 +970,24 @@
     margin-right: -14px;
     padding: 0 14px;
   }
-  .tabs::-webkit-scrollbar { display: none; }
+  .tabs::-webkit-scrollbar,
+  .view-tabs::-webkit-scrollbar { display: none; }
   .tab {
     white-space: nowrap;
     flex-shrink: 0;
     padding: 12px 16px;
     font-size: 13px;
   }
+  .view-tab {
+    white-space: nowrap;
+    flex-shrink: 0;
+    padding: 12px 14px;
+    font-size: 12px;
+    gap: 6px;
+  }
+  .view-tab .count { padding: 2px 6px; font-size: 10px; }
 
-  /* Booking card (lien de réservation) */
+  /* Booking card */
   .booking-card { padding: 16px 18px; }
   .booking-card-header { gap: 10px; margin-bottom: 12px; }
   .booking-card-icon { width: 32px; height: 32px; }
@@ -1017,18 +1025,33 @@
     min-width: 0;
   }
 
-  /* Tables : scroll horizontal interne */
+  /* Tables scrollable horizontalement */
   .a-table { min-width: 520px; }
   .card {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
   }
 
+  /* Form card : padding réduit pour que tout rentre */
+  .form-card { padding: 18px 16px; }
+
+  /* Option row (Etablissement > Options) : shrink inputs */
+  .option-row { padding: 10px; gap: 8px; }
+  .option-name { min-width: 0; padding: 6px 8px; font-size: 13px; flex: 1 1 0; }
+  .option-price { width: 64px; min-width: 0; padding: 6px 8px; font-size: 13px; flex-shrink: 0; }
+  .option-unit { font-size: 11px; }
+  .option-del { width: 26px; height: 26px; flex-shrink: 0; }
+
+  /* Save bar : centrée sur mobile (quel que soit le nombre de boutons) */
+  .save-bar { justify-content: center; flex-wrap: wrap; }
+
   /* Content padding serré */
   .content { padding: 18px 14px 32px; }
 
-  /* Stats row 1 colonne sur très petit */
-  .stats-row { grid-template-columns: 1fr; }
+  /* Stats : 2 colonnes même sur petit mobile (pas 1) */
+  .stats-row { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .stat-card { padding: 16px; }
+  .sc-num { font-size: 26px; }
   .summary-grid { grid-template-columns: 1fr; }
 }
 
