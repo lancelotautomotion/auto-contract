@@ -1,0 +1,86 @@
+/* ─── ONBOARDING ─── */
+.ob-page{
+  --green:#689D71;--green-light:#EEF5EF;--green-dark:#4A7353;
+  --violet:#7F77DD;--violet-light:#EFEEF9;--violet-dark:#5B52B5;
+  --ink:#2C2C2A;--ink-soft:#71716E;--ink-lighter:#A3A3A0;
+  --line:#E8E6E1;--line-light:#F3F2EE;--white:#FFFFFF;
+  --ff:'Plus Jakarta Sans',system-ui,sans-serif;
+  font-family:var(--ff);color:var(--ink);background:var(--line-light);
+  min-height:100vh;-webkit-font-smoothing:antialiased;
+}
+
+/* ─── HEADER ─── */
+.ob-header{padding:18px 32px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line);background:var(--white)}
+.ob-header-brand{font-size:15px;font-weight:800;color:var(--ink);letter-spacing:-0.02em}
+.ob-header-label{font-size:11px;font-weight:600;color:var(--ink-lighter);text-transform:uppercase;letter-spacing:.08em}
+
+/* ─── MAIN ─── */
+.ob-main{max-width:640px;margin:0 auto;padding:40px 24px 60px;box-sizing:border-box}
+
+/* ─── GREETING ─── */
+.ob-greeting{padding:0 4px 28px}
+.ob-greeting h1{font-size:clamp(24px,4vw,30px);font-weight:800;color:var(--ink);letter-spacing:-0.03em;margin:0 0 8px;line-height:1.2}
+.ob-greeting h1 .v{color:var(--violet)}
+.ob-greeting p{font-size:15px;color:var(--ink-soft);line-height:1.6;margin:0}
+
+/* ─── TRIAL CALLOUT ─── */
+.ob-trial{background:var(--violet-light);border:1px solid rgba(127,119,221,.2);border-radius:12px;padding:14px 18px;margin-bottom:28px;display:flex;align-items:center;gap:12px}
+.ob-trial p{font-size:13px;color:var(--violet-dark);margin:0;line-height:1.5}
+.ob-trial-emoji{font-size:18px;flex-shrink:0}
+
+/* ─── CARD ─── */
+.ob-card{background:var(--white);border-radius:16px;border:1px solid var(--line);overflow:hidden}
+.ob-card-bar{height:4px;background:var(--violet)}
+.ob-card-inner{padding:28px 32px 32px}
+
+/* ─── FORM SECTIONS ─── */
+.ob-section{margin-bottom:28px}
+.ob-section:last-of-type{margin-bottom:0}
+.ob-section-title{font-size:11px;font-weight:700;color:var(--ink);text-transform:uppercase;letter-spacing:.07em;margin:0 0 14px;padding-bottom:10px;border-bottom:1px solid #F0EDEA;display:flex;align-items:center;gap:8px}
+.ob-section-note{font-weight:400;color:var(--ink-lighter);text-transform:none;letter-spacing:0;font-size:11px}
+.ob-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.ob-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.ob-field{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+.ob-field:last-child{margin-bottom:0}
+.ob-label{font-size:10px;font-weight:700;color:var(--ink-lighter);text-transform:uppercase;letter-spacing:.08em}
+.ob-input{width:100%;padding:12px 14px;border:1.5px solid var(--line);background:#FAFAF7;font-size:14px;font-family:var(--ff);color:var(--ink);outline:none;border-radius:10px;box-sizing:border-box;transition:border-color .15s,box-shadow .15s}
+.ob-input:focus{border-color:var(--violet);box-shadow:0 0 0 3px rgba(127,119,221,.1);background:var(--white)}
+.ob-input::placeholder{color:var(--ink-lighter)}
+
+/* ─── OPTIONS ─── */
+.ob-opts{display:flex;flex-direction:column;gap:8px}
+.ob-opt{display:flex;align-items:center;gap:14px;padding:12px 14px;border-radius:10px;border:1.5px solid var(--line);background:#FAFAF7;cursor:pointer;transition:all .15s}
+.ob-opt:has(input:checked){border-color:rgba(127,119,221,.4);background:var(--violet-light)}
+.ob-opt input[type="checkbox"]{width:16px;height:16px;accent-color:var(--violet);flex-shrink:0;cursor:pointer}
+.ob-opt-name{flex:1;font-size:14px;color:var(--ink);font-weight:400}
+.ob-opt:has(input:checked) .ob-opt-name{font-weight:600}
+.ob-opt-price{display:flex;align-items:center;gap:6px}
+.ob-price-input{width:72px;padding:5px 10px;border:1px solid rgba(127,119,221,.3);background:var(--white);font-size:14px;font-family:var(--ff);color:var(--ink);outline:none;border-radius:8px;text-align:right}
+.ob-price-unit{font-size:13px;color:var(--ink-lighter)}
+
+/* ─── CGU ─── */
+.ob-cgu{display:flex;align-items:flex-start;gap:10px;cursor:pointer;margin-bottom:8px}
+.ob-cgu input{width:16px;height:16px;accent-color:var(--violet);flex-shrink:0;margin-top:2px;cursor:pointer}
+.ob-cgu-text{font-size:13px;color:var(--ink-soft);line-height:1.5}
+.ob-cgu-text a{color:var(--violet);font-weight:600;text-decoration:none}
+.ob-cgu-text a:hover{text-decoration:underline}
+
+/* ─── ERROR ─── */
+.ob-error{padding:12px 16px;background:#FEF2F2;border:1px solid #FCA5A5;border-radius:10px;margin-bottom:16px}
+.ob-error p{font-size:13px;color:#b91c1c;margin:0;line-height:1.5}
+
+/* ─── SUBMIT ─── */
+.ob-submit{width:100%;padding:15px;font-family:var(--ff);font-size:15px;font-weight:700;background:var(--green);color:#fff;border:none;border-radius:11px;cursor:pointer;transition:all .2s;margin-top:20px;display:flex;align-items:center;justify-content:center;gap:8px;min-height:50px}
+.ob-submit:hover:not(:disabled){background:var(--green-dark);transform:translateY(-1px);box-shadow:0 6px 20px rgba(104,157,113,.3)}
+.ob-submit:disabled{background:#C9D4CC;cursor:not-allowed;transform:none;box-shadow:none}
+.ob-note{font-size:12px;color:var(--ink-lighter);text-align:center;margin-top:10px;line-height:1.5}
+.ob-spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:ob-spin .7s linear infinite}
+@keyframes ob-spin{to{transform:rotate(360deg)}}
+
+/* ─── RESPONSIVE ─── */
+@media(max-width:600px){
+  .ob-header{padding:14px 18px}
+  .ob-main{padding:28px 16px 48px}
+  .ob-card-inner{padding:22px 18px 24px}
+  .ob-row,.ob-row-3{grid-template-columns:1fr}
+}

@@ -1,7 +1,7 @@
 import { auth } from "@clerk/nextjs/server";
 import { Plus_Jakarta_Sans } from 'next/font/google';
 import { redirect } from "next/navigation";
-import Sidebar from "./Sidebar";
+import DashboardShell from "./DashboardShell";
 import TrialBanner from "./TrialBanner";
 import { prisma } from "@/lib/prisma";
 import { getTrialInfo } from "@/lib/trial";
@@ -45,14 +45,11 @@ export default async function DashboardLayout({ children }: { children: React.Re
   }
 
   return (
-    <div className={`${font.className} app`}>
-      <Sidebar pendingCount={pendingCount} trialInfo={trialInfo} />
-      <div className="main">
-        {trialInfo?.isTrial && !trialInfo.isExpired && trialInfo.daysLeft <= 7 && (
-          <TrialBanner daysLeft={trialInfo.daysLeft} />
-        )}
-        {children}
-      </div>
-    </div>
+    <DashboardShell fontClass={font.className} pendingCount={pendingCount} trialInfo={trialInfo}>
+      {trialInfo?.isTrial && !trialInfo.isExpired && trialInfo.daysLeft <= 7 && (
+        <TrialBanner daysLeft={trialInfo.daysLeft} />
+      )}
+      {children}
+    </DashboardShell>
   );
 }

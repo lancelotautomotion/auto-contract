@@ -6,7 +6,12 @@ import { usePathname } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 import type { TrialInfo } from "@/lib/trial";
 
-export default function Sidebar({ pendingCount = 0, trialInfo }: { pendingCount?: number; trialInfo?: TrialInfo | null }) {
+export default function Sidebar({ pendingCount = 0, trialInfo, mobileOpen, onMobileClose }: {
+  pendingCount?: number;
+  trialInfo?: TrialInfo | null;
+  mobileOpen?: boolean;
+  onMobileClose?: () => void;
+}) {
   const pathname = usePathname();
   const { user } = useUser();
 
@@ -36,7 +41,7 @@ export default function Sidebar({ pendingCount = 0, trialInfo }: { pendingCount?
       : 'rgba(255,255,255,.3)';
 
   return (
-    <aside className="sidebar">
+    <aside className={`sidebar${mobileOpen ? ' open' : ''}`}>
       <div className="sb-logo">
         <Image
           src="/logotype_prysme.png"
@@ -45,6 +50,11 @@ export default function Sidebar({ pendingCount = 0, trialInfo }: { pendingCount?
           height={22}
           style={{ filter: 'brightness(10)', objectFit: 'contain' }}
         />
+        <button className="sb-close-btn" onClick={onMobileClose} aria-label="Fermer le menu">
+          <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
+            <path d="M3 3l10 10M13 3L3 13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+          </svg>
+        </button>
       </div>
 
       <nav className="sb-nav">
