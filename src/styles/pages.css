@@ -166,8 +166,8 @@ footer{background:var(--ink);color:rgba(255,255,255,.5);padding:56px 28px 28px}
 .ab-pill-icon{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .ab-pill-icon.g{background:rgba(104,157,113,.2)}.ab-pill-icon.v{background:rgba(127,119,221,.2)}
 .ab-footer{position:absolute;bottom:28px;left:0;right:0;text-align:center;font-size:11px;color:rgba(255,255,255,.15);z-index:1}
-.auth-form-panel{flex:1;display:flex;align-items:center;justify-content:center;padding:48px 56px;background:var(--white)}
-.auth-form-inner{width:100%;max-width:440px}
+.auth-form-panel{flex:1;display:flex;align-items:center;justify-content:center;padding:48px 56px;background:var(--white);overflow-x:hidden;min-width:0}
+.auth-form-inner{width:100%;max-width:440px;min-width:0}
 
 /* ═══ AUTH TABS ═══ */
 .auth-tabs{display:flex;background:#F4F3F0;border-radius:12px;padding:4px;margin-bottom:28px;gap:4px}
@@ -176,12 +176,25 @@ footer{background:var(--ink);color:rgba(255,255,255,.5);padding:56px 28px 28px}
 .auth-tab:hover:not(.auth-tab--active){color:#2C2C2A}
 
 /* ═══ CLERK OVERRIDES ═══ */
-.auth-form-panel .cl-rootBox{width:100%}
+.auth-form-panel .cl-rootBox,
+.auth-form-panel .cl-cardBox,
+.auth-form-panel .cl-card,
+.auth-form-panel .cl-main,
+.auth-form-panel .cl-header,
+.auth-form-panel .cl-footer,
+.auth-form-panel form{width:100%;max-width:100%;min-width:0;box-sizing:border-box}
 .auth-form-panel .cl-card{box-shadow:none!important;border:none!important;padding:0!important;background:transparent!important;border-radius:0!important}
 .auth-form-panel .cl-cardBox{box-shadow:none!important;border:none!important}
 .auth-form-panel .cl-header{padding:0 0 20px}
 .auth-form-panel .cl-main{padding:0}
 .auth-form-panel .cl-footer{padding:20px 0 0}
+.auth-form-panel .cl-formFieldInput,
+.auth-form-panel .cl-formButtonPrimary,
+.auth-form-panel .cl-socialButtonsBlockButton,
+.auth-form-panel .cl-formFieldRow,
+.auth-form-panel .cl-form,
+.auth-form-panel .cl-phoneInputBox,
+.auth-form-panel .cl-phoneInputBox input{width:100%!important;max-width:100%!important;box-sizing:border-box!important;min-width:0!important}
 
 /* ═══ MOBILE ═══ */
 @media(max-width:900px){
