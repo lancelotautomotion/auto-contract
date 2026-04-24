@@ -88,7 +88,7 @@
 .sb-user-plan { font-size: 10px; color: rgba(255,255,255,.3); font-weight: 500; }
 
 /* ═══ MAIN ═══ */
-.main { flex: 1; min-width: 0; overflow-y: auto; display: flex; flex-direction: column; }
+.main { flex: 1; min-width: 0; overflow-y: auto; overflow-x: hidden; display: flex; flex-direction: column; }
 
 /* ═══ TOPBAR ═══ */
 .topbar {
@@ -112,7 +112,7 @@
 }
 
 /* ═══ CONTENT ═══ */
-.content { padding: 28px 32px 40px; box-sizing: border-box; width: 100%; }
+.content { padding: 28px 32px 40px; box-sizing: border-box; width: 100%; max-width: 100%; overflow-x: hidden; }
 
 /* ═══ PAGE HEADER ═══ */
 .dash-header {
@@ -918,6 +918,118 @@
   .cc-actions { grid-template-columns: 1fr; }
   .detail-header { flex-direction: column; gap: 16px; }
   .dh-right { align-items: flex-start; }
+}
+
+/* ═══ SMALL MOBILE ≤640px ═══ */
+@media (max-width: 640px) {
+  /* Dashboard header : stack vertical, CTA en dessous et compact */
+  .dash-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 14px;
+  }
+  .dash-greeting {
+    font-size: 22px;
+    line-height: 1.15;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+  }
+  .dash-header .btn,
+  .dash-header .btn-lg {
+    align-self: flex-start;
+    padding: 10px 18px;
+    font-size: 13px;
+  }
+
+  /* Page title */
+  .page-title h1 {
+    font-size: 22px;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+  }
+
+  /* Topbar : ellipsis breadcrumb, pas de debordement */
+  .topbar { padding: 0 14px; height: 48px; gap: 8px; }
+  .topbar-left { min-width: 0; flex: 1; }
+  .topbar-breadcrumb {
+    font-size: 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
+  }
+  .topbar-btn { width: 32px; height: 32px; }
+
+  /* Etablissement tabs : scroll horizontal interne, gomme la scrollbar */
+  .tabs {
+    overflow-x: auto;
+    overflow-y: hidden;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    margin-left: -14px;
+    margin-right: -14px;
+    padding: 0 14px;
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab {
+    white-space: nowrap;
+    flex-shrink: 0;
+    padding: 12px 16px;
+    font-size: 13px;
+  }
+
+  /* Booking card (lien de réservation) */
+  .booking-card { padding: 16px 18px; }
+  .booking-card-header { gap: 10px; margin-bottom: 12px; }
+  .booking-card-icon { width: 32px; height: 32px; }
+  .booking-card-title { font-size: 13px; }
+  .booking-card-desc { font-size: 12px; }
+  .booking-card-link {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    padding: 10px 14px;
+  }
+  .booking-card-url { width: 100%; min-width: 0; }
+  .booking-card-url span {
+    word-break: break-all;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+    font-size: 12px;
+  }
+  .booking-card-actions { width: 100%; }
+  .booking-card-actions .btn { flex: 1; justify-content: center; }
+
+  /* Archives toolbar */
+  .toolbar { padding: 12px 14px; gap: 8px; }
+  .toolbar > form {
+    flex: 1 1 100%;
+    min-width: 0;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .t-search {
+    width: auto !important;
+    flex: 1;
+    min-width: 0;
+  }
+
+  /* Tables : scroll horizontal interne */
+  .a-table { min-width: 520px; }
+  .card {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Content padding serré */
+  .content { padding: 18px 14px 32px; }
+
+  /* Stats row 1 colonne sur très petit */
+  .stats-row { grid-template-columns: 1fr; }
+  .summary-grid { grid-template-columns: 1fr; }
 }
 
 /* ═══ TRIAL BANNER ═══ */
