@@ -25,9 +25,9 @@ const clerkAppearance = {
     fontSize: '14px',
   },
   elements: {
-    rootBox: { width: '100%' },
-    cardBox: { boxShadow: 'none', border: 'none', width: '100%' },
-    card: { boxShadow: 'none', border: 'none', padding: '0', borderRadius: '0', background: 'transparent', width: '100%' },
+    rootBox: { width: '100%', maxWidth: '100%', overflow: 'visible' },
+    cardBox: { boxShadow: 'none', border: 'none', width: '100%', maxWidth: '100%', overflow: 'visible' },
+    card: { boxShadow: 'none', border: 'none', padding: '0', borderRadius: '0', background: 'transparent', width: '100%', maxWidth: '100%', overflow: 'visible' },
     headerTitle: { fontSize: '26px', fontWeight: '800', letterSpacing: '-0.03em', color: '#2C2C2A' },
     headerSubtitle: { color: '#71716E', fontSize: '14px' },
     formFieldLabel: { color: '#2C2C2A', fontSize: '13px', fontWeight: '600' },
@@ -38,6 +38,8 @@ const clerkAppearance = {
     dividerText: { color: '#A3A3A0', fontSize: '12px' },
     socialButtonsBlockButton: { border: '1.5px solid #E8E6E1', borderRadius: '10px', fontSize: '13px', fontWeight: '600', color: '#2C2C2A' },
     socialButtonsBlockButtonText: { fontWeight: '600' },
+    formField: { width: '100%', maxWidth: '100%', minWidth: 0 },
+    formFieldInputGroup: { width: '100%', maxWidth: '100%', minWidth: 0 },
     footer: { '& a[href*="sign-up"]': { display: 'none' } },
   },
 };
