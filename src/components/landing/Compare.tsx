@@ -3,9 +3,10 @@ const transformations = [
     delay: 'reveal-d1',
     before: {
       icon: (
-        <svg width="18" height="18" fill="none" viewBox="0 0 18 18">
-          <rect x="3" y="2" width="12" height="14" rx="1.5" stroke="currentColor" strokeWidth="1.3" />
-          <path d="M6 6h6M6 9h4M6 12h5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+        <svg width="22" height="22" fill="none" viewBox="0 0 22 22">
+          <path d="M6 2.5h7l4 4v12a1.5 1.5 0 01-1.5 1.5h-9.5A1.5 1.5 0 014.5 18.5v-14a2 2 0 012-2z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+          <path d="M13 2.5v4h4" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+          <path d="M8 11.5h6M8 14h6M8 16.5h4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
         </svg>
       ),
       title: 'Contrat sur Word',
@@ -13,9 +14,9 @@ const transformations = [
     },
     after: {
       icon: (
-        <svg width="18" height="18" fill="none" viewBox="0 0 18 18">
-          <rect x="3" y="2" width="12" height="14" rx="1.5" stroke="currentColor" strokeWidth="1.3" />
-          <path d="M6 8l2 2 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+        <svg width="22" height="22" fill="none" viewBox="0 0 22 22">
+          <path d="M14.5 4l2.5 2.5-8 8-3 .5.5-3 8-8z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+          <path d="M3 18.5c2-.8 4-1 6-1s4 .2 6 1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
         </svg>
       ),
       title: 'Contrat auto-généré',
@@ -26,8 +27,8 @@ const transformations = [
     delay: 'reveal-d2',
     before: {
       icon: (
-        <svg width="18" height="18" fill="none" viewBox="0 0 18 18">
-          <path d="M3 14l5-5 3 3 4-5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
+        <svg width="22" height="22" fill="none" viewBox="0 0 22 22">
+          <path d="M3 14c1.5-3 3-5 4.5-5s1.8 3 3.5 3 3-4 5-4 3 2 3 2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       ),
       title: 'Signature papier',
@@ -35,9 +36,10 @@ const transformations = [
     },
     after: {
       icon: (
-        <svg width="18" height="18" fill="none" viewBox="0 0 18 18">
-          <rect x="5" y="2" width="8" height="14" rx="2" stroke="currentColor" strokeWidth="1.3" />
-          <path d="M7 10l1.5 1.5L11 8.5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
+        <svg width="22" height="22" fill="none" viewBox="0 0 22 22">
+          <rect x="6" y="2" width="10" height="18" rx="2" stroke="currentColor" strokeWidth="1.5" />
+          <path d="M9.5 16.5h3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+          <path d="M9 6l2 1.5L15 4.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       ),
       title: 'Signature en 30 secondes',
@@ -48,10 +50,10 @@ const transformations = [
     delay: 'reveal-d3',
     before: {
       icon: (
-        <svg width="18" height="18" fill="none" viewBox="0 0 18 18">
-          <circle cx="9" cy="9" r="6" stroke="currentColor" strokeWidth="1.3" />
-          <path d="M9 5v4" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
-          <circle cx="9" cy="12.5" r="0.9" fill="currentColor" />
+        <svg width="22" height="22" fill="none" viewBox="0 0 22 22">
+          <path d="M3 11s3-6 8-6 8 6 8 6-3 6-8 6-8-6-8-6z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+          <circle cx="11" cy="11" r="2.5" stroke="currentColor" strokeWidth="1.5" />
+          <path d="M4 19L19 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
         </svg>
       ),
       title: 'Aucune visibilité',
@@ -59,9 +61,10 @@ const transformations = [
     },
     after: {
       icon: (
-        <svg width="18" height="18" fill="none" viewBox="0 0 18 18">
-          <circle cx="9" cy="9" r="6" stroke="currentColor" strokeWidth="1.3" />
-          <path d="M9 5v4l2.5 1.5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+        <svg width="22" height="22" fill="none" viewBox="0 0 22 22">
+          <path d="M3 11s3-6 8-6 8 6 8 6-3 6-8 6-8-6-8-6z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+          <circle cx="11" cy="11" r="2.5" stroke="currentColor" strokeWidth="1.5" />
+          <circle cx="11" cy="11" r="1" fill="currentColor" />
         </svg>
       ),
       title: 'Suivi temps réel',
@@ -72,10 +75,11 @@ const transformations = [
     delay: 'reveal-d4',
     before: {
       icon: (
-        <svg width="18" height="18" fill="none" viewBox="0 0 18 18">
-          <rect x="2" y="4" width="5" height="4" rx="1" stroke="currentColor" strokeWidth="1.3" />
-          <rect x="11" y="4" width="5" height="4" rx="1" stroke="currentColor" strokeWidth="1.3" />
-          <rect x="6.5" y="10" width="5" height="4" rx="1" stroke="currentColor" strokeWidth="1.3" />
+        <svg width="22" height="22" fill="none" viewBox="0 0 22 22">
+          <rect x="2.5" y="2.5" width="7" height="7" rx="1" stroke="currentColor" strokeWidth="1.5" />
+          <rect x="12.5" y="2.5" width="7" height="7" rx="1" stroke="currentColor" strokeWidth="1.5" />
+          <rect x="2.5" y="12.5" width="7" height="7" rx="1" stroke="currentColor" strokeWidth="1.5" />
+          <rect x="12.5" y="12.5" width="7" height="7" rx="1" stroke="currentColor" strokeWidth="1.5" />
         </svg>
       ),
       title: 'Infos éparpillées',
@@ -83,10 +87,10 @@ const transformations = [
     },
     after: {
       icon: (
-        <svg width="18" height="18" fill="none" viewBox="0 0 18 18">
-          <rect x="2" y="3" width="14" height="12" rx="2" stroke="currentColor" strokeWidth="1.3" />
-          <path d="M2 7h14" stroke="currentColor" strokeWidth="1.3" />
-          <path d="M5 10h3M5 12h5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+        <svg width="22" height="22" fill="none" viewBox="0 0 22 22">
+          <path d="M3 9l8-6 8 6v10.5A1 1 0 0118 20.5H4a1 1 0 01-1-1V9z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+          <path d="M3 9h16" stroke="currentColor" strokeWidth="1.5" />
+          <path d="M8 14h6M8 17h4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
         </svg>
       ),
       title: 'Tout centralisé',
@@ -96,9 +100,42 @@ const transformations = [
 ];
 
 const stats = [
-  { val: '3', unit: 'min', lbl: 'Pour créer, envoyer et faire signer un contrat complet' },
-  { val: '30', unit: 'min', lbl: 'Économisées par réservation vs Word + email + scan' },
-  { val: '0', unit: 'erreur', lbl: 'De clause oubliée, de mention légale manquante, de mauvaise date' },
+  {
+    icon: (
+      <svg width="28" height="28" fill="none" viewBox="0 0 28 28">
+        <circle cx="14" cy="14" r="10" stroke="currentColor" strokeWidth="1.6" />
+        <path d="M14 8v6l4 2.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+      </svg>
+    ),
+    color: 'violet',
+    val: '3',
+    unit: 'min',
+    lbl: 'Pour créer, envoyer et faire signer un contrat complet',
+  },
+  {
+    icon: (
+      <svg width="28" height="28" fill="none" viewBox="0 0 28 28">
+        <path d="M14 4c5 3 8 7 8 12s-4 8-8 8-8-3-8-8c0-2 1-4 2.5-6C11 6 14 4 14 4z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
+        <path d="M14 10c0 3-1.5 6-4 7" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+      </svg>
+    ),
+    color: 'green',
+    val: '30',
+    unit: 'min',
+    lbl: 'Économisées par réservation vs Word + email + scan',
+  },
+  {
+    icon: (
+      <svg width="28" height="28" fill="none" viewBox="0 0 28 28">
+        <path d="M14 3l9 4v7c0 5-4 9-9 10-5-1-9-5-9-10V7l9-4z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
+        <path d="M10 14l2.5 2.5L18 11" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    ),
+    color: 'violet',
+    val: '0',
+    unit: 'erreur',
+    lbl: 'De clause oubliée, de mention légale manquante, de mauvaise date',
+  },
 ];
 
 export default function Compare() {
@@ -112,43 +149,49 @@ export default function Compare() {
         </div>
 
         <div className="tr-panel reveal">
+          <div className="tr-panel-head">
+            <span className="tr-pill violet">Avant</span>
+            <span className="tr-pill green">Après</span>
+          </div>
+
           {transformations.map((t, i) => (
             <div key={i} className={`tr-row reveal ${t.delay}`}>
-              <div className="tr-before">
-                <div className="tr-head">
-                  <div className="tr-icon old">{t.before.icon}</div>
-                  <span className="tr-tag red">Avant</span>
+              <div className="tr-cell before">
+                <div className="tr-icon violet">{t.before.icon}</div>
+                <div className="tr-text">
+                  <div className="tr-title">{t.before.title}</div>
+                  <div className="tr-desc">{t.before.desc}</div>
                 </div>
-                <div className="tr-title dim">{t.before.title}</div>
-                <div className="tr-desc dim">{t.before.desc}</div>
               </div>
 
               <div className="tr-arrow">
-                <svg width="18" height="18" fill="none" viewBox="0 0 18 18">
-                  <path d="M4 9h10m-3-4l4 4-4 4" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
+                  <path d="M4 8h8m-3-3l3 3-3 3" stroke="#fff" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </div>
 
-              <div className="tr-after">
-                <div className="tr-head">
-                  <div className="tr-icon new">{t.after.icon}</div>
-                  <span className="tr-tag grn">Après</span>
+              <div className="tr-cell after">
+                <div className="tr-icon green">{t.after.icon}</div>
+                <div className="tr-text">
+                  <div className="tr-title">{t.after.title}</div>
+                  <div className="tr-desc">{t.after.desc}</div>
                 </div>
-                <div className="tr-title">{t.after.title}</div>
-                <div className="tr-desc">{t.after.desc}</div>
               </div>
             </div>
           ))}
         </div>
 
-        <div className="compare-bottom reveal reveal-d2">
+        <div className="stats-panel reveal reveal-d2">
           {stats.map((s, i) => (
-            <div key={i} className="cb-cell">
-              <div className="cb-num">
-                <span className="val">{s.val}</span>
-                <span className="unit">{s.unit}</span>
+            <div key={i} className={`sp-cell${i > 0 ? ' has-div' : ''}`}>
+              <div className={`sp-icon ${s.color}`}>{s.icon}</div>
+              <div className="sp-right">
+                <div className="sp-num">
+                  <span className={`sp-val ${s.color}`}>{s.val}</span>
+                  <span className="sp-unit">{s.unit}</span>
+                </div>
+                <div className="sp-lbl">{s.lbl}</div>
               </div>
-              <div className="cb-lbl">{s.lbl}</div>
             </div>
           ))}
         </div>
