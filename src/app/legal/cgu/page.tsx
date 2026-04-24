@@ -15,7 +15,7 @@ export default function CguPage() {
           <h1 className="ph-title">Conditions Générales <span className="v">d&apos;Utilisation</span></h1>
           <p className="ph-subtitle">Les présentes CGU régissent l&apos;utilisation de la plateforme Prysme. En créant un compte, vous acceptez ces conditions dans leur intégralité.</p>
           <div className="ph-meta">
-            <span>Dernière mise à jour : 17 avril 2026</span>
+            <span>Dernière mise à jour : 24 avril 2026</span>
             <span>Lecture : 8 min</span>
           </div>
         </div>
@@ -90,9 +90,17 @@ export default function CguPage() {
           <p>Les modalités de collecte, de traitement, de conservation et les droits des personnes concernées sont détaillés dans la <a href="/legal/confidentialite">Politique de confidentialité</a> de Prysme.</p>
 
           <h2 id="art9"><span className="num">09.</span> Limitation de responsabilité</h2>
-          <p>L&apos;Éditeur met en œuvre tous les moyens raisonnables pour assurer la disponibilité et le bon fonctionnement de la Plateforme. Toutefois, il ne saurait garantir un accès ininterrompu ni être tenu responsable des éventuelles interruptions de service, quelles qu&apos;en soient les causes.</p>
-          <p>L&apos;Éditeur ne saurait être tenu responsable de l&apos;utilisation faite par l&apos;Utilisateur des contrats générés, ni des conséquences découlant d&apos;informations inexactes ou incomplètes saisies par l&apos;Utilisateur.</p>
-          <p>La Plateforme fournit un outil de génération documentaire. Elle <strong>ne se substitue pas aux conseils d&apos;un professionnel du droit</strong>. En cas de doute sur la conformité d&apos;un contrat, l&apos;Utilisateur est invité à consulter un avocat ou un juriste spécialisé.</p>
+          <p>La Plateforme est mise à disposition « en l&apos;état ». L&apos;Éditeur met en œuvre tous les moyens raisonnables pour assurer la disponibilité et le bon fonctionnement du service, mais ne souscrit à cet égard qu&apos;à une <strong>obligation de moyens</strong>. Il ne saurait garantir un accès ininterrompu, ni l&apos;absence d&apos;erreur, ni la compatibilité avec un usage particulier, et ne pourra être tenu responsable des interruptions de service, lenteurs ou indisponibilités, quelles qu&apos;en soient les causes (maintenance, incident technique, défaillance d&apos;un prestataire tiers, force majeure, etc.).</p>
+          <p>La Plateforme fournit un outil de génération documentaire. Elle <strong>ne se substitue en aucun cas aux conseils d&apos;un professionnel du droit</strong> (avocat, notaire, juriste). Les modèles et clauses proposés constituent une assistance à la rédaction ; ils n&apos;ont pas la valeur d&apos;un avis juridique personnalisé. Il appartient à l&apos;Utilisateur, en tant que professionnel, de vérifier la conformité des contrats qu&apos;il édite au regard de sa situation, de son activité et de la réglementation applicable.</p>
+          <p>L&apos;Utilisateur est <strong>seul et entièrement responsable</strong> :</p>
+          <p>— du contenu qu&apos;il saisit, des informations communiquées et de leur exactitude ;<br/>
+          — des contrats qu&apos;il génère, de leur conformité légale, fiscale et réglementaire, ainsi que de leur exécution ;<br/>
+          — des relations contractuelles qu&apos;il noue avec ses locataires, y compris en cas de litige ;<br/>
+          — des obligations qui lui incombent en qualité de bailleur, d&apos;exploitant d&apos;hébergement touristique et d&apos;employeur éventuel ;<br/>
+          — du respect de ses propres obligations RGPD vis-à-vis de ses locataires.</p>
+          <p>Dans les limites autorisées par la loi, la responsabilité de l&apos;Éditeur, toutes causes confondues et tous préjudices cumulés, ne pourra excéder les <strong>sommes effectivement encaissées auprès de l&apos;Utilisateur au cours des trois (3) derniers mois</strong> précédant le fait générateur. L&apos;Éditeur ne saurait en aucun cas être tenu responsable de dommages indirects, et notamment : pertes d&apos;exploitation, pertes de chiffre d&apos;affaires, pertes de clientèle, pertes de chance, atteinte à l&apos;image, pertes de données, manque à gagner, ou de tout préjudice subi par des tiers (notamment par les locataires de l&apos;Utilisateur).</p>
+          <p><strong>Garantie de l&apos;Utilisateur.</strong> L&apos;Utilisateur garantit l&apos;Éditeur contre tout recours, réclamation, action ou condamnation qui serait introduit contre lui par un tiers, et notamment par un locataire, en lien avec un contrat généré ou une réservation traitée via la Plateforme. L&apos;Utilisateur s&apos;engage à prendre en charge l&apos;intégralité des sommes, frais, honoraires d&apos;avocat et condamnations qui pourraient en résulter.</p>
+          <p>Les présentes limitations ne s&apos;appliquent pas en cas de faute lourde ou dolosive dûment établie de l&apos;Éditeur, ni dans les cas où la loi l&apos;interdit. L&apos;acceptation des présentes CGU vaut reconnaissance et acceptation expresse, par l&apos;Utilisateur, de la présente clause de limitation de responsabilité.</p>
 
           <h2 id="art10"><span className="num">10.</span> Résiliation</h2>
           <p>L&apos;Utilisateur peut résilier son abonnement à tout moment depuis les paramètres de son compte. La résiliation prend effet à la fin de la période d&apos;abonnement en cours. Aucun remboursement au prorata ne sera effectué.</p>
