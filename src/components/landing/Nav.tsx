@@ -31,10 +31,11 @@ export default function Nav() {
             <Image src="/logotype_prysme.png" alt="Prysme" width={400} height={85} priority style={{ height: 28, width: 'auto' }} />
           </Link>
           <ul className="nav-links">
-            <li><a href="#problemes">Problèmes résolus</a></li>
-            <li><a href="#fonctionnalites">Fonctionnalités</a></li>
-            <li><a href="#tarifs">Tarifs</a></li>
-            <li><a href="#temoignages">Avis</a></li>
+            <li><Link href="/comment-ca-marche">Comment ça marche</Link></li>
+            <li><Link href="/#fonctionnalites">Fonctionnalités</Link></li>
+            <li><Link href="/#tarifs">Tarifs</Link></li>
+            <li><Link href="/a-propos">À propos</Link></li>
+            <li><Link href="/contact">Contact</Link></li>
           </ul>
           <div className="nav-cta">
             <Link className="btn btn-ghost" href="/sign-in">Se connecter</Link>
@@ -82,11 +83,10 @@ export default function Nav() {
         </div>
 
         <ul className="nav-drawer-links">
-          <li><a href="#problemes" onClick={close}>Problèmes résolus</a></li>
-          <li><a href="#fonctionnalites" onClick={close}>Fonctionnalités</a></li>
-          <li><a href="#tarifs" onClick={close}>Tarifs</a></li>
-          <li><a href="#temoignages" onClick={close}>Avis</a></li>
           <li><Link href="/comment-ca-marche" onClick={close}>Comment ça marche</Link></li>
+          <li><Link href="/#fonctionnalites" onClick={close}>Fonctionnalités</Link></li>
+          <li><Link href="/#tarifs" onClick={close}>Tarifs</Link></li>
+          <li><Link href="/#temoignages" onClick={close}>Avis</Link></li>
           <li><Link href="/a-propos" onClick={close}>À propos</Link></li>
           <li><Link href="/contact" onClick={close}>Contact</Link></li>
         </ul>
