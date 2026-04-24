@@ -20,8 +20,8 @@ export default async function BookingPage({ params }: { params: Promise<{ slug: 
 
       <div className="book-hero">
         <div className="book-hero-inner">
-          <h1>Réservez votre séjour au <span className="g">{gite.name}</span></h1>
-          <p>Renseignez vos informations ci-dessous. Le gérant vous contactera pour confirmer votre réservation et vous transmettre le contrat.</p>
+          <h1>Réservez au <span className="g">{gite.name}</span></h1>
+          <p>Renseignez vos informations ci-dessous. Le gérant vous contactera pour confirmer votre séjour et vous transmettre le contrat.</p>
         </div>
       </div>
 
@@ -29,6 +29,8 @@ export default async function BookingPage({ params }: { params: Promise<{ slug: 
         <BookingForm
           giteSlug={slug}
           giteName={gite.name}
+          giteCity={gite.city}
+          giteLogoUrl={gite.logoUrl}
           options={gite.options.map(o => ({ id: o.id, label: o.label, price: o.price }))}
         />
       </div>
