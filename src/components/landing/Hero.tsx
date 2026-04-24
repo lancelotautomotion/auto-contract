@@ -7,14 +7,6 @@ export default function Hero() {
 
         {/* Left — copy */}
         <div>
-          <div className="hero-badge">
-            <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
-              <circle cx="7" cy="7" r="5" fill="#7F77DD" />
-              <path d="M5 7l1.5 1.5L9 5.5" stroke="#fff" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-            Signature électronique conforme eIDAS
-          </div>
-
           <h1>
             Vos réservations,<br />
             <span className="green">structurées.</span><br />
@@ -33,7 +25,7 @@ export default function Hero() {
                 <path d="M3 8h10m-4-4l4 4-4 4" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </Link>
-            <a className="btn btn-outline btn-lg" href="#fonctionnalites">Voir comment ça marche</a>
+            <a className="btn btn-green btn-lg" href="#fonctionnalites">Voir comment ça marche</a>
           </div>
 
           <p className="hero-note">

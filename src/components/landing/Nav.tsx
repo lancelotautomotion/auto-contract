@@ -28,7 +28,7 @@ export default function Nav() {
       <nav className="nav">
         <div className="nav-inner">
           <Link className="nav-logo" href="/">
-            <Image src="/logotype_prysme.png" alt="Prysme" width={120} height={28} />
+            <Image src="/logotype_prysme.png" alt="Prysme" width={400} height={85} priority style={{ height: 28, width: 'auto' }} />
           </Link>
           <ul className="nav-links">
             <li><a href="#problemes">Problèmes résolus</a></li>
@@ -47,9 +47,9 @@ export default function Nav() {
             aria-expanded={open}
             onClick={() => setOpen(true)}
           >
-            <span />
-            <span />
-            <span />
+            <svg width="20" height="20" fill="none" viewBox="0 0 20 20">
+              <path d="M4 6h12M4 10h12M4 14h12" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" />
+            </svg>
           </button>
         </div>
       </nav>
@@ -67,7 +67,7 @@ export default function Nav() {
       >
         <div className="nav-drawer-head">
           <Link className="nav-logo" href="/" onClick={close}>
-            <Image src="/logotype_prysme.png" alt="Prysme" width={104} height={24} />
+            <Image src="/logotype_prysme.png" alt="Prysme" width={400} height={85} style={{ height: 24, width: 'auto' }} />
           </Link>
           <button
             type="button"
