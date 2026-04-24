@@ -1,109 +1,116 @@
 import type { Metadata } from 'next';
-import { Plus_Jakarta_Sans } from 'next/font/google';
-
-import '@/styles/pages.css';
-
-import NavPages from '@/components/landing/NavPages';
+import '@/styles/landing.css';
+import './contact.css';
+import Nav from '@/components/landing/Nav';
 import Footer from '@/components/landing/Footer';
-import ScrollReveal from '@/app/ScrollReveal';
 import ContactForm from './ContactForm';
 
 export const metadata: Metadata = {
   title: 'Contact — Prysme',
-  description: 'Une question ? On est là. Contactez l\'équipe Prysme — réponse sous 24h.',
+  description: "Une question ? Écrivez-nous, réponse sous 24h ouvrées — contact@prysme.app.",
 };
-
-const font = Plus_Jakarta_Sans({
-  subsets: ['latin'],
-  weight: ['300', '400', '500', '600', '700', '800'],
-  style: ['normal', 'italic'],
-  display: 'swap',
-});
 
 export default function ContactPage() {
   return (
-    <div className={font.className}>
-      <NavPages />
+    <>
+      <Nav />
 
-      <div className="page-header">
-        <div className="page-header-inner reveal">
-          <div className="ph-tag">Contact</div>
-          <h1>Une question<span className="v"> ?</span><br />On est là.</h1>
-          <p>Besoin d&apos;aide, question sur les tarifs ou envie de nous dire bonjour — écrivez-nous, on répond sous 24h.</p>
-        </div>
-      </div>
+      <main className="ct-main">
 
-      <section className="contact-section">
-        <div className="contact-inner">
-
-          {/* Info cards */}
-          <div className="contact-info">
-            <div className="ci-card reveal">
-              <div className="ci-card-icon v">
-                <svg width="18" height="18" fill="none" viewBox="0 0 18 18">
-                  <path d="M2 5l7 5 7-5" stroke="#5B52B5" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
-                  <rect x="2" y="4" width="14" height="10" rx="2" stroke="#5B52B5" strokeWidth="1.3"/>
-                </svg>
-              </div>
-              <div className="ci-card-title">Email</div>
-              <div className="ci-card-desc">Pour toute question commerciale ou support technique.</div>
-              <a className="ci-card-link" href="mailto:contact@prysme.app">
-                contact@prysme.app
-                <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
-                  <path d="M3 7h8m-3-3l3 3-3 3" stroke="#7F77DD" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </a>
-            </div>
-
-            <div className="ci-card reveal reveal-d1">
-              <div className="ci-card-icon g">
-                <svg width="18" height="18" fill="none" viewBox="0 0 18 18">
-                  <circle cx="9" cy="9" r="7" stroke="#4A7353" strokeWidth="1.3"/>
-                  <path d="M9 5v4l2.5 1.5" stroke="#4A7353" strokeWidth="1.3" strokeLinecap="round"/>
-                </svg>
-              </div>
-              <div className="ci-card-title">Réponse rapide</div>
-              <div className="ci-card-desc">On répond en moyenne en moins de 4 heures sur les jours ouvrés. Pas de chatbot, un humain.</div>
-            </div>
-
-            <div className="ci-card reveal reveal-d2">
-              <div className="ci-card-icon v">
-                <svg width="18" height="18" fill="none" viewBox="0 0 18 18">
-                  <path d="M9 2C5.7 2 3 4.2 3 7c0 1.7 1 3.2 2.5 4.1L5 15l2.5-1.5c.5.1 1 .2 1.5.2 3.3 0 6-2.2 6-5s-2.7-5-6-5z" stroke="#5B52B5" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </div>
-              <div className="ci-card-title">Démo personnalisée</div>
-              <div className="ci-card-desc">Envie de voir Prysme en action ? Demandez une démo de 15 min et on vous montre tout.</div>
-              <a className="ci-card-link" href="mailto:contact@prysme.app?subject=Demande%20de%20démo">
-                Réserver un créneau
-                <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
-                  <path d="M3 7h8m-3-3l3 3-3 3" stroke="#7F77DD" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </a>
-            </div>
-
-            <div className="ci-hours reveal reveal-d3">
-              <div className="ci-hours-title">
-                <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
-                  <circle cx="8" cy="8" r="6" stroke="#fff" strokeWidth="1.2"/>
-                  <path d="M8 5v3l2 1.5" stroke="#fff" strokeWidth="1.2" strokeLinecap="round"/>
-                </svg>
-                Horaires de support
-              </div>
-              <div className="ci-hours-row"><span>Lundi – Vendredi</span><strong>9h – 18h</strong></div>
-              <div className="ci-hours-row"><span>Samedi</span><strong>10h – 14h</strong></div>
-              <div className="ci-hours-row"><span>Dimanche</span><strong>Fermé</strong></div>
-              <div className="ci-hours-badge">En ligne maintenant</div>
-            </div>
+        {/* ── Hero ── */}
+        <section className="ct-hero">
+          <div className="ct-hero-inner">
+            <p className="ct-eyebrow">Contact</p>
+            <h1>
+              Une question&nbsp;?<br />
+              <span className="v">On est là.</span>
+            </h1>
+            <p className="ct-hero-sub">
+              Support, commercial, démo ou simple bonjour — écrivez-nous.
+              Réponse sous <strong>24h ouvrées</strong>, par un humain.
+            </p>
           </div>
+        </section>
 
-          <ContactForm />
+        {/* ── Content ── */}
+        <section className="ct-section">
+          <div className="ct-inner">
 
-        </div>
-      </section>
+            {/* ── Info cards (left) ── */}
+            <aside className="ct-info">
+              <div className="ct-card">
+                <div className="ct-ico violet">
+                  <svg width="20" height="20" fill="none" viewBox="0 0 20 20">
+                    <rect x="2.5" y="4.5" width="15" height="11" rx="2" stroke="currentColor" strokeWidth="1.4" />
+                    <path d="M2.5 5.5l7.5 6 7.5-6" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </div>
+                <div className="ct-card-title">Email</div>
+                <div className="ct-card-desc">Le canal préféré. On lit chaque message et on répond personnellement.</div>
+                <a className="ct-card-link" href="mailto:contact@prysme.app">
+                  contact@prysme.app
+                  <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
+                    <path d="M3 7h8m-3-3l3 3-3 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </a>
+              </div>
+
+              <div className="ct-card">
+                <div className="ct-ico green">
+                  <svg width="20" height="20" fill="none" viewBox="0 0 20 20">
+                    <circle cx="10" cy="10" r="7.5" stroke="currentColor" strokeWidth="1.4" />
+                    <path d="M10 5.5v4.5l3 2" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+                  </svg>
+                </div>
+                <div className="ct-card-title">Réponse rapide</div>
+                <div className="ct-card-desc">En moyenne moins de 4h sur les jours ouvrés. Pas de chatbot, un humain.</div>
+              </div>
+
+              <div className="ct-card">
+                <div className="ct-ico violet">
+                  <svg width="20" height="20" fill="none" viewBox="0 0 20 20">
+                    <rect x="3" y="2" width="14" height="16" rx="2" stroke="currentColor" strokeWidth="1.4" />
+                    <path d="M7 7h6M7 10h6M7 13h4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+                    <path d="M13 15l2 2 3-3" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </div>
+                <div className="ct-card-title">Démo personnalisée</div>
+                <div className="ct-card-desc">Envie de voir Prysme en action&nbsp;? Réservez 15 min en visio, on vous montre tout.</div>
+                <a
+                  className="ct-card-link"
+                  href="mailto:contact@prysme.app?subject=Demande%20de%20d%C3%A9mo%20Prysme"
+                >
+                  Réserver un créneau
+                  <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
+                    <path d="M3 7h8m-3-3l3 3-3 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </a>
+              </div>
+
+              <div className="ct-hours">
+                <div className="ct-hours-title">
+                  <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
+                    <circle cx="8" cy="8" r="6" stroke="currentColor" strokeWidth="1.3" />
+                    <path d="M8 5v3l2 1.5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+                  </svg>
+                  Horaires de support
+                </div>
+                <div className="ct-hours-row"><span>Lundi – Vendredi</span><strong>9h – 18h</strong></div>
+                <div className="ct-hours-row"><span>Samedi</span><strong>10h – 14h</strong></div>
+                <div className="ct-hours-row"><span>Dimanche</span><strong>Fermé</strong></div>
+                <div className="ct-hours-badge"><span className="dot" /> En ligne maintenant</div>
+              </div>
+            </aside>
+
+            {/* ── Form (right) ── */}
+            <ContactForm />
+
+          </div>
+        </section>
+
+      </main>
 
       <Footer />
-      <ScrollReveal />
-    </div>
+    </>
   );
 }

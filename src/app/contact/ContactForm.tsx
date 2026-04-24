@@ -1,64 +1,139 @@
-'use client';
-import { useState } from 'react';
-import Link from 'next/link';
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+
+type FormState = {
+  prenom: string;
+  nom: string;
+  email: string;
+  sujet: string;
+  message: string;
+  consent: boolean;
+};
+
+const INITIAL: FormState = {
+  prenom: "",
+  nom: "",
+  email: "",
+  sujet: "",
+  message: "",
+  consent: false,
+};
 
 export default function ContactForm() {
+  const [form, setForm] = useState<FormState>(INITIAL);
+  const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
-  const [form, setForm] = useState({
-    prenom: '', nom: '', email: '', sujet: '', message: '', consent: false,
-  });
+  const [error, setError] = useState<string | null>(null);
 
-  function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) {
+  function handleChange(
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
+  ) {
     const { name, value, type } = e.target;
+    setError(null);
     setForm(prev => ({
       ...prev,
-      [name]: type === 'checkbox' ? (e.target as HTMLInputElement).checked : value,
+      [name]: type === "checkbox" ? (e.target as HTMLInputElement).checked : value,
     }));
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setSent(true);
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setError(data.error ?? "Une erreur est survenue. Réessayez.");
+        setLoading(false);
+        return;
+      }
+      setSent(true);
+    } catch {
+      setError("Erreur réseau. Vérifiez votre connexion et réessayez.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   if (sent) {
     return (
-      <div className="contact-form-wrap reveal reveal-d1">
-        <div className="cf-success">
-          <div className="cf-success-icon">
-            <svg width="24" height="24" fill="none" viewBox="0 0 24 24">
-              <path d="M5 13l4 4L19 7" stroke="#4A7353" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      <div className="ct-form-wrap">
+        <div className="ct-success">
+          <div className="ct-success-icon">
+            <svg width="28" height="28" fill="none" viewBox="0 0 28 28">
+              <path d="M6 14l5 5L22 9" stroke="#fff" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </div>
-          <h3>Message envoyé !</h3>
-          <p>Nous vous répondrons sous 24h. Merci de nous avoir contactés.</p>
+          <h3>Message envoyé&nbsp;!</h3>
+          <p>
+            Merci, nous avons bien reçu votre demande.
+            Nous revenons vers vous sous <strong>24h ouvrées</strong>.
+          </p>
+          <button
+            type="button"
+            className="btn btn-outline ct-success-btn"
+            onClick={() => { setSent(false); setForm(INITIAL); }}
+          >
+            Envoyer un autre message
+          </button>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="contact-form-wrap reveal reveal-d1">
-      <div className="cf-title">Envoyez-nous un message</div>
-      <div className="cf-desc">Remplissez le formulaire et nous reviendrons vers vous rapidement.</div>
-      <form onSubmit={handleSubmit}>
-        <div className="form-row">
-          <div className="form-group">
-            <label className="form-label">Prénom</label>
-            <input className="form-input" type="text" name="prenom" placeholder="Votre prénom" value={form.prenom} onChange={handleChange} required />
+    <div className="ct-form-wrap">
+      <div className="ct-form-head">
+        <h2>Envoyez-nous un message</h2>
+        <p>Remplissez le formulaire, on revient vers vous en moins de 24h.</p>
+      </div>
+
+      <form onSubmit={handleSubmit} className="ct-form" noValidate>
+        <div className="ct-row-2">
+          <div className="ct-group">
+            <label htmlFor="ct-prenom">Prénom <span className="req">*</span></label>
+            <input
+              id="ct-prenom" name="prenom" type="text" required
+              placeholder="Votre prénom"
+              value={form.prenom} onChange={handleChange}
+              disabled={loading}
+            />
           </div>
-          <div className="form-group">
-            <label className="form-label">Nom</label>
-            <input className="form-input" type="text" name="nom" placeholder="Votre nom" value={form.nom} onChange={handleChange} required />
+          <div className="ct-group">
+            <label htmlFor="ct-nom">Nom <span className="req">*</span></label>
+            <input
+              id="ct-nom" name="nom" type="text" required
+              placeholder="Votre nom"
+              value={form.nom} onChange={handleChange}
+              disabled={loading}
+            />
           </div>
         </div>
-        <div className="form-group">
-          <label className="form-label">Email</label>
-          <input className="form-input" type="email" name="email" placeholder="vous@exemple.com" value={form.email} onChange={handleChange} required />
+
+        <div className="ct-group">
+          <label htmlFor="ct-email">Email <span className="req">*</span></label>
+          <input
+            id="ct-email" name="email" type="email" required
+            placeholder="vous@exemple.com"
+            value={form.email} onChange={handleChange}
+            disabled={loading}
+          />
         </div>
-        <div className="form-group">
-          <label className="form-label">Sujet</label>
-          <select className="form-select" name="sujet" value={form.sujet} onChange={handleChange} required>
+
+        <div className="ct-group">
+          <label htmlFor="ct-sujet">Sujet <span className="req">*</span></label>
+          <select
+            id="ct-sujet" name="sujet" required
+            value={form.sujet} onChange={handleChange}
+            disabled={loading}
+          >
             <option value="" disabled>Choisissez un sujet</option>
             <option>Question sur les tarifs</option>
             <option>Demande de démo</option>
@@ -67,31 +142,58 @@ export default function ContactForm() {
             <option>Autre</option>
           </select>
         </div>
-        <div className="form-group">
-          <label className="form-label">Message</label>
-          <textarea className="form-textarea" name="message" placeholder="Décrivez votre demande en quelques mots..." value={form.message} onChange={handleChange} required />
+
+        <div className="ct-group">
+          <label htmlFor="ct-message">Message <span className="req">*</span></label>
+          <textarea
+            id="ct-message" name="message" required
+            placeholder="Décrivez votre demande en quelques mots…"
+            value={form.message} onChange={handleChange}
+            disabled={loading}
+            rows={5}
+          />
         </div>
-        <div className="form-check">
-          <input type="checkbox" id="consent" name="consent" checked={form.consent} onChange={handleChange} required />
-          <label htmlFor="consent">
-            J&apos;accepte que mes données soient traitées conformément à la{' '}
+
+        <label className="ct-check">
+          <input
+            type="checkbox" name="consent" required
+            checked={form.consent} onChange={handleChange}
+            disabled={loading}
+          />
+          <span>
+            J&apos;accepte que mes données soient traitées conformément à la{" "}
             <Link href="/legal/confidentialite">politique de confidentialité</Link> de Prysme.
-          </label>
-        </div>
-        <button className="btn btn-violet btn-lg btn-full" type="submit">
-          Envoyer le message
-          <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
-            <path d="M2 8l5 5L14 3" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
+          </span>
+        </label>
+
+        {error && (
+          <div className="ct-error">
+            <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
+              <circle cx="8" cy="8" r="6.5" stroke="currentColor" strokeWidth="1.4" />
+              <path d="M8 5v3.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+              <circle cx="8" cy="11" r="0.9" fill="currentColor" />
+            </svg>
+            <span>{error}</span>
+          </div>
+        )}
+
+        <button type="submit" className="btn btn-violet btn-lg ct-submit" disabled={loading}>
+          {loading ? "Envoi en cours…" : "Envoyer le message"}
+          {!loading && (
+            <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
+              <path d="M2 8l12-5-4 13-3-6-5-2z" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          )}
         </button>
+
+        <div className="ct-note">
+          <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
+            <rect x="2.5" y="5" width="9" height="7" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
+            <path d="M4 5V3.5a3 3 0 016 0V5" stroke="currentColor" strokeWidth="1.2" />
+          </svg>
+          Vos données ne sont jamais partagées avec des tiers.
+        </div>
       </form>
-      <div className="cf-note">
-        <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
-          <rect x="2" y="3" width="10" height="8" rx="1.5" stroke="#A3A3A0" strokeWidth="1"/>
-          <path d="M5 7l1.5 1.5L9 5.5" stroke="#A3A3A0" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"/>
-        </svg>
-        Vos données ne sont jamais partagées avec des tiers.
-      </div>
     </div>
   );
 }
