@@ -2,6 +2,7 @@ import { SignIn } from '@clerk/nextjs';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Plus_Jakarta_Sans } from 'next/font/google';
+
 import '@/styles/pages.css';
 
 const font = Plus_Jakarta_Sans({
@@ -67,10 +68,7 @@ export default function SignInPage() {
         </div>
 
         <div className="auth-form-panel">
-          <div style={{ width: '100%', maxWidth: '420px' }}>
-            <div className="mobile-logo">
-              <Link href="/"><Image src="/logotype_prysme.png" alt="Prysme" width={96} height={24} /></Link>
-            </div>
+          <div className="auth-form-inner">
             <div className="auth-tabs">
               <Link href="/sign-in" className="auth-tab auth-tab--active">Se connecter</Link>
               <Link href="/sign-up" className="auth-tab">Créer un compte</Link>

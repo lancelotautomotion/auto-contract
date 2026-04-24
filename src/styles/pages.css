@@ -166,9 +166,8 @@ footer{background:var(--ink);color:rgba(255,255,255,.5);padding:56px 28px 28px}
 .ab-pill-icon{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .ab-pill-icon.g{background:rgba(104,157,113,.2)}.ab-pill-icon.v{background:rgba(127,119,221,.2)}
 .ab-footer{position:absolute;bottom:28px;left:0;right:0;text-align:center;font-size:11px;color:rgba(255,255,255,.15);z-index:1}
-.auth-form-panel{flex:1;display:flex;align-items:center;justify-content:center;padding:40px 28px;background:var(--white)}
-.auth-form-panel .mobile-logo{display:none;margin-bottom:32px}
-.auth-form-panel .mobile-logo img{height:28px}
+.auth-form-panel{flex:1;display:flex;align-items:center;justify-content:center;padding:48px 56px;background:var(--white)}
+.auth-form-inner{width:100%;max-width:440px}
 
 /* ═══ AUTH TABS ═══ */
 .auth-tabs{display:flex;background:#F4F3F0;border-radius:12px;padding:4px;margin-bottom:28px;gap:4px}
@@ -196,6 +195,8 @@ footer{background:var(--ink);color:rgba(255,255,255,.5);padding:56px 28px 28px}
   .nav-pages-links{display:none}
   .auth-layout{flex-direction:column}
   .auth-brand{display:none}
-  .auth-form-panel{padding:40px 24px;align-items:flex-start;padding-top:60px}
-  .auth-form-panel .mobile-logo{display:block}
+  .auth-form-panel{padding:48px 32px;align-items:flex-start}
+}
+@media(max-width:480px){
+  .auth-form-panel{padding:36px 24px}
 }
