@@ -21,6 +21,29 @@ body{font-family:var(--ff);color:var(--ink);background:var(--white);-webkit-font
 .nav-links a{text-decoration:none;font-size:14px;font-weight:500;color:var(--ink-soft);transition:color .2s}
 .nav-links a:hover{color:var(--ink)}
 .nav-cta{display:flex;align-items:center;gap:10px}
+
+/* HAMBURGER */
+.nav-burger{display:none;width:40px;height:40px;border:none;background:transparent;cursor:pointer;padding:0;flex-direction:column;align-items:center;justify-content:center;gap:5px;border-radius:10px;transition:background .2s}
+.nav-burger:hover{background:var(--line-light)}
+.nav-burger span{width:20px;height:2px;background:var(--ink);border-radius:2px;transition:all .25s}
+
+/* BACKDROP */
+.nav-backdrop{position:fixed;inset:0;background:rgba(28,28,26,.35);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);z-index:200;opacity:0;pointer-events:none;transition:opacity .3s ease}
+.nav-backdrop.open{opacity:1;pointer-events:auto}
+
+/* DRAWER — modern slide-in sidebar */
+.nav-drawer{position:fixed;top:0;right:0;height:100vh;width:min(320px,88vw);background:#fff;z-index:201;box-shadow:-20px 0 60px rgba(44,44,42,.18);transform:translateX(100%);transition:transform .35s cubic-bezier(.22,1,.36,1);display:flex;flex-direction:column;padding:22px 24px 24px;overflow-y:auto}
+.nav-drawer.open{transform:translateX(0)}
+.nav-drawer-head{display:flex;align-items:center;justify-content:space-between;padding-bottom:22px;margin-bottom:8px;border-bottom:1px solid var(--line-light)}
+.nav-drawer-close{width:36px;height:36px;border:none;background:var(--line-light);border-radius:10px;display:flex;align-items:center;justify-content:center;color:var(--ink);cursor:pointer;transition:background .2s}
+.nav-drawer-close:hover{background:var(--line)}
+.nav-drawer-links{list-style:none;display:flex;flex-direction:column;gap:2px;flex:1;padding:8px 0 0}
+.nav-drawer-links li{list-style:none}
+.nav-drawer-links a{display:flex;align-items:center;padding:14px 14px;font-size:15px;font-weight:500;color:var(--ink);text-decoration:none;border-radius:10px;transition:background .2s,color .2s}
+.nav-drawer-links a:hover,.nav-drawer-links a:focus-visible{background:var(--violet-light);color:var(--violet-dark)}
+.nav-drawer-cta{display:flex;flex-direction:column;gap:10px;padding-top:16px;margin-top:8px;border-top:1px solid var(--line-light)}
+.nav-drawer-cta .btn{width:100%;justify-content:center}
+
 .btn{font-family:var(--ff);font-size:14px;font-weight:600;cursor:pointer;border:none;border-radius:10px;padding:10px 22px;transition:all .25s ease;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:6px}
 .btn-ghost{background:transparent;color:var(--ink);padding:10px 16px}.btn-ghost:hover{background:var(--line-light)}
 .btn-violet{background:var(--violet);color:#fff}.btn-violet:hover{background:var(--violet-dark);transform:translateY(-1px);box-shadow:0 4px 16px rgba(127,119,221,.3)}
@@ -217,18 +240,78 @@ footer{background:var(--ink);color:rgba(255,255,255,.5);padding:56px 28px 28px}
 .footer-col a{text-decoration:none;font-size:14px;color:rgba(255,255,255,.5);transition:color .2s}.footer-col a:hover{color:#fff}
 .footer-bottom{display:flex;justify-content:space-between;align-items:center;padding-top:20px;font-size:12px;color:rgba(255,255,255,.25)}
 
-/* MOBILE */
+/* MOBILE — tablette & large mobile */
 @media(max-width:900px){
+  .nav-inner{padding:0 20px;height:60px}
+  .nav-links,.nav-cta{display:none}
+  .nav-burger{display:flex}
+
+  .hero{padding:48px 20px 0}
   .hero-top,.feat-split,.feat-split.rev{grid-template-columns:1fr;gap:40px}
   .feat-split.rev .feat-txt,.feat-split.rev .feat-vis{order:unset}
-  .friction-grid,.pricing-grid,.testi-grid{grid-template-columns:1fr}
+  .friction-grid,.pricing-grid,.testi-grid{grid-template-columns:1fr;gap:16px}
   .compare-grid{grid-template-columns:1fr;gap:0}
+  .compare-col{padding:28px 24px}
   .compare-col.before{border-radius:16px 16px 0 0;border:1px solid rgba(255,255,255,.06);border-bottom:none}
   .compare-col.after{border-radius:0 0 16px 16px;border:1px solid rgba(104,157,113,.15);border-top:none}
   .compare-divider{flex-direction:row;padding:0 20px}
   .compare-divider::before{width:100%;height:1px;background:linear-gradient(90deg,transparent,rgba(127,119,221,.4),transparent)}
-  .compare-bottom{grid-template-columns:1fr}
+  .compare-bottom{grid-template-columns:1fr;margin-top:40px}
   .footer-top{grid-template-columns:1fr;gap:32px}
-  .nav-links{display:none}
   .float-notif{display:none}
+
+  .section{padding:72px 20px}
+  .cta-section{padding:64px 20px}
+  footer{padding:48px 20px 24px}
+}
+
+/* MOBILE — smartphone */
+@media(max-width:640px){
+  .nav-inner{padding:0 16px;height:56px}
+  .nav-logo img{height:24px}
+
+  .hero{padding:36px 16px 0}
+  .hero-top{gap:32px}
+  .hero-sub{font-size:16px;margin-bottom:24px}
+  .hero-actions{flex-direction:column;align-items:stretch;gap:10px}
+  .hero-actions .btn{justify-content:center;width:100%}
+  .hero-note{justify-content:center;text-align:center}
+
+  .mockup-body{padding:14px}
+  .db-stats{grid-template-columns:1fr 1fr;gap:8px}
+  .db-stat{padding:10px}
+  .db-stat-num{font-size:18px}
+  .db-tbl{font-size:11px}
+  .db-tbl th,.db-tbl td{padding:7px 4px}
+  .db-av{width:18px;height:18px;margin-right:4px}
+
+  .section{padding:56px 16px}
+  .friction-header{margin-bottom:40px}
+  .friction-header .sd{font-size:15px}
+  .fc{padding:22px}
+  .pc{padding:26px 22px}
+  .pc-price{font-size:40px}
+  .tc{padding:22px}
+  .cta-section{padding:56px 16px}
+  .cta-section h2{font-size:30px}
+  .cta-section p{font-size:15px}
+  footer{padding:40px 16px 20px}
+  .footer-bottom{flex-direction:column;gap:8px;text-align:center}
+
+  .compare-col{padding:22px 18px}
+  .compare-header{margin-bottom:40px}
+  .compare-header h2{font-size:28px}
+  .cb-cell{padding:28px 20px}
+  .compare-item{gap:10px;margin-bottom:18px}
+  .ci-icon{width:32px;height:32px}
+
+  h2.st{font-size:28px}
+  .sd{font-size:15px}
+}
+
+/* VERY SMALL */
+@media(max-width:380px){
+  .nav-inner{padding:0 14px}
+  .db-stats{grid-template-columns:1fr}
+  .db-tbl th:nth-child(2),.db-tbl td:nth-child(2){display:none}
 }
