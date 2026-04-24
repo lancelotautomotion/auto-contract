@@ -249,7 +249,40 @@ footer{background:var(--ink);color:rgba(255,255,255,.5);padding:56px 28px 28px}
   .hero{padding:48px 20px 0}
   .hero-top,.feat-split,.feat-split.rev{grid-template-columns:1fr;gap:40px}
   .feat-split.rev .feat-txt,.feat-split.rev .feat-vis{order:unset}
-  .friction-grid,.pricing-grid,.testi-grid{grid-template-columns:1fr;gap:16px}
+
+  /* HORIZONTAL SWIPE CARDS — frictions, pricing, testimonials */
+  .friction-grid,.pricing-grid,.testi-grid{
+    display:flex;
+    grid-template-columns:none;
+    overflow-x:auto;
+    overflow-y:visible;
+    scroll-snap-type:x mandatory;
+    scroll-behavior:smooth;
+    scroll-padding-left:20px;
+    gap:14px;
+    margin:0 -20px;
+    padding:20px 20px 24px;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
+  }
+  .friction-grid::-webkit-scrollbar,
+  .pricing-grid::-webkit-scrollbar,
+  .testi-grid::-webkit-scrollbar{display:none}
+  .fc,.pc,.tc{
+    flex:0 0 78%;
+    max-width:320px;
+    scroll-snap-align:start;
+    scroll-snap-stop:always;
+  }
+  .pc.feat{order:-1}
+  /* Scroll hint row — dots indicator */
+  .friction-grid::after,
+  .pricing-grid::after,
+  .testi-grid::after{
+    content:'';
+    flex:0 0 4px;
+  }
+
   .compare-grid{grid-template-columns:1fr;gap:0}
   .compare-col{padding:28px 24px}
   .compare-col.before{border-radius:16px 16px 0 0;border:1px solid rgba(255,255,255,.06);border-bottom:none}
