@@ -14,10 +14,6 @@ export default async function BookingPage({ params }: { params: Promise<{ slug: 
 
   return (
     <>
-      <div className="pub-topbar">
-        <div className="pub-topbar-name">{gite.name}</div>
-      </div>
-
       <div className="book-hero">
         <div className="book-hero-inner">
           <h1>Réservez au <span className="g">{gite.name}</span></h1>

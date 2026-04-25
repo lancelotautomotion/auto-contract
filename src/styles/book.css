@@ -9,10 +9,6 @@
   -webkit-font-smoothing:antialiased;line-height:1.6;min-height:100vh;display:flex;flex-direction:column;
 }
 
-/* ─── TOPBAR ─── */
-.pub-topbar{background:var(--white);border-bottom:1px solid var(--line);padding:0 24px;height:52px;display:flex;align-items:center;justify-content:center;position:sticky;top:0;z-index:10}
-.pub-topbar-name{font-size:15px;font-weight:700;color:var(--ink);letter-spacing:-0.01em}
-
 /* ─── HERO ─── */
 .book-hero{padding:44px 28px 32px;text-align:center}
 .book-hero-inner{max-width:520px;margin:0 auto}
@@ -23,27 +19,39 @@
 /* ─── MAIN ─── */
 .book-main{flex:1;padding:0 24px 60px;display:flex;justify-content:center}
 
-/* ─── 2-COLUMN LAYOUT ─── */
-.book-layout{width:100%;max-width:900px;display:grid;grid-template-columns:1fr 300px;gap:28px;align-items:start}
+/* ─── LAYOUT GRID (form / recap / final) ─── */
+.book-layout{
+  width:100%;max-width:900px;display:grid;
+  grid-template-columns:minmax(0,1fr) 300px;
+  grid-template-areas:
+    "form  recap"
+    "final recap";
+  gap:28px;
+  align-items:start;
+}
+.book-form-col{grid-area:form;min-width:0}
+.book-recap-col{grid-area:recap}
+.book-final-col{grid-area:final;min-width:0}
 
 /* ─── FORM SECTIONS ─── */
-.book-form-col{min-width:0}
-.book-fs{margin-bottom:20px}
+.book-fs{margin-bottom:24px}
 .book-fs-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--ink-lighter);margin-bottom:6px;display:flex;align-items:center;gap:8px}
 .book-fs-title svg{color:var(--violet);flex-shrink:0}
 .book-fs-divider{height:1px;background:var(--line);margin-bottom:14px}
 .book-card{background:var(--white);border:1px solid var(--line);border-radius:14px;padding:22px;transition:border-color .25s}
 .book-card:focus-within{border-color:var(--violet-light)}
-.book-group{margin-bottom:14px}
+.book-group{margin-bottom:18px}
 .book-group:last-child{margin-bottom:0}
-.book-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.book-label{display:block;font-size:11px;font-weight:700;color:var(--ink-soft);margin-bottom:5px;text-transform:uppercase;letter-spacing:.05em}
+.book-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px}
+.book-row:last-child{margin-bottom:0}
+.book-row .book-group{margin-bottom:0}
+.book-label{display:block;font-size:11px;font-weight:700;color:var(--ink-soft);margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em}
 .book-label .req{color:var(--violet)}
-.book-input,.book-date,.book-textarea{width:100%;font-family:var(--ff);font-size:14px;padding:10px 13px;border:1.5px solid var(--line);border-radius:10px;background:var(--white);color:var(--ink);transition:border-color .2s,box-shadow .2s;outline:none;box-sizing:border-box}
+.book-input,.book-date,.book-textarea{width:100%;max-width:100%;font-family:var(--ff);font-size:15px;padding:11px 13px;border:1.5px solid var(--line);border-radius:10px;background:var(--white);color:var(--ink);transition:border-color .2s,box-shadow .2s;outline:none;box-sizing:border-box;line-height:1.4}
 .book-input:focus,.book-date:focus,.book-textarea:focus{border-color:var(--violet);box-shadow:0 0 0 3px rgba(127,119,221,.1)}
 .book-input::placeholder,.book-textarea::placeholder{color:var(--ink-lighter)}
-.book-date{cursor:pointer}
-.book-textarea{resize:vertical;min-height:96px;line-height:1.7}
+.book-date{cursor:pointer;min-height:44px;-webkit-appearance:none;appearance:none}
+.book-textarea{resize:vertical;min-height:96px;line-height:1.6}
 .book-nights-badge{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--violet);background:var(--violet-light);border-radius:20px;padding:4px 12px;margin-top:12px}
 
 /* ─── OPTIONS ─── */
@@ -77,7 +85,7 @@
 @keyframes spin{to{transform:rotate(360deg)}}
 
 /* ─── RECAP COLUMN ─── */
-.book-recap-col{position:sticky;top:68px}
+.book-recap-col{position:sticky;top:24px}
 .book-recap-card{background:var(--white);border:1px solid var(--line);border-radius:16px;padding:22px;overflow:hidden}
 .book-recap-logo{margin-bottom:4px}
 .book-recap-gite-name{font-size:15px;font-weight:800;color:var(--ink);letter-spacing:-0.02em;margin-bottom:2px}
@@ -117,15 +125,24 @@
 
 /* ─── RESPONSIVE ─── */
 @media(max-width:768px){
-  .book-layout{grid-template-columns:1fr}
-  .book-recap-col{position:static;order:-1}
-  .book-recap-card{padding:16px 18px}
-  .book-recap-sep{margin:12px 0}
+  .book-layout{
+    grid-template-columns:minmax(0,1fr);
+    grid-template-areas:
+      "form"
+      "recap"
+      "final";
+    gap:24px;
+  }
+  .book-recap-col{position:static}
+  .book-recap-card{padding:18px}
+  .book-recap-sep{margin:14px 0}
   .book-recap-trust{flex-direction:row;flex-wrap:wrap;gap:10px}
   .book-hero{padding:32px 20px 24px}
   .book-main{padding:0 16px 48px}
 }
 @media(max-width:480px){
-  .book-row{grid-template-columns:1fr}
+  .book-row{grid-template-columns:1fr;gap:18px}
   .book-card{padding:18px}
+  .book-fs{margin-bottom:22px}
+  .book-input,.book-date,.book-textarea{font-size:16px;padding:12px 14px}
 }

@@ -288,36 +288,6 @@ export default function BookingForm({ giteSlug, giteName, giteCity, giteLogoUrl,
               />
             </div>
           </div>
-
-          {/* Consentement */}
-          <div className="book-consent">
-            <input type="checkbox" id="rgpd" required checked={form.gdprConsent} onChange={e => set('gdprConsent', e.target.checked)}/>
-            <label htmlFor="rgpd">
-              J&apos;accepte que mes données personnelles soient utilisées pour le traitement de ma demande conformément à la politique de confidentialité. <span className="req">*</span>
-            </label>
-          </div>
-
-          {error && <div className="book-error">{error}</div>}
-
-          <button className="btn-book-submit" type="submit" disabled={loading || !form.gdprConsent}>
-            {loading ? (
-              <span className="book-spinner"/>
-            ) : (
-              <>
-                Envoyer ma demande
-                <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
-                  <path d="M3 8h10m-4-4l4 4-4 4" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </>
-            )}
-          </button>
-          <div className="book-submit-note">
-            <svg width="13" height="13" fill="none" viewBox="0 0 13 13">
-              <path d="M6.5 1.5L2 4v3.5c0 3 2 5 4.5 6 2.5-1 4.5-3 4.5-6V4L6.5 1.5z" stroke="#A3A3A0" strokeWidth="1" strokeLinecap="round"/>
-              <path d="M4.5 6.5l1.5 1.5L9 5" stroke="#A3A3A0" strokeWidth="1" strokeLinecap="round"/>
-            </svg>
-            Aucun paiement requis à cette étape.
-          </div>
         </div>
 
         {/* ── COLONNE RÉCAP ── */}
@@ -398,6 +368,38 @@ export default function BookingForm({ giteSlug, giteName, giteCity, giteLogoUrl,
             </div>
           </div>
         </aside>
+
+        {/* ── COLONNE FINALE — consent + submit ── */}
+        <div className="book-final-col">
+          <div className="book-consent">
+            <input type="checkbox" id="rgpd" required checked={form.gdprConsent} onChange={e => set('gdprConsent', e.target.checked)}/>
+            <label htmlFor="rgpd">
+              J&apos;accepte que mes données personnelles soient utilisées pour le traitement de ma demande conformément à la politique de confidentialité. <span className="req">*</span>
+            </label>
+          </div>
+
+          {error && <div className="book-error">{error}</div>}
+
+          <button className="btn-book-submit" type="submit" disabled={loading || !form.gdprConsent}>
+            {loading ? (
+              <span className="book-spinner"/>
+            ) : (
+              <>
+                Envoyer ma demande
+                <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
+                  <path d="M3 8h10m-4-4l4 4-4 4" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </>
+            )}
+          </button>
+          <div className="book-submit-note">
+            <svg width="13" height="13" fill="none" viewBox="0 0 13 13">
+              <path d="M6.5 1.5L2 4v3.5c0 3 2 5 4.5 6 2.5-1 4.5-3 4.5-6V4L6.5 1.5z" stroke="#A3A3A0" strokeWidth="1" strokeLinecap="round"/>
+              <path d="M4.5 6.5l1.5 1.5L9 5" stroke="#A3A3A0" strokeWidth="1" strokeLinecap="round"/>
+            </svg>
+            Aucun paiement requis à cette étape.
+          </div>
+        </div>
 
       </div>
     </form>
