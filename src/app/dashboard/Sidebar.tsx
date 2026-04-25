@@ -112,6 +112,42 @@ export default function Sidebar({ pendingCount = 0, trialInfo, mobileOpen, onMob
           </Link>
         </div>
 
+        <div className="sb-section">
+          <div className="sb-section-title">Support</div>
+
+          <Link href="/aide" className={`sb-link${active('/aide') ? ' active' : ''}`}>
+            <span className="sb-icon">
+              <svg width="18" height="18" fill="none" viewBox="0 0 18 18">
+                <circle cx="9" cy="9" r="6.5" stroke="currentColor" strokeWidth="1.3"/>
+                <path d="M7 7c0-1.1.9-2 2-2s2 .9 2 2c0 .8-.5 1.5-1.2 1.8L9 11" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
+                <circle cx="9" cy="13.5" r=".8" fill="currentColor"/>
+              </svg>
+            </span>
+            FAQ & Aide
+          </Link>
+
+          <a href="mailto:support@prysme.app" className="sb-link">
+            <span className="sb-icon">
+              <svg width="18" height="18" fill="none" viewBox="0 0 18 18">
+                <rect x="2" y="4" width="14" height="10" rx="2" stroke="currentColor" strokeWidth="1.3"/>
+                <path d="M2 7l7 4 7-4" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </span>
+            Contacter le support
+          </a>
+
+          <a href="mailto:support@prysme.app?subject=Bug%20Prysme&body=Bonjour%2C%0A%0APage%20concern%C3%A9e%20%3A%20%0ADescription%20du%20probl%C3%A8me%20%3A%20%0A" className="sb-link">
+            <span className="sb-icon">
+              <svg width="18" height="18" fill="none" viewBox="0 0 18 18">
+                <path d="M9 2.5L2.5 14.5h13L9 2.5z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round"/>
+                <path d="M9 7v4" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
+                <circle cx="9" cy="12.5" r=".8" fill="currentColor"/>
+              </svg>
+            </span>
+            Signaler un bug
+          </a>
+        </div>
+
         {/* Trial upgrade CTA in sidebar */}
         {trialInfo?.isTrial && !trialInfo.isExpired && (
           <div className="sb-trial-card">
