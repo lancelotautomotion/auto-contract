@@ -33,6 +33,7 @@ export default function BookingForm({ giteSlug, giteName, giteCity, giteLogoUrl,
     firstName: '', lastName: '', email: '', phone: '',
     address: '', city: '', zipCode: '',
     checkIn: '', checkOut: '',
+    guestCount: '',
     notes: '',
     gdprConsent: false,
   });
@@ -212,6 +213,15 @@ export default function BookingForm({ giteSlug, giteName, giteCity, giteLogoUrl,
                   {nights} nuit{nights > 1 ? 's' : ''}
                 </div>
               )}
+              <div className="book-group" style={{ marginTop: '14px' }}>
+                <label className="book-label">Nombre de personnes <span className="req">*</span></label>
+                <input
+                  className="book-input" type="number" min="1" max="50" required
+                  placeholder="2"
+                  value={form.guestCount}
+                  onChange={e => set('guestCount', e.target.value)}
+                />
+              </div>
             </div>
           </div>
 
@@ -267,9 +277,12 @@ export default function BookingForm({ giteSlug, giteName, giteCity, giteLogoUrl,
             </div>
             <div className="book-fs-divider"/>
             <div className="book-card">
+              <p style={{ fontSize: '13px', color: 'var(--ink-lighter, #71716E)', margin: '0 0 10px', lineHeight: 1.5 }}>
+                Précisez la composition de votre groupe (couple, famille avec enfants, adultes…), votre heure d&apos;arrivée estimée ou toute demande particulière.
+              </p>
               <textarea
                 className="book-textarea"
-                placeholder="Nombre de personnes, demandes particulières, heure d'arrivée estimée..."
+                placeholder="Ex. Couple avec 2 enfants (4 et 7 ans), arrivée prévue vers 17h."
                 value={form.notes}
                 onChange={e => set('notes', e.target.value)}
               />

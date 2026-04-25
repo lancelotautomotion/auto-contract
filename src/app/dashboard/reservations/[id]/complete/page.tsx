@@ -88,6 +88,10 @@ export default async function CompleteReservationPage({ params }: { params: Prom
                 <div className="req-field-label">Dates souhaitées</div>
                 <div className="req-field-value">{fmtDisplay(reservation.checkIn)} → {fmtDisplay(reservation.checkOut)}</div>
               </div>
+              <div>
+                <div className="req-field-label">Nombre de personnes</div>
+                <div className="req-field-value">{reservation.guestCount ?? '—'}</div>
+              </div>
             </div>
 
             {reservation.reservationOptions.length > 0 && (

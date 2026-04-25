@@ -144,6 +144,10 @@ export default async function ReservationDetailPage({ params }: { params: Promis
                 <div className="db-label">Départ</div>
                 <div className="db-value">{fmt(reservation.checkOut)}</div>
               </div>
+              <div className="db-item">
+                <div className="db-label">Personnes</div>
+                <div className="db-value">{reservation.guestCount ?? '—'}</div>
+              </div>
             </div>
           </div>
 

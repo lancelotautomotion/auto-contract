@@ -94,6 +94,9 @@ model Reservation {
   checkIn  DateTime
   checkOut DateTime
 
+  // Composition du séjour
+  guestCount Int?
+
   // Tarifs (null si demande client en attente de validation)
   rent        Float?
   deposit     Float?

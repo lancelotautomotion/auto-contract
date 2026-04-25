@@ -22,6 +22,9 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ slu
   const selectedIds: string[] = Array.isArray(body.selectedOptionIds) ? body.selectedOptionIds : [];
   const selectedOptions = gite.options.filter(o => selectedIds.includes(o.id));
 
+  const guestCountParsed = parseInt(String(body.guestCount ?? ''), 10);
+  const guestCount = Number.isFinite(guestCountParsed) && guestCountParsed > 0 ? guestCountParsed : null;
+
   const reservation = await prisma.reservation.create({
     data: {
       giteId: gite.id,
@@ -35,6 +38,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ slu
       clientZipCode: body.zipCode ?? "",
       checkIn: new Date(body.checkIn),
       checkOut: new Date(body.checkOut),
+      guestCount,
       notes: body.notes ?? "",
       rent: null,
       deposit: null,
@@ -62,6 +66,9 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ slu
       const optionsHtml = selectedOptions.length > 0
         ? `<p style="font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif;font-size:14px;color:#2C2C2A;margin:0 0 6px;"><strong>Options :</strong> ${selectedOptions.map(o => `${o.label}${o.price > 0 ? ` (+${o.price} €)` : ''}`).join(', ')}</p>`
         : '';
+      const guestsHtml = guestCount
+        ? `<p style="font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif;font-size:14px;color:#2C2C2A;margin:0 0 6px;"><strong>Personnes :</strong> ${guestCount}</p>`
+        : '';
       const notesHtml = body.notes
         ? `<p style="font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif;font-size:14px;color:#71716E;margin:8px 0 0;font-style:italic;">« ${body.notes} »</p>`
         : '';
@@ -80,6 +87,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ slu
     <p style="font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:#A3A3A0;margin:0 0 12px;">Séjour demandé</p>
     <p style="font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif;font-size:15px;font-weight:700;color:#2C2C2A;margin:0 0 4px;">${checkIn} → ${checkOut}</p>
     <p style="font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif;font-size:14px;color:#7F77DD;font-weight:600;margin:0 0 8px;">${nights} nuit${nights > 1 ? 's' : ''}</p>
+    ${guestsHtml}
     ${optionsHtml}
     ${notesHtml}
   </td></tr>
