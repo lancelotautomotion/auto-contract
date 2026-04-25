@@ -1,4 +1,3 @@
-import { put } from "@vercel/blob";
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { generateSignedContractPdf, ContractData } from "@/lib/contractPdf";
@@ -58,18 +57,10 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
       signedByIp: reservation.contract.signedByIp ?? "inconnue",
       reservationId: reservation.id,
     });
-    console.log("[mark-deposit] ✓ PDF généré, taille:", pdfBuffer.length);
-
-    const pdfFilename = `contrats/${reservation.id}/contrat-signe.pdf`;
-    const { url: signedPdfUrl } = await put(pdfFilename, pdfBuffer, {
-      access: "public",
-      contentType: "application/pdf",
-    });
-    console.log("[mark-deposit] ✓ PDF uploadé:", signedPdfUrl);
 
     await prisma.contract.update({
       where: { id: reservation.contract.id },
-      data: { depositReceived: true, depositReceivedAt: new Date(), signedPdfUrl },
+      data: { depositReceived: true, depositReceivedAt: new Date() },
     });
 
     const resend = new Resend(process.env.RESEND_API_KEY);

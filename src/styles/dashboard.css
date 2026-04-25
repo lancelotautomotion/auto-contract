@@ -24,9 +24,8 @@
 
 /* ═══ APP SHELL ═══ */
 .app {
-  position: fixed;
-  inset: 0;
   display: flex;
+  min-height: 100vh;
   background: var(--line-light);
   -webkit-font-smoothing: antialiased;
 }
@@ -40,6 +39,10 @@
   flex-direction: column;
   flex-shrink: 0;
   overflow-y: auto;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  align-self: flex-start;
 }
 .sb-logo { padding: 24px 24px 32px; display: flex; align-items: center; }
 .sb-nav { flex: 1; padding: 0 12px; }
@@ -88,7 +91,7 @@
 .sb-user-plan { font-size: 10px; color: rgba(255,255,255,.3); font-weight: 500; }
 
 /* ═══ MAIN ═══ */
-.main { flex: 1; min-width: 0; overflow-y: auto; overflow-x: hidden; display: flex; flex-direction: column; }
+.main { flex: 1; min-width: 0; overflow-x: hidden; display: flex; flex-direction: column; }
 
 /* ═══ TOPBAR ═══ */
 .topbar {
