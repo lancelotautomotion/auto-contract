@@ -3,13 +3,6 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-const OPTIONS = [
-  { key: 'offerNordicBath', priceKey: 'nordicBathPrice', label: 'Bain nordique' },
-  { key: 'offerSheet160',   priceKey: 'sheet160Price',   label: 'Draps 160×200' },
-  { key: 'offerSheet90',    priceKey: 'sheet90Price',    label: 'Draps 90×190' },
-  { key: 'offerTowels',     priceKey: 'towelsPrice',     label: 'Linge de toilette' },
-];
-
 export default function OnboardingForm({ defaultEmail }: { defaultEmail: string }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -17,16 +10,10 @@ export default function OnboardingForm({ defaultEmail }: { defaultEmail: string 
   const [form, setForm] = useState({
     giteName: '', email: defaultEmail, phone: '',
     address: '', city: '', zipCode: '',
-    capacity: '12', cleaningFee: '90', touristTax: '1.32',
-    offerNordicBath: false, nordicBathPrice: '120',
-    offerSheet160: false,   sheet160Price: '0',
-    offerSheet90: false,    sheet90Price: '0',
-    offerTowels: false,     towelsPrice: '0',
   });
   const [cguAccepted, setCguAccepted] = useState(false);
 
   const set = (k: string, v: string) => setForm(f => ({ ...f, [k]: v }));
-  const toggle = (k: string) => setForm(f => ({ ...f, [k]: !f[k as keyof typeof f] }));
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,18 +27,11 @@ export default function OnboardingForm({ defaultEmail }: { defaultEmail: string 
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/^-+|-+$/g, '');
 
-    const options = OPTIONS
-      .filter(opt => form[opt.key as keyof typeof form])
-      .map(opt => ({
-        label: opt.label,
-        price: parseFloat(String(form[opt.priceKey as keyof typeof form] ?? '0')) || 0,
-      }));
-
     try {
       const res = await fetch('/api/onboarding', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...form, slug, options }),
+        body: JSON.stringify({ ...form, slug }),
       });
       if (res.ok) {
         router.push('/dashboard');
@@ -108,60 +88,6 @@ export default function OnboardingForm({ defaultEmail }: { defaultEmail: string 
         </div>
       </div>
 
-      {/* Section 2 — Tarifs */}
-      <div className="ob-section">
-        <p className="ob-section-title">Tarifs par défaut</p>
-        <div className="ob-row-3">
-          <div className="ob-field">
-            <label className="ob-label">Capacité (pers.)</label>
-            <input className="ob-input" type="number" min="1"
-              value={form.capacity} onChange={e => set('capacity', e.target.value)}/>
-          </div>
-          <div className="ob-field">
-            <label className="ob-label">Frais de ménage (€)</label>
-            <input className="ob-input" type="number" step="0.01" min="0"
-              value={form.cleaningFee} onChange={e => set('cleaningFee', e.target.value)}/>
-          </div>
-          <div className="ob-field">
-            <label className="ob-label">Taxe de séjour (€/nuit)</label>
-            <input className="ob-input" type="number" step="0.01" min="0"
-              value={form.touristTax} onChange={e => set('touristTax', e.target.value)}/>
-          </div>
-        </div>
-      </div>
-
-      {/* Section 3 — Options */}
-      <div className="ob-section">
-        <p className="ob-section-title">
-          Options proposées
-          <span className="ob-section-note">— facultatif, modifiable plus tard</span>
-        </p>
-        <div className="ob-opts">
-          {OPTIONS.map(opt => (
-            <label key={opt.key} className="ob-opt">
-              <input
-                type="checkbox"
-                checked={form[opt.key as keyof typeof form] as boolean}
-                onChange={() => toggle(opt.key)}
-              />
-              <span className="ob-opt-name">{opt.label}</span>
-              {form[opt.key as keyof typeof form] && (
-                <div className="ob-opt-price" onClick={e => e.preventDefault()}>
-                  <input
-                    type="number" step="0.01" min="0"
-                    className="ob-price-input"
-                    value={form[opt.priceKey as keyof typeof form] as string}
-                    onChange={e => set(opt.priceKey, e.target.value)}
-                    onClick={e => e.stopPropagation()}
-                  />
-                  <span className="ob-price-unit">€</span>
-                </div>
-              )}
-            </label>
-          ))}
-        </div>
-      </div>
-
       {/* CGU */}
       <label className="ob-cgu">
         <input
@@ -195,7 +121,7 @@ export default function OnboardingForm({ defaultEmail }: { defaultEmail: string 
       </button>
 
       <p className="ob-note">
-        Vous pourrez compléter et modifier toutes ces informations dans vos paramètres.
+        Vous configurerez vos tarifs, options et documents depuis votre tableau de bord.
       </p>
 
     </form>

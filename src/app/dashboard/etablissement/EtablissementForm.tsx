@@ -496,10 +496,12 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
             {options.map((opt, i) => (
               <div key={i} className="option-row">
                 <input type="text" className="option-name" placeholder="Nom de l'option..." value={opt.label} onChange={e => updateOption(i, 'label', e.target.value)} />
-                <input type="number" className="option-price" min="0" step="0.01" value={opt.price} onChange={e => updateOption(i, 'price', e.target.value)} />
+                <input type="number" className="option-price" min="0" step="0.01" placeholder="Gratuit" value={opt.price === 0 ? '' : String(opt.price)} onChange={e => updateOption(i, 'price', e.target.value)} />
                 <span className="option-unit">€</span>
-                <button type="button" className="option-del" onClick={() => removeOption(i)}>
-                  <svg width="10" height="10" fill="none" viewBox="0 0 10 10"><path d="M2 2l6 6M8 2l-6 6" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/></svg>
+                <button type="button" className="option-del" onClick={() => removeOption(i)} title="Supprimer">
+                  <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
+                    <path d="M2.5 3.5h9M5 3.5V2.5a1 1 0 011-1h2a1 1 0 011 1v1M3.5 3.5l.5 8.5a1 1 0 001 1h4a1 1 0 001-1l.5-8.5M5.5 6v4M8.5 6v4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
                 </button>
               </div>
             ))}
