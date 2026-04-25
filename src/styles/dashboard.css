@@ -950,10 +950,17 @@
   .header-actions .btn,
   .header-actions .btn-lg {
     flex: 1;
-    justify-content: center;
-    padding: 12px 10px;
+    min-width: 0;
+    justify-content: flex-start;
+    padding: 12px 14px;
     font-size: 13px;
-    text-align: center;
+    text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .header-actions .btn svg {
+    flex-shrink: 0;
   }
   .dash-header .btn,
   .dash-header .btn-lg,
