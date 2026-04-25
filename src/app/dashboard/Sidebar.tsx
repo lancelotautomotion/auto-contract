@@ -115,7 +115,7 @@ export default function Sidebar({ pendingCount = 0, trialInfo, mobileOpen, onMob
         <div className="sb-section">
           <div className="sb-section-title">Support</div>
 
-          <Link href="/aide" className={`sb-link${active('/aide') ? ' active' : ''}`}>
+          <Link href="/comment-ca-marche" className={`sb-link${active('/comment-ca-marche') ? ' active' : ''}`}>
             <span className="sb-icon">
               <svg width="18" height="18" fill="none" viewBox="0 0 18 18">
                 <circle cx="9" cy="9" r="6.5" stroke="currentColor" strokeWidth="1.3"/>
@@ -126,7 +126,7 @@ export default function Sidebar({ pendingCount = 0, trialInfo, mobileOpen, onMob
             FAQ & Aide
           </Link>
 
-          <a href="mailto:support@prysme.app" className="sb-link">
+          <Link href="/contact" className={`sb-link${active('/contact') ? ' active' : ''}`}>
             <span className="sb-icon">
               <svg width="18" height="18" fill="none" viewBox="0 0 18 18">
                 <rect x="2" y="4" width="14" height="10" rx="2" stroke="currentColor" strokeWidth="1.3"/>
@@ -134,9 +134,9 @@ export default function Sidebar({ pendingCount = 0, trialInfo, mobileOpen, onMob
               </svg>
             </span>
             Contacter le support
-          </a>
+          </Link>
 
-          <a href="mailto:support@prysme.app?subject=Bug%20Prysme&body=Bonjour%2C%0A%0APage%20concern%C3%A9e%20%3A%20%0ADescription%20du%20probl%C3%A8me%20%3A%20%0A" className="sb-link">
+          <Link href="/contact?sujet=Signaler+un+bug" className="sb-link">
             <span className="sb-icon">
               <svg width="18" height="18" fill="none" viewBox="0 0 18 18">
                 <path d="M9 2.5L2.5 14.5h13L9 2.5z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round"/>
@@ -145,7 +145,7 @@ export default function Sidebar({ pendingCount = 0, trialInfo, mobileOpen, onMob
               </svg>
             </span>
             Signaler un bug
-          </a>
+          </Link>
         </div>
 
         {/* Trial upgrade CTA in sidebar */}

@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 
 type FormState = {
@@ -26,6 +27,12 @@ export default function ContactForm() {
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    const sujet = searchParams.get('sujet');
+    if (sujet) setForm(prev => ({ ...prev, sujet }));
+  }, [searchParams]);
 
   function handleChange(
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
@@ -138,6 +145,7 @@ export default function ContactForm() {
             <option>Question sur les tarifs</option>
             <option>Demande de démo</option>
             <option>Support technique</option>
+            <option>Signaler un bug</option>
             <option>Partenariat / Presse</option>
             <option>Autre</option>
           </select>
