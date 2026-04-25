@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { auth } from "@clerk/nextjs/server";
 import { Plus_Jakarta_Sans } from 'next/font/google';
 import { redirect } from "next/navigation";
@@ -6,6 +7,8 @@ import TrialBanner from "./TrialBanner";
 import { prisma } from "@/lib/prisma";
 import { getTrialInfo } from "@/lib/trial";
 import '@/styles/dashboard.css';
+
+export const metadata: Metadata = { title: "Prysme" };
 
 const font = Plus_Jakarta_Sans({
   subsets: ['latin'],
