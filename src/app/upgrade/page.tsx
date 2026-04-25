@@ -1,7 +1,8 @@
 import { auth } from "@clerk/nextjs/server";
+import { currentUser } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/prisma";
 import { getTrialInfo } from "@/lib/trial";
-import { UserButton } from "@clerk/nextjs";
+import Image from "next/image";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import SubscribeButton from "./SubscribeButton";
 
@@ -29,6 +30,10 @@ export default async function UpgradePage({ searchParams }: { searchParams: Prom
     const dbUser = await prisma.user.findUnique({ where: { clerkId } });
     if (dbUser) trialInfo = getTrialInfo(dbUser);
   }
+  const user = await currentUser();
+  const initials = user
+    ? `${user.firstName?.[0] ?? ''}${user.lastName?.[0] ?? ''}`.toUpperCase() || (user.emailAddresses[0]?.emailAddress?.[0]?.toUpperCase() ?? 'U')
+    : 'U';
 
   const isExpired = trialInfo?.isExpired ?? false;
   const isActive = trialInfo?.isActive ?? false;
@@ -42,23 +47,49 @@ export default async function UpgradePage({ searchParams }: { searchParams: Prom
       fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif", WebkitFontSmoothing: 'antialiased',
     }}>
       {/* Header */}
-      <header style={{ padding: '18px 32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #E8E6E1', backgroundColor: '#FFFFFF' }}>
-        <span style={{ fontSize: '15px', fontWeight: 800, color: '#2C2C2A', letterSpacing: '-0.02em' }}>Prysme</span>
-        <UserButton />
+      <header style={{ padding: '14px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #E8E6E1', backgroundColor: '#FFFFFF' }}>
+        <Image src="/logotype_prysme.png" alt="Prysme" width={120} height={28} style={{ height: 22, width: 'auto', objectFit: 'contain' }}/>
+        <div
+          aria-hidden="true"
+          style={{
+            width: '32px', height: '32px', borderRadius: '50%',
+            background: 'linear-gradient(135deg, #7F77DD, #5B52B5)',
+            color: '#fff', fontSize: '12px', fontWeight: 700,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            boxShadow: '0 2px 8px rgba(127,119,221,.3)',
+            userSelect: 'none', pointerEvents: 'none',
+          }}
+        >
+          {initials}
+        </div>
       </header>
 
-      <main style={{ flex: 1, padding: '48px 20px 64px' }}>
+      {/* Hero coloré violet → vert */}
+      <section style={{
+        position: 'relative', overflow: 'hidden',
+        background: 'linear-gradient(135deg, #EFEEF9 0%, #FCFFF2 50%, #EEF5EF 100%)',
+        padding: '56px 20px 48px', textAlign: 'center',
+        borderBottom: '1px solid #E8E6E1',
+      }}>
+        {/* Orbs décoratifs */}
+        <div aria-hidden style={{ position: 'absolute', width: '300px', height: '300px', borderRadius: '50%', top: '-100px', left: '-80px', background: 'radial-gradient(circle, rgba(127,119,221,.18) 0%, transparent 65%)', pointerEvents: 'none' }}/>
+        <div aria-hidden style={{ position: 'absolute', width: '320px', height: '320px', borderRadius: '50%', bottom: '-120px', right: '-80px', background: 'radial-gradient(circle, rgba(104,157,113,.15) 0%, transparent 65%)', pointerEvents: 'none' }}/>
 
-        {/* Page title */}
-        <div style={{ textAlign: 'center', marginBottom: '40px' }}>
-          <p style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#A3A3A0', margin: '0 0 10px' }}>Tarifs</p>
-          <h1 style={{ fontSize: 'clamp(26px, 4vw, 36px)', fontWeight: 800, color: '#2C2C2A', letterSpacing: '-0.03em', margin: '0 0 10px', lineHeight: 1.2 }}>
-            Choisissez votre formule
+        <div style={{ position: 'relative', zIndex: 1, maxWidth: '600px', margin: '0 auto' }}>
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#5B52B5', marginBottom: '16px' }}>
+            <span style={{ width: '16px', height: '2px', borderRadius: '1px', background: '#7F77DD' }}/>
+            Tarifs
+          </span>
+          <h1 style={{ fontSize: 'clamp(28px, 5vw, 42px)', fontWeight: 800, color: '#2C2C2A', letterSpacing: '-0.03em', margin: '0 0 12px', lineHeight: 1.15 }}>
+            Choisissez votre <span style={{ color: '#7F77DD' }}>formule</span>
           </h1>
           <p style={{ fontSize: '15px', color: '#71716E', margin: 0, lineHeight: 1.6 }}>
             Sans engagement. Annulable à tout moment.
           </p>
         </div>
+      </section>
+
+      <main style={{ flex: 1, padding: '40px 20px 64px' }}>
 
         {/* Banners */}
         {isExpired && (
@@ -86,10 +117,10 @@ export default async function UpgradePage({ searchParams }: { searchParams: Prom
         <div style={{ maxWidth: '860px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '16px', alignItems: 'start' }}>
 
           {/* Plan Gratuit */}
-          <div style={{ backgroundColor: '#FFFFFF', borderRadius: '16px', border: '1px solid #E8E6E1', overflow: 'hidden', opacity: isExpired ? 0.55 : 1 }}>
-            <div style={{ height: '4px', backgroundColor: '#E8E6E1' }}/>
+          <div style={{ backgroundColor: '#FFFFFF', borderRadius: '16px', border: '1px solid #E8E6E1', overflow: 'hidden', opacity: isExpired ? 0.6 : 1 }}>
+            <div style={{ height: '4px', background: 'linear-gradient(90deg, #689D71 0%, #9B95E8 100%)' }}/>
             <div style={{ padding: '28px 28px 32px' }}>
-              <p style={{ fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color: '#A3A3A0', margin: '0 0 6px' }}>Gratuit</p>
+              <p style={{ fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color: '#689D71', margin: '0 0 6px' }}>Gratuit</p>
               <div style={{ display: 'flex', alignItems: 'flex-end', gap: '6px', marginBottom: '4px' }}>
                 <span style={{ fontSize: '36px', fontWeight: 800, color: '#2C2C2A', letterSpacing: '-0.04em', lineHeight: 1 }}>0 €</span>
               </div>
@@ -99,13 +130,13 @@ export default async function UpgradePage({ searchParams }: { searchParams: Prom
               <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 28px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
                 {['1 hébergement', '3 contrats / mois', 'Signature eIDAS', 'Email automatique'].map(f => (
                   <li key={f} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', color: isExpired ? '#A3A3A0' : '#2C2C2A' }}>
-                    <span style={{ width: '18px', height: '18px', borderRadius: '5px', backgroundColor: '#F3F2EE', color: '#A3A3A0', fontSize: '10px', fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>✓</span>
+                    <span style={{ width: '18px', height: '18px', borderRadius: '5px', backgroundColor: 'rgba(104,157,113,.15)', color: '#689D71', fontSize: '10px', fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>✓</span>
                     {f}
                   </li>
                 ))}
               </ul>
-              <div style={{ padding: '11px 16px', background: '#F3F2EE', borderRadius: '10px', textAlign: 'center', fontSize: '13px', fontWeight: 600, color: '#A3A3A0' }}>
-                {isTrial ? 'Plan actuel' : isExpired ? 'Expiré' : 'Actuel'}
+              <div style={{ padding: '11px 16px', background: isExpired ? '#FEF2F2' : 'rgba(104,157,113,.1)', border: `1px solid ${isExpired ? 'rgba(220,38,38,.2)' : 'rgba(104,157,113,.25)'}`, borderRadius: '10px', textAlign: 'center', fontSize: '13px', fontWeight: 700, color: isExpired ? '#b91c1c' : '#4A7353' }}>
+                {isTrial ? '✓ Plan actuel' : isExpired ? 'Expiré' : 'Plan actuel'}
               </div>
             </div>
           </div>
@@ -142,13 +173,14 @@ export default async function UpgradePage({ searchParams }: { searchParams: Prom
           </div>
 
           {/* Plan Multi-hébergement — Coming soon */}
-          <div style={{ backgroundColor: '#FFFFFF', borderRadius: '16px', border: '1px solid #E8E6E1', overflow: 'hidden', opacity: 0.7 }}>
+          <div style={{ backgroundColor: '#FFFFFF', borderRadius: '16px', border: '1.5px solid rgba(104,157,113,.3)', overflow: 'hidden', position: 'relative' }}>
             <div style={{ height: '4px', backgroundColor: '#689D71' }}/>
+            {/* Badge Bientôt */}
+            <div style={{ position: 'absolute', top: '16px', right: '16px', background: '#689D71', color: '#fff', fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', padding: '3px 10px', borderRadius: '20px' }}>
+              Bientôt
+            </div>
             <div style={{ padding: '28px 28px 32px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
-                <p style={{ fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color: '#689D71', margin: 0 }}>Multi-hébergement</p>
-                <span style={{ background: '#EEF5EF', color: '#689D71', fontSize: '9px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', padding: '2px 8px', borderRadius: '20px', flexShrink: 0 }}>Bientôt</span>
-              </div>
+              <p style={{ fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color: '#689D71', margin: '0 0 6px' }}>Multi-hébergement</p>
               <div style={{ display: 'flex', alignItems: 'flex-end', gap: '6px', marginBottom: '4px' }}>
                 <span style={{ fontSize: '36px', fontWeight: 800, color: '#2C2C2A', letterSpacing: '-0.04em', lineHeight: 1 }}>15 €</span>
                 <span style={{ fontSize: '13px', color: '#A3A3A0', paddingBottom: '6px' }}>HT / mois</span>
@@ -159,12 +191,12 @@ export default async function UpgradePage({ searchParams }: { searchParams: Prom
               <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 28px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
                 {['Jusqu\'à 3 hébergements', 'Contrats illimités', 'Tout ce qu\'inclut Essentiel', 'Tableau de bord unifié'].map(f => (
                   <li key={f} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', color: '#2C2C2A' }}>
-                    <span style={{ width: '18px', height: '18px', borderRadius: '5px', backgroundColor: 'rgba(104,157,113,.12)', color: '#689D71', fontSize: '10px', fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>✓</span>
+                    <span style={{ width: '18px', height: '18px', borderRadius: '5px', backgroundColor: 'rgba(104,157,113,.18)', color: '#689D71', fontSize: '10px', fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>✓</span>
                     {f}
                   </li>
                 ))}
               </ul>
-              <div style={{ padding: '11px 16px', background: '#EEF5EF', borderRadius: '10px', textAlign: 'center', fontSize: '13px', fontWeight: 600, color: '#689D71' }}>
+              <div style={{ padding: '11px 16px', background: '#EEF5EF', border: '1px solid rgba(104,157,113,.25)', borderRadius: '10px', textAlign: 'center', fontSize: '13px', fontWeight: 700, color: '#4A7353' }}>
                 Disponible prochainement
               </div>
             </div>
