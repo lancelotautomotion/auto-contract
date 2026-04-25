@@ -53,6 +53,12 @@ export default function SignInPage() {
           <div className="orb orb-1" />
           <div className="orb orb-2" />
           <div className="orb orb-3" />
+          <Link href="/" className="auth-back">
+            <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
+              <path d="M9 11L5 7l4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+            Retour à l&apos;accueil
+          </Link>
           <div className="ab-content">
             <div className="ab-mark">
               <Image src="/mark_prysme.png" alt="Prysme" width={44} height={44} style={{ objectFit: 'contain' }} />
@@ -71,6 +77,12 @@ export default function SignInPage() {
 
         <div className="auth-form-panel">
           <div className="auth-form-inner">
+            <Link href="/" className="auth-back-mobile">
+              <svg width="13" height="13" fill="none" viewBox="0 0 13 13">
+                <path d="M8.5 10L4.5 6.5l4-3.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+              Retour à l&apos;accueil
+            </Link>
             <div className="auth-tabs">
               <Link href="/sign-in" className="auth-tab auth-tab--active">Se connecter</Link>
               <Link href="/sign-up" className="auth-tab">Créer un compte</Link>
