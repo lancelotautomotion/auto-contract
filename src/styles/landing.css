@@ -8,7 +8,7 @@
   --nav-h:68px;
 }
 html{scroll-behavior:smooth}
-body{font-family:var(--ff);color:var(--ink);background:var(--white);-webkit-font-smoothing:antialiased;overflow-x:hidden;line-height:1.6}
+body{font-family:var(--ff);color:var(--ink);background:var(--white);-webkit-font-smoothing:antialiased;overflow-x:clip;line-height:1.6}
 body:has(nav.nav){padding-top:var(--nav-h)}
 
 /* SCROLL REVEAL */
