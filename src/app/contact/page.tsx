@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { Suspense } from 'react';
 import '@/styles/landing.css';
 import './contact.css';
 import Nav from '@/components/landing/Nav';
@@ -103,7 +104,9 @@ export default function ContactPage() {
             </aside>
 
             {/* ── Form (right) ── */}
-            <ContactForm />
+            <Suspense fallback={<div className="ct-form-wrap" />}>
+              <ContactForm />
+            </Suspense>
 
           </div>
         </section>
