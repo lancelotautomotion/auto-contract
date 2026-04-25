@@ -8,6 +8,11 @@ export const metadata: Metadata = {
   title: "Prysme — Contrats de location pour gîtes, automatisés",
   description: "Automatisez vos contrats de location saisonnière en 2 minutes. Génération PDF, envoi email, suivi acompte. 30 jours gratuits, sans CB.",
   icons: { icon: "/mark_prysme.png" },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'Prysme',
+  },
 };
 
 export default function RootLayout({
@@ -20,6 +25,7 @@ export default function RootLayout({
       <html lang="fr" className="h-full antialiased" suppressHydrationWarning>
         <head>
           <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+          <meta name="theme-color" content="#689D71" />
           {/* eslint-disable-next-line @next/next/no-sync-scripts */}
           <script dangerouslySetInnerHTML={{__html:`(function(){try{var t=localStorage.getItem('theme');if(t==='dark')document.documentElement.classList.add('dark');}catch(e){}})();`}} />
         </head>
