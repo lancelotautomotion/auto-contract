@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { createPortal } from "react-dom";
 import Link from "next/link";
 import { useTheme } from "@/providers/ThemeProvider";
 
@@ -291,7 +292,7 @@ export default function SettingsForm({ notificationEmail, notifNewReservation, n
     </div>
 
     {/* MODAL CONFIRMATION SUPPRESSION */}
-    {deleteModal && (
+    {deleteModal && createPortal(
       <div
         onClick={e => { if (e.target === e.currentTarget) setDeleteModal(false); }}
         style={{
@@ -373,7 +374,8 @@ export default function SettingsForm({ notificationEmail, notifNewReservation, n
             </button>
           </div>
         </div>
-      </div>
+      </div>,
+      document.body
     )}
     </>
   );
