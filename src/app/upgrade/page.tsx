@@ -5,6 +5,7 @@ import { getTrialInfo } from "@/lib/trial";
 import Image from "next/image";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import SubscribeButton from "./SubscribeButton";
+import "@/styles/upgrade.css";
 
 const font = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -47,7 +48,7 @@ export default async function UpgradePage({ searchParams }: { searchParams: Prom
       fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif", WebkitFontSmoothing: 'antialiased',
     }}>
       {/* Header */}
-      <header style={{ padding: '14px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #E8E6E1', backgroundColor: '#FFFFFF' }}>
+      <header className="upgrade-header">
         <Image src="/logotype_prysme.png" alt="Prysme" width={120} height={28} style={{ height: 22, width: 'auto', objectFit: 'contain' }}/>
         <div
           aria-hidden="true"
@@ -65,12 +66,7 @@ export default async function UpgradePage({ searchParams }: { searchParams: Prom
       </header>
 
       {/* Hero */}
-      <section style={{
-        position: 'relative', overflow: 'hidden',
-        background: 'linear-gradient(135deg, #EFEEF9 0%, #FCFFF2 50%, #EEF5EF 100%)',
-        padding: '56px 20px 48px', textAlign: 'center',
-        borderBottom: '1px solid #E8E6E1',
-      }}>
+      <section className="upgrade-hero">
         <div aria-hidden style={{ position: 'absolute', width: '300px', height: '300px', borderRadius: '50%', top: '-100px', left: '-80px', background: 'radial-gradient(circle, rgba(127,119,221,.18) 0%, transparent 65%)', pointerEvents: 'none' }}/>
         <div aria-hidden style={{ position: 'absolute', width: '320px', height: '320px', borderRadius: '50%', bottom: '-120px', right: '-80px', background: 'radial-gradient(circle, rgba(104,157,113,.15) 0%, transparent 65%)', pointerEvents: 'none' }}/>
 
@@ -88,7 +84,7 @@ export default async function UpgradePage({ searchParams }: { searchParams: Prom
         </div>
       </section>
 
-      <main style={{ flex: 1, padding: '40px 20px 64px' }}>
+      <main className="upgrade-main">
 
         {/* Banners */}
         {isExpired && (
@@ -113,7 +109,7 @@ export default async function UpgradePage({ searchParams }: { searchParams: Prom
         )}
 
         {/* Pricing grid — equal-height cards with bottom-aligned CTAs */}
-        <div style={{ maxWidth: '960px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', alignItems: 'stretch' }}>
+        <div className="upgrade-grid">
 
           {/* Plan Gratuit */}
           <div style={{ backgroundColor: '#FFFFFF', borderRadius: '16px', border: '1px solid #E8E6E1', overflow: 'hidden', opacity: isExpired ? 0.6 : 1, display: 'flex', flexDirection: 'column' }}>

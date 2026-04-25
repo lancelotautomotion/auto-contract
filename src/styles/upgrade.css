@@ -1,0 +1,58 @@
+/* /upgrade — pricing page */
+
+.upgrade-grid {
+  max-width: 960px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  align-items: stretch;
+}
+
+@media (max-width: 860px) {
+  .upgrade-grid {
+    grid-template-columns: 1fr;
+    max-width: 480px;
+  }
+}
+
+.upgrade-hero {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #EFEEF9 0%, #FCFFF2 50%, #EEF5EF 100%);
+  padding: 56px 20px 48px;
+  text-align: center;
+  border-bottom: 1px solid #E8E6E1;
+}
+
+@media (max-width: 640px) {
+  .upgrade-hero {
+    padding: 40px 16px 32px;
+  }
+}
+
+.upgrade-header {
+  padding: 14px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #E8E6E1;
+  background-color: #FFFFFF;
+}
+
+@media (max-width: 640px) {
+  .upgrade-header {
+    padding: 12px 16px;
+  }
+}
+
+.upgrade-main {
+  flex: 1;
+  padding: 40px 20px 64px;
+}
+
+@media (max-width: 640px) {
+  .upgrade-main {
+    padding: 28px 16px 48px;
+  }
+}
