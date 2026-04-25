@@ -944,10 +944,16 @@
     word-break: break-word;
     overflow-wrap: anywhere;
   }
+  .header-actions {
+    width: 100%;
+  }
   .header-actions .btn,
   .header-actions .btn-lg {
-    padding: 10px 14px;
+    flex: 1;
+    justify-content: center;
+    padding: 12px 10px;
     font-size: 13px;
+    text-align: center;
   }
   .dash-header .btn,
   .dash-header .btn-lg,
