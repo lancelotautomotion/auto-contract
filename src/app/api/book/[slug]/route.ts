@@ -8,7 +8,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ slu
 
   const gite = await prisma.gite.findUnique({
     where: { slug },
-    include: { options: true },
+    include: { options: true, user: true },
   });
 
   if (!gite) return NextResponse.json({ error: "Gîte introuvable" }, { status: 404 });
@@ -50,8 +50,8 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ slu
     },
   });
 
-  // Notification email au gérant
-  const notifTo = gite.notificationEmail || gite.email;
+  // Notification email au gérant — fallback sur l'email Prysme du compte si aucun email gîte configuré
+  const notifTo = gite.notificationEmail || gite.email || gite.user.email;
   if (notifTo && process.env.RESEND_API_KEY) {
     try {
       const resend = new Resend(process.env.RESEND_API_KEY);
@@ -102,8 +102,8 @@ ${muted('Cette demande est en attente de votre confirmation dans Prysme.')}
           body: emailBody,
         }),
       });
-    } catch {
-      // La notification est non-bloquante — la réservation est créée même si l'email échoue
+    } catch (emailErr) {
+      console.error("[book] Erreur envoi notification gérant:", emailErr);
     }
   }
 
