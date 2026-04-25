@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { useTheme } from "@/providers/ThemeProvider";
 
@@ -19,6 +19,38 @@ export default function SettingsForm({ notificationEmail, notifNewReservation, n
   const [prysmNews, setPrysmNews] = useState(notifPrysmNews);
   const [loading, setLoading] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [deleteModal, setDeleteModal] = useState(false);
+  const [deleteInput, setDeleteInput] = useState('');
+  const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState('');
+  const deleteInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (deleteModal) {
+      setDeleteInput('');
+      setDeleteError('');
+      setTimeout(() => deleteInputRef.current?.focus(), 50);
+    }
+  }, [deleteModal]);
+
+  const handleDeleteAccount = async () => {
+    if (deleteInput !== 'SUPPRIMER') return;
+    setDeleting(true);
+    setDeleteError('');
+    try {
+      const res = await fetch('/api/account/delete', { method: 'DELETE' });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        setDeleteError(data.error ?? 'Une erreur est survenue.');
+        setDeleting(false);
+        return;
+      }
+      window.location.href = '/';
+    } catch {
+      setDeleteError('Impossible de contacter le serveur.');
+      setDeleting(false);
+    }
+  };
 
   const handleSaveNotif = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,6 +74,7 @@ export default function SettingsForm({ notificationEmail, notifNewReservation, n
   };
 
   return (
+    <>
     <div style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
 
       {/* NOTIFICATIONS */}
@@ -221,6 +254,127 @@ export default function SettingsForm({ notificationEmail, notifNewReservation, n
         </Link>
       </div>
 
+      {/* ZONE DE DANGER */}
+      <div className="form-section" style={{ marginBottom: 0 }}>
+        <div className="fs-title" style={{ color: '#b91c1c' }}>
+          <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
+            <path d="M7 1.5L1.5 11.5h11L7 1.5z" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round"/>
+            <path d="M7 5.5v3M7 10h.01" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
+          </svg>
+          Zone de danger
+        </div>
+        <div className="fs-divider" style={{ background: '#FCA5A5' }} />
+        <div style={{ background: '#FEF2F2', border: '1px solid #FCA5A5', borderRadius: '14px', padding: '22px' }}>
+          <div style={{ marginBottom: '16px' }}>
+            <div style={{ fontSize: '14px', fontWeight: 600, color: '#7f1d1d', marginBottom: '4px' }}>Supprimer mon compte</div>
+            <div style={{ fontSize: '13px', color: '#b91c1c', lineHeight: 1.6 }}>
+              Cette action est <strong>irréversible</strong>. Toutes vos données (gîte, réservations, contrats) seront définitivement supprimées et votre abonnement Stripe sera résilié immédiatement.
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={() => setDeleteModal(true)}
+            style={{
+              fontFamily: 'var(--ff)', fontSize: '13px', fontWeight: 600,
+              padding: '9px 18px', borderRadius: '10px', cursor: 'pointer',
+              border: '1.5px solid #FCA5A5', background: '#fff',
+              color: '#b91c1c', transition: 'all .2s',
+            }}
+            onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = '#FEE2E2'; }}
+            onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = '#fff'; }}
+          >
+            Supprimer mon compte
+          </button>
+        </div>
+      </div>
+
     </div>
+
+    {/* MODAL CONFIRMATION SUPPRESSION */}
+    {deleteModal && (
+      <div
+        onClick={e => { if (e.target === e.currentTarget) setDeleteModal(false); }}
+        style={{
+          position: 'fixed', inset: 0, zIndex: 1000,
+          background: 'rgba(0,0,0,.45)', backdropFilter: 'blur(2px)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          padding: '24px',
+        }}
+      >
+        <div style={{
+          background: 'var(--white)', borderRadius: '16px', padding: '32px',
+          width: '100%', maxWidth: '420px', boxShadow: '0 20px 60px rgba(0,0,0,.2)',
+        }}>
+          <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: '#FEF2F2', border: '1px solid #FCA5A5', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px' }}>
+            <svg width="22" height="22" fill="none" viewBox="0 0 22 22">
+              <path d="M11 2.5L2.5 18.5h17L11 2.5z" stroke="#b91c1c" strokeWidth="1.5" strokeLinejoin="round"/>
+              <path d="M11 8.5v5M11 15.5h.01" stroke="#b91c1c" strokeWidth="1.8" strokeLinecap="round"/>
+            </svg>
+          </div>
+
+          <h2 style={{ fontSize: '18px', fontWeight: 800, color: 'var(--ink)', letterSpacing: '-0.02em', marginBottom: '8px' }}>
+            Supprimer votre compte ?
+          </h2>
+          <p style={{ fontSize: '13px', color: 'var(--ink-soft)', lineHeight: 1.6, marginBottom: '20px' }}>
+            Toutes vos données seront supprimées définitivement — gîte, réservations, contrats, documents. Cette action est <strong style={{ color: 'var(--ink)' }}>irréversible</strong>.
+          </p>
+
+          <div style={{ marginBottom: '20px' }}>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: 'var(--ink-soft)', textTransform: 'uppercase', letterSpacing: '.05em', marginBottom: '8px' }}>
+              Tapez <strong style={{ color: '#b91c1c', fontFamily: 'monospace', letterSpacing: '.05em' }}>SUPPRIMER</strong> pour confirmer
+            </label>
+            <input
+              ref={deleteInputRef}
+              type="text"
+              value={deleteInput}
+              onChange={e => { setDeleteInput(e.target.value); setDeleteError(''); }}
+              onKeyDown={e => { if (e.key === 'Enter' && deleteInput === 'SUPPRIMER') handleDeleteAccount(); }}
+              placeholder="SUPPRIMER"
+              style={{
+                width: '100%', boxSizing: 'border-box',
+                fontFamily: 'monospace', fontSize: '15px', fontWeight: 600,
+                padding: '11px 13px', borderRadius: '10px', outline: 'none',
+                border: `1.5px solid ${deleteInput === 'SUPPRIMER' ? '#b91c1c' : 'var(--line)'}`,
+                color: '#b91c1c', background: 'var(--white)',
+                transition: 'border-color .2s',
+              }}
+            />
+            {deleteError && (
+              <p style={{ fontSize: '12px', color: '#b91c1c', marginTop: '6px' }}>{deleteError}</p>
+            )}
+          </div>
+
+          <div style={{ display: 'flex', gap: '10px' }}>
+            <button
+              type="button"
+              onClick={() => setDeleteModal(false)}
+              style={{
+                flex: 1, fontFamily: 'var(--ff)', fontSize: '14px', fontWeight: 600,
+                padding: '11px', borderRadius: '10px', cursor: 'pointer',
+                border: '1.5px solid var(--line)', background: 'var(--white)', color: 'var(--ink)',
+                transition: 'border-color .2s',
+              }}
+            >
+              Annuler
+            </button>
+            <button
+              type="button"
+              onClick={handleDeleteAccount}
+              disabled={deleteInput !== 'SUPPRIMER' || deleting}
+              style={{
+                flex: 1, fontFamily: 'var(--ff)', fontSize: '14px', fontWeight: 700,
+                padding: '11px', borderRadius: '10px', cursor: deleteInput === 'SUPPRIMER' && !deleting ? 'pointer' : 'not-allowed',
+                border: 'none',
+                background: deleteInput === 'SUPPRIMER' && !deleting ? '#b91c1c' : '#FCA5A5',
+                color: '#fff', transition: 'background .2s',
+              }}
+            >
+              {deleting ? 'Suppression…' : 'Supprimer définitivement'}
+            </button>
+          </div>
+        </div>
+      </div>
+    )}
+    </>
   );
 }
