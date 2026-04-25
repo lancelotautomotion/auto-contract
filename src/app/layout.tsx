@@ -7,7 +7,10 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Prysme — Contrats de location pour gîtes, automatisés",
   description: "Automatisez vos contrats de location saisonnière en 2 minutes. Génération PDF, envoi email, suivi acompte. 30 jours gratuits, sans CB.",
-  icons: { icon: "/mark_prysme.png" },
+  icons: {
+    icon: '/mark_prysme.png',
+    apple: '/apple-touch-icon.png',
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
