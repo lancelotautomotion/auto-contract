@@ -204,7 +204,7 @@ h2.st .g{color:var(--green)}h2.st .v{color:var(--violet)}
 
 /* PRICING */
 .pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:52px}
-.pc{background:var(--white);border:1.5px solid var(--line);border-radius:16px;padding:32px;transition:all .3s ease;position:relative}
+.pc{background:var(--white);border:1.5px solid var(--line);border-radius:16px;padding:32px;transition:all .3s ease;position:relative;display:flex;flex-direction:column}
 .pc:hover{transform:translateY(-4px);box-shadow:0 20px 60px -12px rgba(44,44,42,.10)}
 .pc.feat{border-color:var(--violet);background:var(--violet-light)}
 .pc.feat::before{content:'Populaire';position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--violet);color:#fff;font-size:11px;font-weight:700;padding:4px 14px;border-radius:100px}
@@ -217,7 +217,7 @@ h2.st .g{color:var(--green)}h2.st .v{color:var(--violet)}
 .pc-period{font-size:13px;color:var(--ink-soft);margin-bottom:24px}
 .pc-div{border:none;border-top:1px solid var(--line);margin-bottom:20px}
 .pc.feat .pc-div{border-color:rgba(127,119,221,.2)}
-.pc-feat{list-style:none;display:flex;flex-direction:column;gap:10px;margin-bottom:24px}
+.pc-feat{list-style:none;display:flex;flex-direction:column;gap:10px;margin-bottom:24px;flex:1}
 .pc-feat li{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--ink-soft)}
 .pc-feat li svg{flex-shrink:0}
 

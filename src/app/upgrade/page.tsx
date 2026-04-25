@@ -163,12 +163,10 @@ export default async function UpgradePage({ searchParams }: { searchParams: Prom
                   </li>
                 ))}
               </ul>
-              <div>
-                <SubscribeButton disabled={isActive} />
-                <p style={{ fontSize: '11px', color: '#A3A3A0', textAlign: 'center', margin: '12px 0 0', lineHeight: 1.5 }}>
-                  Paiement sécurisé par Stripe.
-                </p>
-              </div>
+              <p style={{ fontSize: '11px', color: '#A3A3A0', textAlign: 'center', margin: '0 0 10px', lineHeight: 1.5 }}>
+                Paiement sécurisé par Stripe.
+              </p>
+              <SubscribeButton disabled={isActive} />
             </div>
           </div>
 
