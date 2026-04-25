@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import ReservationsTable from "./ReservationsTable";
-import CopyBookingUrlButton from "./CopyBookingUrlButton";
+import CopyBookingUrlButton from "../CopyBookingUrlButton";
 
 export default async function ReservationsPage() {
   const { userId } = await auth();
@@ -76,7 +76,7 @@ export default async function ReservationsPage() {
             <h1>Réservations<span className="v">.</span></h1>
             <div className="sub">Gérez toutes vos réservations depuis un seul endroit</div>
           </div>
-          <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+          <div className="header-actions">
             <CopyBookingUrlButton slug={giteSlug} />
             <Link href="/dashboard/reservations/new" className="btn btn-violet">
               <svg width="14" height="14" fill="none" viewBox="0 0 14 14">

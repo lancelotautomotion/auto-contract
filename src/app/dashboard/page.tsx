@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import CalendarView from "./CalendarView";
+import CopyBookingUrlButton from "./CopyBookingUrlButton";
 
 export default async function DashboardPage() {
   const { userId } = await auth();
@@ -103,12 +104,15 @@ export default async function DashboardPage() {
             </div>
             <div className="dash-date">{dateLabel}</div>
           </div>
-          <Link href="/dashboard/reservations/new" className="btn btn-violet">
-            <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
-              <path d="M7 2v10M2 7h10" stroke="#fff" strokeWidth="1.5" strokeLinecap="round"/>
-            </svg>
-            Nouvelle réservation
-          </Link>
+          <div className="header-actions">
+            <CopyBookingUrlButton slug={gite.slug ?? null} />
+            <Link href="/dashboard/reservations/new" className="btn btn-violet">
+              <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
+                <path d="M7 2v10M2 7h10" stroke="#fff" strokeWidth="1.5" strokeLinecap="round"/>
+              </svg>
+              Nouvelle réservation
+            </Link>
+          </div>
         </div>
 
         {/* Pending banner */}

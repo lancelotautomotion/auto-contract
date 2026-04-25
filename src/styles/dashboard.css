@@ -785,6 +785,7 @@
 .page-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 24px; }
 .page-header h1 { font-weight: 800; font-size: 26px; letter-spacing: -0.03em; }
 .page-header .sub { font-size: 13px; color: var(--ink-lighter); margin-top: 2px; }
+.header-actions { display: flex; gap: 10px; align-items: center; flex-shrink: 0; }
 
 .pb-desc { font-size: 13px; color: var(--amber-dark); opacity: .7; margin-left: 36px; margin-bottom: 12px; }
 .pb-item-card {
@@ -942,6 +943,11 @@
     line-height: 1.15;
     word-break: break-word;
     overflow-wrap: anywhere;
+  }
+  .header-actions .btn,
+  .header-actions .btn-lg {
+    padding: 10px 14px;
+    font-size: 13px;
   }
   .dash-header .btn,
   .dash-header .btn-lg,
