@@ -66,6 +66,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       html: buildEmailHtml({
         giteName: reservation.gite.name,
         giteAddress,
+        giteLogoUrl: reservation.gite.logoUrl,
         docLabel: "Réponse à votre demande",
         preheader: `Réponse à votre demande de réservation du ${dateEntree} au ${dateSortie}.`,
         greeting: reservation.clientFirstName,

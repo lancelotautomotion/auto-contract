@@ -83,6 +83,7 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
       html: buildEmailHtml({
         giteName: reservation.gite.name,
         giteAddress,
+        giteLogoUrl: reservation.gite.logoUrl,
         docLabel: 'Contrat signé',
         preheader: "Votre contrat de location signé est disponible en pièce jointe.",
         greeting: reservation.clientFirstName,
@@ -106,6 +107,7 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
         html: buildEmailHtml({
           giteName: reservation.gite.name,
           giteAddress,
+          giteLogoUrl: reservation.gite.logoUrl,
           docLabel: 'Acompte reçu',
           preheader: `Contrat envoyé à ${reservation.clientFirstName} ${reservation.clientLastName} suite à la réception de l'acompte.`,
           body: managerBody,

@@ -104,6 +104,7 @@ ${muted('Cette demande est en attente de votre confirmation dans Prysme.')}
         html: buildEmailHtml({
           giteName: gite.name,
           giteAddress: gite.city ?? undefined,
+          giteLogoUrl: gite.logoUrl,
           docLabel: 'Nouvelle demande',
           preheader: `${body.firstName} ${body.lastName} demande à séjourner du ${checkIn} au ${checkOut}.`,
           greeting: 'Bonjour',

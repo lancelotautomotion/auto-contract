@@ -69,6 +69,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ tok
       html: buildEmailHtml({
         giteName: reservation.gite.name,
         giteAddress,
+        giteLogoUrl: reservation.gite.logoUrl,
         docLabel: 'Signature enregistrée',
         preheader: "Votre signature a bien été enregistrée. Le contrat signé vous sera envoyé dès réception de l'acompte.",
         greeting: reservation.clientFirstName,
@@ -96,6 +97,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ tok
         html: buildEmailHtml({
           giteName: reservation.gite.name,
           giteAddress,
+          giteLogoUrl: reservation.gite.logoUrl,
           docLabel: 'Notification signature',
           preheader: `${reservation.clientFirstName} ${reservation.clientLastName} a signé. En attente de l'acompte.`,
           body: managerBody,

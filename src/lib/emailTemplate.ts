@@ -7,6 +7,7 @@
 interface EmailTemplateOptions {
   giteName: string;
   giteAddress?: string | null;
+  giteLogoUrl?: string | null;  // optional gite logo (PNG/JPG/SVG URL)
   docLabel?: string;    // Header right label, e.g. "Contrat de location"
   preheader?: string;
   greeting?: string;    // First name only → renders "Bonjour [greeting]."
@@ -14,7 +15,7 @@ interface EmailTemplateOptions {
 }
 
 export function buildEmailHtml(opts: EmailTemplateOptions): string {
-  const { giteName, giteAddress, preheader, greeting, body, docLabel = 'Prysme' } = opts;
+  const { giteName, giteAddress, giteLogoUrl, preheader, greeting, body, docLabel = 'Prysme' } = opts;
 
   const preheaderHtml = preheader
     ? `<div style="display:none;max-height:0;overflow:hidden;font-size:1px;color:#F3F2EE;">${preheader}</div>`
@@ -22,10 +23,17 @@ export function buildEmailHtml(opts: EmailTemplateOptions): string {
 
   const greetingHtml = greeting ? `
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
-      <tr><td style="font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif;font-size:22px;font-weight:800;color:#2C2C2A;letter-spacing:-0.03em;padding-bottom:20px;line-height:1.3;">
+      <tr><td class="greeting" style="font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif;font-size:22px;font-weight:800;color:#2C2C2A;letter-spacing:-0.03em;padding-bottom:20px;line-height:1.3;">
         Bonjour ${greeting}<span style="color:#7F77DD">.</span>
       </td></tr>
     </table>` : '';
+
+  const headerLeftHtml = giteLogoUrl
+    ? `<table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr>
+        <td style="padding-right:10px;vertical-align:middle;line-height:0;"><img src="${giteLogoUrl}" alt="${giteName}" width="32" height="32" style="display:block;border-radius:6px;width:32px;height:32px;object-fit:cover;border:0;outline:none;text-decoration:none;"/></td>
+        <td style="font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif;font-size:15px;font-weight:800;color:#2C2C2A;letter-spacing:-0.02em;vertical-align:middle;">${giteName}</td>
+      </tr></table>`
+    : `<span style="font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif;font-size:15px;font-weight:800;color:#2C2C2A;letter-spacing:-0.02em;">${giteName}</span>`;
 
   const footerAddress = giteAddress
     ? `<tr><td style="font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif;font-size:11px;color:#A3A3A0;padding-bottom:4px;">${giteAddress}</td></tr>`
@@ -42,27 +50,33 @@ export function buildEmailHtml(opts: EmailTemplateOptions): string {
   table,td{mso-table-lspace:0pt;mso-table-rspace:0pt}
   img{-ms-interpolation-mode:bicubic;border:0;outline:none;text-decoration:none}
   body{margin:0;padding:0;width:100%!important;background-color:#F3F2EE;font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif}
+  a{color:#7F77DD}
   @media only screen and (max-width:620px){
-    .email-wrap{width:100%!important;padding:12px!important}
+    .email-outer-pad{padding:20px 12px!important}
+    .email-wrap{width:100%!important}
     .card{border-radius:12px!important}
     .inner{padding:28px 20px!important}
-    .recap-col{display:block!important;width:100%!important;padding-bottom:16px!important}
+    .recap-col{display:block!important;width:100%!important;padding-bottom:16px!important;padding-right:0!important;padding-left:0!important;border-left:0!important;border-top:1px solid #E8E6E1!important;padding-top:16px!important}
+    .recap-col-first{border-top:0!important;padding-top:0!important}
+    .header-row td{font-size:13px!important}
+    .cta-btn a{padding:13px 24px!important;font-size:14px!important}
+    .greeting{font-size:20px!important}
   }
 </style>
 </head>
 <body style="margin:0;padding:0;background-color:#F3F2EE;font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif;">
 ${preheaderHtml}
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#F3F2EE;">
-<tr><td align="center" style="padding:40px 20px;">
+<tr><td align="center" class="email-outer-pad" style="padding:40px 20px;">
 
   <table role="presentation" class="email-wrap" width="560" cellpadding="0" cellspacing="0" border="0">
 
     <!-- HEADER BAR -->
     <tr><td style="padding:0 0 24px;">
-      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+      <table role="presentation" class="header-row" width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td style="font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif;font-size:15px;font-weight:800;color:#2C2C2A;letter-spacing:-0.02em;">${giteName}</td>
-          <td align="right" style="font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif;font-size:11px;font-weight:600;color:#A3A3A0;text-transform:uppercase;letter-spacing:0.08em;">${docLabel}</td>
+          <td valign="middle">${headerLeftHtml}</td>
+          <td valign="middle" align="right" style="font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif;font-size:11px;font-weight:600;color:#A3A3A0;text-transform:uppercase;letter-spacing:0.08em;">${docLabel}</td>
         </tr>
       </table>
     </td></tr>
@@ -132,13 +146,13 @@ export function recapCard(left: RecapItem[], right: RecapItem[]): string {
   <tr><td style="padding:20px 24px;">
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
       <tr>
-        <td class="recap-col" width="50%" valign="top" style="padding-right:16px;">
-          <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+        <td class="recap-col recap-col-first" width="50%" valign="top" style="padding-right:16px;">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
             ${col(left)}
           </table>
         </td>
         <td class="recap-col" width="50%" valign="top" style="border-left:1px solid #E8E6E1;padding-left:24px;">
-          <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
             ${col(right)}
           </table>
         </td>
@@ -151,7 +165,7 @@ export function recapCard(left: RecapItem[], right: RecapItem[]): string {
 /** Bouton CTA centré (vert) */
 export function ctaButton(label: string, url: string): string {
   return `
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+<table role="presentation" class="cta-btn" width="100%" cellpadding="0" cellspacing="0" border="0">
   <tr>
     <td align="center" style="padding:4px 0 32px;">
       <table role="presentation" cellpadding="0" cellspacing="0" border="0">

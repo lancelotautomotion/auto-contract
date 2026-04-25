@@ -59,6 +59,7 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
       html: buildEmailHtml({
         giteName: reservation.gite.name,
         giteAddress,
+        giteLogoUrl: reservation.gite.logoUrl,
         docLabel: 'Rappel acompte',
         preheader: `Rappel : votre acompte${depositFormatted ? ` de ${depositFormatted}` : ""} est en attente pour finaliser votre réservation.`,
         greeting: reservation.clientFirstName,

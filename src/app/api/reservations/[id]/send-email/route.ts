@@ -71,6 +71,7 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
   const html = buildEmailHtml({
     giteName: reservation.gite.name,
     giteAddress,
+    giteLogoUrl: reservation.gite.logoUrl,
     docLabel: 'Contrat de location',
     preheader: `Votre contrat pour le séjour du ${dateEntree} au ${dateSortie} est prêt à être signé.`,
     greeting: reservation.clientFirstName,
