@@ -6,11 +6,17 @@ import { useTheme } from "@/providers/ThemeProvider";
 
 interface Props {
   notificationEmail: string;
+  notifNewReservation: boolean;
+  notifContractSigned: boolean;
+  notifPrysmNews: boolean;
 }
 
-export default function SettingsForm({ notificationEmail }: Props) {
+export default function SettingsForm({ notificationEmail, notifNewReservation, notifContractSigned, notifPrysmNews }: Props) {
   const { dark, toggle } = useTheme();
   const [notifEmail, setNotifEmail] = useState(notificationEmail);
+  const [newRes, setNewRes] = useState(notifNewReservation);
+  const [contractSigned, setContractSigned] = useState(notifContractSigned);
+  const [prysmNews, setPrysmNews] = useState(notifPrysmNews);
   const [loading, setLoading] = useState(false);
   const [saved, setSaved] = useState(false);
 
@@ -22,7 +28,12 @@ export default function SettingsForm({ notificationEmail }: Props) {
       const res = await fetch('/api/settings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ notificationEmail: notifEmail }),
+        body: JSON.stringify({
+          notificationEmail: notifEmail,
+          notifNewReservation: newRes,
+          notifContractSigned: contractSigned,
+          notifPrysmNews: prysmNews,
+        }),
       });
       if (res.ok) setSaved(true);
     } finally {
@@ -45,10 +56,7 @@ export default function SettingsForm({ notificationEmail }: Props) {
         <div className="fs-divider" />
         <form onSubmit={handleSaveNotif}>
           <div className="form-card">
-            <p style={{ fontSize: '13px', color: 'var(--ink-soft)', margin: '0 0 18px', lineHeight: 1.6 }}>
-              Recevez un email lorsqu&apos;un client soumet une nouvelle demande de réservation.
-            </p>
-            <div className="form-group">
+            <div className="form-group" style={{ marginBottom: '20px' }}>
               <label className="form-label">Email de notification</label>
               <input
                 type="email"
@@ -57,8 +65,60 @@ export default function SettingsForm({ notificationEmail }: Props) {
                 onChange={e => { setNotifEmail(e.target.value); setSaved(false); }}
                 placeholder="votre@email.com"
               />
+              <p style={{ fontSize: '12px', color: 'var(--ink-lighter)', margin: '6px 0 0', lineHeight: 1.5 }}>
+                Adresse qui recevra les notifications ci-dessous.
+              </p>
             </div>
-            <div style={{ display: 'flex', gap: '12px', alignItems: 'center', marginTop: '4px' }}>
+
+            <div style={{ marginBottom: '4px' }}>
+              <div style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--ink-soft)', marginBottom: '10px' }}>
+                Choisissez ce que vous souhaitez recevoir
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+
+                <label style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px 14px', border: `1.5px solid ${newRes ? 'var(--violet)' : 'var(--line)'}`, borderRadius: '10px', background: newRes ? 'var(--violet-light)' : 'var(--white)', cursor: 'pointer', transition: 'all .2s', userSelect: 'none' }}>
+                  <input
+                    type="checkbox"
+                    checked={newRes}
+                    onChange={e => { setNewRes(e.target.checked); setSaved(false); }}
+                    style={{ width: '16px', height: '16px', accentColor: 'var(--violet)', cursor: 'pointer', flexShrink: 0 }}
+                  />
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--ink)', lineHeight: 1.3 }}>Nouvelle demande de réservation</div>
+                    <div style={{ fontSize: '12px', color: 'var(--ink-soft)', marginTop: '2px' }}>Quand un client remplit le formulaire public</div>
+                  </div>
+                </label>
+
+                <label style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px 14px', border: `1.5px solid ${contractSigned ? 'var(--violet)' : 'var(--line)'}`, borderRadius: '10px', background: contractSigned ? 'var(--violet-light)' : 'var(--white)', cursor: 'pointer', transition: 'all .2s', userSelect: 'none' }}>
+                  <input
+                    type="checkbox"
+                    checked={contractSigned}
+                    onChange={e => { setContractSigned(e.target.checked); setSaved(false); }}
+                    style={{ width: '16px', height: '16px', accentColor: 'var(--violet)', cursor: 'pointer', flexShrink: 0 }}
+                  />
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--ink)', lineHeight: 1.3 }}>Contrat signé par le locataire</div>
+                    <div style={{ fontSize: '12px', color: 'var(--ink-soft)', marginTop: '2px' }}>Dès que la signature électronique est enregistrée</div>
+                  </div>
+                </label>
+
+                <label style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px 14px', border: `1.5px solid ${prysmNews ? 'var(--violet)' : 'var(--line)'}`, borderRadius: '10px', background: prysmNews ? 'var(--violet-light)' : 'var(--white)', cursor: 'pointer', transition: 'all .2s', userSelect: 'none' }}>
+                  <input
+                    type="checkbox"
+                    checked={prysmNews}
+                    onChange={e => { setPrysmNews(e.target.checked); setSaved(false); }}
+                    style={{ width: '16px', height: '16px', accentColor: 'var(--violet)', cursor: 'pointer', flexShrink: 0 }}
+                  />
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--ink)', lineHeight: 1.3 }}>Actualités et nouveautés Prysme</div>
+                    <div style={{ fontSize: '12px', color: 'var(--ink-soft)', marginTop: '2px' }}>Nouvelles fonctionnalités, conseils et offres</div>
+                  </div>
+                </label>
+
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', gap: '12px', alignItems: 'center', marginTop: '20px' }}>
               <button
                 type="submit"
                 disabled={loading}

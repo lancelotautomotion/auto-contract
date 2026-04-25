@@ -46,6 +46,9 @@ model Gite {
   contractTemplate      String?
   logoUrl               String?  // Vercel Blob URL (formerly logoDataUrl base64)
   notificationEmail     String?
+  notifNewReservation   Boolean @default(true)
+  notifContractSigned   Boolean @default(true)
+  notifPrysmNews        Boolean @default(false)
   driveTemplateFolderId String?
   driveOutputFolderId   String?
   n8nWebhookUrl         String?

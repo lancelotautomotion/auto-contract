@@ -21,7 +21,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ tok
       where: { signatureToken: token },
       include: {
         reservation: {
-          include: { gite: true, reservationOptions: true },
+          include: { gite: { include: { user: true } }, reservationOptions: true },
         },
       },
     });
@@ -77,8 +77,8 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ tok
     });
 
     // Email au gérant — notification de signature
-    const notifEmail = reservation.gite.notificationEmail ?? reservation.gite.email;
-    if (notifEmail) {
+    const notifEmail = reservation.gite.notificationEmail || reservation.gite.email || reservation.gite.user.email;
+    if (reservation.gite.notifContractSigned && notifEmail) {
       const signedAtFormatted = signedAt.toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' });
       const managerBody = `
         <p style="margin:0 0 20px;"><strong style="color:#2C2C2A;">${reservation.clientFirstName} ${reservation.clientLastName}</strong> vient de signer son contrat de location pour le séjour du <strong style="color:#2C2C2A;">${dateEntree}</strong> au <strong style="color:#2C2C2A;">${dateSortie}</strong>.</p>

@@ -37,6 +37,9 @@ export default async function SettingsPage() {
 
         <SettingsForm
           notificationEmail={gite.notificationEmail ?? ''}
+          notifNewReservation={gite.notifNewReservation}
+          notifContractSigned={gite.notifContractSigned}
+          notifPrysmNews={gite.notifPrysmNews}
         />
       </div>
     </>

@@ -56,7 +56,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ slu
 
   // Notification email au gérant — fallback sur l'email Prysme du compte si aucun email gîte configuré
   const notifTo = gite.notificationEmail || gite.email || gite.user.email;
-  if (notifTo && process.env.RESEND_API_KEY) {
+  if (gite.notifNewReservation && notifTo && process.env.RESEND_API_KEY) {
     try {
       const resend = new Resend(process.env.RESEND_API_KEY);
       const checkIn = new Date(body.checkIn + 'T12:00:00').toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
