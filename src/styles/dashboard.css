@@ -816,7 +816,7 @@
 .view-tab .count { font-size: 10px; font-weight: 700; background: var(--line-light); color: var(--ink-lighter); padding: 2px 7px; border-radius: 100px; }
 .view-tab.active .count { background: var(--violet-light); color: var(--violet-dark); }
 
-.table-card { background: var(--dash-white); border: 1px solid var(--line); border-top: none; border-radius: 0 0 14px 14px; overflow: hidden; }
+.table-card { background: var(--dash-white); border: 1px solid var(--line); border-top: none; border-radius: 0 0 14px 14px; overflow-x: auto; }
 
 .t-sort {
   font-family: var(--ff); font-size: 12px; font-weight: 500; padding: 6px 12px;
@@ -1051,6 +1051,7 @@
 
   /* Tables scrollable horizontalement */
   .a-table { min-width: 520px; }
+  .resa-table { min-width: 560px; }
   .card {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;

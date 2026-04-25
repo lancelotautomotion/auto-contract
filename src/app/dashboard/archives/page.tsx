@@ -202,6 +202,7 @@ export default async function ArchivesPage({
           </div>
 
           {/* Table */}
+          <div style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
           <table className="a-table">
             <thead>
               <tr>
@@ -252,6 +253,7 @@ export default async function ArchivesPage({
               )}
             </tbody>
           </table>
+          </div>
 
           {/* Footer */}
           <div className="table-footer">
