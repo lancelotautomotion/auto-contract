@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import ReservationsTable from "./ReservationsTable";
+import CopyBookingUrlButton from "./CopyBookingUrlButton";
 
 export default async function ReservationsPage() {
   const { userId } = await auth();
@@ -10,6 +11,9 @@ export default async function ReservationsPage() {
 
   const dbUser = await prisma.user.findUnique({ where: { clerkId: userId } });
   if (!dbUser) redirect("/dashboard");
+
+  const gite = await prisma.gite.findFirst({ where: { userId: dbUser.id }, select: { slug: true } });
+  const giteSlug = gite?.slug ?? null;
 
   const allReservations = await prisma.reservation.findMany({
     where: { gite: { userId: dbUser.id } },
@@ -72,12 +76,15 @@ export default async function ReservationsPage() {
             <h1>Réservations<span className="v">.</span></h1>
             <div className="sub">Gérez toutes vos réservations depuis un seul endroit</div>
           </div>
-          <Link href="/dashboard/reservations/new" className="btn btn-violet">
-            <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
-              <path d="M7 2v10M2 7h10" stroke="#fff" strokeWidth="1.5" strokeLinecap="round"/>
-            </svg>
-            Nouvelle réservation
-          </Link>
+          <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+            <CopyBookingUrlButton slug={giteSlug} />
+            <Link href="/dashboard/reservations/new" className="btn btn-violet">
+              <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
+                <path d="M7 2v10M2 7h10" stroke="#fff" strokeWidth="1.5" strokeLinecap="round"/>
+              </svg>
+              Nouvelle réservation
+            </Link>
+          </div>
         </div>
 
         {/* Pending banner */}

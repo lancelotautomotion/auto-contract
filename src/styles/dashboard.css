@@ -142,6 +142,8 @@
 .btn-green:hover { background: var(--green-dark); transform: translateY(-1px); }
 .btn-outline { background: var(--dash-white); color: var(--ink-soft); border: 1.5px solid var(--line); }
 .btn-outline:hover { border-color: var(--ink-soft); color: var(--ink); }
+.btn-outline-green { background: var(--dash-white); color: var(--green-dark); border: 1.5px solid rgba(104,157,113,.4); }
+.btn-outline-green:hover { background: var(--green-light); border-color: var(--green); }
 .btn-danger { background: var(--dash-white); color: var(--red); border: 1.5px solid var(--red-light); }
 .btn-danger:hover { background: var(--red-light); border-color: var(--red); }
 .btn-danger-outline { background: var(--dash-white); color: var(--red); border: 1.5px solid var(--red-light); }
