@@ -29,6 +29,7 @@ function getAvatarColor(name: string) {
 }
 
 function getPill(r: Reservation) {
+  if (r.status === 'REFUSED') return { cls: 'pill-refused', label: 'Refusée' };
   if (r.status === 'PENDING_REVIEW') return { cls: 'pill-a', label: 'En attente' };
   if (r.contractStatus === 'SIGNED') return { cls: 'pill-g', label: 'Signé' };
   if (r.contractStatus === 'GENERATED') return { cls: 'pill-v', label: 'Envoyé' };
@@ -57,6 +58,7 @@ export default function ReservationsTable({ reservations }: { reservations: Rese
       case 'active': return ci <= today && co >= today;
       case 'past': return co < today;
       case 'pending': return r.status === 'PENDING_REVIEW';
+      case 'refused': return r.status === 'REFUSED';
       default: return true;
     }
   }
@@ -70,6 +72,7 @@ export default function ReservationsTable({ reservations }: { reservations: Rese
         case 'active': return ci <= today && co >= today;
         case 'past': return co < today;
         case 'pending': return r.status === 'PENDING_REVIEW';
+        case 'refused': return r.status === 'REFUSED';
         default: return true;
       }
     }).length;
@@ -106,6 +109,7 @@ export default function ReservationsTable({ reservations }: { reservations: Rese
     { key: 'active', label: 'En cours' },
     { key: 'past', label: 'Passées' },
     { key: 'pending', label: 'En attente' },
+    { key: 'refused', label: 'Refusées' },
   ];
 
   const start = filtered.length === 0 ? 0 : (safePage - 1) * PER_PAGE + 1;
@@ -207,11 +211,13 @@ export default function ReservationsTable({ reservations }: { reservations: Rese
                             <circle cx="6" cy="6" r="1.5" stroke="currentColor" strokeWidth="1.1"/>
                           </svg>
                         </Link>
-                        <button className="row-btn del" title="Supprimer" onClick={e => handleDelete(e, r.id)}>
-                          <svg width="10" height="10" fill="none" viewBox="0 0 10 10">
-                            <path d="M2 2l6 6M8 2l-6 6" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
-                          </svg>
-                        </button>
+                        {r.status !== 'REFUSED' && (
+                          <button className="row-btn del" title="Supprimer" onClick={e => handleDelete(e, r.id)}>
+                            <svg width="10" height="10" fill="none" viewBox="0 0 10 10">
+                              <path d="M2 2l6 6M8 2l-6 6" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
+                            </svg>
+                          </button>
+                        )}
                       </div>
                     </td>
                   </tr>

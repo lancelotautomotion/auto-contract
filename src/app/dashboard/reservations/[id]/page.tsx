@@ -2,7 +2,17 @@ import { auth } from "@clerk/nextjs/server";
 import { redirect, notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import ContractActions from "./ContractActions";
+
+const REFUSAL_LABELS: Record<string, string> = {
+  dates_taken:    "Dates déjà réservées",
+  rules_breach:   "Non-respect du règlement",
+  duration:       "Durée incompatible",
+  unavailable:    "Établissement indisponible",
+  other:          "Autre",
+};
 import DeleteReservationButton from "./DeleteReservationButton";
+import RefuseReservationButton from "./RefuseReservationButton";
+import RestoreReservationButton from "./RestoreReservationButton";
 import Link from "next/link";
 
 export default async function ReservationDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -22,16 +32,23 @@ export default async function ReservationDetailPage({ params }: { params: Promis
   const fmt = (d: Date) => new Date(d).toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' });
   const fmtMoney = (n: number) => n.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '\u00a0€';
 
+  const isRefused = reservation.status === 'REFUSED';
   const contractStatus = reservation.contract?.status ?? null;
   const pillClass =
+    isRefused ? 'pill pill-refused pill-lg' :
+    reservation.status === 'PENDING_REVIEW' ? 'pill pill-a pill-lg' :
     contractStatus === 'GENERATED' ? 'pill pill-v pill-lg' :
     contractStatus === 'SIGNED' ? 'pill pill-g pill-lg' :
     'pill pill-a pill-lg';
   const pillLabel =
+    isRefused ? 'Refusée' :
+    reservation.status === 'PENDING_REVIEW' ? 'En attente' :
     contractStatus === null ? 'En attente' :
     contractStatus === 'GENERATING' ? 'En cours...' :
     contractStatus === 'GENERATED' ? 'Contrat généré' :
     contractStatus === 'SIGNED' ? 'Signé' : 'En attente';
+
+  const clientName = `${reservation.clientFirstName} ${reservation.clientLastName}`;
 
   const optionsTotal = reservation.reservationOptions.reduce((sum, o) => sum + (o.price || 0), 0);
 
@@ -72,16 +89,39 @@ export default async function ReservationDetailPage({ params }: { params: Promis
           <div className="dh-right">
             <span className={pillClass}>{pillLabel}</span>
             <div className="dh-actions">
-              <Link href={`/dashboard/reservations/${id}/edit`} className="btn btn-outline">
-                Modifier
-              </Link>
-              <DeleteReservationButton
-                reservationId={id}
-                clientName={`${reservation.clientFirstName} ${reservation.clientLastName}`}
-              />
+              {isRefused ? (
+                <>
+                  <RestoreReservationButton reservationId={id} />
+                  <DeleteReservationButton reservationId={id} clientName={clientName} />
+                </>
+              ) : (
+                <>
+                  <Link href={`/dashboard/reservations/${id}/edit`} className="btn btn-outline">
+                    Modifier
+                  </Link>
+                  <RefuseReservationButton reservationId={id} clientName={clientName} />
+                </>
+              )}
             </div>
           </div>
         </div>
+
+        {/* Refused banner */}
+        {isRefused && (
+          <div className="refused-banner">
+            <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
+              <circle cx="8" cy="8" r="6" stroke="currentColor" strokeWidth="1.3"/>
+              <path d="M5 5l6 6M11 5l-6 6" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
+            </svg>
+            <span>
+              Cette réservation a été refusée.
+              {reservation.refusalReason && (
+                <> Motif : <strong>{REFUSAL_LABELS[reservation.refusalReason] ?? reservation.refusalReason}</strong>.</>
+              )}
+              {reservation.refusalNote && <> &mdash; {reservation.refusalNote}</>}
+            </span>
+          </div>
+        )}
 
         {/* Detail grid */}
         <div className="detail-grid">

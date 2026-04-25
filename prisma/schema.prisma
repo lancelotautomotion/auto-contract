@@ -102,6 +102,9 @@ model Reservation {
 
   notes String?
 
+  refusalReason String?
+  refusalNote   String?
+
   giteId String
   gite   Gite   @relation(fields: [giteId], references: [id], onDelete: Cascade)
 
@@ -166,6 +169,7 @@ enum ReservationStatus {
   NEW             // Réservation confirmée / créée manuellement
   CONFIRMED
   CANCELLED
+  REFUSED         // Refusée par le gérant (réversible)
 }
 
 enum ContractStatus {
