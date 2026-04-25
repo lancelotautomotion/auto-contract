@@ -43,7 +43,9 @@ export async function POST(req: NextRequest) {
   if (gite) {
     gite = await prisma.gite.update({ where: { id: gite.id }, data: giteData });
   } else {
-    gite = await prisma.gite.create({ data: { userId: user.id, ...giteData } });
+    gite = await prisma.gite.create({
+      data: { userId: user.id, ...giteData, notificationEmail: body.email || null },
+    });
   }
 
   // Remplace toutes les options si fournies
