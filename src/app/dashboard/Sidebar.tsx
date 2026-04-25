@@ -46,9 +46,9 @@ export default function Sidebar({ pendingCount = 0, trialInfo, mobileOpen, onMob
         <Image
           src="/logotype_prysme.png"
           alt="Prysme"
-          width={88}
-          height={22}
-          style={{ filter: 'brightness(10)', objectFit: 'contain' }}
+          width={110}
+          height={24}
+          style={{ filter: 'brightness(0) invert(1)', objectFit: 'contain' }}
         />
         <button className="sb-close-btn" onClick={onMobileClose} aria-label="Fermer le menu">
           <svg width="16" height="16" fill="none" viewBox="0 0 16 16">

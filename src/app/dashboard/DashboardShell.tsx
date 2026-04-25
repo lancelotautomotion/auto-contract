@@ -46,7 +46,7 @@ export default function DashboardShell({ children, pendingCount, trialInfo, font
             alt="Prysme"
             width={80}
             height={20}
-            style={{ filter: 'brightness(10)', objectFit: 'contain', height: 18, width: 'auto' }}
+            style={{ filter: 'brightness(0) invert(1)', objectFit: 'contain', height: 18, width: 'auto' }}
           />
           <div style={{ width: 36 }}/>
         </header>
