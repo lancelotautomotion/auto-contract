@@ -303,8 +303,9 @@ export default function SettingsForm({ notificationEmail, notifNewReservation, n
         }}
       >
         <div style={{
-          background: 'var(--white)', borderRadius: '16px', padding: '32px',
+          background: '#ffffff', borderRadius: '16px', padding: '32px',
           width: '100%', maxWidth: '420px', boxShadow: '0 20px 60px rgba(0,0,0,.2)',
+          fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
         }}>
           <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: '#FEF2F2', border: '1px solid #FCA5A5', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px' }}>
             <svg width="22" height="22" fill="none" viewBox="0 0 22 22">
@@ -313,15 +314,15 @@ export default function SettingsForm({ notificationEmail, notifNewReservation, n
             </svg>
           </div>
 
-          <h2 style={{ fontSize: '18px', fontWeight: 800, color: 'var(--ink)', letterSpacing: '-0.02em', marginBottom: '8px' }}>
+          <h2 style={{ fontSize: '18px', fontWeight: 800, color: '#2C2C2A', letterSpacing: '-0.02em', marginBottom: '8px', fontFamily: 'inherit' }}>
             Supprimer votre compte ?
           </h2>
-          <p style={{ fontSize: '13px', color: 'var(--ink-soft)', lineHeight: 1.6, marginBottom: '20px' }}>
-            Toutes vos données seront supprimées définitivement — gîte, réservations, contrats, documents. Cette action est <strong style={{ color: 'var(--ink)' }}>irréversible</strong>.
+          <p style={{ fontSize: '13px', color: '#71716E', lineHeight: 1.6, marginBottom: '20px', margin: '0 0 20px' }}>
+            Toutes vos données seront supprimées définitivement — gîte, réservations, contrats, documents. Cette action est <strong style={{ color: '#2C2C2A' }}>irréversible</strong>.
           </p>
 
           <div style={{ marginBottom: '20px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: 'var(--ink-soft)', textTransform: 'uppercase', letterSpacing: '.05em', marginBottom: '8px' }}>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#71716E', textTransform: 'uppercase', letterSpacing: '.05em', marginBottom: '8px' }}>
               Tapez <strong style={{ color: '#b91c1c', fontFamily: 'monospace', letterSpacing: '.05em' }}>SUPPRIMER</strong> pour confirmer
             </label>
             <input
@@ -335,8 +336,8 @@ export default function SettingsForm({ notificationEmail, notifNewReservation, n
                 width: '100%', boxSizing: 'border-box',
                 fontFamily: 'monospace', fontSize: '15px', fontWeight: 600,
                 padding: '11px 13px', borderRadius: '10px', outline: 'none',
-                border: `1.5px solid ${deleteInput === 'SUPPRIMER' ? '#b91c1c' : 'var(--line)'}`,
-                color: '#b91c1c', background: 'var(--white)',
+                border: `1.5px solid ${deleteInput === 'SUPPRIMER' ? '#b91c1c' : '#E8E6E1'}`,
+                color: '#b91c1c', background: '#ffffff',
                 transition: 'border-color .2s',
               }}
             />
@@ -350,9 +351,9 @@ export default function SettingsForm({ notificationEmail, notifNewReservation, n
               type="button"
               onClick={() => setDeleteModal(false)}
               style={{
-                flex: 1, fontFamily: 'var(--ff)', fontSize: '14px', fontWeight: 600,
+                flex: 1, fontFamily: 'inherit', fontSize: '14px', fontWeight: 600,
                 padding: '11px', borderRadius: '10px', cursor: 'pointer',
-                border: '1.5px solid var(--line)', background: 'var(--white)', color: 'var(--ink)',
+                border: '1.5px solid #E8E6E1', background: '#ffffff', color: '#2C2C2A',
                 transition: 'border-color .2s',
               }}
             >
@@ -363,11 +364,11 @@ export default function SettingsForm({ notificationEmail, notifNewReservation, n
               onClick={handleDeleteAccount}
               disabled={deleteInput !== 'SUPPRIMER' || deleting}
               style={{
-                flex: 1, fontFamily: 'var(--ff)', fontSize: '14px', fontWeight: 700,
+                flex: 1, fontFamily: 'inherit', fontSize: '14px', fontWeight: 700,
                 padding: '11px', borderRadius: '10px', cursor: deleteInput === 'SUPPRIMER' && !deleting ? 'pointer' : 'not-allowed',
                 border: 'none',
                 background: deleteInput === 'SUPPRIMER' && !deleting ? '#b91c1c' : '#FCA5A5',
-                color: '#fff', transition: 'background .2s',
+                color: '#ffffff', transition: 'background .2s',
               }}
             >
               {deleting ? 'Suppression…' : 'Supprimer définitivement'}
