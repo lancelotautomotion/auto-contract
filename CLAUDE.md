@@ -9,7 +9,6 @@ Contexte projet et roadmap pour les sessions Claude Code.
 - **Production** : https://prysme.app
 - **Repo** : `lancelotautomotion/auto-contract`
 - **Branche de dev principale** : `main` (Vercel auto-deploy)
-- **Branche assistant** : `claude/project-assessment-mxfzy`
 
 ## Stack technique
 
@@ -44,27 +43,38 @@ Contexte projet et roadmap pour les sessions Claude Code.
 ```
 src/app/
 ├── page.tsx                     # Landing
-├── layout.tsx                   # ClerkProvider + frFR localization
+├── layout.tsx                   # ClerkProvider + frFR + viewport-fit=cover
 ├── not-found.tsx                # 404 avec force-dynamic
 ├── a-propos, comment-ca-marche, contact, legal/   # Pages publiques
-├── sign-in/[[...sign-in]]       # Auth Clerk avec tabs custom
-├── sign-up/[[...sign-up]]       # Auth Clerk avec tabs custom
+├── sign-in/[[...sign-in]]       # Auth Clerk avec tabs custom + bouton retour
+├── sign-up/[[...sign-up]]       # Auth Clerk avec tabs custom + bouton retour
 ├── onboarding                   # Config initiale gîte (nom, adresse, etc.)
 ├── dashboard/
-│   ├── Sidebar.tsx              # Navigation + widget d'essai
+│   ├── DashboardShell.tsx       # Client component — gère l'état open/close sidebar mobile
+│   ├── Sidebar.tsx              # Navigation + widget d'essai + drawer mobile
+│   ├── CopyBookingUrlButton.tsx # Bouton copier lien public (vert) ou configurer
 │   ├── TrialBanner.tsx          # Bandeau haut si essai actif
 │   ├── CalendarView.tsx         # Planning réservations
-│   ├── reservations, archives, settings, etablissement
+│   ├── reservations, archives, settings, etablissement, compte
 │   └── page.tsx                 # Tableau de bord
-├── book/[slug]                  # Page publique formulaire de réservation
+├── book/[slug]                  # Page publique formulaire de réservation (2 colonnes)
 ├── sign/[token]                 # Page signature eIDAS locataire
-├── upgrade                      # Page d'abonnement Stripe
+├── upgrade                      # Page d'abonnement Stripe (3 plans)
 └── api/
     ├── stripe (checkout, webhook, portal)
     ├── reservations, gite, onboarding, sign, book
     ├── upload                   # Upload documents Supabase Storage
     ├── cron                     # Tâches planifiées (rappels acompte, etc.)
     └── n8n                      # Webhook automatisation
+
+src/styles/
+├── landing.css                  # Landing page (scoped avec :has(nav.nav) pour éviter leak)
+├── dashboard.css                # Dashboard — design system complet + media queries 1024/640px
+├── pages.css                    # Auth pages (sign-in, sign-up) avec .auth-layout
+├── book.css                     # Page de réservation publique
+├── sign.css                     # Page signature locataire
+├── onboarding.css               # Onboarding
+└── upgrade.css                  # Page upgrade — grille 3→1 col à 860px
 ```
 
 ## Points de configuration importants
@@ -74,7 +84,7 @@ src/app/
 - Custom domain `clerk.prysme.app` (Frontend API) + `accounts.prysme.app` (Account Portal)
 - DNS géré par Vercel : CNAMEs vers `frontend-api.clerk.services` / `accounts.clerk.services`
 - SSL certs émis par Clerk
-- **Pas de `proxyUrl`** dans `ClerkProvider` — connexion directe (supprimé car inutile depuis que le SSL est émis)
+- **Pas de `proxyUrl`** dans `ClerkProvider` — connexion directe
 - Connexions sociales : Google OAuth activé (credentials custom dans Google Cloud Console)
 - Connexion : email + mot de passe + Google
 
@@ -82,6 +92,11 @@ src/app/
 - 3 événements webhook : `checkout.session.completed`, `customer.subscription.updated`, `customer.subscription.deleted`
 - `STRIPE_WEBHOOK_SECRET` dans Vercel env vars
 - Price IDs : `STRIPE_PRICE_ID` (plan actuel unique)
+
+### Storage — IMPORTANT
+- **Ne pas utiliser `@vercel/blob`** : `BLOB_READ_WRITE_TOKEN` n'est pas configuré. Toute route utilisant `put()` de `@vercel/blob` retournera une erreur 500.
+- La route `mark-deposit` a été corrigée : elle génère le PDF en mémoire pour l'email, sans upload Blob. Le téléchargement PDF se fait par régénération à la demande (`download-signed-contract`).
+- Utiliser **Supabase Storage** pour tout nouveau besoin de stockage fichier.
 
 ### DNS (Vercel DNS pour `prysme.app`)
 - ALIAS `*` → `cname.vercel-dns-017.com` (Vercel automatique)
@@ -112,47 +127,16 @@ Migrations : `npx prisma migrate dev --name <nom>` en local, `prisma migrate dep
 
 # Roadmap — prochaines étapes
 
-## 1. UX & Navigation (interface)
+## 1. UX & Navigation — à faire
 
-### Compte & Facturation
-- **Mon Compte / Facturation** : section dédiée dans la sidebar pour gérer profil, intégrer le **Stripe Customer Portal** (changer CB, télécharger factures, gérer abonnement).
+### Fonctionnalités manquantes
+- **Système de Refus de Réservation** (priorité haute) : remplacer "Supprimer" par "Refuser" avec modale + motifs + email Resend automatique + statut `REFUSÉE` en BDD + bouton "Restaurer".
+- **Export Comptable** : page dédiée pour télécharger un CSV/Excel des réservations par période (pour le comptable).
+- **Aide & Support** : bouton dans la sidebar (FAQ, mail, chat) — indispensable au lancement.
 
-### Support
-- **Aide & Support** : bouton d'accès rapide (FAQ, mail, chat) dans la sidebar — indispensable au lancement pour capter les retours.
-
-### Refonte graphique
-- **Modifier la réservation** : aligner sur la charte graphique.
-- **Paramètres** : aligner sur la charte.
-- **Upgrade** : afficher toutes les offres
-  - Gratuit / période d'essai (barré si expirée)
-  - Essentiel : 9,99 € HT
-  - Multi-hébergement (jusqu'à 3) : 15 € HT
-
-### Fonctionnalités
-- **Export Comptable** : page dédiée pour télécharger un Excel/CSV des réservations du mois (pour le comptable).
-- **Responsivité** : compatibilité multi-device (landing + pages publiques + interne SaaS).
-
-### Système de Refus de Réservation (réversible)
-
-**Objectif** : permettre au gérant de décliner une demande proprement, avec possibilité de la réactiver.
-
-1. **Frontend** :
-   - Remplacer le bouton "Supprimer" par "Refuser" (rouge secondaire / outline).
-   - Modale au clic avec menu déroulant des motifs :
-     - Dates déjà réservées
-     - Non-respect du règlement (animaux, fêtes, etc.)
-     - Durée de séjour incompatible
-     - Établissement indisponible (travaux/fermeture)
-     - Autre (champ texte conditionnel qui apparaît si "Autre")
-   - Bouton "Confirmer le refus et envoyer l'email".
-
-2. **Backend** :
-   - Envoi automatique via Resend d'un email poli (remerciement + motif + formule de politesse).
-   - Statut BDD → `REFUSÉE`.
-
-3. **État "Refusé" (droit à l'erreur)** :
-   - Réservation reste visible avec badge gris/barré.
-   - Bouton "Repasser en attente" / "Restaurer" pour réactiver.
+### Refonte graphique restante
+- **Modifier la réservation** (`/dashboard/reservations/[id]/edit`) : aligner sur la charte graphique.
+- **Paramètres** (`/dashboard/settings`) : aligner sur la charte.
 
 ## 2. Éditeur de contrat (sécurisation)
 
@@ -170,46 +154,65 @@ Migrations : `npx prisma migrate dev --name <nom>` en local, `prisma migrate dep
 
 **Objectif** : rassurer le locataire pendant le délai bancaire, centraliser l'info pour le gérant.
 
-Prérequis déjà en place : page "Documents" pour uploader RIB, instructions de paiement (joints à l'email automatique).
-
 **Côté locataire** (page Succès après signature) :
-- Texte : "Pour bloquer définitivement vos dates, merci de procéder au règlement (coordonnées en PJ de l'email)."
-- Bouton 1 : 📎 "Joindre ma preuve de virement (image ou PDF)"
-- Bouton 2 : ✉️ "Je confirme avoir posté mon chèque"
+- Bouton "Joindre ma preuve de virement (image ou PDF)"
+- Bouton "Je confirme avoir posté mon chèque"
 
 **Côté gérant** :
-- Email Resend auto : "X a transmis une preuve de paiement".
-- Encadré jaune de la réservation mis à jour avec la PJ ou mention chèque.
-- Bouton vert "Acompte reçu" reste **100 % manuel** (validation quand l'argent est sur le compte).
+- Email Resend auto à réception d'une preuve.
+- Encadré jaune mis à jour avec la PJ ou mention chèque.
+- Bouton vert "Acompte reçu" reste 100 % manuel.
 
-**Vigilance Supabase Storage** :
-- Limite 5 Mo/fichier côté gérant (déjà en place).
-- Côté locataire : compresser impérativement les captures smartphone (ex. `browser-image-compression`, cible 500 Ko max).
+**Note** : côté locataire, compresser les images smartphone (`browser-image-compression`, cible 500 Ko max).
 
 ## 4. Stratégie & argumentaire
 
-- **Onboarding "Waouh effect"** : s'assurer que l'utilisateur génère et s'envoie **au moins un contrat test** pendant les 30 jours gratuits — c'est la démo qui convertit en abonné.
+- **Onboarding "Waouh effect"** : s'assurer que l'utilisateur génère et s'envoie au moins un contrat test pendant les 30 jours gratuits — c'est la démo qui convertit en abonné.
 
 ## 5. Check-list "Go-Live" infra
 
-Avant d'accepter les premiers paiements :
-
-- **Vercel → Pro (20 $/mois)** : indispensable pour éviter l'erreur **504 Timeout** sur la génération PDF (Hobby coupe à 10s). ⚠️ Désactiver **Speed Insights** pour ne pas payer 10 $ de plus.
+- **Vercel → Pro (20 $/mois)** : indispensable pour éviter l'erreur **504 Timeout** sur la génération PDF (Hobby coupe à 10s). Désactiver Speed Insights pour ne pas payer 10 $ de plus.
 - **Resend** : plan gratuit limite à 100 emails/jour. Passer au Pro (20 $/mois) dès ~10 clients actifs.
-- **Supabase** : 1 Go gratuit ≈ 4000 contrats PDF. Surveiller la métrique storage au fil des mois.
+- **Supabase** : 1 Go gratuit ≈ 4000 contrats PDF. Surveiller la métrique storage.
 
-## 6. Onboarding / Inscription
+---
 
-- Finition graphique (padding, margin) notamment sur le **formulaire Clerk** dont l'affichage semble bugger par moments.
+# Historique des sessions — travaux réalisés
+
+## Session avril 2026
+
+### Bugs corrigés
+- **"Acompte reçu" → Erreur interne** : la route `mark-deposit` utilisait `@vercel/blob` (token non configuré). Supprimé l'upload Blob — le PDF est généré en mémoire pour l'email, le téléchargement se fait par régénération à la demande.
+- **Scrollbar au milieu du dashboard** : `.app` était `position: fixed; inset: 0` + `.main { overflow-y: auto }`. Remplacé par layout naturel (`min-height: 100vh`) avec sidebar sticky (`position: sticky; height: 100dvh`).
+- **Logo Prysme pixelisé en sidebar** : `filter: brightness(10)` créait des artefacts. Remplacé par `brightness(0) invert(1)` pour un blanc propre sans halation.
+- **Barre blanche sur sign-in** : `landing.css` avait `body { padding-top: 68px }` qui leaked globalement. Scopé avec `body:has(nav.nav)`.
+
+### Améliorations UI
+- **Page `/upgrade`** : refonte 3 plans (Gratuit / Essentiel 9,99€ / Multi-hébergement 15€), cards égales hauteur, CTA alignés en bas, bouton retour visible, responsive grille 3→1 col à 860px.
+- **Auth pages** : bouton "Retour à l'accueil" ajouté (desktop dans le panneau gauche, mobile dans le panneau formulaire).
+- **Dashboard mobile** : sidebar drawer avec hamburger vert, overlay, `safe-area-inset-bottom`, `100dvh`.
+- **Bouton "Lien de réservation"** : composant `CopyBookingUrlButton` sur le dashboard et la page réservations — vert (copie URL) si slug configuré, outline (lien vers config) sinon. Même ligne que "Nouvelle réservation", largeurs égales sur mobile.
+- **Page de tarification landing** : CTAs alignés en bas sur les 3 cards (flex column + flex:1 sur `.pc-feat`).
+
+### Responsivité — audit complet
+Toutes les pages sont maintenant responsive :
+- `viewport-fit=cover` dans `layout.tsx` pour les safe areas iOS
+- `100dvh` sur les sidebars (desktop + mobile)
+- `padding-bottom: max(env(safe-area-inset-bottom), Npx)` sur les drawers
+- `.resa-table { min-width: 560px }` + `.table-card { overflow-x: auto }` pour le scroll horizontal
+- `.a-table` wrappée dans un div `overflow-x: auto` dans archives
+- Landing pricing : grille 3 colonnes se stack verticalement sur mobile
 
 ---
 
 ## Notes utiles pour Claude Code
 
-- **Toujours push sur `main`** (Vercel auto-deploy). La branche `claude/project-assessment-mxfzy` est tolérée mais Vercel surveille `main`.
+- **Toujours push sur `main`** (Vercel auto-deploy).
 - **Pas d'emoji** dans le code ni les commits (sauf demande explicite).
 - **Pas de commentaires inutiles** — ne documenter que le "why" non évident.
-- **Next.js 16 rewrites** : syntaxe `:path*` / `:path*`, pas `(.*)` / `$1`.
+- **Next.js 16 rewrites** : syntaxe `:path*`, pas `(.*)`.
 - **Prisma 7** : `url` et `directUrl` vont dans `prisma.config.ts`, pas dans `schema.prisma`.
-- **Débuggage UI** : toujours tester en navigateur après changement visuel — les tests unitaires ne vérifient pas le rendu.
-- **Quand l'utilisateur débute**, guider pas à pas, screenshots attendus. L'utilisateur utilise souvent la navigation privée Chrome pour tester en prod.
+- **Ne pas utiliser `@vercel/blob`** : token non configuré, utiliser Supabase Storage.
+- **CSS global leak** : dans Next.js App Router, tout CSS importé est global. Scoper avec `:has()` si nécessaire (ex: `body:has(nav.nav)`).
+- **Clerk appearance API** : les styles JS créent des inline styles. Pour surcharger, utiliser `!important` en CSS.
+- **Débuggage UI** : toujours tester en navigateur après changement visuel.
