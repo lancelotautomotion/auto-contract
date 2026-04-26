@@ -94,13 +94,13 @@ const C = {
 
 // ─── PDF renderer ─────────────────────────────────────────────────────────────
 async function _render(data: ContractData, sig: SignatureInfo | null): Promise<Buffer> {
-  const text = buildText(data);
+  const text = buildText(data).replace(/\n+$/, ''); // strip trailing blank lines
   const logoBuffer = data.logoUrl ? await fetchImageBuffer(data.logoUrl) : null;
 
   return new Promise((resolve, reject) => {
     const doc = new PDFDocument({
       size: 'A4',
-      margins: { top: 48, bottom: 64, left: 52, right: 52 },
+      margins: { top: 36, bottom: 48, left: 52, right: 52 },
       autoFirstPage: true,
       bufferPages: true,
     });
@@ -140,18 +140,18 @@ async function _render(data: ContractData, sig: SignatureInfo | null): Promise<B
     doc.y = Math.max(doc.y, headerY + 52);
 
     // ── Header separator ────────────────────────────────────────────────────
-    doc.moveDown(0.5);
+    doc.moveDown(0.4);
     doc.moveTo(ml, doc.y).lineTo(ml + W, doc.y).lineWidth(0.5).strokeColor(C.border).stroke();
-    doc.moveDown(1);
+    doc.moveDown(0.6);
 
     // ── Document title ───────────────────────────────────────────────────────
     doc.font('Helvetica-Bold').fontSize(11).fillColor(C.dark)
       .text('CONTRAT DE LOCATION SAISONNIÈRE', ml, doc.y, { width: W, align: 'center' });
     const dateJour = new Date().toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' });
-    doc.moveDown(0.3);
+    doc.moveDown(0.2);
     doc.font('Helvetica').fontSize(7.5).fillColor(C.muted)
       .text(`Établi le ${dateJour}`, ml, doc.y, { width: W, align: 'center' });
-    doc.moveDown(1.2);
+    doc.moveDown(0.8);
 
     // ── Contract body ────────────────────────────────────────────────────────
     const lines = text.split('\n');
@@ -160,7 +160,7 @@ async function _render(data: ContractData, sig: SignatureInfo | null): Promise<B
 
       // Empty line
       if (trimmed === '') {
-        doc.moveDown(0.35);
+        doc.moveDown(0.25);
         continue;
       }
 
@@ -193,9 +193,9 @@ async function _render(data: ContractData, sig: SignatureInfo | null): Promise<B
 
       // Article heading
       if (/^ARTICLE\s+\d+/i.test(trimmed)) {
-        doc.moveDown(0.6);
-        doc.font('Helvetica-Bold').fontSize(8.5).fillColor(C.dark).text(trimmed);
-        doc.moveDown(0.2);
+        doc.moveDown(0.4);
+        doc.font('Helvetica-Bold').fontSize(8.5).fillColor(C.dark).text(trimmed, { lineGap: 0 });
+        doc.moveDown(0.1);
         continue;
       }
 
@@ -208,28 +208,28 @@ async function _render(data: ContractData, sig: SignatureInfo | null): Promise<B
         && !/^\d/.test(trimmed);
 
       if (isLabel) {
-        doc.moveDown(0.6);
-        doc.font('Helvetica-Bold').fontSize(7.5).fillColor(C.muted).text(trimmed);
-        doc.moveDown(0.15);
+        doc.moveDown(0.4);
+        doc.font('Helvetica-Bold').fontSize(7.5).fillColor(C.muted).text(trimmed, { lineGap: 0 });
+        doc.moveDown(0.1);
         doc.moveTo(ml, doc.y).lineTo(ml + W, doc.y).lineWidth(0.5).strokeColor(C.border).stroke();
-        doc.moveDown(0.3);
+        doc.moveDown(0.2);
         doc.fillColor(C.dark);
         continue;
       }
 
       // List item
       if (trimmed.startsWith('-')) {
-        doc.font('Helvetica').fontSize(9.5).fillColor(C.dark).text(`  ${trimmed}`);
+        doc.font('Helvetica').fontSize(9.5).fillColor(C.dark).text(`  ${trimmed}`, { lineGap: -0.5 });
         continue;
       }
 
       // Regular line
-      doc.font('Helvetica').fontSize(9.5).fillColor(C.dark).text(rawLine);
+      doc.font('Helvetica').fontSize(9.5).fillColor(C.dark).text(rawLine, { lineGap: -0.5 });
     }
 
     // ── Signature block ──────────────────────────────────────────────────────
     if (sig) {
-      doc.moveDown(1.5);
+      doc.moveDown(1);
       const boxY = doc.y;
       const boxH = 88;
 
