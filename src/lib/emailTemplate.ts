@@ -29,11 +29,12 @@ export function buildEmailHtml(opts: EmailTemplateOptions): string {
     </table>` : '';
 
   const headerLeftHtml = giteLogoUrl
-    ? `<table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr>
-        <td style="padding-right:10px;vertical-align:middle;line-height:0;"><img src="${giteLogoUrl}" alt="${giteName}" width="32" height="32" style="display:block;border-radius:6px;width:32px;height:32px;object-fit:cover;border:0;outline:none;text-decoration:none;"/></td>
-        <td style="font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif;font-size:15px;font-weight:800;color:#2C2C2A;letter-spacing:-0.02em;vertical-align:middle;">${giteName}</td>
-      </tr></table>`
+    ? `<img src="${giteLogoUrl}" alt="${giteName}" height="40" style="display:block;height:40px;width:auto;max-width:160px;border:0;outline:none;text-decoration:none;"/>`
     : `<span style="font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif;font-size:15px;font-weight:800;color:#2C2C2A;letter-spacing:-0.02em;">${giteName}</span>`;
+
+  const headerRightHtml = giteLogoUrl
+    ? `<span style="font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif;font-size:15px;font-weight:800;color:#2C2C2A;letter-spacing:-0.02em;">${giteName}</span>`
+    : `<span style="font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif;font-size:11px;font-weight:600;color:#A3A3A0;text-transform:uppercase;letter-spacing:0.08em;">${docLabel}</span>`;
 
   const footerAddress = giteAddress
     ? `<tr><td style="font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif;font-size:11px;color:#A3A3A0;padding-bottom:4px;">${giteAddress}</td></tr>`
@@ -76,7 +77,7 @@ ${preheaderHtml}
       <table role="presentation" class="header-row" width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
           <td valign="middle">${headerLeftHtml}</td>
-          <td valign="middle" align="right" style="font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif;font-size:11px;font-weight:600;color:#A3A3A0;text-transform:uppercase;letter-spacing:0.08em;">${docLabel}</td>
+          <td valign="middle" align="right">${headerRightHtml}</td>
         </tr>
       </table>
     </td></tr>
