@@ -1,7 +1,13 @@
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import dynamic from "next/dynamic";
 import SigningForm from "./SigningForm";
-import ContractPdfViewer from "./ContractPdfViewer";
+
+// pdfjs-dist uses browser APIs (DOMMatrix) at module evaluation — must be client-only
+const ContractPdfViewer = dynamic(() => import("./ContractPdfViewer"), {
+  ssr: false,
+  loading: () => <div className="sign-pdf-loading"><span className="sign-pdf-spinner"/>Chargement du contrat…</div>,
+});
 
 export default async function SignPage({ params }: { params: Promise<{ token: string }> }) {
   const { token } = await params;
