@@ -5,11 +5,8 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
-  webpack: (config) => {
-    // pdfjs-dist tries to resolve optional canvas dep — not needed client-side
-    config.resolve.alias.canvas = false;
-    return config;
-  },
+  // Turbopack is default in Next.js 16; canvas alias not needed client-side
+  turbopack: {},
   async rewrites() {
     return [
       {
