@@ -1,5 +1,7 @@
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import { generateContractPdf, ContractData } from "@/lib/contractPdf";
+import { DEFAULT_CONTRACT_TEMPLATE } from "@/lib/defaultContractTemplate";
 import SigningForm from "./SigningForm";
 import ContractPdfViewer from "./ContractPdfViewer";
 
@@ -18,7 +20,36 @@ export default async function SignPage({ params }: { params: Promise<{ token: st
   if (!contract || !contract.reservation) notFound();
 
   const { reservation } = contract;
-  const fmtLong = (d: Date) => new Date(d).toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' });
+  const fmtShort = (d: Date) => new Date(d).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  const fmtLong  = (d: Date) => new Date(d).toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' });
+
+  // Generate PDF server-side — avoids any client-side API route routing issues
+  const data: ContractData = {
+    template: reservation.gite.contractTemplate ?? DEFAULT_CONTRACT_TEMPLATE,
+    nom_client: reservation.clientLastName,
+    prenom_client: reservation.clientFirstName,
+    email_client: reservation.clientEmail,
+    telephone_client: reservation.clientPhone,
+    adresse_client: reservation.clientAddress,
+    ville_client: reservation.clientCity,
+    code_postal_client: reservation.clientZipCode,
+    date_entree: fmtShort(reservation.checkIn),
+    date_sortie: fmtShort(reservation.checkOut),
+    loyer: reservation.rent ?? 0,
+    acompte: reservation.deposit ?? 0,
+    menage: reservation.cleaningFee ?? 0,
+    taxe_sejour: reservation.touristTax ?? 0,
+    options: reservation.reservationOptions.map(o => ({ label: o.label, price: o.price })),
+    nom_gite: reservation.gite.name,
+    adresse_gite: reservation.gite.address,
+    ville_gite: reservation.gite.city,
+    code_postal_gite: reservation.gite.zipCode,
+    email_gite: reservation.gite.email,
+    telephone_gite: reservation.gite.phone,
+    logoUrl: reservation.gite.logoUrl,
+  };
+  const pdfBuffer = await generateContractPdf(data);
+  const pdfBase64 = pdfBuffer.toString('base64');
 
   const alreadySigned = contract.status === 'SIGNED';
   const rentFormatted = reservation.rent != null ? `${reservation.rent.toFixed(2).replace('.', ',')} €` : null;
@@ -90,7 +121,7 @@ export default async function SignPage({ params }: { params: Promise<{ token: st
           {/* PDF du contrat */}
           <div className="sign-contract-wrap">
             <p className="sign-contract-label">Contrat à signer</p>
-            <ContractPdfViewer token={token} />
+            <ContractPdfViewer pdfBase64={pdfBase64} />
           </div>
         </div>
 

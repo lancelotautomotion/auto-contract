@@ -2,12 +2,10 @@
 
 import { useState, useEffect } from 'react';
 
-// useEffect-based lazy import: ContractPdfRenderer (react-pdf / pdfjs-dist)
-// uses DOMMatrix at module evaluation — must never run server-side.
-// useEffect only runs in the browser, so the import is guaranteed client-only.
+type RendererProps = { pdfBase64: string };
 
-export default function ContractPdfViewer({ token }: { token: string }) {
-  const [Renderer, setRenderer] = useState<React.ComponentType<{ token: string }> | null>(null);
+export default function ContractPdfViewer({ pdfBase64 }: RendererProps) {
+  const [Renderer, setRenderer] = useState<React.ComponentType<RendererProps> | null>(null);
 
   useEffect(() => {
     import('./ContractPdfRenderer').then(mod => {
@@ -24,5 +22,5 @@ export default function ContractPdfViewer({ token }: { token: string }) {
     );
   }
 
-  return <Renderer token={token} />;
+  return <Renderer pdfBase64={pdfBase64} />;
 }

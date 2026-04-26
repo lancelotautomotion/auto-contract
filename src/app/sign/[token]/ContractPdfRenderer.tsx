@@ -7,7 +7,7 @@ import 'react-pdf/dist/Page/AnnotationLayer.css';
 
 pdfjs.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.mjs';
 
-export default function ContractPdfViewer({ token }: { token: string }) {
+export default function ContractPdfRenderer({ pdfBase64 }: { pdfBase64: string }) {
   const [numPages, setNumPages] = useState<number>(0);
   const [pageWidth, setPageWidth] = useState<number>(560);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -22,10 +22,13 @@ export default function ContractPdfViewer({ token }: { token: string }) {
     return () => ro.disconnect();
   }, []);
 
+  // Decode base64 to Uint8Array — react-pdf accepts {data: Uint8Array} directly
+  const pdfData = { data: Uint8Array.from(atob(pdfBase64), c => c.charCodeAt(0)) };
+
   return (
     <div ref={containerRef} className="sign-pdf-viewer">
       <Document
-        file={`/api/sign/${token}`}
+        file={pdfData}
         onLoadSuccess={({ numPages }) => setNumPages(numPages)}
         loading={
           <div className="sign-pdf-loading">
