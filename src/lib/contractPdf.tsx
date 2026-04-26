@@ -160,7 +160,7 @@ async function _render(data: ContractData, sig: SignatureInfo | null): Promise<B
     const flushPending = () => {
       if (!pending.length) return;
       doc.font('Helvetica').fontSize(9).fillColor(C.dark)
-        .text(pending.join('\n'), { lineGap: -1, paragraphGap: 0 });
+        .text(pending.join('\n'), { paragraphGap: 0 });
       pending.length = 0;
     };
 
@@ -170,7 +170,7 @@ async function _render(data: ContractData, sig: SignatureInfo | null): Promise<B
       // Empty line
       if (trimmed === '') {
         flushPending();
-        doc.moveDown(0.15);
+        doc.moveDown(0.3);
         continue;
       }
 
@@ -205,9 +205,10 @@ async function _render(data: ContractData, sig: SignatureInfo | null): Promise<B
       // Article heading
       if (/^ARTICLE\s+\d+/i.test(trimmed)) {
         flushPending();
-        doc.moveDown(0.25);
+        doc.moveDown(0.35);
         doc.font('Helvetica-Bold').fontSize(8.5).fillColor(C.dark)
-          .text(trimmed, { lineGap: 0, paragraphGap: 0 });
+          .text(trimmed, { paragraphGap: 0 });
+        doc.moveDown(0.1);
         continue;
       }
 
@@ -221,11 +222,11 @@ async function _render(data: ContractData, sig: SignatureInfo | null): Promise<B
 
       if (isLabel) {
         flushPending();
-        doc.moveDown(0.25);
+        doc.moveDown(0.35);
         doc.font('Helvetica-Bold').fontSize(7.5).fillColor(C.muted)
-          .text(trimmed, { lineGap: 0, paragraphGap: 0 });
+          .text(trimmed, { paragraphGap: 0 });
         doc.moveTo(ml, doc.y).lineTo(ml + W, doc.y).lineWidth(0.5).strokeColor(C.border).stroke();
-        doc.moveDown(0.1);
+        doc.moveDown(0.15);
         doc.fillColor(C.dark);
         continue;
       }
@@ -266,11 +267,14 @@ async function _render(data: ContractData, sig: SignatureInfo | null): Promise<B
     const range = doc.bufferedPageRange();
     for (let i = 0; i < range.count; i++) {
       doc.switchToPage(range.start + i);
-      const footerY = doc.page.height - doc.page.margins.bottom + 16;
+      const savedBottom = doc.page.margins.bottom;
+      doc.page.margins.bottom = 0; // évite que pdfkit auto-pagine pendant le footer
+      const footerY = doc.page.height - savedBottom + 16;
       doc.moveTo(ml, footerY - 8).lineTo(ml + W, footerY - 8).lineWidth(0.5).strokeColor(C.border).stroke();
       doc.font('Helvetica').fontSize(7.5).fillColor(C.muted)
         .text(data.nom_gite, ml, footerY, { width: W / 2, align: 'left' });
       doc.text(`${i + 1} / ${range.count}`, ml, footerY, { width: W, align: 'right' });
+      doc.page.margins.bottom = savedBottom;
     }
 
     doc.end();
