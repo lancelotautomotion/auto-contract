@@ -25,7 +25,7 @@ export default function ContractPdfViewer({ token }: { token: string }) {
   return (
     <div ref={containerRef} className="sign-pdf-viewer">
       <Document
-        file={`/api/contract-preview/${token}`}
+        file={`/api/sign/${token}`}
         onLoadSuccess={({ numPages }) => setNumPages(numPages)}
         loading={
           <div className="sign-pdf-loading">
