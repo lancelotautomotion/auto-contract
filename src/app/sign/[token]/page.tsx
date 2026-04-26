@@ -1,11 +1,7 @@
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import { DEFAULT_CONTRACT_TEMPLATE } from "@/lib/defaultContractTemplate";
 import SigningForm from "./SigningForm";
-
-function replaceVars(template: string, vars: Record<string, string>): string {
-  return Object.entries(vars).reduce((t, [k, v]) => t.replaceAll(`{{${k}}}`, v), template);
-}
+import ContractPdfViewer from "./ContractPdfViewer";
 
 export default async function SignPage({ params }: { params: Promise<{ token: string }> }) {
   const { token } = await params;
@@ -22,41 +18,8 @@ export default async function SignPage({ params }: { params: Promise<{ token: st
   if (!contract || !contract.reservation) notFound();
 
   const { reservation } = contract;
-  const fmtShort = (d: Date) => new Date(d).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
   const fmtLong = (d: Date) => new Date(d).toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' });
 
-  const solde = Math.max(0, (reservation.rent ?? 0) - (reservation.deposit ?? 0));
-  const optionsText = reservation.reservationOptions.length === 0
-    ? 'Aucune option sélectionnée'
-    : reservation.reservationOptions.map(o =>
-        o.price > 0 ? `- ${o.label} : ${o.price.toFixed(2).replace('.', ',')} €` : `- ${o.label} : inclus`
-      ).join('\n');
-
-  const vars: Record<string, string> = {
-    nom_client: reservation.clientLastName,
-    prenom_client: reservation.clientFirstName,
-    email_client: reservation.clientEmail,
-    telephone_client: reservation.clientPhone,
-    adresse_client: reservation.clientAddress ?? '',
-    ville_client: reservation.clientCity ?? '',
-    code_postal_client: reservation.clientZipCode ?? '',
-    date_entree: fmtShort(reservation.checkIn),
-    date_sortie: fmtShort(reservation.checkOut),
-    loyer: (reservation.rent ?? 0).toFixed(2).replace('.', ','),
-    acompte: (reservation.deposit ?? 0).toFixed(2).replace('.', ','),
-    solde: solde.toFixed(2).replace('.', ','),
-    menage: (reservation.cleaningFee ?? 0).toFixed(2).replace('.', ','),
-    taxe_sejour: (reservation.touristTax ?? 0).toFixed(2).replace('.', ','),
-    options: optionsText,
-    nom_gite: reservation.gite.name,
-    adresse_gite: reservation.gite.address ?? '',
-    ville_gite: reservation.gite.city ?? '',
-    email_gite: reservation.gite.email ?? '',
-    telephone_gite: reservation.gite.phone ?? '',
-    date_du_jour: new Date().toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' }),
-  };
-
-  const contractText = replaceVars(reservation.gite.contractTemplate ?? DEFAULT_CONTRACT_TEMPLATE, vars);
   const alreadySigned = contract.status === 'SIGNED';
   const rentFormatted = reservation.rent != null ? `${reservation.rent.toFixed(2).replace('.', ',')} €` : null;
   const depositFormatted = reservation.deposit != null ? `${reservation.deposit.toFixed(2).replace('.', ',')} €` : null;
@@ -124,12 +87,10 @@ export default async function SignPage({ params }: { params: Promise<{ token: st
             </div>
           </div>
 
-          {/* Texte du contrat */}
+          {/* PDF du contrat */}
           <div className="sign-contract-wrap">
             <p className="sign-contract-label">Contrat à signer</p>
-            <div className="sign-contract-box">
-              <pre className="sign-contract-text">{contractText}</pre>
-            </div>
+            <ContractPdfViewer token={token} />
           </div>
         </div>
 

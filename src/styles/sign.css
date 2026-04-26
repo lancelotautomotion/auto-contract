@@ -45,10 +45,20 @@
 .sign-recap-val:last-child{margin-bottom:0}
 
 /* ─── CONTRACT ─── */
-.sign-contract-wrap{padding:24px 28px 28px}
-.sign-contract-label{font-size:10px;font-weight:700;color:var(--ink-lighter);text-transform:uppercase;letter-spacing:.08em;margin:0 0 12px}
-.sign-contract-box{background:#FAFAF7;border:1px solid var(--line);border-radius:12px;padding:24px 28px;max-height:520px;overflow-y:auto;-webkit-overflow-scrolling:touch}
-.sign-contract-text{font-family:var(--ff);font-size:13px;line-height:1.75;color:var(--ink);white-space:pre-wrap;word-break:break-word;margin:0}
+.sign-contract-wrap{padding:24px 0 0}
+.sign-contract-label{font-size:10px;font-weight:700;color:var(--ink-lighter);text-transform:uppercase;letter-spacing:.08em;margin:0 0 12px;padding:0 28px}
+
+/* ─── PDF VIEWER ─── */
+.sign-pdf-viewer{width:100%}
+.sign-pdf-page-wrap{margin-bottom:2px;line-height:0}
+.sign-pdf-page-wrap canvas{display:block;width:100%!important;height:auto!important}
+.sign-pdf-page-num{font-family:var(--ff);font-size:10px;color:var(--ink-lighter);text-align:center;margin:4px 0 8px;letter-spacing:.04em}
+.sign-pdf-loading{display:flex;align-items:center;justify-content:center;gap:12px;padding:48px 28px;font-family:var(--ff);font-size:14px;color:var(--ink-lighter)}
+.sign-pdf-error{padding:32px 28px;text-align:center;font-family:var(--ff);font-size:14px;color:#b91c1c}
+.sign-pdf-spinner{width:18px;height:18px;border:2px solid rgba(0,0,0,.1);border-top-color:var(--violet);border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
+/* Ensure react-pdf TextLayer doesn't overflow */
+.react-pdf__Page{position:relative!important;overflow:hidden}
+.react-pdf__Page__textContent{user-select:text}
 
 /* ─── SIGNING FORM ─── */
 .sign-form-card{background:var(--white);border-radius:16px;border:1px solid var(--line);overflow:hidden;margin-bottom:20px}
@@ -103,10 +113,8 @@
   .sign-recap-col+.sign-recap-col{padding-left:0;border-left:none;border-top:1px solid var(--line);padding-top:16px;margin-top:4px}
   .sign-recap-key{font-size:10px}
   .sign-recap-val{font-size:15px}
-  /* Remove nested scroll on mobile — page itself scrolls */
-  .sign-contract-wrap{padding:18px 16px 20px}
-  .sign-contract-box{padding:18px 16px;max-height:none;overflow-y:visible}
-  .sign-contract-text{font-size:14px;line-height:1.8}
+  .sign-contract-wrap{padding:18px 0 0}
+  .sign-contract-label{padding:0 16px;margin-bottom:10px}
   .sign-form-card{border-radius:12px}
   .sign-form-inner{padding:22px 16px 24px}
   .sign-form-desc{font-size:13px}
