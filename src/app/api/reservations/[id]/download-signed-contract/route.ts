@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { generateSignedContractPdf, ContractData } from "@/lib/contractPdf";
+import { generateSignedContractPdf, ContractData, buildSignedContractFilename } from "@/lib/contractPdf";
 import { DEFAULT_CONTRACT_TEMPLATE } from "@/lib/defaultContractTemplate";
 import { requireAuth } from "@/lib/auth";
 
@@ -19,7 +19,12 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
     if (!reservation.contract) return NextResponse.json({ error: "Aucun contrat" }, { status: 404 });
     if (reservation.contract.status !== "SIGNED") return NextResponse.json({ error: "Contrat non signé" }, { status: 400 });
 
-    const filename = `contrat-signe-${reservation.clientLastName}-${reservation.clientFirstName}.pdf`;
+    const filename = buildSignedContractFilename({
+      clientLastName: reservation.clientLastName,
+      clientFirstName: reservation.clientFirstName,
+      checkIn: reservation.checkIn,
+      checkOut: reservation.checkOut,
+    });
 
     // Chantier 3: if the signed PDF was uploaded to Blob, redirect directly (no regeneration)
     if (reservation.contract.signedPdfUrl) {

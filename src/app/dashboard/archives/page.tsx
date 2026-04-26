@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import ArchiveDownloadButton from "./ArchiveDownloadButton";
+import { buildSignedContractFilename } from "@/lib/contractPdf";
 
 export default async function ArchivesPage({
   searchParams,
@@ -244,7 +245,12 @@ export default async function ArchivesPage({
                       <td>
                         <ArchiveDownloadButton
                           reservationId={r.id}
-                          filename={`contrat-signe-${r.clientLastName}-${r.clientFirstName}.pdf`}
+                          filename={buildSignedContractFilename({
+                            clientLastName: r.clientLastName,
+                            clientFirstName: r.clientFirstName,
+                            checkIn: r.checkIn,
+                            checkOut: r.checkOut,
+                          })}
                         />
                       </td>
                     </tr>

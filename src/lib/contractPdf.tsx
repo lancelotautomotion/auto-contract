@@ -100,7 +100,7 @@ async function _render(data: ContractData, sig: SignatureInfo | null): Promise<B
   return new Promise((resolve, reject) => {
     const doc = new PDFDocument({
       size: 'A4',
-      margins: { top: 28, bottom: 40, left: 52, right: 52 },
+      margins: { top: 56, bottom: 64, left: 64, right: 64 },
       autoFirstPage: true,
       bufferPages: true,
     });
@@ -140,18 +140,18 @@ async function _render(data: ContractData, sig: SignatureInfo | null): Promise<B
     doc.y = Math.max(doc.y, headerY + 52);
 
     // ── Header separator ────────────────────────────────────────────────────
-    doc.moveDown(0.2);
+    doc.moveDown(0.6);
     doc.moveTo(ml, doc.y).lineTo(ml + W, doc.y).lineWidth(0.5).strokeColor(C.border).stroke();
-    doc.moveDown(0.3);
+    doc.moveDown(0.8);
 
     // ── Document title ───────────────────────────────────────────────────────
-    doc.font('Helvetica-Bold').fontSize(11).fillColor(C.dark)
+    doc.font('Helvetica-Bold').fontSize(13).fillColor(C.dark)
       .text('CONTRAT DE LOCATION SAISONNIÈRE', ml, doc.y, { width: W, align: 'center' });
     const dateJour = new Date().toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' });
-    doc.moveDown(0.1);
-    doc.font('Helvetica').fontSize(7.5).fillColor(C.muted)
+    doc.moveDown(0.3);
+    doc.font('Helvetica').fontSize(8).fillColor(C.muted)
       .text(`Établi le ${dateJour}`, ml, doc.y, { width: W, align: 'center' });
-    doc.moveDown(0.4);
+    doc.moveDown(1.2);
 
     // ── Contract body ────────────────────────────────────────────────────────
     const lines = text.split('\n');
@@ -159,8 +159,8 @@ async function _render(data: ContractData, sig: SignatureInfo | null): Promise<B
 
     const flushPending = () => {
       if (!pending.length) return;
-      doc.font('Helvetica').fontSize(9).fillColor(C.dark)
-        .text(pending.join('\n'), { paragraphGap: 0 });
+      doc.font('Helvetica').fontSize(10).fillColor(C.dark)
+        .text(pending.join('\n'), { paragraphGap: 0, lineGap: 2 });
       pending.length = 0;
     };
 
@@ -170,7 +170,7 @@ async function _render(data: ContractData, sig: SignatureInfo | null): Promise<B
       // Empty line
       if (trimmed === '') {
         flushPending();
-        doc.moveDown(0.3);
+        doc.moveDown(0.6);
         continue;
       }
 
@@ -185,19 +185,19 @@ async function _render(data: ContractData, sig: SignatureInfo | null): Promise<B
         const curY = doc.y;
 
         if (isSigLine) {
-          doc.moveTo(ml,             curY + 14).lineTo(ml + colW,         curY + 14).lineWidth(0.5).strokeColor(C.border).stroke();
-          doc.moveTo(ml + colW + 20, curY + 14).lineTo(ml + W,            curY + 14).lineWidth(0.5).strokeColor(C.border).stroke();
-          doc.y = curY + 20;
+          doc.moveTo(ml,             curY + 18).lineTo(ml + colW,         curY + 18).lineWidth(0.5).strokeColor(C.border).stroke();
+          doc.moveTo(ml + colW + 20, curY + 18).lineTo(ml + W,            curY + 18).lineWidth(0.5).strokeColor(C.border).stroke();
+          doc.y = curY + 26;
         } else {
           doc.font(isColHeader ? 'Helvetica-Bold' : 'Helvetica')
-            .fontSize(isColHeader ? 7.5 : 9)
+            .fontSize(isColHeader ? 8 : 10)
             .fillColor(isColHeader ? C.muted : C.dark)
             .text(l, ml, curY, { width: colW, lineBreak: false });
           doc.font(isColHeader ? 'Helvetica-Bold' : 'Helvetica')
-            .fontSize(isColHeader ? 7.5 : 9)
+            .fontSize(isColHeader ? 8 : 10)
             .fillColor(isColHeader ? C.muted : C.dark)
             .text(r, ml + colW + 20, curY, { width: colW, lineBreak: false });
-          doc.y = curY + (isColHeader ? 16 : 12);
+          doc.y = curY + (isColHeader ? 22 : 16);
         }
         continue;
       }
@@ -205,10 +205,10 @@ async function _render(data: ContractData, sig: SignatureInfo | null): Promise<B
       // Article heading
       if (/^ARTICLE\s+\d+/i.test(trimmed)) {
         flushPending();
-        doc.moveDown(0.35);
-        doc.font('Helvetica-Bold').fontSize(8.5).fillColor(C.dark)
+        doc.moveDown(0.9);
+        doc.font('Helvetica-Bold').fontSize(10).fillColor(C.dark)
           .text(trimmed, { paragraphGap: 0 });
-        doc.moveDown(0.1);
+        doc.moveDown(0.4);
         continue;
       }
 
@@ -222,11 +222,12 @@ async function _render(data: ContractData, sig: SignatureInfo | null): Promise<B
 
       if (isLabel) {
         flushPending();
-        doc.moveDown(0.35);
-        doc.font('Helvetica-Bold').fontSize(7.5).fillColor(C.muted)
-          .text(trimmed, { paragraphGap: 0 });
+        doc.moveDown(0.8);
+        doc.font('Helvetica-Bold').fontSize(8).fillColor(C.muted)
+          .text(trimmed, { paragraphGap: 0, characterSpacing: 0.5 });
+        doc.moveDown(0.2);
         doc.moveTo(ml, doc.y).lineTo(ml + W, doc.y).lineWidth(0.5).strokeColor(C.border).stroke();
-        doc.moveDown(0.15);
+        doc.moveDown(0.4);
         doc.fillColor(C.dark);
         continue;
       }
@@ -288,4 +289,33 @@ export async function generateSignedContractPdf(data: ContractData, sig: Signatu
 
 export async function generateContractPdf(data: ContractData): Promise<Buffer> {
   return _render(data, null);
+}
+
+// ─── Nom de fichier normalisé pour le contrat signé ───────────────────────────
+// Format : contrat-NOM-PRENOM-DDMMYYYY-DDMMYYYY.pdf (sans accent, sans espace)
+export function buildSignedContractFilename(opts: {
+  clientLastName: string;
+  clientFirstName: string;
+  checkIn: Date | string;
+  checkOut: Date | string;
+}): string {
+  const slug = (s: string) => s
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')   // accents (combining diacritics)
+    .replace(/[^a-zA-Z0-9]+/g, '-')    // tout le reste → tiret
+    .replace(/^-+|-+$/g, '')           // tirets en bordure
+    .toLowerCase();
+
+  const fmt = (d: Date | string) => {
+    const date = d instanceof Date ? d : new Date(d);
+    const dd = String(date.getDate()).padStart(2, '0');
+    const mm = String(date.getMonth() + 1).padStart(2, '0');
+    const yyyy = date.getFullYear();
+    return `${dd}${mm}${yyyy}`;
+  };
+
+  const last = slug(opts.clientLastName) || 'locataire';
+  const first = slug(opts.clientFirstName) || '';
+  const name = first ? `${last}-${first}` : last;
+  return `contrat-${name}-${fmt(opts.checkIn)}-${fmt(opts.checkOut)}.pdf`;
 }

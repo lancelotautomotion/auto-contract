@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { generateSignedContractPdf, ContractData } from "@/lib/contractPdf";
+import { generateSignedContractPdf, ContractData, buildSignedContractFilename } from "@/lib/contractPdf";
 import { DEFAULT_CONTRACT_TEMPLATE } from "@/lib/defaultContractTemplate";
 import { buildEmailHtml, divider, muted, signOff } from "@/lib/emailTemplate";
 import { Resend } from "resend";
@@ -14,7 +14,7 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
   try {
     const reservation = await prisma.reservation.findFirst({
       where: { id, gite: { userId: ctx.userId } },
-      include: { gite: true, reservationOptions: true, contract: true },
+      include: { gite: { include: { user: true } }, reservationOptions: true, contract: true },
     });
 
     if (!reservation) return NextResponse.json({ error: "Réservation introuvable" }, { status: 404 });
@@ -65,7 +65,12 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
 
     const resend = new Resend(process.env.RESEND_API_KEY);
     const fromEmail = process.env.RESEND_FROM_EMAIL ?? "onboarding@resend.dev";
-    const filename = `contrat-signe-${reservation.clientLastName}-${reservation.clientFirstName}.pdf`;
+    const filename = buildSignedContractFilename({
+      clientLastName: reservation.clientLastName,
+      clientFirstName: reservation.clientFirstName,
+      checkIn: reservation.checkIn,
+      checkOut: reservation.checkOut,
+    });
     const giteAddress = [reservation.gite.address, reservation.gite.zipCode, reservation.gite.city]
       .filter(Boolean).join(', ') || undefined;
 
@@ -92,7 +97,7 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
       attachments: [{ filename, content: pdfBuffer.toString("base64") }],
     });
 
-    const notifEmail = reservation.gite.notificationEmail ?? reservation.gite.email;
+    const notifEmail = reservation.gite.notificationEmail || reservation.gite.email || reservation.gite.user.email;
     if (notifEmail) {
       const managerBody = `
         <p style="margin:0 0 20px;">L'acompte de <strong style="color:#2C2C2A;">${reservation.clientFirstName} ${reservation.clientLastName}</strong> a été marqué comme reçu.</p>
