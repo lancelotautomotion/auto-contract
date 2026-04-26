@@ -1,58 +1,20 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
-import { Document, Page, pdfjs } from 'react-pdf';
-import 'react-pdf/dist/Page/TextLayer.css';
-import 'react-pdf/dist/Page/AnnotationLayer.css';
+import dynamic from 'next/dynamic';
 
-pdfjs.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.mjs';
+// Dynamically load the actual react-pdf renderer client-side only.
+// pdfjs-dist references DOMMatrix (browser API) at module evaluation —
+// importing it server-side crashes SSR with ReferenceError.
+const ContractPdfRenderer = dynamic(() => import('./ContractPdfRenderer'), {
+  ssr: false,
+  loading: () => (
+    <div className="sign-pdf-loading">
+      <span className="sign-pdf-spinner"/>
+      Chargement du contrat…
+    </div>
+  ),
+});
 
 export default function ContractPdfViewer({ token }: { token: string }) {
-  const [numPages, setNumPages] = useState<number>(0);
-  const [pageWidth, setPageWidth] = useState<number>(560);
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const el = containerRef.current;
-    if (!el) return;
-    const ro = new ResizeObserver(entries => {
-      setPageWidth(Math.floor(entries[0].contentRect.width));
-    });
-    ro.observe(el);
-    return () => ro.disconnect();
-  }, []);
-
-  return (
-    <div ref={containerRef} className="sign-pdf-viewer">
-      <Document
-        file={`/api/contract-preview/${token}`}
-        onLoadSuccess={({ numPages }) => setNumPages(numPages)}
-        loading={
-          <div className="sign-pdf-loading">
-            <span className="sign-pdf-spinner"/>
-            Chargement du contrat…
-          </div>
-        }
-        error={
-          <div className="sign-pdf-error">
-            Impossible de charger le contrat. Veuillez rafraîchir la page.
-          </div>
-        }
-      >
-        {Array.from({ length: numPages }, (_, i) => (
-          <div key={i} className="sign-pdf-page-wrap">
-            <Page
-              pageNumber={i + 1}
-              width={pageWidth || undefined}
-              renderTextLayer
-              renderAnnotationLayer={false}
-            />
-            {numPages > 1 && (
-              <p className="sign-pdf-page-num">{i + 1} / {numPages}</p>
-            )}
-          </div>
-        ))}
-      </Document>
-    </div>
-  );
+  return <ContractPdfRenderer token={token} />;
 }
