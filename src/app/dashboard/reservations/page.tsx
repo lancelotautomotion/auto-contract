@@ -92,35 +92,29 @@ export default async function ReservationsPage() {
           <div className="pending-banner">
             <div className="pb-header">
               <div className="pb-icon">
-                <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
-                  <circle cx="7" cy="7" r="5.5" stroke="#8C6A00" strokeWidth="1.2"/>
-                  <path d="M7 4v3M7 9v.5" stroke="#8C6A00" strokeWidth="1.3" strokeLinecap="round"/>
+                <svg width="18" height="18" fill="none" viewBox="0 0 18 18">
+                  <circle cx="9" cy="9" r="7" stroke="currentColor" strokeWidth="1.4"/>
+                  <path d="M9 6v4M9 12v.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
                 </svg>
               </div>
-              <div className="pb-title">
-                {pendingReservations.length} nouvelle{pendingReservations.length > 1 ? 's' : ''} demande{pendingReservations.length > 1 ? 's' : ''} à valider
+              <div>
+                <div className="pb-title">
+                  {pendingReservations.length} nouvelle{pendingReservations.length > 1 ? 's' : ''} demande{pendingReservations.length > 1 ? 's' : ''} à valider
+                </div>
+                <div className="pb-sub">Des clients ont soumis une demande via votre formulaire de réservation.</div>
               </div>
             </div>
-            <div className="pb-desc">
-              {pendingReservations.length > 1 ? 'Des clients ont soumis' : 'Un client a soumis'} une demande via votre formulaire de réservation.
-            </div>
-            {pendingReservations.map(r => (
-              <div key={r.id} className="pb-item-card">
-                <div className="pb-item-av">
-                  {r.clientFirstName[0]}{r.clientLastName[0]}
-                </div>
-                <div className="pb-item-info">
-                  <div className="pb-item-name">{r.clientFirstName} {r.clientLastName}</div>
-                  <div className="pb-item-dates">{fmt(r.checkIn)} → {fmt(r.checkOut)}</div>
-                </div>
-                <Link href={`/dashboard/reservations/${r.id}/complete`} className="pb-item-action">
-                  Compléter
-                  <svg width="10" height="10" fill="none" viewBox="0 0 10 10">
-                    <path d="M2 5h6m-2.5-2.5L8 5 5.5 7.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
+            <div className="pb-items">
+              {pendingReservations.map(r => (
+                <Link key={r.id} href={`/dashboard/reservations/${r.id}/complete`} className="pb-item">
+                  <div className="pb-item-left">
+                    <span className="pb-item-name">{r.clientFirstName} {r.clientLastName}</span>
+                    <span className="pb-item-dates">{fmt(r.checkIn)} → {fmt(r.checkOut)}</span>
+                  </div>
+                  <span className="pb-item-cta">Compléter →</span>
                 </Link>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         )}
 
