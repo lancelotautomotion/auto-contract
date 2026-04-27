@@ -17,25 +17,31 @@ export async function POST() {
   const clerkUser = await currentUser();
   const customerEmail = dbUser.email || clerkUser?.emailAddresses[0]?.emailAddress;
 
-  const session = await stripe.checkout.sessions.create({
-    mode: "subscription",
-    line_items: [{ price: STRIPE_PRICE_ID, quantity: 1 }],
-    client_reference_id: dbUser.id,
-    customer: dbUser.stripeCustomerId ?? undefined,
-    customer_email: dbUser.stripeCustomerId ? undefined : customerEmail,
-    allow_promotion_codes: true,
-    billing_address_collection: "auto",
-    subscription_data: {
+  try {
+    const session = await stripe.checkout.sessions.create({
+      mode: "subscription",
+      line_items: [{ price: STRIPE_PRICE_ID, quantity: 1 }],
+      client_reference_id: dbUser.id,
+      customer: dbUser.stripeCustomerId ?? undefined,
+      customer_email: dbUser.stripeCustomerId ? undefined : customerEmail,
+      allow_promotion_codes: true,
+      billing_address_collection: "auto",
+      subscription_data: {
+        metadata: { userId: dbUser.id, clerkId },
+      },
       metadata: { userId: dbUser.id, clerkId },
-    },
-    metadata: { userId: dbUser.id, clerkId },
-    success_url: appUrl("/upgrade/success?session_id={CHECKOUT_SESSION_ID}"),
-    cancel_url: appUrl("/upgrade?canceled=1"),
-  });
+      success_url: appUrl("/upgrade/success?session_id={CHECKOUT_SESSION_ID}"),
+      cancel_url: appUrl("/upgrade?canceled=1"),
+    });
 
-  if (!session.url) {
-    return NextResponse.json({ error: "Impossible de créer la session de paiement." }, { status: 500 });
+    if (!session.url) {
+      return NextResponse.json({ error: "Stripe n'a pas renvoyé d'URL de paiement." }, { status: 500 });
+    }
+
+    return NextResponse.json({ url: session.url });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    console.error("[stripe/checkout] Erreur:", message, err);
+    return NextResponse.json({ error: `Stripe: ${message}` }, { status: 500 });
   }
-
-  return NextResponse.json({ url: session.url });
 }

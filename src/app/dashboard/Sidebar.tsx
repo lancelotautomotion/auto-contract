@@ -3,7 +3,6 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { useUser } from "@clerk/nextjs";
 import type { TrialInfo } from "@/lib/trial";
 
 export default function Sidebar({ pendingCount = 0, trialInfo, mobileOpen, onMobileClose }: {
@@ -13,32 +12,11 @@ export default function Sidebar({ pendingCount = 0, trialInfo, mobileOpen, onMob
   onMobileClose?: () => void;
 }) {
   const pathname = usePathname();
-  const { user } = useUser();
-
-  const initials = user
-    ? `${user.firstName?.[0] ?? ''}${user.lastName?.[0] ?? ''}`.toUpperCase()
-    : '?';
 
   const active = (href: string) =>
     href === '/dashboard'
       ? pathname === '/dashboard'
       : pathname.startsWith(href);
-
-  const planLabel = trialInfo?.isActive
-    ? 'Plan Essentiel'
-    : trialInfo?.isTrial && !trialInfo.isExpired
-      ? trialInfo.daysLeft === 1
-        ? 'Essai — 1 jour restant'
-        : `Essai — ${trialInfo.daysLeft}j restants`
-      : trialInfo?.isExpired
-        ? 'Essai expiré'
-        : 'Plan Essentiel';
-
-  const planColor = trialInfo?.isExpired
-    ? 'rgba(220,38,38,.6)'
-    : trialInfo?.isTrial && trialInfo.daysLeft <= 3
-      ? 'rgba(217,119,6,.7)'
-      : 'rgba(255,255,255,.3)';
 
   return (
     <aside className={`sidebar${mobileOpen ? ' open' : ''}`}>
@@ -169,7 +147,7 @@ export default function Sidebar({ pendingCount = 0, trialInfo, mobileOpen, onMob
       </nav>
 
       <div className="sb-bottom">
-        <Link href="/dashboard/settings" className={`sb-link${active('/dashboard/settings') ? ' active' : ''}`} style={{ marginBottom: '8px' }}>
+        <Link href="/dashboard/settings" className={`sb-link${active('/dashboard/settings') ? ' active' : ''}`}>
           <span className="sb-icon">
             <svg width="18" height="18" fill="none" viewBox="0 0 18 18">
               <circle cx="9" cy="9" r="3" stroke="currentColor" strokeWidth="1.3"/>
@@ -178,14 +156,6 @@ export default function Sidebar({ pendingCount = 0, trialInfo, mobileOpen, onMob
           </span>
           Paramètres
         </Link>
-
-        <div className="sb-user">
-          <div className="sb-avatar">{initials}</div>
-          <div className="sb-user-info">
-            <div className="sb-user-name">{user?.fullName ?? 'Utilisateur'}</div>
-            <div className="sb-user-plan" style={{ color: planColor }}>{planLabel}</div>
-          </div>
-        </div>
       </div>
     </aside>
   );
