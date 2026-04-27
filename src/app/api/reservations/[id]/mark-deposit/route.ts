@@ -97,7 +97,7 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
       attachments: [{ filename, content: pdfBuffer.toString("base64") }],
     });
 
-    const notifEmail = reservation.gite.notificationEmail || reservation.gite.email || reservation.gite.user.email;
+    const notifEmail = reservation.gite.notificationEmail || reservation.gite.user.email;
     if (notifEmail) {
       const managerBody = `
         <p style="margin:0 0 20px;">L'acompte de <strong style="color:#2C2C2A;">${reservation.clientFirstName} ${reservation.clientLastName}</strong> a été marqué comme reçu.</p>

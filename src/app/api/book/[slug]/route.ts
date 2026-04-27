@@ -54,8 +54,8 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ slu
     },
   });
 
-  // Notification email au gérant — fallback sur l'email Prysme du compte si aucun email gîte configuré
-  const notifTo = gite.notificationEmail || gite.email || gite.user.email;
+  // Notification email au gérant — fallback sur l'email Prysme du compte si aucun email de notification configuré
+  const notifTo = gite.notificationEmail || gite.user.email;
   if (gite.notifNewReservation && notifTo && process.env.RESEND_API_KEY) {
     try {
       const resend = new Resend(process.env.RESEND_API_KEY);

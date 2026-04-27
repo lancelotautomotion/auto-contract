@@ -127,7 +127,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ tok
     });
 
     // Email au gérant — notification de signature
-    const notifEmail = reservation.gite.notificationEmail || reservation.gite.email || reservation.gite.user.email;
+    const notifEmail = reservation.gite.notificationEmail || reservation.gite.user.email;
     if (reservation.gite.notifContractSigned && notifEmail) {
       const signedAtFormatted = signedAt.toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' });
       const managerBody = `
