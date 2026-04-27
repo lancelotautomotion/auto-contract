@@ -90,6 +90,10 @@ const C = {
   muted:  '#7A7570',
   border: '#CEC8BF',
   bg:     '#F7F4F0',
+  violet:       '#5B52B5',
+  violetLight:  '#7F77DD',
+  violetBg:     '#F4F2FB',
+  violetBorder: '#DAD7F0',
 };
 
 // ─── PDF renderer ─────────────────────────────────────────────────────────────
@@ -239,29 +243,49 @@ async function _render(data: ContractData, sig: SignatureInfo | null): Promise<B
 
     // ── Signature block ──────────────────────────────────────────────────────
     if (sig) {
-      doc.moveDown(0.5);
+      doc.moveDown(0.6);
       const boxY = doc.y;
-      const boxH = 80;
+      const boxH = 96;
+      const radius = 10;
+      const padX = 18;
+      const accentW = 3;
 
-      doc.rect(ml, boxY, W, boxH)
-        .fill(C.bg)
-        .lineWidth(0.5).strokeColor(C.border)
-        .rect(ml, boxY, W, boxH).stroke();
+      doc.roundedRect(ml, boxY, W, boxH, radius)
+        .fillAndStroke(C.violetBg, C.violetBorder);
 
-      doc.font('Helvetica-Bold').fontSize(8).fillColor(C.muted)
-        .text('SIGNATURE ÉLECTRONIQUE', ml + 14, boxY + 12);
+      doc.save();
+      doc.roundedRect(ml, boxY, W, boxH, radius).clip();
+      doc.rect(ml, boxY, accentW, boxH).fill(C.violetLight);
+      doc.restore();
+
+      const badgeR = 7;
+      const badgeCx = ml + padX + badgeR;
+      const badgeCy = boxY + 16 + badgeR;
+      doc.circle(badgeCx, badgeCy, badgeR).fill(C.violet);
+
+      doc.save();
+      doc.lineWidth(1.4).strokeColor('#FFFFFF').lineJoin('round').lineCap('round');
+      doc.moveTo(badgeCx - 3, badgeCy + 0.3)
+        .lineTo(badgeCx - 0.6, badgeCy + 2.6)
+        .lineTo(badgeCx + 3.2, badgeCy - 1.8)
+        .stroke();
+      doc.restore();
+
+      const textX = badgeCx + badgeR + 8;
+      doc.font('Helvetica-Bold').fontSize(8.5).fillColor(C.violet)
+        .text('SIGNATURE ÉLECTRONIQUE', textX, boxY + 17, { characterSpacing: 0.6 });
 
       const dateStr = sig.signedAt.toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' });
       const timeStr = sig.signedAt.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
 
       doc.font('Helvetica').fontSize(8.5).fillColor(C.dark);
-      doc.text(`Signé le : ${dateStr} à ${timeStr}`, ml + 14, boxY + 28);
-      doc.text(`Par : ${sig.signedByName}`, ml + 14);
-      doc.text(`Adresse IP : ${sig.signedByIp}`, ml + 14);
-      doc.text(`Référence : ${sig.reservationId}`, ml + 14);
+      doc.text(`Signé le : ${dateStr} à ${timeStr}`, ml + padX, boxY + 38);
+      doc.text(`Par : ${sig.signedByName}`, ml + padX);
+      doc.text(`Adresse IP : ${sig.signedByIp}`, ml + padX);
+      doc.text(`Référence : ${sig.reservationId}`, ml + padX);
 
       doc.font('Helvetica-Oblique').fontSize(7.5).fillColor(C.muted)
-        .text('Ce document constitue une signature électronique simple au sens du règlement eIDAS (UE) n°910/2014.', ml + 14);
+        .text('Ce document constitue une signature électronique simple au sens du règlement eIDAS (UE) n°910/2014.', ml + padX, boxY + boxH + 8, { width: W - padX * 2 });
     }
 
     // ── Footer (on every page) ───────────────────────────────────────────────
