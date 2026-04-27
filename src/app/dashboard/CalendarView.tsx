@@ -68,16 +68,8 @@ export default function CalendarView({ reservations }: { reservations: Reservati
         >
           ←
         </button>
-        <div style={{ display: 'flex', gap: '8px' }}>
-          {/* Légende */}
-          <span style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', color: SIGNED_TEXT }}>
-            <span style={{ width: 12, height: 12, borderRadius: 3, backgroundColor: SIGNED_BG, border: `1px solid ${SIGNED_TEXT}`, display: 'inline-block' }} />
-            Signé
-          </span>
-          <span style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', color: PENDING_TEXT }}>
-            <span style={{ width: 12, height: 12, borderRadius: 3, backgroundColor: PENDING_BG, border: `1px solid ${PENDING_TEXT}`, display: 'inline-block' }} />
-            En attente de signature
-          </span>
+        <div style={{ fontSize: '13px', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#1C1C1A' }}>
+          {MONTHS[baseMonth.month]} {baseMonth.year}
         </div>
         <button
           onClick={() => setBaseMonth(b => {
@@ -99,9 +91,6 @@ export default function CalendarView({ reservations }: { reservations: Reservati
 
           return (
             <div key={`${year}-${month}`} style={{ backgroundColor: '#F7F4F0', border: '1px solid #CEC8BF', borderRadius: '10px', padding: '16px' }}>
-              <p style={{ fontSize: '12px', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#7A7570', marginBottom: '12px', textAlign: 'center' }}>
-                {MONTHS[month]} {year}
-              </p>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '2px' }}>
                 {DAYS.map(d => (
                   <div key={d} style={{ textAlign: 'center', fontSize: '9px', letterSpacing: '0.1em', color: '#7A7570', paddingBottom: '4px', textTransform: 'uppercase' }}>{d}</div>
