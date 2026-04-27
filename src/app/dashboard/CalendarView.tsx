@@ -9,18 +9,21 @@ interface Reservation {
   clientLastName: string;
   checkIn: string;
   checkOut: string;
+  status: string;
   contractStatus: string | null;
 }
 
 const SIGNED_BG = '#D1EDD4';
 const SIGNED_TEXT = '#2D6A31';
-const PENDING_BG = '#FDECD0';
-const PENDING_TEXT = '#C47822';
+const SENT_BG = '#DAD7F0';
+const SENT_TEXT = '#5B52B5';
+const WAITING_BG = '#FCE3B0';
+const WAITING_TEXT = '#8C6A00';
 
-function getColor(status: string | null): { bg: string; text: string } | null {
-  if (status === 'SIGNED') return { bg: SIGNED_BG, text: SIGNED_TEXT };
-  if (status === 'GENERATED') return { bg: PENDING_BG, text: PENDING_TEXT };
-  return null;
+function getColor(reservation: Reservation): { bg: string; text: string } {
+  if (reservation.contractStatus === 'SIGNED') return { bg: SIGNED_BG, text: SIGNED_TEXT };
+  if (reservation.contractStatus === 'GENERATED') return { bg: SENT_BG, text: SENT_TEXT };
+  return { bg: WAITING_BG, text: WAITING_TEXT };
 }
 
 function getDaysInMonth(year: number, month: number) {
@@ -101,7 +104,7 @@ export default function CalendarView({ reservations }: { reservations: Reservati
                 {Array.from({ length: daysInMonth }).map((_, i) => {
                   const day = i + 1;
                   const reservation = getReservationForDay(year, month, day);
-                  const color = reservation ? getColor(reservation.contractStatus) : null;
+                  const color = reservation ? getColor(reservation) : null;
                   const isToday = year === today.getFullYear() && month === today.getMonth() && day === today.getDate();
 
                   const cell = (

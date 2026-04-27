@@ -24,6 +24,7 @@ export default async function DashboardPage() {
   let reservations: Array<{
     id: string; clientFirstName: string; clientLastName: string;
     checkIn: Date; checkOut: Date;
+    status: string;
     contract: { status: string; emailStatus: string } | null;
   }> = [];
 
@@ -41,7 +42,7 @@ export default async function DashboardPage() {
         orderBy: { createdAt: 'desc' },
       }),
       prisma.reservation.findMany({
-        where: { gite: { userId: dbUser.id }, status: { not: 'PENDING_REVIEW' } },
+        where: { gite: { userId: dbUser.id } },
         include: { contract: true },
         orderBy: { checkIn: 'asc' },
       }),
@@ -59,11 +60,12 @@ export default async function DashboardPage() {
     clientLastName: r.clientLastName,
     checkIn: r.checkIn.toISOString(),
     checkOut: r.checkOut.toISOString(),
+    status: r.status,
     contractStatus: r.contract?.status ?? null,
   }));
 
   const upcoming = reservations
-    .filter(r => new Date(r.checkIn) >= today)
+    .filter(r => r.status !== 'PENDING_REVIEW' && new Date(r.checkIn) >= today)
     .sort((a, b) => new Date(a.checkIn).getTime() - new Date(b.checkIn).getTime())
     .slice(0, 5);
 
