@@ -56,6 +56,8 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
       signedAt: reservation.contract.signedAt ?? new Date(),
       signedByIp: reservation.contract.signedByIp ?? "inconnue",
       reservationId: reservation.id,
+      managerName: reservation.gite.user.name?.trim() || reservation.gite.name,
+      managerSignedAt: reservation.contract.createdAt,
     });
 
     await prisma.contract.update({

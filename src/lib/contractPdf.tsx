@@ -31,6 +31,8 @@ export interface SignatureInfo {
   signedAt: Date;
   signedByIp: string;
   reservationId: string;
+  managerName: string;
+  managerSignedAt: Date;
 }
 
 // ─── Template substitution ────────────────────────────────────────────────────
@@ -189,9 +191,29 @@ async function _render(data: ContractData, sig: SignatureInfo | null): Promise<B
         const curY = doc.y;
 
         if (isSigLine) {
-          doc.moveTo(ml,             curY + 18).lineTo(ml + colW,         curY + 18).lineWidth(0.5).strokeColor(C.border).stroke();
-          doc.moveTo(ml + colW + 20, curY + 18).lineTo(ml + W,            curY + 18).lineWidth(0.5).strokeColor(C.border).stroke();
-          doc.y = curY + 26;
+          if (sig) {
+            const sigBaseY = curY + 4;
+            doc.font('Times-Italic').fontSize(16).fillColor(C.violet);
+            doc.text(sig.managerName, ml, sigBaseY, { width: colW, align: 'center', lineBreak: false });
+            doc.text(sig.signedByName, ml + colW + 20, sigBaseY, { width: colW, align: 'center', lineBreak: false });
+
+            const lineY = curY + 30;
+            doc.moveTo(ml,             lineY).lineTo(ml + colW,         lineY).lineWidth(0.5).strokeColor(C.violetBorder).stroke();
+            doc.moveTo(ml + colW + 20, lineY).lineTo(ml + W,            lineY).lineWidth(0.5).strokeColor(C.violetBorder).stroke();
+
+            const dateMgr    = sig.managerSignedAt.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+            const dateClient = sig.signedAt.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+            doc.font('Helvetica').fontSize(7.5).fillColor(C.muted);
+            doc.text(`Signé électroniquement le ${dateMgr}`,    ml,             lineY + 4, { width: colW, align: 'center', lineBreak: false });
+            doc.text(`Signé électroniquement le ${dateClient}`, ml + colW + 20, lineY + 4, { width: colW, align: 'center', lineBreak: false });
+
+            doc.fillColor(C.dark);
+            doc.y = lineY + 18;
+          } else {
+            doc.moveTo(ml,             curY + 18).lineTo(ml + colW,         curY + 18).lineWidth(0.5).strokeColor(C.border).stroke();
+            doc.moveTo(ml + colW + 20, curY + 18).lineTo(ml + W,            curY + 18).lineWidth(0.5).strokeColor(C.border).stroke();
+            doc.y = curY + 26;
+          }
         } else {
           doc.font(isColHeader ? 'Helvetica-Bold' : 'Helvetica')
             .fontSize(isColHeader ? 8 : 10)

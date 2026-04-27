@@ -12,7 +12,7 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
   try {
     const reservation = await prisma.reservation.findFirst({
       where: { id, gite: { userId: ctx.userId } },
-      include: { gite: true, reservationOptions: true, contract: true },
+      include: { gite: { include: { user: true } }, reservationOptions: true, contract: true },
     });
 
     if (!reservation) return NextResponse.json({ error: "Réservation introuvable" }, { status: 404 });
@@ -64,6 +64,8 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
       signedAt: reservation.contract.signedAt ?? new Date(),
       signedByIp: reservation.contract.signedByIp ?? "inconnue",
       reservationId: reservation.id,
+      managerName: reservation.gite.user.name?.trim() || reservation.gite.name,
+      managerSignedAt: reservation.contract.createdAt,
     });
 
     return new NextResponse(new Uint8Array(pdfBuffer), {
