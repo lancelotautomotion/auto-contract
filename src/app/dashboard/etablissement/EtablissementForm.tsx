@@ -614,12 +614,12 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
               Votre logo sera affiché en haut de chaque contrat PDF généré. Formats acceptés : PNG, JPG, WEBP.
             </p>
             {logoUrl ? (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '24px', padding: '20px', background: 'var(--line-light)', borderRadius: '12px', marginBottom: '16px' }}>
+              <div className="logo-preview">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={logoUrl} alt="Logo" style={{ maxHeight: '80px', maxWidth: '200px', objectFit: 'contain', borderRadius: '4px' }} />
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  <p style={{ fontSize: '13px', color: 'var(--ink)', fontWeight: 500, margin: 0 }}>Logo actuel</p>
-                  <div style={{ display: 'flex', gap: '8px' }}>
+                <img src={logoUrl} alt="Logo" />
+                <div className="logo-preview-info">
+                  <p className="logo-preview-label">Logo actuel</p>
+                  <div className="logo-preview-actions">
                     <button type="button" className="btn btn-outline" style={{ fontSize: '12px', padding: '6px 14px' }} disabled={logoLoading} onClick={() => fileInputRef.current?.click()}>
                       {logoLoading ? 'Chargement...' : 'Remplacer'}
                     </button>
