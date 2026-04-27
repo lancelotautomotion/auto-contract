@@ -3,7 +3,7 @@ import { redirect, notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import CompleteReservationForm from "./CompleteReservationForm";
-import RejectReservationButton from "./RejectReservationButton";
+import RefuseReservationButton from "../RefuseReservationButton";
 
 export default async function CompleteReservationPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -63,7 +63,11 @@ export default async function CompleteReservationPage({ params }: { params: Prom
             </div>
           </div>
           <div className="rh-right">
-            <RejectReservationButton id={id} />
+            <RefuseReservationButton
+              reservationId={id}
+              clientName={`${reservation.clientFirstName} ${reservation.clientLastName}`}
+              redirectAfter="/dashboard/reservations"
+            />
           </div>
         </div>
 

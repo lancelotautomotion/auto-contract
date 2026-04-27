@@ -11,7 +11,7 @@ const REASONS = [
   { value: "other",        label: "Autre (préciser)" },
 ];
 
-export default function RefuseReservationButton({ reservationId, clientName }: { reservationId: string; clientName: string }) {
+export default function RefuseReservationButton({ reservationId, clientName, redirectAfter }: { reservationId: string; clientName: string; redirectAfter?: string }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [reason, setReason] = useState("dates_taken");
@@ -33,7 +33,8 @@ export default function RefuseReservationButton({ reservationId, clientName }: {
     });
     if (res.ok) {
       setOpen(false);
-      router.refresh();
+      if (redirectAfter) router.push(redirectAfter);
+      else router.refresh();
     } else {
       const data = await res.json().catch(() => ({}));
       setError(data.error ?? "Erreur lors du refus.");
