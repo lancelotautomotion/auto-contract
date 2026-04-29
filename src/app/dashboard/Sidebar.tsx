@@ -22,8 +22,8 @@ export default function Sidebar({ pendingCount = 0, trialInfo, mobileOpen, onMob
     <aside className={`sidebar${mobileOpen ? ' open' : ''}`}>
       <div className="sb-logo">
         <Image
-          src="/logotype_prysme.png"
-          alt="Prysme"
+          src="/logotype_kordia.png"
+          alt="Kordia"
           width={110}
           height={24}
           style={{ filter: 'brightness(0) invert(1)', objectFit: 'contain' }}

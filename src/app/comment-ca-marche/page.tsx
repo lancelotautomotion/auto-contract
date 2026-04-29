@@ -59,7 +59,7 @@ const steps = [
     n: '05',
     badge: 'Automatique · immédiat',
     title: 'Les deux parties reçoivent le PDF signé',
-    desc: "Dès la signature, Prysme envoie le contrat signé en PDF au locataire et à vous. Le statut passe à « Signé » dans votre tableau de bord et la réservation est archivée.",
+    desc: "Dès la signature, Kordia envoie le contrat signé en PDF au locataire et à vous. Le statut passe à « Signé » dans votre tableau de bord et la réservation est archivée.",
     points: [
       'PDF signé envoyé au locataire par email',
       'Copie automatique envoyée au gérant',
@@ -88,7 +88,7 @@ export default function CommentCaMarche() {
                   en 3 minutes.
                 </h1>
                 <p className="ccm-hero-sub">
-                  Prysme automatise tout ce qui suit une réservation. Voici exactement comment ça se passe, étape par étape.
+                  Kordia automatise tout ce qui suit une réservation. Voici exactement comment ça se passe, étape par étape.
                 </p>
                 <div className="ccm-hero-stats">
                   <div><strong>5 min</strong><span>config initiale</span></div>
@@ -171,7 +171,7 @@ export default function CommentCaMarche() {
                 <h2 className="ccm-faq-title">Vos questions,<br /><span className="v">nos réponses.</span></h2>
                 <p className="ccm-faq-sub">
                   Une question absente&nbsp;?<br />
-                  Écrivez-nous à <a href="mailto:contact@prysme.app">contact@prysme.app</a>
+                  Écrivez-nous à <a href="mailto:contact@kordia.fr">contact@kordia.fr</a>
                 </p>
               </div>
               <FaqAccordion />

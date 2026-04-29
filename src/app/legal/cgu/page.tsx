@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import LegalSidebarClient from "../_components/LegalSidebarClient";
 
 export const metadata: Metadata = {
-  title: "Conditions Générales d'Utilisation — Prysme",
-  description: "Conditions générales d'utilisation de la plateforme Prysme — génération et signature électronique de contrats de location.",
+  title: "Conditions Générales d'Utilisation — Kordia",
+  description: "Conditions générales d'utilisation de la plateforme Kordia — génération et signature électronique de contrats de location.",
 };
 
 export default function CguPage() {
@@ -13,7 +13,7 @@ export default function CguPage() {
         <div className="ph-inner">
           <div className="ph-tag violet">Juridique</div>
           <h1 className="ph-title">Conditions Générales <span className="v">d&apos;Utilisation</span></h1>
-          <p className="ph-subtitle">Les présentes CGU régissent l&apos;utilisation de la plateforme Prysme. En créant un compte, vous acceptez ces conditions dans leur intégralité.</p>
+          <p className="ph-subtitle">Les présentes CGU régissent l&apos;utilisation de la plateforme Kordia. En créant un compte, vous acceptez ces conditions dans leur intégralité.</p>
           <div className="ph-meta">
             <span>Dernière mise à jour : 24 avril 2026</span>
             <span>Lecture : 8 min</span>
@@ -39,23 +39,23 @@ export default function CguPage() {
 
         <div className="legal-content">
           <h2 id="art1"><span className="num">01.</span> Objet</h2>
-          <p>Les présentes Conditions Générales d&apos;Utilisation (ci-après « CGU ») ont pour objet de définir les modalités et conditions d&apos;accès et d&apos;utilisation de la plateforme <strong>Prysme</strong>, accessible à l&apos;adresse <a href="https://prysme.app">prysme.app</a>.</p>
-          <p>Prysme est un service en ligne destiné aux propriétaires de gîtes et hébergements saisonniers. Il permet la génération automatique de contrats de location saisonnière, leur envoi, leur signature électronique et le suivi centralisé des réservations.</p>
+          <p>Les présentes Conditions Générales d&apos;Utilisation (ci-après « CGU ») ont pour objet de définir les modalités et conditions d&apos;accès et d&apos;utilisation de la plateforme <strong>Kordia</strong>, accessible à l&apos;adresse <a href="https://kordia.fr">kordia.fr</a>.</p>
+          <p>Kordia est un service en ligne destiné aux propriétaires de gîtes et hébergements saisonniers. Il permet la génération automatique de contrats de location saisonnière, leur envoi, leur signature électronique et le suivi centralisé des réservations.</p>
 
           <h2 id="art2"><span className="num">02.</span> Définitions</h2>
-          <p><strong>« Plateforme »</strong> désigne le site web et l&apos;application Prysme, accessibles à l&apos;adresse prysme.app.</p>
+          <p><strong>« Plateforme »</strong> désigne le site web et l&apos;application Kordia, accessibles à l&apos;adresse kordia.fr.</p>
           <p><strong>« Éditeur »</strong> désigne la société ou personne physique exploitant la Plateforme, identifiée dans les mentions légales.</p>
           <p><strong>« Utilisateur »</strong> désigne toute personne physique ou morale inscrite sur la Plateforme et disposant d&apos;un compte actif.</p>
           <p><strong>« Locataire »</strong> désigne la personne recevant un contrat de location généré via la Plateforme et invitée à le signer électroniquement.</p>
           <p><strong>« Contrat de location »</strong> désigne le document généré automatiquement par la Plateforme à partir des informations de réservation saisies par l&apos;Utilisateur.</p>
 
           <h2 id="art3"><span className="num">03.</span> Inscription et compte utilisateur</h2>
-          <p>L&apos;accès aux services de Prysme nécessite la création d&apos;un compte. L&apos;Utilisateur s&apos;engage à fournir des informations exactes, complètes et à jour lors de son inscription.</p>
+          <p>L&apos;accès aux services de Kordia nécessite la création d&apos;un compte. L&apos;Utilisateur s&apos;engage à fournir des informations exactes, complètes et à jour lors de son inscription.</p>
           <p>Chaque compte est strictement personnel. L&apos;Utilisateur est responsable de la confidentialité de ses identifiants de connexion et de toute activité effectuée depuis son compte.</p>
           <p>L&apos;Éditeur se réserve le droit de suspendre ou supprimer tout compte en cas de violation des présentes CGU, d&apos;utilisation frauduleuse ou de fourniture d&apos;informations inexactes.</p>
 
           <h2 id="art4"><span className="num">04.</span> Description des services</h2>
-          <p>Prysme propose les services suivants :</p>
+          <p>Kordia propose les services suivants :</p>
           <h3>Génération de contrats</h3>
           <p>L&apos;Utilisateur saisit les informations relatives à une réservation (dates, montant, identité du locataire, clauses particulières). La Plateforme génère automatiquement un contrat de location saisonnière personnalisé et conforme aux dispositions de la loi ALUR.</p>
           <h3>Signature électronique</h3>
@@ -67,7 +67,7 @@ export default function CguPage() {
           <p>La Plateforme offre un tableau de bord centralisant l&apos;ensemble des contrats et leur statut (généré, envoyé, signé), un calendrier des réservations, ainsi qu&apos;un système d&apos;archivage automatique des contrats signés en format PDF horodaté.</p>
 
           <h2 id="art5"><span className="num">05.</span> Tarifs et paiement</h2>
-          <p>Prysme propose plusieurs formules d&apos;abonnement dont les tarifs en vigueur sont disponibles sur la page <a href="/upgrade">Tarifs</a> de la Plateforme.</p>
+          <p>Kordia propose plusieurs formules d&apos;abonnement dont les tarifs en vigueur sont disponibles sur la page <a href="/upgrade">Tarifs</a> de la Plateforme.</p>
           <p>Une période d&apos;essai gratuite de trente (30) jours est proposée à tout nouvel Utilisateur, sans engagement et sans nécessité de fournir un moyen de paiement.</p>
           <p>À l&apos;issue de la période d&apos;essai, l&apos;Utilisateur peut souscrire à un abonnement mensuel. Le paiement s&apos;effectue par carte bancaire via un prestataire de paiement sécurisé. L&apos;abonnement est renouvelé tacitement chaque mois, sauf résiliation par l&apos;Utilisateur.</p>
           <p>Les tarifs peuvent être modifiés à tout moment. L&apos;Utilisateur en sera informé par email au moins <strong>30 jours</strong> avant l&apos;entrée en vigueur des nouveaux tarifs.</p>
@@ -87,7 +87,7 @@ export default function CguPage() {
 
           <h2 id="art8"><span className="num">08.</span> Données personnelles</h2>
           <p>La collecte et le traitement des données personnelles des Utilisateurs et Locataires sont réalisés conformément au Règlement Général sur la Protection des Données (<strong>RGPD — UE 2016/679</strong>) et à la loi Informatique et Libertés du 6 janvier 1978 modifiée.</p>
-          <p>Les modalités de collecte, de traitement, de conservation et les droits des personnes concernées sont détaillés dans la <a href="/legal/confidentialite">Politique de confidentialité</a> de Prysme.</p>
+          <p>Les modalités de collecte, de traitement, de conservation et les droits des personnes concernées sont détaillés dans la <a href="/legal/confidentialite">Politique de confidentialité</a> de Kordia.</p>
 
           <h2 id="art9"><span className="num">09.</span> Limitation de responsabilité</h2>
           <p>La Plateforme est mise à disposition « en l&apos;état ». L&apos;Éditeur met en œuvre tous les moyens raisonnables pour assurer la disponibilité et le bon fonctionnement du service, mais ne souscrit à cet égard qu&apos;à une <strong>obligation de moyens</strong>. Il ne saurait garantir un accès ininterrompu, ni l&apos;absence d&apos;erreur, ni la compatibilité avec un usage particulier, et ne pourra être tenu responsable des interruptions de service, lenteurs ou indisponibilités, quelles qu&apos;en soient les causes (maintenance, incident technique, défaillance d&apos;un prestataire tiers, force majeure, etc.).</p>
@@ -113,7 +113,7 @@ export default function CguPage() {
 
           <h2 id="art12"><span className="num">12.</span> Contact</h2>
           <p>Pour toute question relative aux présentes CGU, vous pouvez contacter l&apos;Éditeur :</p>
-          <p><strong>Email :</strong> <a href="mailto:contact@prysme.app">contact@prysme.app</a><br/>
+          <p><strong>Email :</strong> <a href="mailto:contact@kordia.fr">contact@kordia.fr</a><br/>
           <strong>Adresse :</strong> Paris, France</p>
         </div>
       </div>

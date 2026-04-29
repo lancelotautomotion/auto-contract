@@ -18,7 +18,7 @@ export default async function OnboardingPage() {
   return (
     <>
       <header className="ob-header">
-        <span className="ob-header-brand">Prysme</span>
+        <span className="ob-header-brand">Kordia</span>
         <span className="ob-header-label">Configuration initiale</span>
       </header>
 

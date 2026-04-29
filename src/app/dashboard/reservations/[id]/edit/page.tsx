@@ -29,7 +29,7 @@ export default async function EditReservationPage({ params }: { params: Promise<
     <>
       <div className="topbar">
         <div className="topbar-left">
-          <div className="topbar-breadcrumb">Prysme / Réservations / <span>Modifier</span></div>
+          <div className="topbar-breadcrumb">Kordia / Réservations / <span>Modifier</span></div>
         </div>
         <div className="topbar-right">
           <button className="topbar-btn">

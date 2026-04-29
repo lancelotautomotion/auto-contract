@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import LegalSidebarClient from "../_components/LegalSidebarClient";
 
 export const metadata: Metadata = {
-  title: "Mentions légales — Prysme",
-  description: "Mentions légales de Prysme, logiciel de gestion de contrats de location pour gîtes.",
+  title: "Mentions légales — Kordia",
+  description: "Mentions légales de Kordia, logiciel de gestion de contrats de location pour gîtes.",
 };
 
 export default function MentionsLegalesPage() {
@@ -35,20 +35,20 @@ export default function MentionsLegalesPage() {
 
         <div className="legal-content">
           <h2 id="art1"><span className="num">01.</span> Éditeur du site</h2>
-          <p>Le site <strong>prysme.app</strong> et l&apos;application <strong>prysme.app</strong> sont édités par :</p>
+          <p>Le site <strong>kordia.fr</strong> et l&apos;application <strong>kordia.fr</strong> sont édités par :</p>
           <table className="info-table">
             <tbody>
               <tr><td>Nom</td><td>Lancelot Loubier</td></tr>
               <tr><td>Statut</td><td>Entrepreneur individuel</td></tr>
               <tr><td>Siège social</td><td>Paris, France</td></tr>
-              <tr><td>Email</td><td><a href="mailto:contact@prysme.app">contact@prysme.app</a></td></tr>
+              <tr><td>Email</td><td><a href="mailto:contact@kordia.fr">contact@kordia.fr</a></td></tr>
               <tr><td>Directeur de la publication</td><td>Lancelot Loubier</td></tr>
             </tbody>
           </table>
           <p>Conformément à l&apos;article 6 de la loi n°2004-575 du 21 juin 2004 pour la Confiance dans l&apos;Économie Numérique, les informations d&apos;identification de l&apos;éditeur sont mises à la disposition du public.</p>
 
           <h2 id="art2"><span className="num">02.</span> Hébergement</h2>
-          <p>Le site et l&apos;application Prysme sont hébergés par :</p>
+          <p>Le site et l&apos;application Kordia sont hébergés par :</p>
           <table className="info-table">
             <tbody>
               <tr><td>Hébergeur</td><td>Vercel Inc.</td></tr>
@@ -68,31 +68,31 @@ export default function MentionsLegalesPage() {
           <p>L&apos;envoi des emails transactionnels est assuré par <strong>Resend, Inc.</strong> (2261 Market Street #5039, San Francisco, CA 94114, États-Unis — <a href="https://resend.com" target="_blank" rel="noreferrer">resend.com</a>) et les paiements par <strong>Stripe Payments Europe, Ltd.</strong> (1 Grand Canal Street Lower, Grand Canal Dock, Dublin, Irlande — <a href="https://stripe.com" target="_blank" rel="noreferrer">stripe.com</a>).</p>
 
           <h2 id="art3"><span className="num">03.</span> Propriété intellectuelle</h2>
-          <p>L&apos;ensemble du contenu du site prysme.app et de l&apos;application prysme.app — incluant, sans s&apos;y limiter, les textes, graphismes, images, logos, icônes, logiciels, base de données et la structure générale — est protégé par le droit d&apos;auteur et les lois relatives à la propriété intellectuelle.</p>
-          <p>La marque <strong>Prysme</strong>, son logo et ses déclinaisons graphiques sont la propriété exclusive de l&apos;éditeur. Toute reproduction, représentation, modification, publication ou adaptation, totale ou partielle, de ces éléments, par quelque moyen ou procédé que ce soit, est interdite sans l&apos;autorisation écrite préalable de l&apos;éditeur.</p>
+          <p>L&apos;ensemble du contenu du site kordia.fr et de l&apos;application kordia.fr — incluant, sans s&apos;y limiter, les textes, graphismes, images, logos, icônes, logiciels, base de données et la structure générale — est protégé par le droit d&apos;auteur et les lois relatives à la propriété intellectuelle.</p>
+          <p>La marque <strong>Kordia</strong>, son logo et ses déclinaisons graphiques sont la propriété exclusive de l&apos;éditeur. Toute reproduction, représentation, modification, publication ou adaptation, totale ou partielle, de ces éléments, par quelque moyen ou procédé que ce soit, est interdite sans l&apos;autorisation écrite préalable de l&apos;éditeur.</p>
           <p>Toute exploitation non autorisée du site ou de l&apos;un quelconque des éléments qu&apos;il contient sera considérée comme constitutive d&apos;une contrefaçon et poursuivie conformément aux articles L.335-2 et suivants du Code de la propriété intellectuelle.</p>
 
           <h2 id="art4"><span className="num">04.</span> Données personnelles</h2>
           <p>Les données personnelles collectées sur le site sont traitées conformément au Règlement Général sur la Protection des Données (<strong>RGPD — Règlement UE 2016/679</strong>) et à la loi Informatique et Libertés du 6 janvier 1978 modifiée.</p>
-          <p>Le responsable du traitement des données est Lancelot Loubier, joignable à l&apos;adresse <a href="mailto:contact@prysme.app">contact@prysme.app</a>.</p>
+          <p>Le responsable du traitement des données est Lancelot Loubier, joignable à l&apos;adresse <a href="mailto:contact@kordia.fr">contact@kordia.fr</a>.</p>
           <p>Les données collectées sont nécessaires au bon fonctionnement du service et ne sont jamais cédées à des tiers à des fins commerciales. L&apos;ensemble des modalités de traitement, de conservation et d&apos;exercice des droits est détaillé dans la <a href="/legal/confidentialite">Politique de confidentialité</a>.</p>
-          <p>Conformément aux articles 15 à 22 du RGPD, tout utilisateur dispose des droits d&apos;accès, rectification, effacement, limitation du traitement, portabilité et opposition. Ces droits peuvent être exercés par email à <a href="mailto:contact@prysme.app">contact@prysme.app</a>.</p>
+          <p>Conformément aux articles 15 à 22 du RGPD, tout utilisateur dispose des droits d&apos;accès, rectification, effacement, limitation du traitement, portabilité et opposition. Ces droits peuvent être exercés par email à <a href="mailto:contact@kordia.fr">contact@kordia.fr</a>.</p>
 
           <h2 id="art5"><span className="num">05.</span> Cookies</h2>
-          <p>Le site prysme.app utilise des cookies strictement nécessaires au fonctionnement du service (authentification, préférences de session). Ces cookies ne nécessitent pas de consentement préalable conformément aux recommandations de la CNIL.</p>
+          <p>Le site kordia.fr utilise des cookies strictement nécessaires au fonctionnement du service (authentification, préférences de session). Ces cookies ne nécessitent pas de consentement préalable conformément aux recommandations de la CNIL.</p>
           <p>Aucun cookie de suivi publicitaire ou de mesure d&apos;audience tiers n&apos;est déposé sur le site.</p>
 
           <h2 id="art6"><span className="num">06.</span> Limitation de responsabilité</h2>
-          <p>Prysme est un service exclusivement destiné à une clientèle de <strong>professionnels</strong> (propriétaires et gérants d&apos;hébergement dans le cadre de leur activité). Il est mis à disposition « en l&apos;état », sans garantie d&apos;aptitude à un usage particulier.</p>
+          <p>Kordia est un service exclusivement destiné à une clientèle de <strong>professionnels</strong> (propriétaires et gérants d&apos;hébergement dans le cadre de leur activité). Il est mis à disposition « en l&apos;état », sans garantie d&apos;aptitude à un usage particulier.</p>
           <p>L&apos;éditeur s&apos;efforce de fournir des informations aussi précises que possible sur le site. Toutefois, il ne pourra être tenu responsable des omissions, des inexactitudes ou des carences dans la mise à jour, qu&apos;elles soient de son fait ou du fait des tiers partenaires qui lui fournissent ces informations.</p>
           <p>L&apos;éditeur ne saurait être tenu responsable des dommages directs ou indirects résultant de l&apos;accès au site ou de l&apos;impossibilité d&apos;y accéder, ni de l&apos;utilisation du site et/ou du crédit accordé à une quelconque information provenant directement ou indirectement de ce dernier.</p>
-          <p>L&apos;utilisateur est seul responsable du contenu qu&apos;il saisit, des contrats qu&apos;il génère via la plateforme, ainsi que de leur conformité juridique, fiscale et réglementaire. Prysme fournit un outil de génération documentaire et <strong>ne délivre en aucun cas un conseil juridique</strong>. Toute décision prise par l&apos;utilisateur sur la base des documents produits relève de sa seule responsabilité.</p>
+          <p>L&apos;utilisateur est seul responsable du contenu qu&apos;il saisit, des contrats qu&apos;il génère via la plateforme, ainsi que de leur conformité juridique, fiscale et réglementaire. Kordia fournit un outil de génération documentaire et <strong>ne délivre en aucun cas un conseil juridique</strong>. Toute décision prise par l&apos;utilisateur sur la base des documents produits relève de sa seule responsabilité.</p>
           <p>Dans les limites autorisées par la loi, la responsabilité globale de l&apos;éditeur, toutes causes confondues, est limitée aux sommes effectivement versées par l&apos;utilisateur au cours des trois (3) derniers mois précédant le fait générateur. Sont exclus les dommages indirects, pertes d&apos;exploitation, pertes de chance, de clientèle, de chiffre d&apos;affaires, de bénéfices, d&apos;image ou de données.</p>
           <p>Les présentes limitations ne s&apos;appliquent pas en cas de faute lourde ou dolosive de l&apos;éditeur, ni dans les cas où la loi l&apos;interdit.</p>
 
           <h2 id="art7"><span className="num">07.</span> Liens hypertextes</h2>
-          <p>Le site prysme.app peut contenir des liens hypertextes vers d&apos;autres sites internet. L&apos;éditeur ne dispose d&apos;aucun moyen de contrôle sur le contenu de ces sites tiers et n&apos;assume aucune responsabilité quant à leur contenu, leurs pratiques en matière de confidentialité ou leur fonctionnement.</p>
-          <p>La mise en place de liens hypertextes vers le site prysme.app est autorisée sans accord préalable, à condition que ce lien ne porte pas atteinte à l&apos;image de l&apos;éditeur.</p>
+          <p>Le site kordia.fr peut contenir des liens hypertextes vers d&apos;autres sites internet. L&apos;éditeur ne dispose d&apos;aucun moyen de contrôle sur le contenu de ces sites tiers et n&apos;assume aucune responsabilité quant à leur contenu, leurs pratiques en matière de confidentialité ou leur fonctionnement.</p>
+          <p>La mise en place de liens hypertextes vers le site kordia.fr est autorisée sans accord préalable, à condition que ce lien ne porte pas atteinte à l&apos;image de l&apos;éditeur.</p>
 
           <h2 id="art8"><span className="num">08.</span> Droit applicable</h2>
           <p>Les présentes mentions légales sont régies par le droit français. En cas de litige, et après tentative de résolution amiable, les tribunaux français seront seuls compétents.</p>
@@ -101,7 +101,7 @@ export default function MentionsLegalesPage() {
           <p>Pour toute question relative aux présentes mentions légales :</p>
           <table className="info-table">
             <tbody>
-              <tr><td>Email</td><td><a href="mailto:contact@prysme.app">contact@prysme.app</a></td></tr>
+              <tr><td>Email</td><td><a href="mailto:contact@kordia.fr">contact@kordia.fr</a></td></tr>
             </tbody>
           </table>
         </div>

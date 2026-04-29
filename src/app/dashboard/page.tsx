@@ -77,7 +77,7 @@ export default async function DashboardPage() {
       {/* Topbar */}
       <div className="topbar">
         <div className="topbar-left">
-          <div className="topbar-breadcrumb">Prysme / <span>Tableau de bord</span></div>
+          <div className="topbar-breadcrumb">Kordia / <span>Tableau de bord</span></div>
         </div>
         <div className="topbar-right">
           <button className="topbar-btn" title="Rechercher">

@@ -170,7 +170,7 @@ export default function ContactForm() {
           />
           <span>
             J&apos;accepte que mes données soient traitées conformément à la{" "}
-            <Link href="/legal/confidentialite">politique de confidentialité</Link> de Prysme.
+            <Link href="/legal/confidentialite">politique de confidentialité</Link> de Kordia.
           </span>
         </label>
 

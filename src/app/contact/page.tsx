@@ -7,8 +7,8 @@ import Footer from '@/components/landing/Footer';
 import ContactForm from './ContactForm';
 
 export const metadata: Metadata = {
-  title: 'Contact — Prysme',
-  description: "Une question ? Écrivez-nous, réponse sous 24h ouvrées — contact@prysme.app.",
+  title: 'Contact — Kordia',
+  description: "Une question ? Écrivez-nous, réponse sous 24h ouvrées — contact@kordia.fr.",
 };
 
 export default function ContactPage() {
@@ -48,8 +48,8 @@ export default function ContactPage() {
                 </div>
                 <div className="ct-card-title">Email</div>
                 <div className="ct-card-desc">Le canal préféré. On lit chaque message et on répond personnellement.</div>
-                <a className="ct-card-link" href="mailto:contact@prysme.app">
-                  contact@prysme.app
+                <a className="ct-card-link" href="mailto:contact@kordia.fr">
+                  contact@kordia.fr
                   <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
                     <path d="M3 7h8m-3-3l3 3-3 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
@@ -76,10 +76,10 @@ export default function ContactPage() {
                   </svg>
                 </div>
                 <div className="ct-card-title">Démo personnalisée</div>
-                <div className="ct-card-desc">Envie de voir Prysme en action&nbsp;? Réservez 15 min en visio, on vous montre tout.</div>
+                <div className="ct-card-desc">Envie de voir Kordia en action&nbsp;? Réservez 15 min en visio, on vous montre tout.</div>
                 <a
                   className="ct-card-link"
-                  href="mailto:contact@prysme.app?subject=Demande%20de%20d%C3%A9mo%20Prysme"
+                  href="mailto:contact@kordia.fr?subject=Demande%20de%20d%C3%A9mo%20Kordia"
                 >
                   Réserver un créneau
                   <svg width="14" height="14" fill="none" viewBox="0 0 14 14">

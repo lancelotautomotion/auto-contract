@@ -32,7 +32,7 @@ export default async function BookingPage({ params }: { params: Promise<{ slug: 
       </div>
 
       <footer className="pub-footer">
-        Propulsé par <a href="https://prysme.app">Prysme</a>
+        Propulsé par <a href="https://kordia.fr">Kordia</a>
       </footer>
     </>
   );

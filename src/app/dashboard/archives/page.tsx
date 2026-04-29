@@ -64,7 +64,7 @@ export default async function ArchivesPage({
       {/* Topbar */}
       <div className="topbar">
         <div className="topbar-left">
-          <div className="topbar-breadcrumb">Prysme / <span>Archives</span></div>
+          <div className="topbar-breadcrumb">Kordia / <span>Archives</span></div>
         </div>
         <div className="topbar-right">
           <button className="topbar-btn">

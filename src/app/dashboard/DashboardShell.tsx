@@ -42,8 +42,8 @@ export default function DashboardShell({ children, pendingCount, trialInfo, font
             </svg>
           </button>
           <Image
-            src="/logotype_prysme.png"
-            alt="Prysme"
+            src="/logotype_kordia.png"
+            alt="Kordia"
             width={80}
             height={20}
             style={{ filter: 'brightness(0) invert(1)', objectFit: 'contain', height: 18, width: 'auto' }}

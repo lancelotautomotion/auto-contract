@@ -28,7 +28,7 @@ export default function Nav() {
       <nav className="nav">
         <div className="nav-inner">
           <Link className="nav-logo" href="/">
-            <Image src="/logotype_prysme.png" alt="Prysme" width={400} height={85} priority style={{ height: 28, width: 'auto' }} />
+            <Image src="/logotype_kordia.png" alt="Kordia" width={400} height={85} priority style={{ height: 28, width: 'auto' }} />
           </Link>
           <ul className="nav-links">
             <li><Link href="/comment-ca-marche">Comment ça marche</Link></li>
@@ -68,7 +68,7 @@ export default function Nav() {
       >
         <div className="nav-drawer-head">
           <Link className="nav-logo" href="/" onClick={close}>
-            <Image src="/logotype_prysme.png" alt="Prysme" width={400} height={85} style={{ height: 24, width: 'auto' }} />
+            <Image src="/logotype_kordia.png" alt="Kordia" width={400} height={85} style={{ height: 24, width: 'auto' }} />
           </Link>
           <button
             type="button"

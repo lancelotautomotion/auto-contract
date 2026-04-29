@@ -11,7 +11,7 @@ const nextConfig: NextConfig = {
     return [
       {
         source: "/clerk-proxy/:path*",
-        destination: "https://clerk.prysme.app/:path*",
+        destination: "https://clerk.kordia.fr/:path*",
       },
     ];
   },
@@ -23,8 +23,8 @@ const nextConfig: NextConfig = {
         "*.app.github.dev",
         "*.github.dev",
         "*.vercel.app",
-        "prysme.app",
-        "www.prysme.app",
+        "kordia.fr",
+        "www.kordia.fr",
       ],
     },
   },

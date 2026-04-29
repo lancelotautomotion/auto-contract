@@ -1,12 +1,12 @@
-# Prysme — CLAUDE.md
+# Kordia — CLAUDE.md
 
 Contexte projet et roadmap pour les sessions Claude Code.
 
 ## Vue d'ensemble
 
-**Prysme** est un SaaS destiné aux gérants de gîtes de location saisonnière. Il automatise la génération de contrats de location, la signature électronique eIDAS, l'envoi des documents par email et le suivi des acomptes.
+**Kordia** est un SaaS destiné aux gérants de gîtes de location saisonnière. Il automatise la génération de contrats de location, la signature électronique eIDAS, l'envoi des documents par email et le suivi des acomptes.
 
-- **Production** : https://prysme.app
+- **Production** : https://kordia.fr
 - **Repo** : `lancelotautomotion/auto-contract`
 - **Branche de dev principale** : `main` (Vercel auto-deploy)
 
@@ -18,9 +18,9 @@ Contexte projet et roadmap pour les sessions Claude Code.
 | Runtime | React 19 |
 | DB | Supabase Postgres (pooler port 6543 en `DATABASE_URL`, direct 5432 en `DIRECT_URL`) |
 | ORM | Prisma 7 (config dans `prisma.config.ts`, plus dans `schema.prisma`) |
-| Auth | Clerk (instance production, custom domain `clerk.prysme.app`) |
+| Auth | Clerk (instance production, custom domain `clerk.kordia.fr`) |
 | Paiement | Stripe (mode live, webhook configuré avec 3 événements) |
-| Email | Resend (domaine `prysme.app` vérifié) |
+| Email | Resend (domaine `kordia.fr` vérifié) |
 | Storage | Supabase Storage (limite 5 Mo/fichier côté gérant, 1 Go total plan gratuit) |
 | PDF | pdfkit |
 | Déploiement | Vercel (plan Hobby actuellement) |
@@ -81,7 +81,7 @@ src/styles/
 
 ### Clerk
 - Instance **Production** (pas Development) : clés `pk_live_*` / `sk_live_*`
-- Custom domain `clerk.prysme.app` (Frontend API) + `accounts.prysme.app` (Account Portal)
+- Custom domain `clerk.kordia.fr` (Frontend API) + `accounts.kordia.fr` (Account Portal)
 - DNS géré par Vercel : CNAMEs vers `frontend-api.clerk.services` / `accounts.clerk.services`
 - SSL certs émis par Clerk
 - **Pas de `proxyUrl`** dans `ClerkProvider` — connexion directe
@@ -98,7 +98,7 @@ src/styles/
 - La route `mark-deposit` a été corrigée : elle génère le PDF en mémoire pour l'email, sans upload Blob. Le téléchargement PDF se fait par régénération à la demande (`download-signed-contract`).
 - Utiliser **Supabase Storage** pour tout nouveau besoin de stockage fichier.
 
-### DNS (Vercel DNS pour `prysme.app`)
+### DNS (Vercel DNS pour `kordia.fr`)
 - ALIAS `*` → `cname.vercel-dns-017.com` (Vercel automatique)
 - CNAME `clerk` → `frontend-api.clerk.services`
 - CNAME `accounts` → `accounts.clerk.services`
@@ -111,7 +111,7 @@ src/styles/
 - `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`, `CLERK_SECRET_KEY`
 - `STRIPE_SECRET_KEY`, `STRIPE_PRICE_ID`, `STRIPE_WEBHOOK_SECRET`
 - `RESEND_API_KEY`
-- `NEXT_PUBLIC_APP_URL` = `https://prysme.app`
+- `NEXT_PUBLIC_APP_URL` = `https://kordia.fr`
 
 ## Commandes
 
@@ -141,7 +141,7 @@ Migrations : `npx prisma migrate dev --name <nom>` en local, `prisma migrate dep
 ## 2. Éditeur de contrat (sécurisation)
 
 - **Alertes balises obligatoires** : avertissement visuel (rouge) si le gérant supprime `[Loyer €]`, `[Nom client]`, etc.
-- **Séparer tronc légal / clauses libres** : bloc "Conditions Générales" (socle légal Prysme) + "Règlement intérieur" libre.
+- **Séparer tronc légal / clauses libres** : bloc "Conditions Générales" (socle légal Kordia) + "Règlement intérieur" libre.
 - **Nettoyeur de copier-coller** : purifier auto le HTML invisible venant de Word avant rendu PDF.
 
 ## 3. "Game Changers"
@@ -184,7 +184,7 @@ Migrations : `npx prisma migrate dev --name <nom>` en local, `prisma migrate dep
 ### Bugs corrigés
 - **"Acompte reçu" → Erreur interne** : la route `mark-deposit` utilisait `@vercel/blob` (token non configuré). Supprimé l'upload Blob — le PDF est généré en mémoire pour l'email, le téléchargement se fait par régénération à la demande.
 - **Scrollbar au milieu du dashboard** : `.app` était `position: fixed; inset: 0` + `.main { overflow-y: auto }`. Remplacé par layout naturel (`min-height: 100vh`) avec sidebar sticky (`position: sticky; height: 100dvh`).
-- **Logo Prysme pixelisé en sidebar** : `filter: brightness(10)` créait des artefacts. Remplacé par `brightness(0) invert(1)` pour un blanc propre sans halation.
+- **Logo Kordia pixelisé en sidebar** : `filter: brightness(10)` créait des artefacts. Remplacé par `brightness(0) invert(1)` pour un blanc propre sans halation.
 - **Barre blanche sur sign-in** : `landing.css` avait `body { padding-top: 68px }` qui leaked globalement. Scopé avec `body:has(nav.nav)`.
 
 ### Améliorations UI

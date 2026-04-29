@@ -136,7 +136,7 @@ export default async function SignPage({ params }: { params: Promise<{ token: st
         {/* Footer */}
         <div className="sign-footer">
           <p>Signature conforme au règlement eIDAS · Envoyé par <strong>{reservation.gite.name}</strong></p>
-          <p className="sign-footer-brand">Prysme</p>
+          <p className="sign-footer-brand">Kordia</p>
         </div>
       </main>
     </>

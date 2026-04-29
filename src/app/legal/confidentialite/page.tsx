@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import LegalSidebarClient from "../_components/LegalSidebarClient";
 
 export const metadata: Metadata = {
-  title: "Politique de confidentialité — Prysme",
-  description: "Comment Prysme collecte, utilise et protège vos données personnelles. Conformité RGPD.",
+  title: "Politique de confidentialité — Kordia",
+  description: "Comment Kordia collecte, utilise et protège vos données personnelles. Conformité RGPD.",
 };
 
 export default function ConfidentialitePage() {
@@ -13,7 +13,7 @@ export default function ConfidentialitePage() {
         <div className="ph-inner">
           <div className="ph-tag green">Protection des données</div>
           <h1 className="ph-title">Politique de <span className="g">Confidentialité</span></h1>
-          <p className="ph-subtitle">Prysme s&apos;engage à protéger vos données personnelles. Cette page détaille ce que nous collectons, pourquoi, et comment vous gardez le contrôle.</p>
+          <p className="ph-subtitle">Kordia s&apos;engage à protéger vos données personnelles. Cette page détaille ce que nous collectons, pourquoi, et comment vous gardez le contrôle.</p>
           <div className="ph-meta">
             <span>Dernière mise à jour : 17 avril 2026</span>
             <span>Lecture : 10 min</span>
@@ -39,11 +39,11 @@ export default function ConfidentialitePage() {
 
         <div className="legal-content">
           <h2 id="art1"><span className="num-g">01.</span> Responsable du traitement</h2>
-          <p>Le responsable du traitement des données personnelles collectées via la plateforme Prysme est :</p>
-          <p><strong>Lancelot Loubier</strong><br/>Entrepreneur individuel<br/>Paris, France<br/>Email : <a href="mailto:contact@prysme.app">contact@prysme.app</a></p>
+          <p>Le responsable du traitement des données personnelles collectées via la plateforme Kordia est :</p>
+          <p><strong>Lancelot Loubier</strong><br/>Entrepreneur individuel<br/>Paris, France<br/>Email : <a href="mailto:contact@kordia.fr">contact@kordia.fr</a></p>
 
           <h2 id="art2"><span className="num-g">02.</span> Données personnelles collectées</h2>
-          <p>Prysme collecte différentes catégories de données selon votre interaction avec la plateforme :</p>
+          <p>Kordia collecte différentes catégories de données selon votre interaction avec la plateforme :</p>
 
           <h3>Données des Utilisateurs (propriétaires de gîtes)</h3>
           <div style={{ overflowX: 'auto', marginBottom: '16px' }}>
@@ -72,7 +72,7 @@ export default function ConfidentialitePage() {
           </div>
 
           <div className="legal-callout green">
-            Prysme ne collecte aucune donnée bancaire des Locataires. Les informations de paiement des Utilisateurs sont traitées exclusivement par <strong>Stripe</strong>, notre prestataire de paiement sécurisé.
+            Kordia ne collecte aucune donnée bancaire des Locataires. Les informations de paiement des Utilisateurs sont traitées exclusivement par <strong>Stripe</strong>, notre prestataire de paiement sécurisé.
           </div>
 
           <h2 id="art3"><span className="num-g">03.</span> Finalités du traitement</h2>
@@ -130,11 +130,11 @@ export default function ConfidentialitePage() {
           <p style={{ fontSize: '12px', color: '#A3A3A0' }}>SCC = Clauses contractuelles types approuvées par la Commission européenne.</p>
 
           <div className="legal-callout green">
-            Prysme ne vend, ne loue et ne cède jamais vos données personnelles à des tiers à des fins commerciales ou publicitaires.
+            Kordia ne vend, ne loue et ne cède jamais vos données personnelles à des tiers à des fins commerciales ou publicitaires.
           </div>
 
           <h2 id="art7"><span className="num-g">07.</span> Transferts hors Union Européenne</h2>
-          <p>Prysme privilégie des prestataires situés au sein de l&apos;Union Européenne. Dans le cas où un transfert de données hors UE serait nécessaire, ce transfert est encadré par les garanties appropriées prévues par le RGPD : clauses contractuelles types de la Commission Européenne ou décision d&apos;adéquation.</p>
+          <p>Kordia privilégie des prestataires situés au sein de l&apos;Union Européenne. Dans le cas où un transfert de données hors UE serait nécessaire, ce transfert est encadré par les garanties appropriées prévues par le RGPD : clauses contractuelles types de la Commission Européenne ou décision d&apos;adéquation.</p>
 
           <h2 id="art8"><span className="num-g">08.</span> Sécurité des données</h2>
           <p><strong>— Chiffrement :</strong> communications sécurisées par HTTPS/TLS. Données sensibles chiffrées au repos.</p>
@@ -150,15 +150,15 @@ export default function ConfidentialitePage() {
           <p><strong>— Droit à la limitation :</strong> demander la suspension du traitement dans certains cas.</p>
           <p><strong>— Droit à la portabilité :</strong> recevoir vos données dans un format structuré et lisible par machine.</p>
           <p><strong>— Droit d&apos;opposition :</strong> vous opposer au traitement fondé sur l&apos;intérêt légitime.</p>
-          <p>Pour exercer ces droits, adressez votre demande par email à <a href="mailto:contact@prysme.app">contact@prysme.app</a>. Nous y répondrons dans un délai maximum de <strong>30 jours</strong>.</p>
+          <p>Pour exercer ces droits, adressez votre demande par email à <a href="mailto:contact@kordia.fr">contact@kordia.fr</a>. Nous y répondrons dans un délai maximum de <strong>30 jours</strong>.</p>
 
           <div className="legal-callout">
             En cas de différend non résolu, vous avez le droit d&apos;introduire une réclamation auprès de la <strong>CNIL</strong> — <a href="https://www.cnil.fr" target="_blank" rel="noreferrer">www.cnil.fr</a>.
           </div>
 
           <h2 id="art10"><span className="num-g">10.</span> Cookies</h2>
-          <p>Prysme utilise uniquement des <strong>cookies strictement nécessaires</strong> au fonctionnement de la plateforme (authentification, session utilisateur, préférences d&apos;affichage). Ces cookies sont exemptés de consentement conformément aux recommandations de la CNIL.</p>
-          <p>Prysme n&apos;utilise aucun cookie de suivi publicitaire, de mesure d&apos;audience tierce ni de traçage inter-sites.</p>
+          <p>Kordia utilise uniquement des <strong>cookies strictement nécessaires</strong> au fonctionnement de la plateforme (authentification, session utilisateur, préférences d&apos;affichage). Ces cookies sont exemptés de consentement conformément aux recommandations de la CNIL.</p>
+          <p>Kordia n&apos;utilise aucun cookie de suivi publicitaire, de mesure d&apos;audience tierce ni de traçage inter-sites.</p>
           <div style={{ overflowX: 'auto', marginBottom: '16px' }}>
             <table className="data-table">
               <thead><tr><th>Cookie</th><th>Finalité</th><th>Durée</th></tr></thead>
@@ -170,11 +170,11 @@ export default function ConfidentialitePage() {
           </div>
 
           <h2 id="art11"><span className="num-g">11.</span> Modifications de la politique</h2>
-          <p>Prysme se réserve le droit de modifier la présente politique de confidentialité à tout moment. En cas de modification substantielle, les Utilisateurs seront informés par email au moins <strong>15 jours</strong> avant l&apos;entrée en vigueur des modifications.</p>
+          <p>Kordia se réserve le droit de modifier la présente politique de confidentialité à tout moment. En cas de modification substantielle, les Utilisateurs seront informés par email au moins <strong>15 jours</strong> avant l&apos;entrée en vigueur des modifications.</p>
           <p>La date de dernière mise à jour est indiquée en haut de cette page. Nous vous invitons à la consulter régulièrement.</p>
 
           <h2 id="art12"><span className="num-g">12.</span> Contact</h2>
-          <p><strong>Email :</strong> <a href="mailto:contact@prysme.app">contact@prysme.app</a><br/>
+          <p><strong>Email :</strong> <a href="mailto:contact@kordia.fr">contact@kordia.fr</a><br/>
           <strong>Adresse :</strong> Paris, France</p>
         </div>
       </div>

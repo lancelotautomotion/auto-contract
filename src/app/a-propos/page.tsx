@@ -10,8 +10,8 @@ import Footer from '@/components/landing/Footer';
 import ScrollReveal from '@/app/ScrollReveal';
 
 export const metadata: Metadata = {
-  title: 'À propos — Prysme',
-  description: 'Derrière Prysme : une équipe qui croit que les propriétaires de gîtes méritent des outils aussi bons que les pros.',
+  title: 'À propos — Kordia',
+  description: 'Derrière Kordia : une équipe qui croit que les propriétaires de gîtes méritent des outils aussi bons que les pros.',
 };
 
 const font = Plus_Jakarta_Sans({
@@ -31,12 +31,12 @@ export default function AProposPage() {
         <div className="about-hero-inner">
           <div className="about-text reveal">
             <div className="ph-tag">À propos</div>
-            <h1>Derrière<br /><span className="g">Prysme.</span></h1>
-            <p className="lead">Prysme est né d&apos;un constat simple : les propriétaires de gîtes méritent des outils <strong>aussi professionnels</strong> que ceux des grandes plateformes — sans la complexité ni les commissions.</p>
+            <h1>Derrière<br /><span className="g">Kordia.</span></h1>
+            <p className="lead">Kordia est né d&apos;un constat simple : les propriétaires de gîtes méritent des outils <strong>aussi professionnels</strong> que ceux des grandes plateformes — sans la complexité ni les commissions.</p>
             <p className="lead">Un outil unique qui centralise vos réservations, génère vos contrats et les fait signer en ligne. <strong>Tout le cycle administratif d&apos;une réservation</strong>, depuis un seul endroit.</p>
           </div>
           <div className="logo-showcase reveal reveal-d2">
-            <Image src="/logotype_prysme.png" alt="Logo Prysme" width={240} height={60} style={{ width: '240px', height: 'auto' }} />
+            <Image src="/logotype_kordia.png" alt="Logo Kordia" width={240} height={60} style={{ width: '240px', height: 'auto' }} />
           </div>
         </div>
       </div>
@@ -45,7 +45,7 @@ export default function AProposPage() {
       <section className="mission">
         <div className="mission-inner">
           <div className="mission-header reveal">
-            <h2>Ce que Prysme rend <span style={{ color: 'var(--green)' }}>possible.</span></h2>
+            <h2>Ce que Kordia rend <span style={{ color: 'var(--green)' }}>possible.</span></h2>
             <p>Un seul outil pour tout le cycle administratif de vos réservations.</p>
           </div>
           <div className="mission-grid">
@@ -89,7 +89,7 @@ export default function AProposPage() {
         <div className="values-inner">
           <div className="values-header reveal">
             <h2>Nos <span className="v">valeurs.</span></h2>
-            <p>Ce qui guide chaque décision produit chez Prysme.</p>
+            <p>Ce qui guide chaque décision produit chez Kordia.</p>
           </div>
           <div className="values-grid">
             <div className="val-card reveal reveal-d1">
@@ -100,7 +100,7 @@ export default function AProposPage() {
                 </svg>
               </div>
               <div className="val-title">Simplicité</div>
-              <div className="val-desc">Pas de formation, pas de complexité. Si c&apos;est pas simple, c&apos;est pas Prysme.</div>
+              <div className="val-desc">Pas de formation, pas de complexité. Si c&apos;est pas simple, c&apos;est pas Kordia.</div>
             </div>
             <div className="val-card reveal reveal-d2">
               <div className="val-icon v">
@@ -140,15 +140,15 @@ export default function AProposPage() {
           <div className="founder-avatar">LL</div>
           <div className="founder-info">
             <h3>Lancelot Loubier</h3>
-            <div className="role">Fondateur de Prysme</div>
-            <p>Passionné d&apos;automatisation et de produits bien pensés, j&apos;ai créé Prysme après avoir constaté que des milliers de propriétaires de gîtes gèrent encore leurs contrats à la main — sur Word, par email, sans suivi.</p>
+            <div className="role">Fondateur de Kordia</div>
+            <p>Passionné d&apos;automatisation et de produits bien pensés, j&apos;ai créé Kordia après avoir constaté que des milliers de propriétaires de gîtes gèrent encore leurs contrats à la main — sur Word, par email, sans suivi.</p>
             <p>Mon objectif : donner à chaque propriétaire indépendant les mêmes outils qu&apos;un professionnel, en gardant la simplicité au centre de tout.</p>
-            <a className="founder-link" href="mailto:contact@prysme.app">
+            <a className="founder-link" href="mailto:contact@kordia.fr">
               <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
                 <rect x="1.5" y="3" width="11" height="8" rx="1.5" stroke="#7F77DD" strokeWidth="1.1"/>
                 <path d="M2 4l5 3.5L12 4" stroke="#7F77DD" strokeWidth="1.1" strokeLinecap="round"/>
               </svg>
-              contact@prysme.app
+              contact@kordia.fr
             </a>
           </div>
         </div>
@@ -158,7 +158,7 @@ export default function AProposPage() {
       <section className="about-cta">
         <div className="about-cta-inner reveal">
           <h2>Prêt à simplifier votre gestion ?</h2>
-          <p>Essayez Prysme gratuitement pendant 1 mois. Sans carte bancaire.</p>
+          <p>Essayez Kordia gratuitement pendant 1 mois. Sans carte bancaire.</p>
           <Link className="btn-white" href="/sign-up">
             Démarrer l&apos;essai gratuit
             <svg width="16" height="16" fill="none" viewBox="0 0 16 16" style={{ verticalAlign: 'middle', marginLeft: '4px' }}>

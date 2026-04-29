@@ -18,7 +18,7 @@ const items = [
       </svg>
     ),
     title: 'Relances automatiques',
-    desc: 'Contrat non signé à J+2 ? Prysme relance automatiquement.',
+    desc: 'Contrat non signé à J+2 ? Kordia relance automatiquement.',
   },
   {
     icon: (

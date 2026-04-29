@@ -49,7 +49,7 @@ export default async function UpgradePage({ searchParams }: { searchParams: Prom
     }}>
       {/* Header */}
       <header className="upgrade-header">
-        <Image src="/logotype_prysme.png" alt="Prysme" width={120} height={28} style={{ height: 22, width: 'auto', objectFit: 'contain' }}/>
+        <Image src="/logotype_kordia.png" alt="Kordia" width={120} height={28} style={{ height: 22, width: 'auto', objectFit: 'contain' }}/>
         <div
           aria-hidden="true"
           style={{
@@ -90,7 +90,7 @@ export default async function UpgradePage({ searchParams }: { searchParams: Prom
         {isExpired && (
           <div style={{ maxWidth: '960px', margin: '0 auto 28px', padding: '14px 20px', backgroundColor: '#FEF3C7', border: '1.5px solid rgba(217,119,6,.3)', borderRadius: '12px' }}>
             <p style={{ fontSize: '14px', color: '#92400E', margin: 0, lineHeight: 1.6, fontWeight: 600 }}>
-              Votre période d&apos;essai est terminée — souscrivez pour continuer à utiliser Prysme.
+              Votre période d&apos;essai est terminée — souscrivez pour continuer à utiliser Kordia.
             </p>
           </div>
         )}

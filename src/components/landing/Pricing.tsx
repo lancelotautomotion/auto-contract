@@ -22,7 +22,7 @@ export default function Pricing() {
         <div className="reveal" style={{ textAlign: 'center', maxWidth: '540px', margin: '0 auto' }}>
           <div className="stag v" style={{ justifyContent: 'center' }}>Tarifs</div>
           <h2 className="st">Simple, <span className="v">transparent</span>, sans surprise.</h2>
-          <p className="sd" style={{ margin: '0 auto' }}>Essayez Prysme gratuitement pendant 1 mois. Sans carte bancaire.</p>
+          <p className="sd" style={{ margin: '0 auto' }}>Essayez Kordia gratuitement pendant 1 mois. Sans carte bancaire.</p>
         </div>
 
         <div className="pricing-grid">

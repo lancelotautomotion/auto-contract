@@ -15,7 +15,7 @@ export default function Hero() {
           </h1>
 
           <p className="hero-sub">
-            Prysme centralise vos réservations, génère vos contrats et les fait signer en ligne. En 3 minutes, pas 30.
+            Kordia centralise vos réservations, génère vos contrats et les fait signer en ligne. En 3 minutes, pas 30.
           </p>
 
           <div className="hero-actions">
@@ -44,7 +44,7 @@ export default function Hero() {
               <div className="m-d m-r" />
               <div className="m-d m-y" />
               <div className="m-d m-g" />
-              <div className="mockup-url">prysme.app</div>
+              <div className="mockup-url">kordia.fr</div>
             </div>
             <div className="mockup-body">
               <div className="db-top">

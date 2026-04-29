@@ -50,7 +50,7 @@ export default function FeatureContracts() {
           <div className="feat-txt reveal">
             <div className="stag g">Contrats &amp; Juridique</div>
             <h2 className="st">Un contrat pro en <span className="g">3 minutes</span>, pas 30.</h2>
-            <p className="sd">Finies les heures sur Word. Prysme génère le contrat, l&apos;envoie et le fait signer en ligne.</p>
+            <p className="sd">Finies les heures sur Word. Kordia génère le contrat, l&apos;envoie et le fait signer en ligne.</p>
             <div className="feat-list">
               {items.map((item, i) => (
                 <div key={i} className="feat-item">

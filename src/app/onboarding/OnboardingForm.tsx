@@ -97,7 +97,7 @@ export default function OnboardingForm({ defaultEmail }: { defaultEmail: string 
         />
         <span className="ob-cgu-text">
           J&apos;accepte les <a href="/legal/cgu" target="_blank">CGU</a> et la{' '}
-          <a href="/legal/confidentialite" target="_blank">Politique de confidentialité</a> de Prysme.
+          <a href="/legal/confidentialite" target="_blank">Politique de confidentialité</a> de Kordia.
         </span>
       </label>
 

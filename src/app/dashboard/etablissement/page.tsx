@@ -24,7 +24,7 @@ export default async function EtablissementPage() {
       {/* Topbar */}
       <div className="topbar">
         <div className="topbar-left">
-          <div className="topbar-breadcrumb">Prysme / <span>Mon hébergement</span></div>
+          <div className="topbar-breadcrumb">Kordia / <span>Mon hébergement</span></div>
         </div>
         <div className="topbar-right">
           <button className="topbar-btn">

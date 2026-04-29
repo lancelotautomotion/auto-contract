@@ -17,7 +17,7 @@ export default async function SettingsPage() {
     <>
       <div className="topbar">
         <div className="topbar-left">
-          <div className="topbar-breadcrumb">Prysme / <span>Paramètres</span></div>
+          <div className="topbar-breadcrumb">Kordia / <span>Paramètres</span></div>
         </div>
         <div className="topbar-right">
           <button className="topbar-btn">

@@ -5,7 +5,7 @@ export default function CTA() {
     <section className="cta-section">
       <div className="cta-inner reveal">
         <h2>Louez l&apos;esprit libre.</h2>
-        <p>Essayez Prysme gratuitement pendant 1 mois. Contrats, signatures, suivi — tout est inclus.</p>
+        <p>Essayez Kordia gratuitement pendant 1 mois. Contrats, signatures, suivi — tout est inclus.</p>
         <Link className="btn-white" href="/sign-up">
           Démarrer l&apos;essai gratuit
           <svg width="16" height="16" fill="none" viewBox="0 0 16 16" style={{ verticalAlign: 'middle', marginLeft: '4px' }}>

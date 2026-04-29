@@ -10,7 +10,7 @@ export default function NavPages() {
     <nav className="nav-pages">
       <div className="nav-pages-inner">
         <Link className="nav-pages-logo" href="/">
-          <Image src="/logotype_prysme.png" alt="Prysme" width={96} height={24} priority />
+          <Image src="/logotype_kordia.png" alt="Kordia" width={96} height={24} priority />
         </Link>
         <ul className="nav-pages-links">
           <li><a href="/#fonctionnalites">Fonctionnalités</a></li>

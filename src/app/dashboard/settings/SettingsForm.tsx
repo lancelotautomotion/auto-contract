@@ -144,7 +144,7 @@ export default function SettingsForm({ notificationEmail, notifNewReservation, n
                     style={{ width: '16px', height: '16px', accentColor: 'var(--violet)', cursor: 'pointer', flexShrink: 0 }}
                   />
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--ink)', lineHeight: 1.3 }}>Actualités et nouveautés Prysme</div>
+                    <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--ink)', lineHeight: 1.3 }}>Actualités et nouveautés Kordia</div>
                     <div style={{ fontSize: '12px', color: 'var(--ink-soft)', marginTop: '2px' }}>Nouvelles fonctionnalités, conseils et offres</div>
                   </div>
                 </label>

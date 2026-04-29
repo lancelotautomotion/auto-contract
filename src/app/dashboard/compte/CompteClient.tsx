@@ -135,7 +135,7 @@ export default function CompteClient({ fullName, email, initials, planStatus, da
                     Essai expiré
                   </div>
                   <p style={{ fontSize: '13px', color: 'var(--ink-soft)', margin: 0, lineHeight: 1.6 }}>
-                    Votre période d&apos;essai est terminée. Souscrivez pour réactiver votre accès à Prysme.
+                    Votre période d&apos;essai est terminée. Souscrivez pour réactiver votre accès à Kordia.
                   </p>
                 </>
               )}

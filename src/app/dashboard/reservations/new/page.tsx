@@ -22,7 +22,7 @@ export default async function NewReservationPage() {
       {/* Topbar */}
       <div className="topbar">
         <div className="topbar-left">
-          <div className="topbar-breadcrumb">Prysme / Réservations / <span>Nouvelle</span></div>
+          <div className="topbar-breadcrumb">Kordia / Réservations / <span>Nouvelle</span></div>
         </div>
         <div className="topbar-right">
           <button className="topbar-btn">

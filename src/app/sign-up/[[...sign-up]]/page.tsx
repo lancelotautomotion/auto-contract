@@ -59,7 +59,7 @@ export default function SignUpPage() {
           </Link>
           <div className="ab-content">
             <div className="ab-mark">
-              <Image src="/mark_prysme.png" alt="Prysme" width={44} height={44} style={{ objectFit: 'contain' }} />
+              <Image src="/mark_kordia.png" alt="Kordia" width={44} height={44} style={{ objectFit: 'contain' }} />
             </div>
             <div className="ab-headline">Gérez votre gîte<br /><span className="g">sans la paperasse.</span></div>
             <div className="ab-desc">Contrats auto-générés, signature en ligne, suivi centralisé. Tout ce qu&apos;il faut pour louer l&apos;esprit libre.</div>
@@ -70,7 +70,7 @@ export default function SignUpPage() {
               <div className="ab-pill"><div className="ab-pill-icon v"><svg width="14" height="14" fill="none" viewBox="0 0 14 14"><circle cx="7" cy="7" r="5" stroke="#7F77DD" strokeWidth="1.2"/><path d="M7 4.5v2.5l2 1.5" stroke="#7F77DD" strokeWidth="1.2" strokeLinecap="round"/></svg></div>Essai gratuit 1 mois, sans CB</div>
             </div>
           </div>
-          <div className="ab-footer">© 2026 Prysme · Fait avec soin en France</div>
+          <div className="ab-footer">© 2026 Kordia · Fait avec soin en France</div>
         </div>
 
         <div className="auth-form-panel">

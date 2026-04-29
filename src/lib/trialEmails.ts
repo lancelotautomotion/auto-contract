@@ -21,25 +21,25 @@ export async function sendTrialReminder({ to, name, daysLeft }: SendTrialReminde
 
   const configs: Record<ReminderDay, { subject: string; preheader: string; body: string }> = {
     7: {
-      subject: "Il vous reste 7 jours d'essai — Prysme",
-      preheader: "Votre essai Prysme se termine dans 7 jours.",
+      subject: "Il vous reste 7 jours d'essai — Kordia",
+      preheader: "Votre essai Kordia se termine dans 7 jours.",
       body: `
         <p style="font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif;font-size:15px;line-height:1.7;color:#71716E;margin:0 0 16px;">
           Votre essai gratuit se termine dans <strong style="color:#2C2C2A;">7 jours</strong>.
-          Vous avez encore le temps d'explorer toutes les fonctionnalités de Prysme.
+          Vous avez encore le temps d'explorer toutes les fonctionnalités de Kordia.
         </p>
         <p style="font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif;font-size:15px;line-height:1.7;color:#71716E;margin:0 0 24px;">
           Pour continuer à gérer vos contrats de location sans interruption,
           souscrivez à l'abonnement mensuel à <strong style="color:#2C2C2A;">9,99 € HT/mois</strong>.
         </p>
-        ${ctaButton("Souscrire à Prysme", upgradeUrl)}
+        ${ctaButton("Souscrire à Kordia", upgradeUrl)}
         ${divider()}
         ${muted("Sans engagement · Résiliable à tout moment")}
       `,
     },
     3: {
-      subject: "Plus que 3 jours d'essai — Prysme",
-      preheader: "Votre essai Prysme se termine dans 3 jours.",
+      subject: "Plus que 3 jours d'essai — Kordia",
+      preheader: "Votre essai Kordia se termine dans 3 jours.",
       body: `
         <p style="font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif;font-size:15px;line-height:1.7;color:#71716E;margin:0 0 16px;">
           Votre essai gratuit se termine dans <strong style="color:#2C2C2A;">3 jours</strong>.
@@ -48,20 +48,20 @@ export async function sendTrialReminder({ to, name, daysLeft }: SendTrialReminde
           Pour ne pas perdre l'accès à vos réservations et contrats,
           abonnez-vous dès maintenant. Toutes vos données sont conservées.
         </p>
-        ${ctaButton("Continuer avec Prysme", upgradeUrl)}
+        ${ctaButton("Continuer avec Kordia", upgradeUrl)}
         ${divider()}
         ${muted("Sans engagement · Résiliable à tout moment · 9,99 € HT/mois")}
       `,
     },
     1: {
-      subject: "Dernier jour d'essai — Prysme",
-      preheader: "Votre essai Prysme se termine demain.",
+      subject: "Dernier jour d'essai — Kordia",
+      preheader: "Votre essai Kordia se termine demain.",
       body: `
         <p style="font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif;font-size:15px;line-height:1.7;color:#71716E;margin:0 0 16px;">
           Votre essai gratuit se termine <strong style="color:#2C2C2A;">demain</strong>.
         </p>
         <p style="font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif;font-size:15px;line-height:1.7;color:#71716E;margin:0 0 24px;">
-          Pour conserver l'accès à Prysme et continuer à gérer vos contrats,
+          Pour conserver l'accès à Kordia et continuer à gérer vos contrats,
           souscrivez avant demain. Vos données restent intactes.
         </p>
         ${ctaButton("S'abonner maintenant", upgradeUrl)}
@@ -70,7 +70,7 @@ export async function sendTrialReminder({ to, name, daysLeft }: SendTrialReminde
       `,
     },
     0: {
-      subject: "Votre essai Prysme est terminé",
+      subject: "Votre essai Kordia est terminé",
       preheader: "Votre essai gratuit a expiré. Retrouvez vos données en vous abonnant.",
       body: `
         <p style="font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif;font-size:15px;line-height:1.7;color:#71716E;margin:0 0 16px;">
@@ -90,7 +90,7 @@ export async function sendTrialReminder({ to, name, daysLeft }: SendTrialReminde
   const { subject, preheader, body } = configs[daysLeft];
 
   const html = buildEmailHtml({
-    giteName: "Prysme",
+    giteName: "Kordia",
     docLabel: "Essai gratuit",
     preheader,
     greeting,
@@ -98,7 +98,7 @@ export async function sendTrialReminder({ to, name, daysLeft }: SendTrialReminde
   });
 
   return resend.emails.send({
-    from: process.env.RESEND_FROM_EMAIL ?? "Prysme <onboarding@resend.dev>",
+    from: process.env.RESEND_FROM_EMAIL ?? "Kordia <onboarding@resend.dev>",
     to,
     subject,
     html,

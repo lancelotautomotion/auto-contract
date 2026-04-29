@@ -57,7 +57,7 @@ export default async function UpgradeSuccessPage({
   return (
     <div className={font.className} style={{ minHeight: "100vh", backgroundColor: "#F3F2EE", display: "flex", flexDirection: "column" }}>
       <header style={{ padding: "20px 32px", display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid #E8E6E1", backgroundColor: "#FFFFFF" }}>
-        <span style={{ fontSize: "15px", fontWeight: 800, color: "#2C2C2A", letterSpacing: "-0.02em" }}>Prysme</span>
+        <span style={{ fontSize: "15px", fontWeight: 800, color: "#2C2C2A", letterSpacing: "-0.02em" }}>Kordia</span>
       </header>
 
       <main style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "40px 20px" }}>
@@ -71,7 +71,7 @@ export default async function UpgradeSuccessPage({
               Bienvenue à bord<span style={{ color: "#7F77DD" }}>.</span>
             </h1>
             <p style={{ fontSize: "14px", color: "#71716E", lineHeight: 1.6, margin: "0 0 28px" }}>
-              Votre abonnement Prysme est actif. Un reçu vient de vous être envoyé par email.
+              Votre abonnement Kordia est actif. Un reçu vient de vous être envoyé par email.
             </p>
             <a
               href="/dashboard"

@@ -8,10 +8,10 @@ const border = '#E8E6E1';
 
 const faqs = [
   { q: "La signature électronique est-elle légalement valable ?", a: "Oui. La signature est horodatée et l'adresse IP est enregistrée, ce qui constitue une preuve de consentement conforme au droit français pour les locations saisonnières." },
-  { q: "Puis-je utiliser mon propre contrat ?", a: "Absolument. Vous collez votre template existant dans l'éditeur et placez les balises aux bons endroits (ex : {{nom_client}}). Prysme les remplace automatiquement à chaque génération." },
+  { q: "Puis-je utiliser mon propre contrat ?", a: "Absolument. Vous collez votre template existant dans l'éditeur et placez les balises aux bons endroits (ex : {{nom_client}}). Kordia les remplace automatiquement à chaque génération." },
   { q: "Faut-il un logiciel pour signer ?", a: "Non. Le locataire clique sur le lien dans l'email, lit le contrat dans son navigateur et tape son nom pour signer. Aucune installation requise, ça marche sur mobile comme ordinateur." },
   { q: "Combien de réservations puis-je gérer ?", a: "Illimitées. L'abonnement couvre un gîte avec autant de réservations que vous voulez, sans surcoût." },
-  { q: "Est-ce que ça fonctionne sans Airbnb ?", a: "C'est exactement pour ça que Prysme a été conçu : pour les gérants qui louent en direct, sans intermédiaire. Vous gardez le lien direct avec vos locataires." },
+  { q: "Est-ce que ça fonctionne sans Airbnb ?", a: "C'est exactement pour ça que Kordia a été conçu : pour les gérants qui louent en direct, sans intermédiaire. Vous gardez le lien direct avec vos locataires." },
   { q: "Que se passe-t-il si je résilie ?", a: "Vous pouvez résilier à tout moment depuis vos paramètres. Vos données et contrats signés restent accessibles 30 jours après résiliation." },
   { q: "Combien de temps prend la configuration ?", a: "Environ 5 minutes. Vous renseignez les informations de votre gîte, importez votre logo et c'est prêt." },
 ];

@@ -8,7 +8,7 @@ import { prisma } from "@/lib/prisma";
 import { getTrialInfo } from "@/lib/trial";
 import '@/styles/dashboard.css';
 
-export const metadata: Metadata = { title: "Prysme" };
+export const metadata: Metadata = { title: "Kordia" };
 
 const font = Plus_Jakarta_Sans({
   subsets: ['latin'],

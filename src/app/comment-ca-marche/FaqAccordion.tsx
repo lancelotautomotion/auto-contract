@@ -8,7 +8,7 @@ const faqs = [
   },
   {
     q: "La signature électronique est-elle légalement valable ?",
-    a: "Oui. Prysme applique le règlement européen eIDAS (UE n°910/2014) : signature horodatée, adresse IP enregistrée, PDF inaltérable. Elle a la même valeur juridique qu'une signature manuscrite et est recevable devant les tribunaux français.",
+    a: "Oui. Kordia applique le règlement européen eIDAS (UE n°910/2014) : signature horodatée, adresse IP enregistrée, PDF inaltérable. Elle a la même valeur juridique qu'une signature manuscrite et est recevable devant les tribunaux français.",
   },
   {
     q: "Puis-je personnaliser mon contrat ?",
@@ -20,7 +20,7 @@ const faqs = [
   },
   {
     q: "Est-ce que ça fonctionne pour les réservations directes ?",
-    a: "C'est exactement pour ça que Prysme a été conçu : pour les gérants qui louent en direct, sans passer par Airbnb ou Booking. Vous gardez le lien direct avec vos locataires et économisez les 15-20 % de commission.",
+    a: "C'est exactement pour ça que Kordia a été conçu : pour les gérants qui louent en direct, sans passer par Airbnb ou Booking. Vous gardez le lien direct avec vos locataires et économisez les 15-20 % de commission.",
   },
   {
     q: "Que se passe-t-il si je résilie ?",

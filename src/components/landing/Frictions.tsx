@@ -86,7 +86,7 @@ export default function Frictions() {
         <div className="friction-header reveal">
           <div className="stag v">Problèmes résolus</div>
           <h2 className="st">Vous vous reconnaissez<span className="v"> ?</span></h2>
-          <p className="sd">Chaque propriétaire de gîte fait face aux mêmes galères administratives. Prysme les résout une par une.</p>
+          <p className="sd">Chaque propriétaire de gîte fait face aux mêmes galères administratives. Kordia les résout une par une.</p>
         </div>
         <div className="friction-grid">
           {cards.map((card, i) => (

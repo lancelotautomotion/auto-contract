@@ -12,7 +12,7 @@ function VisualConfig() {
   return (
     <div className="sv-card">
       <div className="sv-head">
-        <div className="sv-crumb">Prysme / <strong>Mon hébergement</strong></div>
+        <div className="sv-crumb">Kordia / <strong>Mon hébergement</strong></div>
         <span className="sv-progress">1 / 3</span>
       </div>
       <div className="sv-body">
@@ -55,7 +55,7 @@ function VisualReservation() {
   return (
     <div className="sv-card">
       <div className="sv-head">
-        <div className="sv-crumb">Prysme / <strong>Nouvelle réservation</strong></div>
+        <div className="sv-crumb">Kordia / <strong>Nouvelle réservation</strong></div>
       </div>
       <div className="sv-body">
         <div className="sv-grid-2">
@@ -126,7 +126,7 @@ function VisualEmail() {
       </div>
       <div className="sv-mail-body">
         <div className="sv-mail-meta">
-          <div><span className="sv-mail-key">De</span><span>Le Mas des Oliviers &lt;hello@prysme.app&gt;</span></div>
+          <div><span className="sv-mail-key">De</span><span>Le Mas des Oliviers &lt;hello@kordia.fr&gt;</span></div>
           <div><span className="sv-mail-key">À</span><span>martin.dupont@email.fr</span></div>
         </div>
         <p>Bonjour Martin,</p>
@@ -167,7 +167,7 @@ function VisualSignature() {
       <div className="sv-phone">
         <div className="sv-phone-notch" />
         <div className="sv-phone-screen">
-          <div className="sv-phone-head">prysme.app/sign</div>
+          <div className="sv-phone-head">kordia.fr/sign</div>
           <div className="sv-ctr-title">Contrat de location</div>
           <div className="sv-ctr-sub">Le Mas des Oliviers — Été 2025</div>
           <div className="sv-ctr-rows">
@@ -201,7 +201,7 @@ function VisualArchive() {
   return (
     <div className="sv-card">
       <div className="sv-head">
-        <div className="sv-crumb">Prysme / <strong>Réservations</strong></div>
+        <div className="sv-crumb">Kordia / <strong>Réservations</strong></div>
         <span className="sv-progress green">Mis à jour</span>
       </div>
       <div className="sv-body sv-arch-body">

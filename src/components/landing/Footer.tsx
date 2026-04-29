@@ -8,7 +8,7 @@ export default function Footer() {
         <div className="footer-top">
 
           <div className="footer-brand">
-            <Image src="/logotype_prysme.png" alt="Prysme" width={96} height={24} />
+            <Image src="/logotype_kordia.png" alt="Kordia" width={96} height={24} />
             <p>La gestion administrative de votre gîte, enfin simple. Contrats, signatures, suivi — tout au même endroit.</p>
           </div>
 
@@ -42,7 +42,7 @@ export default function Footer() {
 
         </div>
         <div className="footer-bottom">
-          <span>© 2026 Prysme. Tous droits réservés.</span>
+          <span>© 2026 Kordia. Tous droits réservés.</span>
           <span>Fait avec soin en France</span>
         </div>
       </div>

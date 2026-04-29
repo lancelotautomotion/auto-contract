@@ -5,16 +5,16 @@ import ThemeProvider from "@/providers/ThemeProvider";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Prysme — Contrats de location pour gîtes, automatisés",
+  title: "Kordia — Contrats de location pour gîtes, automatisés",
   description: "Automatisez vos contrats de location saisonnière en 2 minutes. Génération PDF, envoi email, suivi acompte. 30 jours gratuits, sans CB.",
   icons: {
-    icon: '/mark_prysme.png',
+    icon: '/mark_kordia.png',
     apple: '/apple-touch-icon.png',
   },
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
-    title: 'Prysme',
+    title: 'Kordia',
   },
 };
 

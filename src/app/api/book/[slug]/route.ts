@@ -54,7 +54,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ slu
     },
   });
 
-  // Notification email au gérant — fallback sur l'email Prysme du compte si aucun email de notification configuré
+  // Notification email au gérant — fallback sur l'email Kordia du compte si aucun email de notification configuré
   const notifTo = gite.notificationEmail || gite.user.email;
   if (gite.notifNewReservation && notifTo && process.env.RESEND_API_KEY) {
     try {
@@ -94,11 +94,11 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ slu
 </table>
 ${divider()}
 ${ctaButton('Voir la demande', `${process.env.NEXT_PUBLIC_APP_URL}/dashboard/reservations`)}
-${muted('Cette demande est en attente de votre confirmation dans Prysme.')}
+${muted('Cette demande est en attente de votre confirmation dans Kordia.')}
 `;
 
       await resend.emails.send({
-        from: 'Prysme <notifications@prysme.app>',
+        from: 'Kordia <notifications@kordia.fr>',
         to: notifTo,
         subject: `Nouvelle demande — ${body.firstName} ${body.lastName} · ${gite.name}`,
         html: buildEmailHtml({

@@ -3,8 +3,8 @@ import { Resend } from "resend";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-const INBOX = "contact@prysme.app";
-const FROM = process.env.RESEND_FROM_EMAIL ?? "Prysme <onboarding@resend.dev>";
+const INBOX = "contact@kordia.fr";
+const FROM = process.env.RESEND_FROM_EMAIL ?? "Kordia <onboarding@resend.dev>";
 
 function escapeHtml(value: string) {
   return value
@@ -43,13 +43,13 @@ export async function POST(req: NextRequest) {
     }
 
     const fullName = `${prenom} ${nom}`;
-    const subject = `[Contact Prysme] ${sujet} — ${fullName}`;
+    const subject = `[Contact Kordia] ${sujet} — ${fullName}`;
 
     const html = `
       <div style="font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif;background:#F3F2EE;padding:32px;">
         <div style="max-width:560px;margin:0 auto;background:#fff;border:1px solid #E8E6E1;border-radius:14px;overflow:hidden;">
           <div style="padding:18px 24px;background:#2C2C2A;color:#fff;font-size:13px;font-weight:700;letter-spacing:.04em;">
-            Nouveau message — Contact Prysme
+            Nouveau message — Contact Kordia
           </div>
           <div style="padding:24px;">
             <table style="width:100%;border-collapse:collapse;font-size:13px;color:#2C2C2A;">
@@ -64,7 +64,7 @@ export async function POST(req: NextRequest) {
       </div>
     `;
 
-    const text = `Nouveau message Contact Prysme\n\nNom: ${fullName}\nEmail: ${email}\nSujet: ${sujet}\n\n${message}`;
+    const text = `Nouveau message Contact Kordia\n\nNom: ${fullName}\nEmail: ${email}\nSujet: ${sujet}\n\n${message}`;
 
     await resend.emails.send({
       from: FROM,

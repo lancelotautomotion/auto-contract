@@ -2,8 +2,8 @@ import type { MetadataRoute } from 'next';
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'Prysme',
-    short_name: 'Prysme',
+    name: 'Kordia',
+    short_name: 'Kordia',
     description: 'Contrats de location pour gîtes, automatisés',
     start_url: '/dashboard',
     display: 'standalone',
