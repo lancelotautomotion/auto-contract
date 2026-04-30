@@ -6,6 +6,7 @@ import { buildEmailHtml, recapCard, ctaButton, divider, infoBox, muted, signOff 
 import { requireAuth } from "@/lib/auth";
 
 export async function POST(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  try {
   const { id } = await params;
   const [ctx, err] = await requireAuth();
   if (err) return err;
@@ -106,4 +107,9 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
   }
 
   return NextResponse.json({ success: true });
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e);
+    console.error("[send-email] uncaught:", e);
+    return NextResponse.json({ error: `Erreur serveur : ${msg}` }, { status: 500 });
+  }
 }
