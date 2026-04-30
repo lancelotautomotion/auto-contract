@@ -10,7 +10,7 @@ export default function NavPages() {
     <nav className="nav-pages">
       <div className="nav-pages-inner">
         <Link className="nav-pages-logo" href="/">
-          <Image src="/logotype_KORDIA.svg" alt="Kordia" width={96} height={24} priority />
+          <Image src="/logotype_KORDIA.svg" alt="Kordia" width={160} height={40} priority style={{ height: 34, width: 'auto' }} />
         </Link>
         <ul className="nav-pages-links">
           <li><a href="/#fonctionnalites">Fonctionnalités</a></li>

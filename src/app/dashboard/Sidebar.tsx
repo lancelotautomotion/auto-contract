@@ -24,8 +24,8 @@ export default function Sidebar({ pendingCount = 0, trialInfo, mobileOpen, onMob
         <Image
           src="/logotype_KORDIA.svg"
           alt="Kordia"
-          width={110}
-          height={24}
+          width={150}
+          height={36}
           style={{ filter: 'brightness(0) invert(1)', objectFit: 'contain' }}
         />
         <button className="sb-close-btn" onClick={onMobileClose} aria-label="Fermer le menu">

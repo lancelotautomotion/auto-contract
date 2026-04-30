@@ -8,7 +8,7 @@ export default function Footer() {
         <div className="footer-top">
 
           <div className="footer-brand">
-            <Image src="/logotype_KORDIA.svg" alt="Kordia" width={96} height={24} />
+            <Image src="/logotype_KORDIA.svg" alt="Kordia" width={160} height={40} style={{ height: 34, width: 'auto' }} />
             <p>La gestion administrative de votre gîte, enfin simple. Contrats, signatures, suivi — tout au même endroit.</p>
           </div>
 
