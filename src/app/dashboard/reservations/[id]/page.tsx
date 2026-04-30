@@ -66,7 +66,6 @@ export default async function ReservationDetailPage({ params }: { params: Promis
 
   const clientName = `${reservation.clientFirstName} ${reservation.clientLastName}`;
 
-  const optionsTotal = reservation.reservationOptions.reduce((sum, o) => sum + (o.price || 0), 0);
 
   return (
     <>
@@ -104,38 +103,37 @@ export default async function ReservationDetailPage({ params }: { params: Promis
           </div>
           <div className="dh-right">
             <span className={pillClass}>{pillLabel}</span>
-            <div className="dh-actions">
-              {isRefused ? (
-                <>
-                  <RestoreReservationButton reservationId={id} />
-                  <DeleteReservationButton reservationId={id} clientName={clientName} />
-                </>
-              ) : (
-                <>
-                  <Link href={`/dashboard/reservations/${id}/edit`} className="btn btn-outline">
-                    Modifier
-                  </Link>
-                  <RefuseReservationButton reservationId={id} clientName={clientName} />
-                </>
-              )}
-            </div>
+            {!isRefused && (
+              <div className="dh-actions">
+                <Link href={`/dashboard/reservations/${id}/edit`} className="btn btn-outline">
+                  Modifier
+                </Link>
+                <RefuseReservationButton reservationId={id} clientName={clientName} />
+              </div>
+            )}
           </div>
         </div>
 
-        {/* Refused banner */}
+        {/* Refused banner + actions inline */}
         {isRefused && (
-          <div className="refused-banner">
-            <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
-              <circle cx="8" cy="8" r="6" stroke="currentColor" strokeWidth="1.3"/>
-              <path d="M5 5l6 6M11 5l-6 6" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
-            </svg>
-            <span>
-              Cette réservation a été refusée.
-              {reservation.refusalReason && (
-                <> Motif : <strong>{REFUSAL_LABELS[reservation.refusalReason] ?? reservation.refusalReason}</strong>.</>
-              )}
-              {reservation.refusalNote && <> &mdash; {reservation.refusalNote}</>}
-            </span>
+          <div style={{ display: 'flex', alignItems: 'stretch', gap: '12px', marginBottom: '20px' }}>
+            <div className="refused-banner" style={{ flex: 1, margin: 0 }}>
+              <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
+                <circle cx="8" cy="8" r="6" stroke="currentColor" strokeWidth="1.3"/>
+                <path d="M5 5l6 6M11 5l-6 6" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
+              </svg>
+              <span>
+                Cette réservation a été refusée.
+                {reservation.refusalReason && (
+                  <> Motif : <strong>{REFUSAL_LABELS[reservation.refusalReason] ?? reservation.refusalReason}</strong>.</>
+                )}
+                {reservation.refusalNote && <> &mdash; {reservation.refusalNote}</>}
+              </span>
+            </div>
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexShrink: 0 }}>
+              <RestoreReservationButton reservationId={id} />
+              <DeleteReservationButton reservationId={id} clientName={clientName} />
+            </div>
           </div>
         )}
 
@@ -288,12 +286,6 @@ export default async function ReservationDetailPage({ params }: { params: Promis
                     {opt.price > 0 && <span className="opt-price">{fmtMoney(opt.price)}</span>}
                   </div>
                 ))}
-                {optionsTotal > 0 && (
-                  <div className="opt-total">
-                    <span className="opt-total-label">Total options</span>
-                    <span className="opt-total-val">{fmtMoney(optionsTotal)}</span>
-                  </div>
-                )}
               </div>
             )}
           </div>
