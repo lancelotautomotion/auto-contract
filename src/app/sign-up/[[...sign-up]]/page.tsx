@@ -82,7 +82,7 @@ export default function SignUpPage() {
               </svg>
               Retour à l&apos;accueil
             </Link>
-            <img src="/logotype_KORDIA.svg" alt="Kordia" className="auth-form-logo" style={{ height: 36, width: 'auto', display: 'block', marginBottom: 28 }} />
+            <img src="/logotype_KORDIA.svg" alt="Kordia" className="auth-form-logo" style={{ height: 36, width: 'auto', display: 'block' }} />
             <div className="auth-tabs">
               <Link href="/sign-in" className="auth-tab">Se connecter</Link>
               <Link href="/sign-up" className="auth-tab auth-tab--active">Créer un compte</Link>

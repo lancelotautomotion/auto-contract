@@ -169,7 +169,7 @@ footer{background:var(--ink);color:rgba(255,255,255,.5);padding:56px 28px 28px}
 .auth-back{position:absolute;top:24px;left:24px;z-index:2;display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:500;color:rgba(255,255,255,.55);text-decoration:none;padding:8px 14px;border-radius:9px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);transition:all .2s}
 .auth-back:hover{color:#fff;background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.14)}
 .auth-back-mobile{display:none}
-.auth-form-logo{display:none}
+.auth-form-logo{display:none;margin:0 auto 28px}
 .auth-form-panel{flex:1;display:flex;align-items:center;justify-content:center;padding:48px 56px;background:var(--white);min-width:0}
 .auth-form-inner{width:100%;max-width:440px;min-width:0}
 
@@ -200,6 +200,8 @@ footer{background:var(--ink);color:rgba(255,255,255,.5);padding:56px 28px 28px}
 .auth-form-panel [class*="cl-socialButton"],
 .auth-form-panel [class*="cl-phone"],
 .auth-form-panel [class*="cl-input"]{width:100%!important;max-width:100%!important;box-sizing:border-box!important;min-width:0!important}
+.auth-form-panel [class*="cl-formFieldInputGroup"]{display:flex!important;position:relative!important;overflow:visible!important}
+.auth-form-panel [class*="cl-formFieldInputGroup"] input{flex:1!important;width:auto!important;min-width:0!important;pointer-events:auto!important}
 
 /* ═══ MOBILE ═══ */
 @media(max-width:900px){
