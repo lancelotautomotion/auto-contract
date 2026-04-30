@@ -471,7 +471,7 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
                 <input className="form-input" type="number" step="0.01" value={form.cleaningFee} onChange={e => set('cleaningFee', e.target.value)} />
               </div>
               <div className="form-group">
-                <label className="form-label">Taxe de séjour (€/nuit)</label>
+                <label className="form-label">Taxe de séjour (€/nuit/pers.)</label>
                 <input className="form-input" type="number" step="0.01" value={form.touristTax} onChange={e => set('touristTax', e.target.value)} />
               </div>
             </div>
