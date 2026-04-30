@@ -3,6 +3,7 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import { DEFAULT_CONTRACT_TEMPLATE } from "@/lib/defaultContractTemplate";
 import DocumentsTab from "./DocumentsTab";
+import IcalTab from "./IcalTab";
 
 const EXAMPLE_DATA: Record<string, string> = {
   prenom_client: 'Marie', nom_client: 'Dupont', email_client: 'marie.dupont@email.com',
@@ -68,7 +69,7 @@ interface GiteData {
   documents: GiteDoc[];
 }
 
-const TABS = ['Informations', 'Options', 'Contrat', 'Logo', 'Documents'] as const;
+const TABS = ['Informations', 'Options', 'Contrat', 'Logo', 'Documents', 'iCal'] as const;
 type Tab = typeof TABS[number];
 
 const VARIABLES: Array<[string, string, 'client' | 'booking' | 'gite']> = [
@@ -647,6 +648,10 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
       {/* ═══ DOCUMENTS ═══ */}
       {activeTab === 'Documents' && (
         <DocumentsTab initialDocs={gite.documents} />
+      )}
+
+      {activeTab === 'iCal' && (
+        <IcalTab />
       )}
 
     </form>

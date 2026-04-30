@@ -62,6 +62,20 @@ model Gite {
   reservations Reservation[]
   options      GiteOption[]
   documents    GiteDocument[]
+  icalFeeds    IcalFeed[]
+}
+
+model IcalFeed {
+  id           String    @id @default(cuid())
+  platform     String    // "airbnb" | "abritel" | "booking" | "leboncoin" | "gites_de_france" | "autre"
+  label        String
+  url          String
+  syncedAt     DateTime?
+  blockedDates Json      @default("[]") // [{start:"2026-05-01",end:"2026-05-10"}]
+  createdAt    DateTime  @default(now())
+
+  giteId String
+  gite   Gite   @relation(fields: [giteId], references: [id], onDelete: Cascade)
 }
 
 // Options configurées par le gérant (dynamiques)

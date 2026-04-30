@@ -35,8 +35,10 @@ export default async function DashboardPage() {
   const gite = await prisma.gite.findFirst({ where: { userId: dbUser.id } }).catch(() => null);
   if (!gite || !gite.name?.trim() || gite.name === "Mon Gîte") redirect("/onboarding");
 
+  let icalBlocked: Array<{ start: string; end: string; platform: string; label: string }> = [];
+
   try {
-    [pendingReservations, reservations] = await Promise.all([
+    const [res1, res2, icalFeeds] = await Promise.all([
       prisma.reservation.findMany({
         where: { gite: { userId: dbUser.id }, status: 'PENDING_REVIEW' },
         orderBy: { createdAt: 'desc' },
@@ -46,7 +48,16 @@ export default async function DashboardPage() {
         include: { contract: true },
         orderBy: { checkIn: 'asc' },
       }),
+      prisma.icalFeed.findMany({ where: { giteId: gite.id } }),
     ]);
+    pendingReservations = res1;
+    reservations = res2;
+    icalBlocked = icalFeeds.flatMap(feed =>
+      ((feed.blockedDates as Array<{ start: string; end: string }>) ?? []).map(e => ({
+        start: e.start, end: e.end,
+        platform: feed.platform, label: feed.label,
+      }))
+    );
   } catch {
     // If reservation queries fail, render with empty state rather than crashing
   }
@@ -228,7 +239,7 @@ export default async function DashboardPage() {
               </div>
             </div>
             <div style={{ padding: '16px 20px' }}>
-              <CalendarView reservations={calendarReservations} />
+              <CalendarView reservations={calendarReservations} icalBlocked={icalBlocked} />
             </div>
           </div>
 

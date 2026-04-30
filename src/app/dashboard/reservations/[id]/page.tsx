@@ -29,6 +29,22 @@ export default async function ReservationDetailPage({ params }: { params: Promis
   });
   if (!reservation) notFound();
 
+  // Détection de conflits iCal
+  const icalFeeds = await prisma.icalFeed.findMany({ where: { giteId: reservation.giteId } });
+  const checkInStr  = reservation.checkIn.toISOString().slice(0, 10);
+  const checkOutStr = reservation.checkOut.toISOString().slice(0, 10);
+  const icalConflicts = icalFeeds.flatMap(feed => {
+    const events = (feed.blockedDates as Array<{ start: string; end: string }>) ?? [];
+    return events
+      .filter(e => e.start < checkOutStr && e.end > checkInStr)
+      .map(e => ({ platform: feed.platform, label: feed.label, start: e.start, end: e.end }));
+  });
+
+  const PLATFORM_LABELS: Record<string, string> = {
+    airbnb: "Airbnb", abritel: "Abritel / VRBO", booking: "Booking.com",
+    leboncoin: "Leboncoin", gites_de_france: "Gîtes de France",
+  };
+
   const fmt = (d: Date) => new Date(d).toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' });
   const fmtMoney = (n: number) => n.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '\u00a0€';
 
@@ -121,6 +137,54 @@ export default async function ReservationDetailPage({ params }: { params: Promis
               {reservation.refusalNote && <> &mdash; {reservation.refusalNote}</>}
             </span>
           </div>
+        )}
+
+        {/* Bandeau disponibilité iCal */}
+        {reservation.status === 'PENDING_REVIEW' && (
+          icalConflicts.length > 0 ? (
+            <div style={{
+              display: 'flex', alignItems: 'flex-start', gap: '10px',
+              background: '#FEF3CD', border: '1px solid #F5C842',
+              borderRadius: '10px', padding: '14px 16px', marginBottom: '20px',
+            }}>
+              <svg width="18" height="18" fill="none" viewBox="0 0 18 18" style={{ flexShrink: 0, marginTop: '1px', color: '#B7791F' }}>
+                <path d="M9 2L1.5 15h15L9 2z" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round"/>
+                <path d="M9 7v4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
+                <circle cx="9" cy="12.5" r="0.8" fill="currentColor"/>
+              </svg>
+              <div>
+                <div style={{ fontSize: '13px', fontWeight: 700, color: '#7B4F0A', marginBottom: '4px' }}>
+                  Conflit détecté sur une autre plateforme
+                </div>
+                <div style={{ fontSize: '12px', color: '#92610E', lineHeight: 1.5 }}>
+                  {icalConflicts.map((c, i) => {
+                    const name = PLATFORM_LABELS[c.platform] ?? c.label;
+                    const fmtD = (s: string) => new Date(s).toLocaleDateString('fr-FR', { day: '2-digit', month: 'long' });
+                    return (
+                      <span key={i}>
+                        {i > 0 && ' · '}
+                        <strong>{name}</strong> : du {fmtD(c.start)} au {fmtD(c.end)}
+                      </span>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          ) : icalFeeds.length > 0 ? (
+            <div style={{
+              display: 'flex', alignItems: 'center', gap: '10px',
+              background: '#F0FDF4', border: '1px solid #86EFAC',
+              borderRadius: '10px', padding: '14px 16px', marginBottom: '20px',
+            }}>
+              <svg width="18" height="18" fill="none" viewBox="0 0 18 18" style={{ flexShrink: 0, color: '#16A34A' }}>
+                <circle cx="9" cy="9" r="7" stroke="currentColor" strokeWidth="1.4"/>
+                <path d="M5.5 9l2.5 2.5 4.5-4.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+              <div style={{ fontSize: '13px', fontWeight: 600, color: '#166534' }}>
+                Dates disponibles — aucun conflit détecté sur vos calendriers connectés
+              </div>
+            </div>
+          ) : null
         )}
 
         {/* Detail grid */}
