@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { resend, getFromEmail } from "@/lib/resend";
 
 const INBOX = "contact@kordia.fr";
-const FROM = getFromEmail();
 
 function escapeHtml(value: string) {
   return value
@@ -64,14 +63,19 @@ export async function POST(req: NextRequest) {
 
     const text = `Nouveau message Contact Kordia\n\nNom: ${fullName}\nEmail: ${email}\nSujet: ${sujet}\n\n${message}`;
 
-    await resend.emails.send({
-      from: FROM,
+    const { error: resendError } = await resend.emails.send({
+      from: getFromEmail(),
       to: INBOX,
       replyTo: email,
       subject,
       html,
       text,
     });
+
+    if (resendError) {
+      console.error("[api/contact] Resend error:", resendError);
+      return NextResponse.json({ error: `Erreur d'envoi : ${resendError.message}` }, { status: 500 });
+    }
 
     return NextResponse.json({ ok: true });
   } catch (err) {

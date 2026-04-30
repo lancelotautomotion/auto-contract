@@ -1,6 +1,12 @@
 "use client";
 import { useState } from "react";
 
+const ink = '#1A1A18';
+const inkSoft = '#71716E';
+const line = '#E8E6E1';
+const violetLight = '#EEEDFA';
+const violetDark = '#5B52B5';
+
 const faqs = [
   {
     q: "Faut-il un logiciel spécial pour signer ?",
@@ -37,65 +43,56 @@ const faqs = [
 ];
 
 export default function FaqAccordion() {
-  const [open, setOpen] = useState<number | null>(0);
+  const [open, setOpen] = useState<number | null>(null);
 
   return (
-    <div className="ccm-faq-list">
-      {faqs.map((faq, i) => (
-        <div key={i} className={`ccm-faq-item${open === i ? ' open' : ''}`}>
-          <button
-            type="button"
-            onClick={() => setOpen(open === i ? null : i)}
-            className="ccm-faq-q"
-            aria-expanded={open === i}
-          >
-            <span>{faq.q}</span>
-            <span className="ccm-faq-icon" aria-hidden="true">
-              <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
-                <path d="M4 5.5l3 3 3-3" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </span>
-          </button>
-          <div className={`ccm-faq-body${open === i ? ' open' : ''}`}>
-            <div className="ccm-faq-a">{faq.a}</div>
-          </div>
-        </div>
-      ))}
+    <div style={{ display: 'flex', flexDirection: 'column', borderTop: `1px solid ${line}` }}>
+      {faqs.map((faq, i) => {
+        const isOpen = open === i;
+        return (
+          <div key={i} style={{ borderBottom: `1px solid ${line}` }}>
+            <button
+              type="button"
+              onClick={() => setOpen(isOpen ? null : i)}
+              aria-expanded={isOpen}
+              style={{
+                width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                padding: '22px 0', background: 'transparent', border: 'none', cursor: 'pointer',
+                textAlign: 'left', gap: '24px',
+                fontFamily: 'inherit', fontSize: '15px', fontWeight: 600, color: ink, lineHeight: 1.4,
+              }}
+            >
+              <span>{faq.q}</span>
+              <span style={{
+                flexShrink: 0, width: '30px', height: '30px', borderRadius: '50%',
+                background: violetLight, color: violetDark,
+                display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                transition: 'transform 0.3s ease',
+                transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+              }}>
+                <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
+                  <path d="M4 5.5l3 3 3-3" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </span>
+            </button>
 
-      <style>{`
-        .ccm-faq-list { display: flex; flex-direction: column; border-top: 1px solid var(--line); }
-        .ccm-faq-item { border-bottom: 1px solid var(--line); }
-        .ccm-faq-q {
-          width: 100%;
-          display: flex; align-items: center; justify-content: space-between;
-          padding: 22px 0;
-          background: transparent; border: none; cursor: pointer;
-          text-align: left; gap: 24px;
-          font-family: var(--ff);
-          font-size: 15px; font-weight: 600; color: var(--ink); line-height: 1.4;
-        }
-        .ccm-faq-q:hover { color: var(--violet-dark); }
-        .ccm-faq-icon {
-          flex-shrink: 0;
-          width: 30px; height: 30px; border-radius: 50%;
-          background: var(--violet-light); color: var(--violet-dark);
-          display: inline-flex; align-items: center; justify-content: center;
-          transition: transform .25s ease;
-        }
-        .ccm-faq-item.open .ccm-faq-icon { transform: rotate(180deg); }
-        .ccm-faq-body {
-          display: grid;
-          grid-template-rows: 0fr;
-          transition: grid-template-rows 0.35s ease;
-        }
-        .ccm-faq-body.open { grid-template-rows: 1fr; }
-        .ccm-faq-body > .ccm-faq-a { overflow: hidden; min-height: 0; }
-        .ccm-faq-a {
-          font-size: 14px; color: var(--ink-soft); line-height: 1.75;
-          padding: 0 0 22px;
-          max-width: 640px;
-        }
-      `}</style>
+            <div style={{
+              display: 'grid',
+              gridTemplateRows: isOpen ? '1fr' : '0fr',
+              transition: 'grid-template-rows 0.35s ease',
+            }}>
+              <div style={{ overflow: 'hidden' }}>
+                <p style={{
+                  fontSize: '14px', color: inkSoft, lineHeight: 1.75,
+                  margin: '0 0 22px', maxWidth: '640px', fontWeight: 400,
+                }}>
+                  {faq.a}
+                </p>
+              </div>
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 }
