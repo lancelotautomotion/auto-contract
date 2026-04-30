@@ -200,8 +200,9 @@ footer{background:var(--ink);color:rgba(255,255,255,.5);padding:56px 28px 28px}
 .auth-form-panel [class*="cl-socialButton"],
 .auth-form-panel [class*="cl-phone"],
 .auth-form-panel [class*="cl-input"]{width:100%!important;max-width:100%!important;box-sizing:border-box!important;min-width:0!important}
-.auth-form-panel [class*="cl-formFieldInputGroup"]{display:flex!important;position:relative!important;overflow:visible!important}
-.auth-form-panel [class*="cl-formFieldInputGroup"] input{flex:1!important;width:auto!important;min-width:0!important;pointer-events:auto!important}
+.auth-form-panel [class*="cl-formFieldInputGroup"]{position:relative!important;overflow:visible!important;display:block!important}
+.auth-form-panel [class*="cl-formFieldInputGroup"] input{width:100%!important;box-sizing:border-box!important;padding-right:44px!important;pointer-events:auto!important}
+.auth-form-panel [class*="cl-formFieldInputShowPasswordButton"]{position:absolute!important;right:10px!important;top:50%!important;transform:translateY(-50%)!important;left:auto!important;z-index:2!important}
 
 /* ═══ MOBILE ═══ */
 @media(max-width:900px){
