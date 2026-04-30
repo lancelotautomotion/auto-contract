@@ -236,6 +236,9 @@ export default async function DashboardPage() {
                 <span><span className="legend-dot g"></span>Signé</span>
                 <span><span className="legend-dot v"></span>Envoyé</span>
                 <span><span className="legend-dot a"></span>En attente</span>
+                {icalBlocked.length > 0 && (
+                  <span><span className="legend-dot" style={{ background: '#E4E2DE', border: '1px solid #CEC8BF' }}></span>Autres plateformes</span>
+                )}
               </div>
             </div>
             <div style={{ padding: '16px 20px' }}>

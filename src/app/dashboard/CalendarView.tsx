@@ -211,28 +211,6 @@ export default function CalendarView({
         >→</button>
       </div>
 
-      {/* Légende */}
-      <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', marginBottom: '12px', fontSize: '11px' }}>
-        <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-          <span style={{ width: '10px', height: '10px', borderRadius: '3px', background: SIGNED_BG, border: `1px solid ${SIGNED_TEXT}40`, display: 'inline-block' }} />
-          <span style={{ color: '#71716E' }}>Signé</span>
-        </span>
-        <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-          <span style={{ width: '10px', height: '10px', borderRadius: '3px', background: SENT_BG, border: `1px solid ${SENT_TEXT}40`, display: 'inline-block' }} />
-          <span style={{ color: '#71716E' }}>Envoyé</span>
-        </span>
-        <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-          <span style={{ width: '10px', height: '10px', borderRadius: '3px', background: WAITING_BG, border: `1px solid ${WAITING_TEXT}40`, display: 'inline-block' }} />
-          <span style={{ color: '#71716E' }}>En attente</span>
-        </span>
-        {hasIcal && (
-          <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-            <span style={{ width: '10px', height: '10px', borderRadius: '3px', background: ICAL_BG, border: `1px solid #CEC8BF`, display: 'inline-block' }} />
-            <span style={{ color: '#71716E' }}>Autres plateformes</span>
-          </span>
-        )}
-      </div>
-
       {months.map(({ year, month }) => {
         const daysInMonth = getDaysInMonth(year, month);
         const firstDay    = getFirstDayOfWeek(year, month);
