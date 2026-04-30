@@ -30,7 +30,7 @@ export default async function ReservationDetailPage({ params }: { params: Promis
   if (!reservation) notFound();
 
   // Détection de conflits iCal
-  const icalFeeds = await prisma.icalFeed.findMany({ where: { giteId: reservation.giteId } });
+  const icalFeeds = await prisma.icalFeed.findMany({ where: { giteId: reservation.giteId } }).catch(() => []);
   const checkInStr  = reservation.checkIn.toISOString().slice(0, 10);
   const checkOutStr = reservation.checkOut.toISOString().slice(0, 10);
   const icalConflicts = icalFeeds.flatMap(feed => {
@@ -140,7 +140,7 @@ export default async function ReservationDetailPage({ params }: { params: Promis
         )}
 
         {/* Bandeau disponibilité iCal */}
-        {reservation.status === 'PENDING_REVIEW' && (
+        {!isRefused && (
           icalConflicts.length > 0 ? (
             <div style={{
               display: 'flex', alignItems: 'flex-start', gap: '10px',

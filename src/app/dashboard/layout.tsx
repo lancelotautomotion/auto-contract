@@ -9,6 +9,7 @@ import { getTrialInfo } from "@/lib/trial";
 import '@/styles/dashboard.css';
 
 export const metadata: Metadata = { title: "Kordia" };
+export const dynamic = 'force-dynamic';
 
 const font = Plus_Jakarta_Sans({
   subsets: ['latin'],
