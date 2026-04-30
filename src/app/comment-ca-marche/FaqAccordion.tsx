@@ -56,7 +56,9 @@ export default function FaqAccordion() {
               </svg>
             </span>
           </button>
-          {open === i && <div className="ccm-faq-a">{faq.a}</div>}
+          <div className={`ccm-faq-body${open === i ? ' open' : ''}`}>
+            <div className="ccm-faq-a">{faq.a}</div>
+          </div>
         </div>
       ))}
 
@@ -81,6 +83,13 @@ export default function FaqAccordion() {
           transition: transform .25s ease;
         }
         .ccm-faq-item.open .ccm-faq-icon { transform: rotate(180deg); }
+        .ccm-faq-body {
+          display: grid;
+          grid-template-rows: 0fr;
+          transition: grid-template-rows 0.35s ease;
+        }
+        .ccm-faq-body.open { grid-template-rows: 1fr; }
+        .ccm-faq-body > .ccm-faq-a { overflow: hidden; }
         .ccm-faq-a {
           font-size: 14px; color: var(--ink-soft); line-height: 1.75;
           padding: 0 0 22px;
