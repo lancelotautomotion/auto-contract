@@ -25,7 +25,10 @@ function unfoldLines(text: string): string[] {
 }
 
 export async function fetchAndParseIcal(url: string): Promise<IcalEvent[]> {
-  const res = await fetch(url, { cache: 'no-store' });
+  const res = await fetch(url, {
+    cache: 'no-store',
+    headers: { 'User-Agent': 'Kordia/1.0 (calendar sync; +https://kordia.fr)' },
+  });
   if (!res.ok) throw new Error(`iCal fetch failed: ${res.status}`);
   const text = await res.text();
   const lines = unfoldLines(text);
