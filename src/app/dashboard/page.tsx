@@ -54,15 +54,18 @@ export default async function DashboardPage() {
   const contractsGenerated = reservations.filter(r => r.contract?.status === 'GENERATED' || r.contract?.status === 'SIGNED').length;
   const contractsSigned = reservations.filter(r => r.contract?.status === 'SIGNED').length;
 
-  const calendarReservations = reservations.map(r => ({
-    id: r.id,
-    clientFirstName: r.clientFirstName,
-    clientLastName: r.clientLastName,
-    checkIn: r.checkIn.toISOString(),
-    checkOut: r.checkOut.toISOString(),
-    status: r.status,
-    contractStatus: r.contract?.status ?? null,
-  }));
+  const calendarReservations = reservations
+    .filter(r => r.status !== 'REFUSED')
+    .map(r => ({
+      id: r.id,
+      clientFirstName: r.clientFirstName,
+      clientLastName: r.clientLastName,
+      checkIn: r.checkIn.toISOString(),
+      checkOut: r.checkOut.toISOString(),
+      status: r.status,
+      contractStatus: r.contract?.status ?? null,
+      rent: r.rent ?? null,
+    }));
 
   const upcoming = reservations
     .filter(r => r.status !== 'PENDING_REVIEW' && new Date(r.checkIn) >= today)
