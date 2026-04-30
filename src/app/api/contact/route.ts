@@ -1,7 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
-import { resend, getFromEmail } from "@/lib/resend";
+import { resend } from "@/lib/resend";
 
 const INBOX = "contact@kordia.fr";
+
+// GET /api/contact — test Resend (à supprimer après diagnostic)
+export async function GET() {
+  const result = await resend.emails.send({
+    from: "Kordia <noreply@kordia.fr>",
+    to: INBOX,
+    subject: "[Test Kordia] Resend fonctionne",
+    html: "<p>Test envoyé depuis /api/contact GET.</p>",
+    text: "Test envoyé depuis /api/contact GET.",
+  });
+  return NextResponse.json(result);
+}
 
 function escapeHtml(value: string) {
   return value
