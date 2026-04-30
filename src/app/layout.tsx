@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   title: "Kordia — Contrats de location pour gîtes, automatisés",
   description: "Automatisez vos contrats de location saisonnière en 2 minutes. Génération PDF, envoi email, suivi acompte. 30 jours gratuits, sans CB.",
   icons: {
-    icon: '/favicon.svg',
+    icon: '/KORDIA.svg',
     apple: '/apple-touch-icon.png',
   },
   appleWebApp: {
@@ -27,6 +27,7 @@ export default function RootLayout({
     <ClerkProvider localization={frFR}>
       <html lang="fr" className="h-full antialiased" suppressHydrationWarning>
         <head>
+          <link rel="icon" type="image/svg+xml" href="/KORDIA.svg" />
           <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
           <meta name="theme-color" content="#689D71" />
           {/* eslint-disable-next-line @next/next/no-sync-scripts */}
