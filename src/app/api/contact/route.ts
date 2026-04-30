@@ -64,7 +64,7 @@ export async function POST(req: NextRequest) {
     const text = `Nouveau message Contact Kordia\n\nNom: ${fullName}\nEmail: ${email}\nSujet: ${sujet}\n\n${message}`;
 
     const { error: resendError } = await resend.emails.send({
-      from: getFromEmail(),
+      from: "Kordia <noreply@kordia.fr>",
       to: INBOX,
       replyTo: email,
       subject,
