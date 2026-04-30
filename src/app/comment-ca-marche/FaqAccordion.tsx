@@ -89,7 +89,7 @@ export default function FaqAccordion() {
           transition: grid-template-rows 0.35s ease;
         }
         .ccm-faq-body.open { grid-template-rows: 1fr; }
-        .ccm-faq-body > .ccm-faq-a { overflow: hidden; }
+        .ccm-faq-body > .ccm-faq-a { overflow: hidden; min-height: 0; }
         .ccm-faq-a {
           font-size: 14px; color: var(--ink-soft); line-height: 1.75;
           padding: 0 0 22px;
