@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { buildEmailHtml, divider, muted, signOff } from "@/lib/emailTemplate";
-import { Resend } from "resend";
+import { resend, getFromEmail } from "@/lib/resend";
 import { requireAuth } from "@/lib/auth";
 
 const REASON_LABELS: Record<string, string> = {
@@ -35,8 +35,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       data: { status: "REFUSED", refusalReason: reason, refusalNote: note || null },
     });
 
-    const resend = new Resend(process.env.RESEND_API_KEY);
-    const fromEmail = process.env.RESEND_FROM_EMAIL ?? "Kordia <noreply@kordia.fr>";
+    const fromEmail = getFromEmail();
     const giteAddress = [reservation.gite.address, reservation.gite.zipCode, reservation.gite.city]
       .filter(Boolean).join(", ") || undefined;
 

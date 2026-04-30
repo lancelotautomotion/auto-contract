@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { buildEmailHtml, divider, infoBox, muted, signOff } from "@/lib/emailTemplate";
 import { generateContractPdf, ContractData } from "@/lib/contractPdf";
 import { DEFAULT_CONTRACT_TEMPLATE } from "@/lib/defaultContractTemplate";
-import { Resend } from "resend";
+import { resend, getFromEmail } from "@/lib/resend";
 
 export async function GET(_req: NextRequest, { params }: { params: Promise<{ token: string }> }) {
   const { token } = await params;
@@ -97,8 +97,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ tok
     const giteAddress = [reservation.gite.address, reservation.gite.zipCode, reservation.gite.city]
       .filter(Boolean).join(', ') || undefined;
 
-    const resend = new Resend(process.env.RESEND_API_KEY);
-    const fromEmail = process.env.RESEND_FROM_EMAIL ?? 'Kordia <noreply@kordia.fr>';
+    const fromEmail = getFromEmail();
 
     // Email au locataire — confirmation de signature
     const clientBody = `

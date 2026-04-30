@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { Resend } from "resend";
+import { resend } from "@/lib/resend";
 import { buildEmailHtml, divider, ctaButton, muted } from "@/lib/emailTemplate";
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ slug: string }> }) {
@@ -58,7 +58,6 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ slu
   const notifTo = gite.notificationEmail || gite.user.email;
   if (gite.notifNewReservation && notifTo && process.env.RESEND_API_KEY) {
     try {
-      const resend = new Resend(process.env.RESEND_API_KEY);
       const checkIn = new Date(body.checkIn + 'T12:00:00').toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
       const checkOut = new Date(body.checkOut + 'T12:00:00').toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
       const nights = Math.round((new Date(body.checkOut).getTime() - new Date(body.checkIn).getTime()) / 86400000);

@@ -1,10 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { Resend } from "resend";
-
-const resend = new Resend(process.env.RESEND_API_KEY);
+import { resend, getFromEmail } from "@/lib/resend";
 
 const INBOX = "contact@kordia.fr";
-const FROM = process.env.RESEND_FROM_EMAIL ?? "Kordia <noreply@kordia.fr>";
+const FROM = getFromEmail();
 
 function escapeHtml(value: string) {
   return value

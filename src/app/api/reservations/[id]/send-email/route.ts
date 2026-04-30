@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { Resend } from "resend";
+import { resend, getFromEmail } from "@/lib/resend";
 import { randomBytes } from "crypto";
 import { buildEmailHtml, recapCard, ctaButton, divider, infoBox, muted, signOff } from "@/lib/emailTemplate";
 import { requireAuth } from "@/lib/auth";
@@ -19,7 +19,6 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
 
   if (!process.env.RESEND_API_KEY)
     return NextResponse.json({ error: "RESEND_API_KEY non configurée" }, { status: 500 });
-  const resend = new Resend(process.env.RESEND_API_KEY);
 
   const existingContract = await prisma.contract.findUnique({ where: { reservationId: id } });
   const signatureToken = existingContract?.signatureToken ?? randomBytes(32).toString("hex");
@@ -32,7 +31,7 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
 
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
   const signUrl = `${appUrl}/sign/${signatureToken}`;
-  const fromEmail = process.env.RESEND_FROM_EMAIL ?? "Kordia <noreply@kordia.fr>";
+  const fromEmail = getFromEmail();
   const fmt = (d: Date) => new Date(d).toLocaleDateString("fr-FR", { day: "2-digit", month: "long", year: "numeric" });
   const dateEntree = fmt(reservation.checkIn);
   const dateSortie = fmt(reservation.checkOut);

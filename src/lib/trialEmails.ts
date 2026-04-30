@@ -1,7 +1,5 @@
-import { Resend } from "resend";
+import { resend, getFromEmail } from "@/lib/resend";
 import { buildEmailHtml, ctaButton, divider, muted } from "./emailTemplate";
-
-const resend = new Resend(process.env.RESEND_API_KEY);
 
 function appBaseUrl() {
   return (process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000").replace(/\/$/, "");
@@ -98,7 +96,7 @@ export async function sendTrialReminder({ to, name, daysLeft }: SendTrialReminde
   });
 
   return resend.emails.send({
-    from: process.env.RESEND_FROM_EMAIL ?? "Kordia <onboarding@resend.dev>",
+    from: getFromEmail(),
     to,
     subject,
     html,

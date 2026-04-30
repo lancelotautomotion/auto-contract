@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { generateSignedContractPdf, ContractData, buildSignedContractFilename } from "@/lib/contractPdf";
 import { DEFAULT_CONTRACT_TEMPLATE } from "@/lib/defaultContractTemplate";
 import { buildEmailHtml, divider, muted, signOff } from "@/lib/emailTemplate";
-import { Resend } from "resend";
+import { resend, getFromEmail } from "@/lib/resend";
 import { requireAuth } from "@/lib/auth";
 
 export async function POST(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
@@ -65,8 +65,7 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
       data: { depositReceived: true, depositReceivedAt: new Date() },
     });
 
-    const resend = new Resend(process.env.RESEND_API_KEY);
-    const fromEmail = process.env.RESEND_FROM_EMAIL ?? "Kordia <noreply@kordia.fr>";
+    const fromEmail = getFromEmail();
     const filename = buildSignedContractFilename({
       clientLastName: reservation.clientLastName,
       clientFirstName: reservation.clientFirstName,

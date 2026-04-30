@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { buildEmailHtml, divider, infoBox, muted, signOff } from "@/lib/emailTemplate";
-import { Resend } from "resend";
+import { resend, getFromEmail } from "@/lib/resend";
 import { requireAuth } from "@/lib/auth";
 
 export async function POST(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
@@ -20,8 +20,7 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
     if (reservation.contract.status !== "SIGNED") return NextResponse.json({ error: "Contrat non signé" }, { status: 400 });
     if (reservation.contract.depositReceived) return NextResponse.json({ error: "Acompte déjà reçu" }, { status: 400 });
 
-    const resend = new Resend(process.env.RESEND_API_KEY);
-    const fromEmail = process.env.RESEND_FROM_EMAIL ?? "Kordia <noreply@kordia.fr>";
+    const fromEmail = getFromEmail();
     const fmt = (d: Date) => new Date(d).toLocaleDateString("fr-FR", { day: "2-digit", month: "long", year: "numeric" });
     const dateEntree = fmt(reservation.checkIn);
     const dateSortie = fmt(reservation.checkOut);
