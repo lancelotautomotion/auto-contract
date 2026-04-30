@@ -1,6 +1,6 @@
 import { SignUp } from '@clerk/nextjs';
 import Link from 'next/link';
-import Image from 'next/image';
+
 import { Plus_Jakarta_Sans } from 'next/font/google';
 import '@/styles/pages.css';
 
@@ -59,7 +59,7 @@ export default function SignUpPage() {
           </Link>
           <div className="ab-content">
             <div className="ab-mark">
-              <Image src="/KORDIA.svg" alt="Kordia" width={44} height={44} style={{ objectFit: 'contain' }} />
+              <img src="/logotype_KORDIA.svg" alt="Kordia" style={{ height: 36, width: 'auto', display: 'block' }} />
             </div>
             <div className="ab-headline">Gérez votre gîte<br /><span className="g">sans la paperasse.</span></div>
             <div className="ab-desc">Contrats auto-générés, signature en ligne, suivi centralisé. Tout ce qu&apos;il faut pour louer l&apos;esprit libre.</div>
