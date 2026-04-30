@@ -78,59 +78,61 @@ export default async function CompleteReservationPage({ params }: { params: Prom
               {' · '}{reservation.clientPhone}
             </div>
           </div>
-          <div className="rh-right">
-            <RefuseReservationButton
-              reservationId={id}
-              clientName={`${reservation.clientFirstName} ${reservation.clientLastName}`}
-              redirectAfter="/dashboard/reservations"
-            />
-          </div>
         </div>
 
-        {/* Bandeau iCal */}
-        {icalConflicts.length > 0 ? (
-          <div style={{
-            display: 'flex', alignItems: 'flex-start', gap: '10px',
-            background: '#FEF3CD', border: '1px solid #F5C842',
-            borderRadius: '10px', padding: '14px 16px', marginBottom: '20px',
-          }}>
-            <svg width="18" height="18" fill="none" viewBox="0 0 18 18" style={{ flexShrink: 0, marginTop: '1px', color: '#B7791F' }}>
-              <path d="M9 2L1.5 15h15L9 2z" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round"/>
-              <path d="M9 7v4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
-              <circle cx="9" cy="12.5" r="0.8" fill="currentColor"/>
-            </svg>
-            <div>
-              <div style={{ fontSize: '13px', fontWeight: 700, color: '#7B4F0A', marginBottom: '4px' }}>
-                Conflit détecté sur une autre plateforme
-              </div>
-              <div style={{ fontSize: '12px', color: '#92610E', lineHeight: 1.5 }}>
-                {icalConflicts.map((c, i) => {
-                  const name = PLATFORM_LABELS[c.platform] ?? c.label;
-                  return (
-                    <span key={i}>
-                      {i > 0 && ' · '}
-                      <strong>{name}</strong> : du {fmtD(c.start)} au {fmtD(c.end)}
-                    </span>
-                  );
-                })}
+        {/* Bandeau iCal + bouton Refuser */}
+        <div style={{ display: 'flex', alignItems: 'stretch', gap: '12px', marginBottom: '20px' }}>
+          {icalConflicts.length > 0 ? (
+            <div style={{
+              flex: 1, display: 'flex', alignItems: 'center', gap: '12px',
+              background: '#FEF3CD', border: '1px solid #F5C842',
+              borderRadius: '10px', padding: '14px 16px',
+            }}>
+              <svg width="18" height="18" fill="none" viewBox="0 0 18 18" style={{ flexShrink: 0, color: '#B7791F' }}>
+                <path d="M9 2L1.5 15h15L9 2z" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round"/>
+                <path d="M9 7v4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
+                <circle cx="9" cy="12.5" r="0.8" fill="currentColor"/>
+              </svg>
+              <div>
+                <div style={{ fontSize: '13px', fontWeight: 700, color: '#7B4F0A', marginBottom: '4px' }}>
+                  Conflit détecté sur une autre plateforme
+                </div>
+                <div style={{ fontSize: '12px', color: '#92610E', lineHeight: 1.5 }}>
+                  {icalConflicts.map((c, i) => {
+                    const name = PLATFORM_LABELS[c.platform] ?? c.label;
+                    return (
+                      <span key={i}>
+                        {i > 0 && ' · '}
+                        <strong>{name}</strong> : du {fmtD(c.start)} au {fmtD(c.end)}
+                      </span>
+                    );
+                  })}
+                </div>
               </div>
             </div>
-          </div>
-        ) : icalFeeds.length > 0 ? (
-          <div style={{
-            display: 'flex', alignItems: 'center', gap: '10px',
-            background: '#F0FDF4', border: '1px solid #86EFAC',
-            borderRadius: '10px', padding: '14px 16px', marginBottom: '20px',
-          }}>
-            <svg width="18" height="18" fill="none" viewBox="0 0 18 18" style={{ flexShrink: 0, color: '#16A34A' }}>
-              <circle cx="9" cy="9" r="7" stroke="currentColor" strokeWidth="1.4"/>
-              <path d="M5.5 9l2.5 2.5 4.5-4.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-            <div style={{ fontSize: '13px', fontWeight: 600, color: '#166534' }}>
-              Dates disponibles — aucun conflit détecté sur vos calendriers connectés
+          ) : (
+            <div style={{
+              flex: 1, display: 'flex', alignItems: 'center', gap: '12px',
+              background: '#F0FDF4', border: '1px solid #86EFAC',
+              borderRadius: '10px', padding: '14px 16px',
+            }}>
+              <svg width="18" height="18" fill="none" viewBox="0 0 18 18" style={{ flexShrink: 0, color: '#16A34A' }}>
+                <circle cx="9" cy="9" r="7" stroke="currentColor" strokeWidth="1.4"/>
+                <path d="M5.5 9l2.5 2.5 4.5-4.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+              <div style={{ fontSize: '13px', fontWeight: 600, color: '#166534' }}>
+                {icalFeeds.length > 0
+                  ? 'Dates disponibles — aucun conflit détecté sur vos calendriers connectés'
+                  : 'Dates disponibles — aucun calendrier iCal connecté'}
+              </div>
             </div>
-          </div>
-        ) : null}
+          )}
+          <RefuseReservationButton
+            reservationId={id}
+            clientName={`${reservation.clientFirstName} ${reservation.clientLastName}`}
+            redirectAfter="/dashboard/reservations"
+          />
+        </div>
 
         {/* Client info card */}
         <div className="req-info-card">
