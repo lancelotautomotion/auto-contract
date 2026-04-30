@@ -169,6 +169,7 @@ footer{background:var(--ink);color:rgba(255,255,255,.5);padding:56px 28px 28px}
 .auth-back{position:absolute;top:24px;left:24px;z-index:2;display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:500;color:rgba(255,255,255,.55);text-decoration:none;padding:8px 14px;border-radius:9px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);transition:all .2s}
 .auth-back:hover{color:#fff;background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.14)}
 .auth-back-mobile{display:none}
+.auth-form-logo{display:none}
 .auth-form-panel{flex:1;display:flex;align-items:center;justify-content:center;padding:48px 56px;background:var(--white);min-width:0}
 .auth-form-inner{width:100%;max-width:440px;min-width:0}
 
@@ -213,6 +214,7 @@ footer{background:var(--ink);color:rgba(255,255,255,.5);padding:56px 28px 28px}
   .auth-layout{flex-direction:column}
   .auth-brand{display:none}
   .auth-form-panel{padding:48px 32px;align-items:flex-start}
+  .auth-form-logo{display:block}
   .auth-back-mobile{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:500;color:var(--ink-soft);text-decoration:none;padding:7px 12px;border-radius:8px;background:#F3F2EE;border:1px solid #E8E6E1;transition:all .15s;margin-bottom:24px;align-self:flex-start}
   .auth-back-mobile:hover{color:var(--ink);background:#E8E6E1}
 }

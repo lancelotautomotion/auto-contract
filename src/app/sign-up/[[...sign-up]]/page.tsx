@@ -39,6 +39,7 @@ const clerkAppearance = {
     socialButtonsBlockButtonText: { fontWeight: '600' },
     formField: { width: '100%', maxWidth: '100%', minWidth: 0 },
     formFieldInputGroup: { width: '100%', maxWidth: '100%', minWidth: 0 },
+    logoBox: { display: 'none' },
   },
 };
 
@@ -59,7 +60,7 @@ export default function SignUpPage() {
           </Link>
           <div className="ab-content">
             <div className="ab-mark">
-              <img src="/logotype_KORDIA.svg" alt="Kordia" style={{ height: 36, width: 'auto', display: 'block' }} />
+              <img src="/KORDIA.svg" alt="Kordia" style={{ height: 44, width: 44, display: 'block' }} />
             </div>
             <div className="ab-headline">Gérez votre gîte<br /><span className="g">sans la paperasse.</span></div>
             <div className="ab-desc">Contrats auto-générés, signature en ligne, suivi centralisé. Tout ce qu&apos;il faut pour louer l&apos;esprit libre.</div>
@@ -81,6 +82,7 @@ export default function SignUpPage() {
               </svg>
               Retour à l&apos;accueil
             </Link>
+            <img src="/logotype_KORDIA.svg" alt="Kordia" className="auth-form-logo" style={{ height: 36, width: 'auto', display: 'block', marginBottom: 28 }} />
             <div className="auth-tabs">
               <Link href="/sign-in" className="auth-tab">Se connecter</Link>
               <Link href="/sign-up" className="auth-tab auth-tab--active">Créer un compte</Link>
