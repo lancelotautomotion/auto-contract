@@ -5,6 +5,11 @@ import Link from "next/link";
 import CompleteReservationForm from "./CompleteReservationForm";
 import RefuseReservationButton from "../RefuseReservationButton";
 
+const PLATFORM_LABELS: Record<string, string> = {
+  airbnb: "Airbnb", abritel: "Abritel / VRBO", booking: "Booking.com",
+  gites_de_france: "Gîtes de France",
+};
+
 export default async function CompleteReservationPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const { userId } = await auth();
@@ -19,8 +24,19 @@ export default async function CompleteReservationPage({ params }: { params: Prom
   });
   if (!reservation) notFound();
 
+  const icalFeeds = await prisma.icalFeed.findMany({ where: { giteId: reservation.giteId } }).catch(() => []);
+  const checkInStr  = reservation.checkIn.toISOString().slice(0, 10);
+  const checkOutStr = reservation.checkOut.toISOString().slice(0, 10);
+  const icalConflicts = icalFeeds.flatMap(feed => {
+    const events = (feed.blockedDates as Array<{ start: string; end: string }>) ?? [];
+    return events
+      .filter(e => e.start < checkOutStr && e.end > checkInStr)
+      .map(e => ({ platform: feed.platform, label: feed.label, start: e.start, end: e.end }));
+  });
+
   const fmt = (d: Date) => new Date(d).toISOString().split('T')[0];
   const fmtDisplay = (d: Date) => new Date(d).toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' });
+  const fmtD = (s: string) => new Date(s + 'T12:00:00').toLocaleDateString('fr-FR', { day: '2-digit', month: 'long' });
 
   const address = [reservation.clientAddress, reservation.clientZipCode, reservation.clientCity]
     .filter(Boolean).join(', ') || '—';
@@ -70,6 +86,51 @@ export default async function CompleteReservationPage({ params }: { params: Prom
             />
           </div>
         </div>
+
+        {/* Bandeau iCal */}
+        {icalConflicts.length > 0 ? (
+          <div style={{
+            display: 'flex', alignItems: 'flex-start', gap: '10px',
+            background: '#FEF3CD', border: '1px solid #F5C842',
+            borderRadius: '10px', padding: '14px 16px', marginBottom: '20px',
+          }}>
+            <svg width="18" height="18" fill="none" viewBox="0 0 18 18" style={{ flexShrink: 0, marginTop: '1px', color: '#B7791F' }}>
+              <path d="M9 2L1.5 15h15L9 2z" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round"/>
+              <path d="M9 7v4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
+              <circle cx="9" cy="12.5" r="0.8" fill="currentColor"/>
+            </svg>
+            <div>
+              <div style={{ fontSize: '13px', fontWeight: 700, color: '#7B4F0A', marginBottom: '4px' }}>
+                Conflit détecté sur une autre plateforme
+              </div>
+              <div style={{ fontSize: '12px', color: '#92610E', lineHeight: 1.5 }}>
+                {icalConflicts.map((c, i) => {
+                  const name = PLATFORM_LABELS[c.platform] ?? c.label;
+                  return (
+                    <span key={i}>
+                      {i > 0 && ' · '}
+                      <strong>{name}</strong> : du {fmtD(c.start)} au {fmtD(c.end)}
+                    </span>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        ) : icalFeeds.length > 0 ? (
+          <div style={{
+            display: 'flex', alignItems: 'center', gap: '10px',
+            background: '#F0FDF4', border: '1px solid #86EFAC',
+            borderRadius: '10px', padding: '14px 16px', marginBottom: '20px',
+          }}>
+            <svg width="18" height="18" fill="none" viewBox="0 0 18 18" style={{ flexShrink: 0, color: '#16A34A' }}>
+              <circle cx="9" cy="9" r="7" stroke="currentColor" strokeWidth="1.4"/>
+              <path d="M5.5 9l2.5 2.5 4.5-4.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+            <div style={{ fontSize: '13px', fontWeight: 600, color: '#166534' }}>
+              Dates disponibles — aucun conflit détecté sur vos calendriers connectés
+            </div>
+          </div>
+        ) : null}
 
         {/* Client info card */}
         <div className="req-info-card">

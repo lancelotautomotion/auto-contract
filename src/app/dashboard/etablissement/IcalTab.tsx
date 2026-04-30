@@ -6,14 +6,13 @@ const PLATFORMS: { value: string; label: string; hint: string }[] = [
   { value: "airbnb",          label: "Airbnb",            hint: "Calendrier → Exporter → Copier le lien iCal" },
   { value: "abritel",         label: "Abritel / VRBO",    hint: "Calendrier → Synchroniser → Exporter l'URL iCal" },
   { value: "booking",         label: "Booking.com",       hint: "Extranet → Calendrier → Exporter le calendrier" },
-  { value: "leboncoin",       label: "Leboncoin",         hint: "Annonce → Calendrier → Synchroniser → URL iCal" },
   { value: "gites_de_france", label: "Gîtes de France",  hint: "Espace pro → Calendrier → Exporter (iCal)" },
   { value: "autre",           label: "Autre plateforme",  hint: "Copiez l'URL .ics fournie par la plateforme" },
 ];
 
 const PLATFORM_COLORS: Record<string, string> = {
   airbnb: "#FF385C", abritel: "#1B6BCD", booking: "#003580",
-  leboncoin: "#F56B2A", gites_de_france: "#5A8A3B", autre: "#7F77DD",
+  gites_de_france: "#5A8A3B", autre: "#7F77DD",
 };
 
 interface Feed { id: string; platform: string; label: string; url: string; syncedAt: string | null; }
