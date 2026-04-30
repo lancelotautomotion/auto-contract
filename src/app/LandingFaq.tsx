@@ -20,24 +20,37 @@ export default function LandingFaq() {
   const [open, setOpen] = useState<number | null>(null);
   return (
     <div style={{ display: 'flex', flexDirection: 'column', fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif" }}>
-      {faqs.map((faq, i) => (
-        <div key={i} style={{ borderTop: `1px solid ${border}` }}>
-          <button
-            onClick={() => setOpen(open === i ? null : i)}
-            style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '22px 0', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', gap: '24px' }}
-          >
-            <span style={{ fontSize: '16px', fontWeight: 400, color: ink, lineHeight: 1.4 }}>{faq.q}</span>
-            <span style={{ width: '24px', height: '24px', borderRadius: '50%', border: `1px solid ${border}`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, color: open === i ? pine : muted, fontSize: '16px', fontWeight: 300, lineHeight: 1 }}>
-              {open === i ? '×' : '+'}
-            </span>
-          </button>
-          {open === i && (
-            <p style={{ fontSize: '14px', color: muted, lineHeight: 1.8, margin: '0 0 22px', maxWidth: '580px', fontWeight: 400 }}>
-              {faq.a}
-            </p>
-          )}
-        </div>
-      ))}
+      {faqs.map((faq, i) => {
+        const isOpen = open === i;
+        return (
+          <div key={i} style={{ borderTop: `1px solid ${border}` }}>
+            <button
+              onClick={() => setOpen(isOpen ? null : i)}
+              style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '22px 0', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', gap: '24px' }}
+            >
+              <span style={{ fontSize: '16px', fontWeight: 400, color: ink, lineHeight: 1.4 }}>{faq.q}</span>
+              <span style={{
+                width: '24px', height: '24px', borderRadius: '50%', border: `1px solid ${border}`,
+                display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+                color: isOpen ? pine : muted, fontSize: '18px', fontWeight: 300, lineHeight: 1,
+                transition: 'transform 0.3s ease, color 0.2s ease',
+                transform: isOpen ? 'rotate(45deg)' : 'rotate(0deg)',
+              }}>+</span>
+            </button>
+            <div style={{
+              display: 'grid',
+              gridTemplateRows: isOpen ? '1fr' : '0fr',
+              transition: 'grid-template-rows 0.35s ease',
+            }}>
+              <div style={{ overflow: 'hidden' }}>
+                <p style={{ fontSize: '14px', color: muted, lineHeight: 1.8, margin: '0 0 22px', maxWidth: '580px', fontWeight: 400 }}>
+                  {faq.a}
+                </p>
+              </div>
+            </div>
+          </div>
+        );
+      })}
       <div style={{ borderTop: `1px solid ${border}` }} />
     </div>
   );
