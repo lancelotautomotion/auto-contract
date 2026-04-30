@@ -98,7 +98,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ tok
       .filter(Boolean).join(', ') || undefined;
 
     const resend = new Resend(process.env.RESEND_API_KEY);
-    const fromEmail = process.env.RESEND_FROM_EMAIL ?? 'onboarding@resend.dev';
+    const fromEmail = process.env.RESEND_FROM_EMAIL ?? 'Kordia <noreply@kordia.fr>';
 
     // Email au locataire — confirmation de signature
     const clientBody = `

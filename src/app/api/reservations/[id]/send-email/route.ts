@@ -31,7 +31,7 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
 
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
   const signUrl = `${appUrl}/sign/${signatureToken}`;
-  const fromEmail = process.env.RESEND_FROM_EMAIL ?? "onboarding@resend.dev";
+  const fromEmail = process.env.RESEND_FROM_EMAIL ?? "Kordia <noreply@kordia.fr>";
   const fmt = (d: Date) => new Date(d).toLocaleDateString("fr-FR", { day: "2-digit", month: "long", year: "numeric" });
   const dateEntree = fmt(reservation.checkIn);
   const dateSortie = fmt(reservation.checkOut);
@@ -78,13 +78,19 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
     body,
   });
 
-  const attachments = await Promise.all(
+  const attachments = (await Promise.all(
     reservation.gite.documents.map(async (doc) => {
-      const res = await fetch(doc.fileUrl);
-      const buffer = Buffer.from(await res.arrayBuffer());
-      return { filename: doc.fileName, content: buffer.toString("base64") };
+      try {
+        const res = await fetch(doc.fileUrl);
+        if (!res.ok) { console.error(`[send-email] fetch doc failed: ${doc.fileUrl} → ${res.status}`); return null; }
+        const buffer = Buffer.from(await res.arrayBuffer());
+        return { filename: doc.fileName, content: buffer.toString("base64") };
+      } catch (e) {
+        console.error(`[send-email] fetch doc error: ${doc.fileUrl}`, e);
+        return null;
+      }
     })
-  );
+  )).filter(Boolean) as { filename: string; content: string }[];
 
   const { error } = await resend.emails.send({
     from: fromEmail,
@@ -96,7 +102,7 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
 
   if (error) {
     console.error("Resend error:", error);
-    return NextResponse.json({ error: "Erreur lors de l'envoi de l'email" }, { status: 500 });
+    return NextResponse.json({ error: `Resend : ${error.message ?? JSON.stringify(error)}` }, { status: 500 });
   }
 
   return NextResponse.json({ success: true });

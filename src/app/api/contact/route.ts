@@ -4,7 +4,7 @@ import { Resend } from "resend";
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 const INBOX = "contact@kordia.fr";
-const FROM = process.env.RESEND_FROM_EMAIL ?? "Kordia <onboarding@resend.dev>";
+const FROM = process.env.RESEND_FROM_EMAIL ?? "Kordia <noreply@kordia.fr>";
 
 function escapeHtml(value: string) {
   return value

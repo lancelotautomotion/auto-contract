@@ -21,7 +21,7 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
     if (reservation.contract.depositReceived) return NextResponse.json({ error: "Acompte déjà reçu" }, { status: 400 });
 
     const resend = new Resend(process.env.RESEND_API_KEY);
-    const fromEmail = process.env.RESEND_FROM_EMAIL ?? "onboarding@resend.dev";
+    const fromEmail = process.env.RESEND_FROM_EMAIL ?? "Kordia <noreply@kordia.fr>";
     const fmt = (d: Date) => new Date(d).toLocaleDateString("fr-FR", { day: "2-digit", month: "long", year: "numeric" });
     const dateEntree = fmt(reservation.checkIn);
     const dateSortie = fmt(reservation.checkOut);
