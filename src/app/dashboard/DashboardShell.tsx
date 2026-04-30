@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
-import Image from "next/image";
 import Sidebar from "./Sidebar";
 import type { TrialInfo } from "@/lib/trial";
 
@@ -41,12 +40,10 @@ export default function DashboardShell({ children, pendingCount, trialInfo, font
               <path d="M2.5 5h13M2.5 9h13M2.5 13h13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
             </svg>
           </button>
-          <Image
+          <img
             src="/logotype_KORDIA.svg"
             alt="Kordia"
-            width={80}
-            height={20}
-            style={{ filter: 'brightness(0) invert(1)', objectFit: 'contain', height: 18, width: 'auto' }}
+            style={{ height: 28, width: 'auto', filter: 'brightness(0) invert(1)' }}
           />
           <div style={{ width: 36 }}/>
         </header>

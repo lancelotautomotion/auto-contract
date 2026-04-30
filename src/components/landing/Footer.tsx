@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import Image from 'next/image';
 
 export default function Footer() {
   return (
@@ -8,7 +7,7 @@ export default function Footer() {
         <div className="footer-top">
 
           <div className="footer-brand">
-            <Image src="/logotype_KORDIA.svg" alt="Kordia" width={160} height={40} style={{ height: 34, width: 'auto' }} />
+            <img src="/logotype_KORDIA.svg" alt="Kordia" />
             <p>La gestion administrative de votre gîte, enfin simple. Contrats, signatures, suivi — tout au même endroit.</p>
           </div>
 

@@ -1,6 +1,5 @@
 'use client';
 import Link from 'next/link';
-import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 
 export default function NavPages() {
@@ -10,7 +9,7 @@ export default function NavPages() {
     <nav className="nav-pages">
       <div className="nav-pages-inner">
         <Link className="nav-pages-logo" href="/">
-          <Image src="/logotype_KORDIA.svg" alt="Kordia" width={160} height={40} priority style={{ height: 34, width: 'auto' }} />
+          <img src="/logotype_KORDIA.svg" alt="Kordia" />
         </Link>
         <ul className="nav-pages-links">
           <li><a href="/#fonctionnalites">Fonctionnalités</a></li>

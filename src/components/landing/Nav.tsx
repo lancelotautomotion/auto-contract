@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 
 export default function Nav() {
   const [open, setOpen] = useState(false);
@@ -28,7 +27,7 @@ export default function Nav() {
       <nav className="nav">
         <div className="nav-inner">
           <Link className="nav-logo" href="/">
-            <Image src="/logotype_KORDIA.svg" alt="Kordia" width={400} height={85} priority style={{ height: 36, width: 'auto' }} />
+            <img src="/logotype_KORDIA.svg" alt="Kordia" />
           </Link>
           <ul className="nav-links">
             <li><Link href="/comment-ca-marche">Comment ça marche</Link></li>
@@ -68,7 +67,7 @@ export default function Nav() {
       >
         <div className="nav-drawer-head">
           <Link className="nav-logo" href="/" onClick={close}>
-            <Image src="/logotype_KORDIA.svg" alt="Kordia" width={400} height={85} style={{ height: 30, width: 'auto' }} />
+            <img src="/logotype_KORDIA.svg" alt="Kordia" />
           </Link>
           <button
             type="button"

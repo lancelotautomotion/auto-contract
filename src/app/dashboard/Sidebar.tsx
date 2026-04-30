@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { usePathname } from "next/navigation";
 import type { TrialInfo } from "@/lib/trial";
 
@@ -21,12 +20,10 @@ export default function Sidebar({ pendingCount = 0, trialInfo, mobileOpen, onMob
   return (
     <aside className={`sidebar${mobileOpen ? ' open' : ''}`}>
       <div className="sb-logo">
-        <Image
+        <img
           src="/logotype_KORDIA.svg"
           alt="Kordia"
-          width={150}
-          height={36}
-          style={{ filter: 'brightness(0) invert(1)', objectFit: 'contain' }}
+          style={{ height: 36, width: 'auto', filter: 'brightness(0) invert(1)' }}
         />
         <button className="sb-close-btn" onClick={onMobileClose} aria-label="Fermer le menu">
           <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
