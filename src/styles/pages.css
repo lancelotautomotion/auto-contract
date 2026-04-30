@@ -15,7 +15,7 @@ body{font-family:var(--ff);color:var(--ink);background:var(--white);-webkit-font
 /* ═══ NAV ═══ */
 .nav-pages{position:sticky;top:0;z-index:100;background:rgba(255,255,255,0.85);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--line-light)}
 .nav-pages-inner{max-width:var(--max);margin:0 auto;padding:0 28px;height:68px;display:flex;align-items:center;justify-content:space-between}
-.nav-pages-logo img{height:40px;display:block}
+.nav-pages-logo img{height:50px!important;display:block}
 .nav-pages-links{display:flex;gap:28px;list-style:none}
 .nav-pages-links a{text-decoration:none;font-size:14px;font-weight:500;color:var(--ink-soft);transition:color .2s}
 .nav-pages-links a:hover{color:var(--ink)}

@@ -18,7 +18,7 @@ body:has(nav.nav){padding-top:var(--nav-h)}
 /* NAV */
 .nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,0.85);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--line-light)}
 .nav-inner{max-width:var(--max);margin:0 auto;padding:0 28px;height:var(--nav-h);display:flex;align-items:center;justify-content:space-between}
-.nav-logo img{height:40px;display:block}
+.nav-logo img{height:50px!important;display:block}
 .nav-links{display:flex;gap:28px;list-style:none}
 .nav-links a{text-decoration:none;font-size:14px;font-weight:500;color:var(--ink-soft);transition:color .2s}
 .nav-links a:hover{color:var(--ink)}
@@ -332,7 +332,7 @@ footer{background:var(--ink);color:rgba(255,255,255,.5);padding:56px 28px 28px}
 @media(max-width:640px){
   :root{--nav-h:56px}
   .nav-inner{padding:0 16px}
-  .nav-logo img{height:34px}
+  .nav-logo img{height:44px!important}
 
   .hero{padding:36px 16px 0}
   .hero-top{gap:32px}

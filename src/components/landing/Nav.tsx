@@ -27,7 +27,7 @@ export default function Nav() {
       <nav className="nav">
         <div className="nav-inner">
           <Link className="nav-logo" href="/">
-            <img src="/logotype_KORDIA.svg" alt="Kordia" style={{ height: 40, width: 'auto', display: 'block' }} />
+            <img src="/logotype_KORDIA.svg" alt="Kordia" style={{ height: 50, width: 'auto', display: 'block' }} />
           </Link>
           <ul className="nav-links">
             <li><Link href="/comment-ca-marche">Comment ça marche</Link></li>
@@ -67,7 +67,7 @@ export default function Nav() {
       >
         <div className="nav-drawer-head">
           <Link className="nav-logo" href="/" onClick={close}>
-            <img src="/logotype_KORDIA.svg" alt="Kordia" style={{ height: 34, width: 'auto', display: 'block' }} />
+            <img src="/logotype_KORDIA.svg" alt="Kordia" style={{ height: 44, width: 'auto', display: 'block' }} />
           </Link>
           <button
             type="button"
