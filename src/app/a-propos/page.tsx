@@ -36,7 +36,7 @@ export default function AProposPage() {
             <p className="lead">Un outil unique qui centralise vos réservations, génère vos contrats et les fait signer en ligne. <strong>Tout le cycle administratif d&apos;une réservation</strong>, depuis un seul endroit.</p>
           </div>
           <div className="logo-showcase reveal reveal-d2">
-            <Image src="/logotype_kordia.png" alt="Logo Kordia" width={240} height={60} style={{ width: '240px', height: 'auto' }} />
+            <Image src="/logotype_KORDIA.svg" alt="Logo Kordia" width={240} height={60} style={{ width: '240px', height: 'auto' }} />
           </div>
         </div>
       </div>

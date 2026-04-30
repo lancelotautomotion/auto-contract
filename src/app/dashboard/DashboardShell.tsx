@@ -42,7 +42,7 @@ export default function DashboardShell({ children, pendingCount, trialInfo, font
             </svg>
           </button>
           <Image
-            src="/logotype_kordia.png"
+            src="/logotype_KORDIA.svg"
             alt="Kordia"
             width={80}
             height={20}

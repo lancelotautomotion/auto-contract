@@ -22,7 +22,7 @@ export default function Sidebar({ pendingCount = 0, trialInfo, mobileOpen, onMob
     <aside className={`sidebar${mobileOpen ? ' open' : ''}`}>
       <div className="sb-logo">
         <Image
-          src="/logotype_kordia.png"
+          src="/logotype_KORDIA.svg"
           alt="Kordia"
           width={110}
           height={24}

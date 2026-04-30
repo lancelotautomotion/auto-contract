@@ -61,7 +61,7 @@ export default function SignInPage() {
           </Link>
           <div className="ab-content">
             <div className="ab-mark">
-              <Image src="/mark_kordia.png" alt="Kordia" width={44} height={44} style={{ objectFit: 'contain' }} />
+              <Image src="/KORDIA.svg" alt="Kordia" width={44} height={44} style={{ objectFit: 'contain' }} />
             </div>
             <div className="ab-headline">Gérez votre gîte<br /><span className="g">sans la paperasse.</span></div>
             <div className="ab-desc">Contrats auto-générés, signature en ligne, suivi centralisé. Tout ce qu&apos;il faut pour louer l&apos;esprit libre.</div>

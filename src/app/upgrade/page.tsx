@@ -49,7 +49,7 @@ export default async function UpgradePage({ searchParams }: { searchParams: Prom
     }}>
       {/* Header */}
       <header className="upgrade-header">
-        <Image src="/logotype_kordia.png" alt="Kordia" width={120} height={28} style={{ height: 22, width: 'auto', objectFit: 'contain' }}/>
+        <Image src="/logotype_KORDIA.svg" alt="Kordia" width={120} height={28} style={{ height: 22, width: 'auto', objectFit: 'contain' }}/>
         <div
           aria-hidden="true"
           style={{
