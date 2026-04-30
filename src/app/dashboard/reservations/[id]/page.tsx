@@ -103,19 +103,11 @@ export default async function ReservationDetailPage({ params }: { params: Promis
           </div>
           <div className="dh-right">
             <span className={pillClass}>{pillLabel}</span>
-            {!isRefused && (
-              <div className="dh-actions">
-                <Link href={`/dashboard/reservations/${id}/edit`} className="btn btn-outline">
-                  Modifier
-                </Link>
-                <RefuseReservationButton reservationId={id} clientName={clientName} />
-              </div>
-            )}
           </div>
         </div>
 
         {/* Refused banner + actions inline */}
-        {isRefused && (
+        {isRefused ? (
           <div style={{ display: 'flex', alignItems: 'stretch', gap: '12px', marginBottom: '20px' }}>
             <div className="refused-banner" style={{ flex: 1, margin: 0 }}>
               <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
@@ -135,54 +127,62 @@ export default async function ReservationDetailPage({ params }: { params: Promis
               <DeleteReservationButton reservationId={id} clientName={clientName} />
             </div>
           </div>
-        )}
-
-        {/* Bandeau disponibilité iCal */}
-        {!isRefused && (
-          icalConflicts.length > 0 ? (
-            <div style={{
-              display: 'flex', alignItems: 'flex-start', gap: '10px',
-              background: '#FEF3CD', border: '1px solid #F5C842',
-              borderRadius: '10px', padding: '14px 16px', marginBottom: '20px',
-            }}>
-              <svg width="18" height="18" fill="none" viewBox="0 0 18 18" style={{ flexShrink: 0, marginTop: '1px', color: '#B7791F' }}>
-                <path d="M9 2L1.5 15h15L9 2z" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round"/>
-                <path d="M9 7v4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
-                <circle cx="9" cy="12.5" r="0.8" fill="currentColor"/>
-              </svg>
-              <div>
-                <div style={{ fontSize: '13px', fontWeight: 700, color: '#7B4F0A', marginBottom: '4px' }}>
-                  Conflit détecté sur une autre plateforme
-                </div>
-                <div style={{ fontSize: '12px', color: '#92610E', lineHeight: 1.5 }}>
-                  {icalConflicts.map((c, i) => {
-                    const name = PLATFORM_LABELS[c.platform] ?? c.label;
-                    const fmtD = (s: string) => new Date(s).toLocaleDateString('fr-FR', { day: '2-digit', month: 'long' });
-                    return (
-                      <span key={i}>
-                        {i > 0 && ' · '}
-                        <strong>{name}</strong> : du {fmtD(c.start)} au {fmtD(c.end)}
-                      </span>
-                    );
-                  })}
+        ) : (
+          /* Bandeau iCal + boutons Modifier/Refuser inline */
+          <div style={{ display: 'flex', alignItems: 'stretch', gap: '12px', marginBottom: '20px' }}>
+            {icalConflicts.length > 0 ? (
+              <div style={{
+                flex: 1, display: 'flex', alignItems: 'center', gap: '12px',
+                background: '#FEF3CD', border: '1px solid #F5C842',
+                borderRadius: '10px', padding: '14px 16px',
+              }}>
+                <svg width="18" height="18" fill="none" viewBox="0 0 18 18" style={{ flexShrink: 0, color: '#B7791F' }}>
+                  <path d="M9 2L1.5 15h15L9 2z" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round"/>
+                  <path d="M9 7v4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
+                  <circle cx="9" cy="12.5" r="0.8" fill="currentColor"/>
+                </svg>
+                <div>
+                  <div style={{ fontSize: '13px', fontWeight: 700, color: '#7B4F0A', marginBottom: '4px' }}>
+                    Conflit détecté sur une autre plateforme
+                  </div>
+                  <div style={{ fontSize: '12px', color: '#92610E', lineHeight: 1.5 }}>
+                    {icalConflicts.map((c, i) => {
+                      const name = PLATFORM_LABELS[c.platform] ?? c.label;
+                      const fmtD = (s: string) => new Date(s + 'T12:00:00').toLocaleDateString('fr-FR', { day: '2-digit', month: 'long' });
+                      return (
+                        <span key={i}>
+                          {i > 0 && ' · '}
+                          <strong>{name}</strong> : du {fmtD(c.start)} au {fmtD(c.end)}
+                        </span>
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
-            </div>
-          ) : icalFeeds.length > 0 ? (
-            <div style={{
-              display: 'flex', alignItems: 'center', gap: '10px',
-              background: '#F0FDF4', border: '1px solid #86EFAC',
-              borderRadius: '10px', padding: '14px 16px', marginBottom: '20px',
-            }}>
-              <svg width="18" height="18" fill="none" viewBox="0 0 18 18" style={{ flexShrink: 0, color: '#16A34A' }}>
-                <circle cx="9" cy="9" r="7" stroke="currentColor" strokeWidth="1.4"/>
-                <path d="M5.5 9l2.5 2.5 4.5-4.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-              <div style={{ fontSize: '13px', fontWeight: 600, color: '#166534' }}>
-                Dates disponibles — aucun conflit détecté sur vos calendriers connectés
+            ) : (
+              <div style={{
+                flex: 1, display: 'flex', alignItems: 'center', gap: '12px',
+                background: '#F0FDF4', border: '1px solid #86EFAC',
+                borderRadius: '10px', padding: '14px 16px',
+              }}>
+                <svg width="18" height="18" fill="none" viewBox="0 0 18 18" style={{ flexShrink: 0, color: '#16A34A' }}>
+                  <circle cx="9" cy="9" r="7" stroke="currentColor" strokeWidth="1.4"/>
+                  <path d="M5.5 9l2.5 2.5 4.5-4.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+                <div style={{ fontSize: '13px', fontWeight: 600, color: '#166534' }}>
+                  {icalFeeds.length > 0
+                    ? 'Dates disponibles — aucun conflit détecté sur vos calendriers connectés'
+                    : 'Dates disponibles — aucun calendrier iCal connecté'}
+                </div>
               </div>
+            )}
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexShrink: 0 }}>
+              <Link href={`/dashboard/reservations/${id}/edit`} className="btn btn-outline">
+                Modifier
+              </Link>
+              <RefuseReservationButton reservationId={id} clientName={clientName} />
             </div>
-          ) : null
+          </div>
         )}
 
         {/* Detail grid */}

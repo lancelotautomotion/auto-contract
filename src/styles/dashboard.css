@@ -207,10 +207,10 @@
 
 /* ═══ STATUS PILLS ═══ */
 .pill { display: inline-flex; align-items: center; gap: 4px; font-size: 10px; font-weight: 600; padding: 4px 10px; border-radius: 100px; letter-spacing: .02em; }
-.pill-g { background: var(--green-light); color: var(--green-dark); }
-.pill-v { background: var(--violet-light); color: var(--violet-dark); }
-.pill-a { background: var(--amber-light); color: var(--amber-dark); }
-.pill-refused { background: #F3F2EE; color: #A3A3A0; text-decoration: line-through; }
+.pill-g { background: var(--green-light); color: var(--green-dark); border: 1.5px solid rgba(74,115,83,.25); }
+.pill-v { background: var(--violet-light); color: var(--violet-dark); border: 1.5px solid rgba(91,82,181,.2); }
+.pill-a { background: var(--amber-light); color: var(--amber-dark); border: 1.5px solid rgba(140,106,0,.2); }
+.pill-refused { background: #FEE2E2; color: #B91C1C; border: 1.5px solid rgba(185,28,28,.2); }
 
 /* ═══ REFUSED BANNER ═══ */
 .refused-banner {
@@ -278,7 +278,7 @@
 .btn-danger:hover { background: #c0392b; }
 .btn-danger:disabled { opacity: .6; cursor: not-allowed; transform: none; }
 .pill-r { background: var(--red-light); color: var(--red); }
-.pill-lg { font-size: 13px; padding: 8px 20px; }
+.pill-lg { font-size: 13px; padding: 8px 20px; font-weight: 700; }
 
 /* ═══ RESERVATIONS TABLE ═══ */
 .resa-card { margin-bottom: 24px; }

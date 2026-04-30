@@ -83,8 +83,19 @@ export default async function DashboardPage() {
     .sort((a, b) => new Date(a.checkIn).getTime() - new Date(b.checkIn).getTime())
     .slice(0, 5);
 
+  const todayStr = today.toISOString().slice(0, 10);
+  const PLATFORM_LABELS_UP: Record<string, string> = {
+    airbnb: "Airbnb", abritel: "Abritel / VRBO", booking: "Booking.com",
+    gites_de_france: "Gîtes de France", autre: "Autre",
+  };
+  const upcomingIcal = icalBlocked
+    .filter(b => b.end > todayStr)
+    .sort((a, b) => a.start < b.start ? -1 : 1)
+    .slice(0, 5);
+
   const fmt = (d: Date) => new Date(d).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
   const fmtShort = (d: Date) => `${new Date(d).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' })}/${new Date(d).getFullYear()}`;
+  const fmtDateStr = (s: string) => new Date(s + 'T12:00:00').toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' }) + '/' + s.slice(0, 4);
 
   return (
     <>
@@ -258,29 +269,41 @@ export default async function DashboardPage() {
               </div>
             </div>
             <div className="upcoming-list">
-              {upcoming.length === 0 ? (
+              {upcoming.length === 0 && upcomingIcal.length === 0 ? (
                 <div style={{ padding: '24px 8px', textAlign: 'center', fontSize: '13px', color: 'var(--ink-lighter)' }}>
                   Aucune arrivée à venir
                 </div>
               ) : (
-                upcoming.map(r => {
-                  const status = r.contract?.status ?? null;
-                  const barClass = status === 'SIGNED' ? 'g' : status === 'GENERATED' ? 'v' : 'a';
-                  const pillClass = status === 'SIGNED' ? 'pill-g' : status === 'GENERATED' ? 'pill-v' : 'pill-a';
-                  const pillLabel = status === 'SIGNED' ? 'Signé' : status === 'GENERATED' ? 'Envoyé' : 'En attente';
-                  return (
-                    <Link key={r.id} href={`/dashboard/reservations/${r.id}`} style={{ textDecoration: 'none' }}>
-                      <div className="upcoming-item">
-                        <div className={`ui-bar ${barClass}`}></div>
-                        <div className="ui-info">
-                          <div className="ui-name">{r.clientFirstName} {r.clientLastName}</div>
-                          <div className="ui-dates">{fmtShort(r.checkIn)} → {fmtShort(r.checkOut)}</div>
+                <>
+                  {upcoming.map(r => {
+                    const status = r.contract?.status ?? null;
+                    const barClass = status === 'SIGNED' ? 'g' : status === 'GENERATED' ? 'v' : 'a';
+                    const pillClass = status === 'SIGNED' ? 'pill-g' : status === 'GENERATED' ? 'pill-v' : 'pill-a';
+                    const pillLabel = status === 'SIGNED' ? 'Signé' : status === 'GENERATED' ? 'Envoyé' : 'En attente';
+                    return (
+                      <Link key={r.id} href={`/dashboard/reservations/${r.id}`} style={{ textDecoration: 'none' }}>
+                        <div className="upcoming-item">
+                          <div className={`ui-bar ${barClass}`}></div>
+                          <div className="ui-info">
+                            <div className="ui-name">{r.clientFirstName} {r.clientLastName}</div>
+                            <div className="ui-dates">{fmtShort(r.checkIn)} → {fmtShort(r.checkOut)}</div>
+                          </div>
+                          <span className={`pill ${pillClass}`}>{pillLabel}</span>
                         </div>
-                        <span className={`pill ${pillClass}`}>{pillLabel}</span>
+                      </Link>
+                    );
+                  })}
+                  {upcomingIcal.map((b, i) => (
+                    <div key={`ical-${i}`} className="upcoming-item" style={{ cursor: 'default' }}>
+                      <div className="ui-bar" style={{ background: '#CEC8BF' }}></div>
+                      <div className="ui-info">
+                        <div className="ui-name" style={{ color: 'var(--ink-soft)' }}>{PLATFORM_LABELS_UP[b.platform] ?? b.label}</div>
+                        <div className="ui-dates">{fmtDateStr(b.start)} → {fmtDateStr(b.end)}</div>
                       </div>
-                    </Link>
-                  );
-                })
+                      <span className="pill" style={{ background: '#F0EDE8', color: '#71716E', border: '1px solid #E4E2DE' }}>Externe</span>
+                    </div>
+                  ))}
+                </>
               )}
             </div>
           </div>
