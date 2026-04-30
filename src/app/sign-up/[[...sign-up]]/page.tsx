@@ -39,6 +39,8 @@ const clerkAppearance = {
     socialButtonsBlockButtonText: { fontWeight: '600' },
     formField: { width: '100%', maxWidth: '100%', minWidth: 0 },
     formFieldInputGroup: { width: '100%', maxWidth: '100%', minWidth: 0 },
+    otpCodeField: { display: 'flex', gap: '10px', width: '100%', justifyContent: 'center' },
+    otpCodeFieldInput: { width: '52px', minWidth: '52px', height: '56px', fontSize: '22px', fontWeight: '600', textAlign: 'center' as const, border: '1.5px solid #E8E6E1', borderRadius: '10px', flex: '1' },
     logoBox: { display: 'none' },
   },
 };
