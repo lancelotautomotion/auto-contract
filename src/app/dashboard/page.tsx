@@ -79,7 +79,7 @@ export default async function DashboardPage() {
     }));
 
   const upcoming = reservations
-    .filter(r => r.status !== 'PENDING_REVIEW' && new Date(r.checkIn) >= today)
+    .filter(r => r.status !== 'PENDING_REVIEW' && r.status !== 'REFUSED' && new Date(r.checkIn) >= today)
     .sort((a, b) => new Date(a.checkIn).getTime() - new Date(b.checkIn).getTime())
     .slice(0, 5);
 
