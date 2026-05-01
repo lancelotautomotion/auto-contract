@@ -736,8 +736,8 @@
 .rh-right { display: flex; gap: 8px; align-items: flex-start; padding-top: 4px; }
 
 .req-info-card { background: var(--dash-white); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; margin-bottom: 24px; }
-.req-info-title { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--ink-lighter); display: flex; align-items: center; gap: 6px; }
-.req-info-title svg { color: var(--violet); }
+.req-info-title { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: #fff; display: flex; align-items: center; gap: 6px; }
+.req-info-title svg { color: rgba(255,255,255,.7); }
 .req-info-body { padding: 24px; }
 .req-info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
 .req-field-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-lighter); margin-bottom: 3px; }
@@ -841,7 +841,7 @@
 .tl-item.pending .tl-label { color: var(--ink-lighter); }
 
 .contract-card { background: var(--dash-white); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; margin-bottom: 20px; }
-.cc-header { padding: 16px 24px; border-bottom: 1px solid var(--line-light); display: flex; align-items: center; gap: 8px; }
+.cc-header { padding: 16px 24px; background: var(--violet); border-bottom: none; display: flex; align-items: center; gap: 8px; }
 .cc-title { font-size: 14px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
 .cc-title svg { color: var(--violet); }
 .cc-actions { padding: 20px 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
