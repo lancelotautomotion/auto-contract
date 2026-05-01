@@ -5,6 +5,8 @@ import Link from "next/link";
 import CompleteReservationForm from "./CompleteReservationForm";
 import RefuseReservationButton from "../RefuseReservationButton";
 
+export const dynamic = 'force-dynamic';
+
 const PLATFORM_LABELS: Record<string, string> = {
   airbnb: "Airbnb", abritel: "Abritel / VRBO", booking: "Booking.com",
   gites_de_france: "Gîtes de France", autre: "Autre",
@@ -20,7 +22,10 @@ export default async function CompleteReservationPage({ params }: { params: Prom
 
   const reservation = await prisma.reservation.findFirst({
     where: { id, gite: { userId: dbUser.id }, status: 'PENDING_REVIEW' },
-    include: { reservationOptions: true, gite: true },
+    include: {
+      reservationOptions: true,
+      gite: { select: { id: true, cleaningFee: true, touristTax: true } },
+    },
   });
   if (!reservation) notFound();
 
