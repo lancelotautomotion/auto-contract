@@ -24,7 +24,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <ClerkProvider localization={frFR}>
+    <ClerkProvider localization={frFR} afterSignInUrl="/dashboard" afterSignUpUrl="/onboarding">
       <html lang="fr" className="h-full antialiased" suppressHydrationWarning>
         <head>
           <link rel="icon" type="image/svg+xml" href="/KORDIA.svg" />
