@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { resend } from "@/lib/resend";
 
 const INBOX = "contact@kordia.fr";
-}
 
 function escapeHtml(value: string) {
   return value
