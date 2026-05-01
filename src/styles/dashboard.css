@@ -842,8 +842,8 @@
 
 .contract-card { background: var(--dash-white); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; margin-bottom: 20px; }
 .cc-header { padding: 16px 24px; background: var(--violet); border-bottom: none; display: flex; align-items: center; gap: 8px; }
-.cc-title { font-size: 14px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
-.cc-title svg { color: var(--violet); }
+.cc-title { font-size: 14px; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 8px; }
+.cc-title svg { color: rgba(255,255,255,.8); }
 .cc-actions { padding: 20px 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .action-card { border: 1.5px solid var(--line); border-radius: 12px; padding: 20px; text-align: center; cursor: pointer; transition: all .25s; background: var(--dash-white); font-family: var(--ff); width: 100%; }
 .action-card:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(44,44,42,.06); }
