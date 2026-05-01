@@ -30,7 +30,8 @@ export default async function ReservationDetailPage({ params }: { params: Promis
   if (!reservation) notFound();
 
   // Détection de conflits iCal
-  const icalFeeds = await prisma.icalFeed.findMany({ where: { giteId: reservation.giteId } }).catch(() => []);
+  let icalFeeds: Array<{ platform: string; label: string; blockedDates: unknown }> = [];
+  try { icalFeeds = await prisma.icalFeed.findMany({ where: { giteId: reservation.giteId } }); } catch { icalFeeds = []; }
   const checkInStr  = reservation.checkIn.toISOString().slice(0, 10);
   const checkOutStr = reservation.checkOut.toISOString().slice(0, 10);
   const icalConflicts = icalFeeds.flatMap(feed => {
