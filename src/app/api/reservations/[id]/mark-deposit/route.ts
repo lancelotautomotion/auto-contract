@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { generateSignedContractPdf, ContractData, buildSignedContractFilename } from "@/lib/contractPdf";
-import { DEFAULT_CONTRACT_TEMPLATE } from "@/lib/defaultContractTemplate";
+import { DEFAULT_CONTRACT_TEMPLATE, mergeTemplates } from "@/lib/defaultContractTemplate";
 import { buildEmailHtml, divider, muted, signOff } from "@/lib/emailTemplate";
 import { resend, getFromEmail } from "@/lib/resend";
 import { requireAuth } from "@/lib/auth";
@@ -27,7 +27,7 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
     const dateSortie = fmt(reservation.checkOut);
 
     const data: ContractData = {
-      template: reservation.gite.contractTemplate ?? DEFAULT_CONTRACT_TEMPLATE,
+      template: mergeTemplates(reservation.gite.contractTemplateGeneral ?? DEFAULT_CONTRACT_TEMPLATE, reservation.gite.contractTemplateHouseRules),
       nom_client: reservation.clientLastName,
       prenom_client: reservation.clientFirstName,
       email_client: reservation.clientEmail,

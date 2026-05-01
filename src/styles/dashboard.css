@@ -534,6 +534,46 @@
 .var-tag.gite:hover { background: #C8DEC9; }
 .var-tag.booking { background: var(--violet-light); color: var(--violet-dark); border-color: #D5D2F0; }
 .var-tag.booking:hover { background: #D5D2F0; }
+.var-tag.var-tag-missing { outline: 1.5px solid #D97706; outline-offset: -1px; }
+
+/* Bannière d'alerte balises obligatoires */
+.contract-alert {
+  display: flex; gap: 12px; align-items: flex-start;
+  background: #FFFBEB; border: 1px solid #FCD34D; border-radius: 10px;
+  padding: 14px 16px; font-size: 12.5px; color: #92400E; line-height: 1.6;
+}
+.contract-alert strong { font-weight: 700; display: block; margin-bottom: 2px; }
+.contract-alert-tags { display: block; font-weight: 600; color: #B45309; margin: 2px 0 4px; }
+.contract-alert-note { display: block; font-size: 11.5px; color: #A16207; font-style: italic; }
+
+/* Onglets internes Conditions Générales / Règlement Intérieur */
+.editor-zone-tabs {
+  display: flex; align-items: center; gap: 4px;
+  border-bottom: 1px solid var(--line); padding-bottom: 0;
+}
+.editor-zone-tab {
+  font-family: var(--ff); font-size: 12.5px; font-weight: 600; padding: 8px 14px;
+  border: none; background: none; cursor: pointer; color: var(--ink-lighter);
+  border-bottom: 2px solid transparent; margin-bottom: -1px; transition: color .15s, border-color .15s;
+  border-radius: 0;
+}
+.editor-zone-tab.active { color: var(--violet); border-bottom-color: var(--violet); }
+.editor-zone-tab:hover:not(.active) { color: var(--ink-soft); }
+.editor-zone-reset {
+  margin-left: auto; font-family: var(--ff); font-size: 11px; font-weight: 500;
+  color: var(--ink-lighter); background: none; border: none; cursor: pointer; padding: 6px 8px;
+  transition: color .15s;
+}
+.editor-zone-reset:hover { color: var(--ink-soft); }
+.editor-zone-desc {
+  font-size: 12px; color: var(--ink-lighter); line-height: 1.6; font-style: italic;
+  padding: 8px 4px 0;
+}
+
+/* Indicateur zone active dans le header du panneau variables */
+.contract-zone-hint {
+  font-size: 11px; font-weight: 400; color: var(--ink-lighter); margin-left: auto;
+}
 
 .info-box {
   background: var(--amber-light); border: 1px solid rgba(255,189,46,.2);

@@ -1,3 +1,9 @@
+export function mergeTemplates(general: string, houseRules: string | null | undefined): string {
+  const rules = houseRules?.trim();
+  if (!rules) return general;
+  return `${general}\n\nRÈGLEMENT INTÉRIEUR\n\n${rules}`;
+}
+
 export const DEFAULT_CONTRACT_TEMPLATE = `CONTRAT DE LOCATION SAISONNIÈRE
 
 Entre les soussignés :

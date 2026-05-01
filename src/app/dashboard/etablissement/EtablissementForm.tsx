@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useRef, useCallback, useEffect } from "react";
-import { DEFAULT_CONTRACT_TEMPLATE } from "@/lib/defaultContractTemplate";
+import { useState, useRef, useCallback, useEffect, useMemo } from "react";
+import { DEFAULT_CONTRACT_TEMPLATE, mergeTemplates } from "@/lib/defaultContractTemplate";
 import DocumentsTab from "./DocumentsTab";
 import IcalTab from "./IcalTab";
 
@@ -63,7 +63,10 @@ interface GiteDoc { id: string; label: string; fileName: string; mimeType: strin
 interface GiteData {
   id: string; name: string; email: string; phone: string;
   address: string; city: string; zipCode: string;
-  slug: string; contractTemplate: string; logoUrl: string;
+  slug: string;
+  contractTemplateGeneral: string;
+  contractTemplateHouseRules: string;
+  logoUrl: string;
   capacity: number; cleaningFee: number; touristTax: number;
   options: GiteOption[];
   documents: GiteDoc[];
@@ -71,6 +74,7 @@ interface GiteData {
 
 const TABS = ['Informations', 'Options', 'Contrat', 'Logo', 'Documents', 'iCal'] as const;
 type Tab = typeof TABS[number];
+type EditorZone = 'general' | 'houseRules';
 
 const VARIABLES: Array<[string, string, 'client' | 'booking' | 'gite']> = [
   ['{{prenom_client}}', 'Prénom client', 'client'],
@@ -95,6 +99,17 @@ const VARIABLES: Array<[string, string, 'client' | 'booking' | 'gite']> = [
   ['{{email_gite}}', 'Email gîte', 'gite'],
   ['{{telephone_gite}}', 'Tél. gîte', 'gite'],
   ['{{date_du_jour}}', 'Date du jour', 'gite'],
+];
+
+// Balises dont l'absence rend le contrat juridiquement incomplet
+const MANDATORY_TAGS: Array<{ key: string; label: string }> = [
+  { key: 'nom_client',    label: 'Nom client' },
+  { key: 'prenom_client', label: 'Prénom client' },
+  { key: 'date_entree',   label: 'Arrivée' },
+  { key: 'date_sortie',   label: 'Départ' },
+  { key: 'loyer',         label: 'Loyer €' },
+  { key: 'acompte',       label: 'Acompte €' },
+  { key: 'nom_gite',      label: 'Nom gîte' },
 ];
 
 const VAR_LABELS: Record<string, string> = Object.fromEntries(
@@ -158,8 +173,19 @@ function readEditorTemplate(el: HTMLDivElement): string {
   return lines.join('\n');
 }
 
+// Nettoie le texte brut collé depuis Word ou d'autres sources
+function sanitizePastedText(text: string): string {
+  return text
+    .replace(/[‘’]/g, "'")   // guillemets simples typographiques → apostrophe droite
+    .replace(/[“”]/g, '"')   // guillemets doubles typographiques → guillemet droit
+    .replace(/ /g, ' ')           // espace insécable → espace normale
+    .replace(/…/g, '...')         // points de suspension → trois points
+    .replace(/\n{3,}/g, '\n\n');       // max 2 lignes vides consécutives
+}
+
 export default function EtablissementForm({ gite }: { gite: GiteData }) {
   const [activeTab, setActiveTab] = useState<Tab>('Informations');
+  const [activeEditorZone, setActiveEditorZone] = useState<EditorZone>('general');
   const [loading, setLoading] = useState(false);
   const [saved, setSaved] = useState(false);
   const [origin, setOrigin] = useState('');
@@ -173,40 +199,69 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
     touristTax: gite.touristTax.toString(),
   });
   const [savedSlug, setSavedSlug] = useState(gite.slug);
-  const [contractTemplate, setContractTemplate] = useState(gite.contractTemplate || DEFAULT_CONTRACT_TEMPLATE);
+  const [contractTemplateGeneral, setContractTemplateGeneral] = useState(
+    gite.contractTemplateGeneral || DEFAULT_CONTRACT_TEMPLATE
+  );
+  const [contractTemplateHouseRules, setContractTemplateHouseRules] = useState(
+    gite.contractTemplateHouseRules || ''
+  );
   const [options, setOptions] = useState<GiteOption[]>(gite.options);
   const [logoUrl, setLogoUrl] = useState(gite.logoUrl || '');
 
   useEffect(() => { setOrigin(window.location.origin); }, []);
   const [logoLoading, setLogoLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const editorRef = useRef<HTMLDivElement>(null);
+  const editorGeneralRef = useRef<HTMLDivElement>(null);
+  const editorHouseRulesRef = useRef<HTMLDivElement>(null);
 
+  // Initialise les deux éditeurs au premier affichage de l'onglet Contrat
   useEffect(() => {
-    if (activeTab === 'Contrat' && editorRef.current && !editorRef.current.dataset.initialized) {
-      editorRef.current.innerHTML = buildEditorHTML(contractTemplate);
-      editorRef.current.dataset.initialized = 'true';
+    if (activeTab !== 'Contrat') return;
+    if (editorGeneralRef.current && !editorGeneralRef.current.dataset.initialized) {
+      editorGeneralRef.current.innerHTML = buildEditorHTML(contractTemplateGeneral);
+      editorGeneralRef.current.dataset.initialized = 'true';
+    }
+    if (editorHouseRulesRef.current && !editorHouseRulesRef.current.dataset.initialized) {
+      editorHouseRulesRef.current.innerHTML = buildEditorHTML(contractTemplateHouseRules);
+      editorHouseRulesRef.current.dataset.initialized = 'true';
     }
   }, [activeTab]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const handleEditorInput = useCallback(() => {
-    if (!editorRef.current) return;
-    setContractTemplate(readEditorTemplate(editorRef.current));
+  // Balises obligatoires manquantes dans les Conditions Générales
+  const missingMandatoryTags = useMemo(() =>
+    MANDATORY_TAGS.filter(({ key }) => !contractTemplateGeneral.includes(`{{${key}}}`)),
+    [contractTemplateGeneral]
+  );
+
+  const getActiveEditorRef = useCallback(() =>
+    activeEditorZone === 'general' ? editorGeneralRef : editorHouseRulesRef,
+    [activeEditorZone]
+  );
+
+  const handleEditorInput = useCallback((zone: EditorZone) => () => {
+    const ref = zone === 'general' ? editorGeneralRef : editorHouseRulesRef;
+    if (!ref.current) return;
+    if (zone === 'general') setContractTemplateGeneral(readEditorTemplate(ref.current));
+    else setContractTemplateHouseRules(readEditorTemplate(ref.current));
     setSaved(false);
   }, []);
 
-  const handleEditorClick = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+  const handleEditorClick = useCallback((zone: EditorZone) => (e: React.MouseEvent<HTMLDivElement>) => {
     const target = e.target as HTMLElement;
     if (target.dataset.del) {
       const chip = target.closest('[data-var]') as HTMLElement | null;
-      if (chip) { chip.remove(); handleEditorInput(); }
+      if (chip) {
+        chip.remove();
+        handleEditorInput(zone)();
+      }
     }
   }, [handleEditorInput]);
 
   const handleEditorPaste = useCallback((e: React.ClipboardEvent<HTMLDivElement>) => {
     e.preventDefault();
-    const text = e.clipboardData.getData('text/plain');
-    document.execCommand('insertText', false, text);
+    const raw = e.clipboardData.getData('text/plain');
+    const clean = sanitizePastedText(raw);
+    document.execCommand('insertText', false, clean);
   }, []);
 
   const handleEditorKeyDown = useCallback((e: React.KeyboardEvent<HTMLDivElement>) => {
@@ -214,7 +269,7 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
   }, []);
 
   const insertVariable = useCallback((varName: string) => {
-    const el = editorRef.current;
+    const el = getActiveEditorRef().current;
     if (!el) return;
     el.focus();
     const sel = window.getSelection();
@@ -226,20 +281,23 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
       tmp.innerHTML = chipHTML;
       const chip = tmp.firstChild!;
       range.insertNode(chip);
-      const after = document.createTextNode('\u200B');
+      const after = document.createTextNode('​');
       chip.parentNode!.insertBefore(after, chip.nextSibling);
       range.setStart(after, 1); range.setEnd(after, 1);
       sel.removeAllRanges(); sel.addRange(range);
     } else { el.innerHTML += chipHTML; }
-    setContractTemplate(readEditorTemplate(el));
+    if (activeEditorZone === 'general') setContractTemplateGeneral(readEditorTemplate(el));
+    else setContractTemplateHouseRules(readEditorTemplate(el));
     setSaved(false);
-  }, []);
+  }, [activeEditorZone, getActiveEditorRef]);
 
-  const handleEditorDrop = useCallback((e: React.DragEvent<HTMLDivElement>) => {
+  const handleEditorDrop = useCallback((zone: EditorZone) => (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     const varName = e.dataTransfer.getData('text/plain');
     if (!varName || !VAR_LABELS[varName]) return;
-    const el = editorRef.current;
+    // Switche vers la zone sur laquelle on drop
+    setActiveEditorZone(zone);
+    const el = zone === 'general' ? editorGeneralRef.current : editorHouseRulesRef.current;
     if (!el) return;
     let range: Range | null = null;
     if (document.caretRangeFromPoint) {
@@ -252,24 +310,48 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
       const sel = window.getSelection()!;
       sel.removeAllRanges(); sel.addRange(range);
     }
-    insertVariable(varName);
-  }, [insertVariable]);
-
-  const handleReset = useCallback(() => {
-    if (!confirm('Remettre le contrat type par défaut ?')) return;
-    setContractTemplate(DEFAULT_CONTRACT_TEMPLATE);
+    // insertVariable lit activeEditorZone — on force via ref direct
+    el.focus();
+    const sel = window.getSelection();
+    const chipHTML = makeChipHTML(varName);
+    if (sel && sel.rangeCount > 0 && el.contains(sel.getRangeAt(0).commonAncestorContainer)) {
+      const r = sel.getRangeAt(0);
+      r.deleteContents();
+      const tmp = document.createElement('span');
+      tmp.innerHTML = chipHTML;
+      const chip = tmp.firstChild!;
+      r.insertNode(chip);
+      const after = document.createTextNode('​');
+      chip.parentNode!.insertBefore(after, chip.nextSibling);
+      r.setStart(after, 1); r.setEnd(after, 1);
+      sel.removeAllRanges(); sel.addRange(r);
+    } else { el.innerHTML += chipHTML; }
+    if (zone === 'general') setContractTemplateGeneral(readEditorTemplate(el));
+    else setContractTemplateHouseRules(readEditorTemplate(el));
     setSaved(false);
-    if (editorRef.current) editorRef.current.innerHTML = buildEditorHTML(DEFAULT_CONTRACT_TEMPLATE);
+  }, []);
+
+  const handleResetGeneral = useCallback(() => {
+    if (!confirm('Remettre les Conditions Générales par défaut ?')) return;
+    setContractTemplateGeneral(DEFAULT_CONTRACT_TEMPLATE);
+    setSaved(false);
+    if (editorGeneralRef.current) editorGeneralRef.current.innerHTML = buildEditorHTML(DEFAULT_CONTRACT_TEMPLATE);
+  }, []);
+
+  const handleResetHouseRules = useCallback(() => {
+    if (!confirm('Effacer le Règlement Intérieur ?')) return;
+    setContractTemplateHouseRules('');
+    setSaved(false);
+    if (editorHouseRulesRef.current) editorHouseRulesRef.current.innerHTML = buildEditorHTML('');
   }, []);
 
   const set = (k: string, v: string) => { setForm(f => ({ ...f, [k]: v })); setSaved(false); };
 
   const handleGiteNameChange = (v: string) => {
     set('giteName', v);
-    // Auto-suggest slug when it's still empty
     if (!form.slug) {
       const suggested = v.toLowerCase()
-        .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+        .normalize('NFD').replace(/[̀-ͯ]/g, '')
         .replace(/[^a-z0-9]+/g, '-')
         .replace(/^-+|-+$/g, '');
       if (suggested) set('slug', suggested);
@@ -306,12 +388,17 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
     e.preventDefault();
     setLoading(true); setSaved(false);
     try {
-      const res = await fetch('/api/etablissement', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...form, contractTemplate, options, logoUrl }) });
+      const res = await fetch('/api/etablissement', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...form, contractTemplateGeneral, contractTemplateHouseRules, options, logoUrl }),
+      });
       if (res.ok) { setSaved(true); setSavedSlug(form.slug); }
     } finally { setLoading(false); }
   };
 
-  const previewLines = buildPreview(contractTemplate, form).split('\n');
+  const mergedPreview = mergeTemplates(contractTemplateGeneral, contractTemplateHouseRules);
+  const previewLines = buildPreview(mergedPreview, form).split('\n');
 
   const SaveBar = ({ extra }: { extra?: React.ReactNode }) => (
     <div className="save-bar" style={{ marginTop: '8px' }}>
@@ -340,7 +427,6 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
       {activeTab === 'Informations' && (
         <div style={{ maxWidth: '860px' }}>
 
-          {/* ── Lien de réservation — carte explicative ── */}
           <div className="booking-card">
             <div className="booking-card-header">
               <div className="booking-card-icon">
@@ -520,41 +606,123 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
         <div>
           <div className="contract-split">
 
-            {/* LEFT: variables + editor */}
+            {/* LEFT: variables + dual-zone editor */}
             <div className="contract-left-col">
+
+              {/* Alerte balises obligatoires manquantes */}
+              {missingMandatoryTags.length > 0 && (
+                <div className="contract-alert">
+                  <svg width="16" height="16" fill="none" viewBox="0 0 16 16" style={{ flexShrink: 0 }}>
+                    <path d="M8 1.5L14.5 13H1.5L8 1.5z" stroke="#B45309" strokeWidth="1.3" strokeLinejoin="round"/>
+                    <path d="M8 6v3.5" stroke="#B45309" strokeWidth="1.4" strokeLinecap="round"/>
+                    <circle cx="8" cy="11.5" r="0.75" fill="#B45309"/>
+                  </svg>
+                  <div>
+                    <strong>Balises obligatoires manquantes dans les Conditions Générales&nbsp;:</strong>
+                    <span className="contract-alert-tags">
+                      {missingMandatoryTags.map(({ label }) => label).join(', ')}
+                    </span>
+                    <span className="contract-alert-note">La sauvegarde reste possible, mais le contrat généré sera incomplet.</span>
+                  </div>
+                </div>
+              )}
+
+              {/* Variables panel */}
               <div className="form-card">
                 <div className="form-card-title">
                   <svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M4 2h6a1 1 0 011 1v8a1 1 0 01-1 1H4a1 1 0 01-1-1V3a1 1 0 011-1z" stroke="currentColor" strokeWidth="1.2"/><path d="M5 5h4M5 7h3M5 9h2" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/></svg>
                   Balises dynamiques
+                  <span className="contract-zone-hint">→ zone active : <strong>{activeEditorZone === 'general' ? 'Conditions Générales' : 'Règlement Intérieur'}</strong></span>
                 </div>
                 <div className="variables-bar">
                   {VARIABLES.map(([v, label, cat]) => {
                     const varName = v.slice(2, -2);
+                    const isMandatory = MANDATORY_TAGS.some(t => t.key === varName);
+                    const isMissing = isMandatory && missingMandatoryTags.some(t => t.key === varName);
                     return (
                       <button
                         key={v}
                         type="button"
-                        className={`var-tag ${cat}`}
+                        className={`var-tag ${cat}${isMissing ? ' var-tag-missing' : ''}`}
                         draggable
                         onDragStart={e => e.dataTransfer.setData('text/plain', varName)}
                         onClick={() => insertVariable(varName)}
                       >
+                        {isMissing && (
+                          <svg width="9" height="9" fill="none" viewBox="0 0 9 9" style={{ marginRight: '3px', flexShrink: 0 }}>
+                            <path d="M4.5 1L8 7.5H1L4.5 1z" stroke="currentColor" strokeWidth="1.1" strokeLinejoin="round"/>
+                          </svg>
+                        )}
                         {label}
                       </button>
                     );
                   })}
                 </div>
               </div>
+
+              {/* Inner tabs: Conditions Générales / Règlement Intérieur */}
+              <div className="editor-zone-tabs">
+                <button
+                  type="button"
+                  className={`editor-zone-tab${activeEditorZone === 'general' ? ' active' : ''}`}
+                  onClick={() => setActiveEditorZone('general')}
+                >
+                  Conditions Générales
+                </button>
+                <button
+                  type="button"
+                  className={`editor-zone-tab${activeEditorZone === 'houseRules' ? ' active' : ''}`}
+                  onClick={() => setActiveEditorZone('houseRules')}
+                >
+                  Règlement Intérieur
+                </button>
+                {activeEditorZone === 'general' ? (
+                  <button type="button" className="editor-zone-reset" onClick={handleResetGeneral} title="Réinitialiser les Conditions Générales">
+                    Réinitialiser
+                  </button>
+                ) : (
+                  <button type="button" className="editor-zone-reset" onClick={handleResetHouseRules} title="Effacer le Règlement Intérieur">
+                    Effacer
+                  </button>
+                )}
+              </div>
+
+              {/* Hint sous l'onglet Règlement Intérieur */}
+              {activeEditorZone === 'houseRules' && (
+                <div className="editor-zone-desc">
+                  Zone libre pour les règles spécifiques de votre gîte (ménage, piscine, animaux, horaires…). Ce texte sera ajouté à la suite des Conditions Générales dans le PDF.
+                </div>
+              )}
+
+              {/* Éditeur Conditions Générales */}
               <div
-                ref={editorRef}
+                ref={editorGeneralRef}
                 contentEditable
                 suppressContentEditableWarning
                 className="contract-editor"
-                onInput={handleEditorInput}
-                onClick={handleEditorClick}
+                style={{ display: activeEditorZone === 'general' ? undefined : 'none' }}
+                onInput={handleEditorInput('general')}
+                onClick={handleEditorClick('general')}
+                onFocus={() => setActiveEditorZone('general')}
                 onPaste={handleEditorPaste}
                 onKeyDown={handleEditorKeyDown}
-                onDrop={handleEditorDrop}
+                onDrop={handleEditorDrop('general')}
+                onDragOver={e => e.preventDefault()}
+              />
+
+              {/* Éditeur Règlement Intérieur */}
+              <div
+                ref={editorHouseRulesRef}
+                contentEditable
+                suppressContentEditableWarning
+                className="contract-editor"
+                style={{ display: activeEditorZone === 'houseRules' ? undefined : 'none' }}
+                onInput={handleEditorInput('houseRules')}
+                onClick={handleEditorClick('houseRules')}
+                onFocus={() => setActiveEditorZone('houseRules')}
+                onPaste={handleEditorPaste}
+                onKeyDown={handleEditorKeyDown}
+                onDrop={handleEditorDrop('houseRules')}
                 onDragOver={e => e.preventDefault()}
               />
             </div>
@@ -563,12 +731,12 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
             <div className="contract-right-col">
               <div className="info-box">
                 <strong>Comment fonctionnent les variables ?</strong><br />
-                Les balises ci-dessus représentent les informations de votre client et les vôtres. Cliquez dessus (ou glissez-les) pour les insérer dans votre contrat. Lors de la génération, elles se transformeront automatiquement avec les vraies données.
+                Les balises ci-dessus représentent les informations de votre client et les vôtres. Cliquez dessus (ou glissez-les) dans la zone active pour les insérer. Lors de la génération, elles se transforment automatiquement avec les vraies données.
               </div>
               <div className="contract-preview">
                 <div className="cp-header">
                   <span>Aperçu en direct</span>
-                  <span className="cp-sub">données d&apos;exemple</span>
+                  <span className="cp-sub">données d&apos;exemple — les deux zones fusionnées</span>
                 </div>
                 <div className="cp-body">
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', paddingBottom: '8px', borderBottom: '0.5px solid #CEC8BF', marginBottom: '8px' }}>
@@ -588,9 +756,6 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
 
               {/* Actions pinned at bottom of right column */}
               <div className="contract-actions">
-                <button type="button" onClick={handleReset} className="btn btn-outline contract-action-btn">
-                  Réinitialiser le modèle
-                </button>
                 <button type="submit" disabled={loading} className="btn btn-violet contract-action-btn">
                   {loading ? 'Enregistrement...' : 'Sauvegarder'}
                   {!loading && <svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M3 7h8M8 4l3 3-3 3" stroke="#fff" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/></svg>}

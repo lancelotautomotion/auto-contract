@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { generateContractPdf, ContractData } from "@/lib/contractPdf";
-import { DEFAULT_CONTRACT_TEMPLATE } from "@/lib/defaultContractTemplate";
+import { DEFAULT_CONTRACT_TEMPLATE, mergeTemplates } from "@/lib/defaultContractTemplate";
 import SigningForm from "./SigningForm";
 import ContractPdfViewer from "./ContractPdfViewer";
 
@@ -25,7 +25,7 @@ export default async function SignPage({ params }: { params: Promise<{ token: st
 
   // Generate PDF server-side — avoids any client-side API route routing issues
   const data: ContractData = {
-    template: reservation.gite.contractTemplate ?? DEFAULT_CONTRACT_TEMPLATE,
+    template: mergeTemplates(reservation.gite.contractTemplateGeneral ?? DEFAULT_CONTRACT_TEMPLATE, reservation.gite.contractTemplateHouseRules),
     nom_client: reservation.clientLastName,
     prenom_client: reservation.clientFirstName,
     email_client: reservation.clientEmail,
