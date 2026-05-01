@@ -1052,7 +1052,8 @@
   .detail-header { flex-direction: column; gap: 16px; }
   .dh-right { align-items: flex-start; }
   .ical-status-row { flex-direction: column; }
-  .ical-status-actions { flex-shrink: unset; }
+  .ical-status-actions { flex-shrink: unset; justify-content: center; }
+  .ical-status-actions .btn { flex: 1; justify-content: center; }
 }
 
 /* ═══ SMALL MOBILE ≤640px ═══ */
