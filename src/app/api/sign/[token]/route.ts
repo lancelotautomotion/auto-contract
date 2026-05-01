@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { buildEmailHtml, divider, infoBox, muted, signOff } from "@/lib/emailTemplate";
 import { generateContractPdf, ContractData } from "@/lib/contractPdf";
-import { DEFAULT_CONTRACT_TEMPLATE } from "@/lib/defaultContractTemplate";
+import { DEFAULT_CONTRACT_TEMPLATE, mergeTemplates } from "@/lib/defaultContractTemplate";
 import { resend, getFromEmail } from "@/lib/resend";
 
 export async function GET(_req: NextRequest, { params }: { params: Promise<{ token: string }> }) {
@@ -18,7 +18,7 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ tok
     const { reservation } = contract;
     const fmt = (d: Date) => new Date(d).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
     const data: ContractData = {
-      template: reservation.gite.contractTemplate ?? DEFAULT_CONTRACT_TEMPLATE,
+      template: mergeTemplates(reservation.gite.contractTemplateGeneral ?? DEFAULT_CONTRACT_TEMPLATE, reservation.gite.contractTemplateHouseRules),
       nom_client: reservation.clientLastName,
       prenom_client: reservation.clientFirstName,
       email_client: reservation.clientEmail,
