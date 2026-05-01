@@ -257,7 +257,7 @@ export default function EditReservationForm({ id, initial, availableOptions, sel
             <div className="sg-value">{menage.toLocaleString('fr-FR')}&nbsp;€</div>
           </div>
           <div className="sg-item">
-            <div className="sg-label">Solde restant</div>
+            <div className="sg-label">Solde restant <span style={{ fontWeight: 400, opacity: .65, fontSize: '11px' }}>(hors taxe de séjour et options)</span></div>
             <div className={`sg-value${loyer ? ' green' : ''}`}>{loyer ? fmtMoney(loyer - acompte) : '— €'}</div>
           </div>
         </div>
