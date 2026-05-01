@@ -833,6 +833,9 @@
 .pb-item-cta { font-size: 12px; font-weight: 700; color: var(--amber-dark); white-space: nowrap; }
 
 /* ═══ DETAIL RESERVATION ═══ */
+.ical-status-row { display: flex; align-items: stretch; gap: 12px; margin-bottom: 20px; }
+.ical-status-actions { display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
+
 .detail-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 28px; }
 .dh-left h1 { font-weight: 800; font-size: 28px; letter-spacing: -0.03em; margin-bottom: 4px; }
 .dh-contact { font-size: 14px; color: var(--ink-soft); display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
@@ -1048,6 +1051,8 @@
   .cc-actions { grid-template-columns: 1fr; }
   .detail-header { flex-direction: column; gap: 16px; }
   .dh-right { align-items: flex-start; }
+  .ical-status-row { flex-direction: column; }
+  .ical-status-actions { flex-shrink: unset; }
 }
 
 /* ═══ SMALL MOBILE ≤640px ═══ */

@@ -130,7 +130,7 @@ export default async function ReservationDetailPage({ params }: { params: Promis
           </div>
         ) : (
           /* Bandeau iCal + boutons Modifier/Refuser inline */
-          <div style={{ display: 'flex', alignItems: 'stretch', gap: '12px', marginBottom: '20px' }}>
+          <div className="ical-status-row">
             {icalConflicts.length > 0 ? (
               <div style={{
                 flex: 1, display: 'flex', alignItems: 'center', gap: '12px',
@@ -173,11 +173,11 @@ export default async function ReservationDetailPage({ params }: { params: Promis
                 <div style={{ fontSize: '13px', fontWeight: 600, color: '#166534' }}>
                   {icalFeeds.length > 0
                     ? 'Dates disponibles — aucun conflit détecté sur vos calendriers connectés'
-                    : 'Dates disponibles — aucun calendrier iCal connecté'}
+                    : 'Dates disponibles'}
                 </div>
               </div>
             )}
-            <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexShrink: 0 }}>
+            <div className="ical-status-actions">
               <Link href={`/dashboard/reservations/${id}/edit`} className="btn btn-outline">
                 Modifier
               </Link>
