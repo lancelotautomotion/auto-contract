@@ -1,22 +1,25 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
-interface GiteOption {
-  id: string;
-  label: string;
-  price: number;
-}
+interface GiteOption { id: string; label: string; price: number; }
+interface IcalBlock { start: string; end: string; platform: string; label: string; }
+
+const PLATFORM_LABELS: Record<string, string> = {
+  airbnb: "Airbnb", abritel: "Abritel / VRBO", booking: "Booking.com",
+  gites_de_france: "Gîtes de France", autre: "Autre",
+};
 
 interface Props {
   defaultCleaningFee: string;
   defaultTouristTax: string;
   availableOptions: GiteOption[];
+  icalBlocked?: IcalBlock[];
 }
 
-export default function NewReservationForm({ defaultCleaningFee, defaultTouristTax, availableOptions }: Props) {
+export default function NewReservationForm({ defaultCleaningFee, defaultTouristTax, availableOptions, icalBlocked = [] }: Props) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
@@ -31,6 +34,11 @@ export default function NewReservationForm({ defaultCleaningFee, defaultTouristT
   const [selectedOptions, setSelectedOptions] = useState<Set<string>>(new Set());
 
   const set = (k: string, v: string) => setForm(f => ({ ...f, [k]: v }));
+
+  const icalConflicts = useMemo(() => {
+    if (!form.checkIn || !form.checkOut) return [];
+    return icalBlocked.filter(b => b.start < form.checkOut && b.end > form.checkIn);
+  }, [form.checkIn, form.checkOut, icalBlocked]);
 
   const toggleOption = (id: string) => setSelectedOptions(prev => {
     const next = new Set(prev);
@@ -134,6 +142,26 @@ export default function NewReservationForm({ defaultCleaningFee, defaultTouristT
             </div>
           </div>
         </div>
+        {icalConflicts.length > 0 && (
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', background: '#FEF3CD', border: '1px solid #F5C842', borderRadius: '10px', padding: '14px 16px', marginTop: '10px' }}>
+            <svg width="18" height="18" fill="none" viewBox="0 0 18 18" style={{ flexShrink: 0, color: '#B7791F', marginTop: '1px' }}>
+              <path d="M9 2L1.5 15h15L9 2z" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round"/>
+              <path d="M9 7v4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
+              <circle cx="9" cy="12.5" r="0.8" fill="currentColor"/>
+            </svg>
+            <div>
+              <div style={{ fontSize: '13px', fontWeight: 700, color: '#7B4F0A', marginBottom: '4px' }}>Conflit détecté sur une autre plateforme</div>
+              <div style={{ fontSize: '12px', color: '#92610E', lineHeight: 1.5 }}>
+                {icalConflicts.map((c, i) => {
+                  const fmtD = (s: string) => new Date(s + 'T12:00:00').toLocaleDateString('fr-FR', { day: '2-digit', month: 'long' });
+                  return (
+                    <span key={i}>{i > 0 && ' · '}<strong>{PLATFORM_LABELS[c.platform] ?? c.label}</strong> : du {fmtD(c.start)} au {fmtD(c.end)}</span>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* TARIFS */}
