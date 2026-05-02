@@ -31,7 +31,7 @@ export default async function ReservationDetailPage({ params }: { params: Promis
 
   // Détection de conflits iCal
   let icalFeeds: Array<{ platform: string; label: string; blockedDates: unknown }> = [];
-  try { icalFeeds = await prisma.icalFeed.findMany({ where: { giteId: reservation.giteId } }); } catch { icalFeeds = []; }
+  try { icalFeeds = await prisma.icalFeed.findMany({ where: { giteId: reservation.giteId } }); } catch (e) { console.error('[reservation] icalFeed fetch error:', e); icalFeeds = []; }
   const checkInStr  = reservation.checkIn.toISOString().slice(0, 10);
   const checkOutStr = reservation.checkOut.toISOString().slice(0, 10);
   const icalConflicts = icalFeeds.flatMap(feed => {

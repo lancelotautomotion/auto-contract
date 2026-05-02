@@ -19,7 +19,7 @@ export default async function ComptePage() {
   const initials = (firstName[0] ?? '').toUpperCase() + (lastName[0] ?? '').toUpperCase() || '?';
 
   let trialInfo = null;
-  try { trialInfo = getTrialInfo(dbUser); } catch {}
+  try { trialInfo = getTrialInfo(dbUser); } catch (e) { console.error('[compte] getTrialInfo error:', e); }
 
   return (
     <>

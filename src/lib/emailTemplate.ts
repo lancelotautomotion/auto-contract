@@ -1,8 +1,11 @@
-/**
- * Template email partagé — Kordia
- * Design: kordia-email-contrat.html
- * Compatible Gmail, Apple Mail, Outlook (table-based)
- */
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
 
 interface EmailTemplateOptions {
   giteName: string;
@@ -17,27 +20,32 @@ interface EmailTemplateOptions {
 export function buildEmailHtml(opts: EmailTemplateOptions): string {
   const { giteName, giteAddress, giteLogoUrl, preheader, greeting, body, docLabel = 'Kordia' } = opts;
 
+  const safeGiteName   = escapeHtml(giteName);
+  const safeGreeting   = greeting ? escapeHtml(greeting) : '';
+  const safeAddress    = giteAddress ? escapeHtml(giteAddress) : '';
+  const safeDocLabel   = escapeHtml(docLabel);
+
   const preheaderHtml = preheader
-    ? `<div style="display:none;max-height:0;overflow:hidden;font-size:1px;color:#F3F2EE;">${preheader}</div>`
+    ? `<div style="display:none;max-height:0;overflow:hidden;font-size:1px;color:#F3F2EE;">${escapeHtml(preheader)}</div>`
     : '';
 
-  const greetingHtml = greeting ? `
+  const greetingHtml = safeGreeting ? `
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
       <tr><td class="greeting" style="font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif;font-size:22px;font-weight:800;color:#2C2C2A;letter-spacing:-0.03em;padding-bottom:20px;line-height:1.3;">
-        Bonjour ${greeting}<span style="color:#7F77DD">.</span>
+        Bonjour ${safeGreeting}<span style="color:#7F77DD">.</span>
       </td></tr>
     </table>` : '';
 
   const headerLeftHtml = giteLogoUrl
-    ? `<img src="${giteLogoUrl}" alt="${giteName}" height="40" style="display:block;height:40px;width:auto;max-width:160px;border:0;outline:none;text-decoration:none;"/>`
-    : `<span style="font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif;font-size:15px;font-weight:800;color:#2C2C2A;letter-spacing:-0.02em;">${giteName}</span>`;
+    ? `<img src="${giteLogoUrl}" alt="${safeGiteName}" height="40" style="display:block;height:40px;width:auto;max-width:160px;border:0;outline:none;text-decoration:none;"/>`
+    : `<span style="font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif;font-size:15px;font-weight:800;color:#2C2C2A;letter-spacing:-0.02em;">${safeGiteName}</span>`;
 
   const headerRightHtml = giteLogoUrl
-    ? `<span style="font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif;font-size:15px;font-weight:800;color:#2C2C2A;letter-spacing:-0.02em;">${giteName}</span>`
-    : `<span style="font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif;font-size:11px;font-weight:600;color:#A3A3A0;text-transform:uppercase;letter-spacing:0.08em;">${docLabel}</span>`;
+    ? `<span style="font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif;font-size:15px;font-weight:800;color:#2C2C2A;letter-spacing:-0.02em;">${safeGiteName}</span>`
+    : `<span style="font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif;font-size:11px;font-weight:600;color:#A3A3A0;text-transform:uppercase;letter-spacing:0.08em;">${safeDocLabel}</span>`;
 
-  const footerAddress = giteAddress
-    ? `<tr><td style="font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif;font-size:11px;color:#A3A3A0;padding-bottom:4px;">${giteAddress}</td></tr>`
+  const footerAddress = safeAddress
+    ? `<tr><td style="font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif;font-size:11px;color:#A3A3A0;padding-bottom:4px;">${safeAddress}</td></tr>`
     : '';
 
   return `<!DOCTYPE html>
@@ -108,7 +116,7 @@ ${preheaderHtml}
     <tr><td style="padding:24px 0 0;text-align:center;">
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr><td style="font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif;font-size:12px;color:#A3A3A0;line-height:1.6;padding-bottom:8px;">
-          Cet email a été envoyé par <strong style="color:#71716E;">${giteName}</strong> via Kordia.
+          Cet email a été envoyé par <strong style="color:#71716E;">${safeGiteName}</strong> via Kordia.
         </td></tr>
         ${footerAddress}
         <tr><td style="padding-top:12px;">

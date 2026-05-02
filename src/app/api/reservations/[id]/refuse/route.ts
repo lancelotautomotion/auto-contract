@@ -78,6 +78,6 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     console.error("[refuse]", message);
-    return NextResponse.json({ error: "Erreur interne", detail: message }, { status: 500 });
+    return NextResponse.json({ error: "Erreur interne" }, { status: 500 });
   }
 }

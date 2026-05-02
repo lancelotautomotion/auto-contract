@@ -29,7 +29,14 @@ export async function POST(req: NextRequest) {
   if (!platform || !label || !url) {
     return NextResponse.json({ error: "Champs manquants" }, { status: 400 });
   }
-  if (!url.startsWith('http')) {
+  try {
+    const parsed = new URL(url);
+    if (!['http:', 'https:'].includes(parsed.protocol))
+      return NextResponse.json({ error: "URL invalide (http/https uniquement)" }, { status: 400 });
+    const h = parsed.hostname;
+    if (/^(localhost|127\.|0\.0\.0\.|10\.|192\.168\.|172\.(1[6-9]|2\d|3[01])\.)/.test(h))
+      return NextResponse.json({ error: "URL non autorisée" }, { status: 400 });
+  } catch {
     return NextResponse.json({ error: "URL invalide" }, { status: 400 });
   }
 

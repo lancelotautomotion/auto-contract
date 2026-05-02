@@ -82,50 +82,56 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
       ${muted("Conservez ce document — il fait office de preuve de votre réservation.")}
       ${signOff(reservation.gite.name)}
     `;
-    await resend.emails.send({
-      from: fromEmail,
-      to: reservation.clientEmail,
-      subject: `Contrat signé — ${reservation.gite.name}`,
-      html: buildEmailHtml({
-        giteName: reservation.gite.name,
-        giteAddress,
-        giteLogoUrl: reservation.gite.logoUrl,
-        docLabel: 'Contrat signé',
-        preheader: "Votre contrat de location signé est disponible en pièce jointe.",
-        greeting: reservation.clientFirstName,
-        body: clientBody,
-      }),
-      attachments: [{ filename, content: pdfBuffer.toString("base64") }],
-    });
 
-    const notifEmail = reservation.gite.notificationEmail || reservation.gite.user.email;
-    if (notifEmail) {
-      const managerBody = `
-        <p style="margin:0 0 20px;">L'acompte de <strong style="color:#2C2C2A;">${reservation.clientFirstName} ${reservation.clientLastName}</strong> a été marqué comme reçu.</p>
-        <p style="margin:0 0 20px;">Le contrat signé a été automatiquement envoyé au locataire. Une copie est jointe ci-dessous.</p>
-        ${divider()}
-        ${muted(`Séjour du ${dateEntree} au ${dateSortie} — ${reservation.gite.name}`)}
-      `;
+    // Emails non-fatals — l'acompte est déjà marqué en DB
+    try {
       await resend.emails.send({
         from: fromEmail,
-        to: notifEmail,
-        subject: `Acompte reçu — contrat envoyé à ${reservation.clientFirstName} ${reservation.clientLastName}`,
+        to: reservation.clientEmail,
+        subject: `Contrat signé — ${reservation.gite.name}`,
         html: buildEmailHtml({
           giteName: reservation.gite.name,
           giteAddress,
           giteLogoUrl: reservation.gite.logoUrl,
-          docLabel: 'Acompte reçu',
-          preheader: `Contrat envoyé à ${reservation.clientFirstName} ${reservation.clientLastName} suite à la réception de l'acompte.`,
-          body: managerBody,
+          docLabel: 'Contrat signé',
+          preheader: "Votre contrat de location signé est disponible en pièce jointe.",
+          greeting: reservation.clientFirstName,
+          body: clientBody,
         }),
         attachments: [{ filename, content: pdfBuffer.toString("base64") }],
       });
+
+      const notifEmail = reservation.gite.notificationEmail || reservation.gite.user.email;
+      if (notifEmail) {
+        const managerBody = `
+          <p style="margin:0 0 20px;">L'acompte de <strong style="color:#2C2C2A;">${reservation.clientFirstName} ${reservation.clientLastName}</strong> a été marqué comme reçu.</p>
+          <p style="margin:0 0 20px;">Le contrat signé a été automatiquement envoyé au locataire. Une copie est jointe ci-dessous.</p>
+          ${divider()}
+          ${muted(`Séjour du ${dateEntree} au ${dateSortie} — ${reservation.gite.name}`)}
+        `;
+        await resend.emails.send({
+          from: fromEmail,
+          to: notifEmail,
+          subject: `Acompte reçu — contrat envoyé à ${reservation.clientFirstName} ${reservation.clientLastName}`,
+          html: buildEmailHtml({
+            giteName: reservation.gite.name,
+            giteAddress,
+            giteLogoUrl: reservation.gite.logoUrl,
+            docLabel: 'Acompte reçu',
+            preheader: `Contrat envoyé à ${reservation.clientFirstName} ${reservation.clientLastName} suite à la réception de l'acompte.`,
+            body: managerBody,
+          }),
+          attachments: [{ filename, content: pdfBuffer.toString("base64") }],
+        });
+      }
+    } catch (emailErr) {
+      console.error("[mark-deposit] Erreur envoi email (acompte déjà marqué en DB):", emailErr);
     }
 
     return NextResponse.json({ success: true });
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     console.error("[mark-deposit] Erreur:", message, err);
-    return NextResponse.json({ error: "Erreur interne", detail: message }, { status: 500 });
+    return NextResponse.json({ error: "Erreur interne" }, { status: 500 });
   }
 }

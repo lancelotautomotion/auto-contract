@@ -48,7 +48,7 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ tok
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
     console.error('[sign/preview]', msg);
-    return NextResponse.json({ error: 'Erreur interne', detail: msg }, { status: 500 });
+    return NextResponse.json({ error: 'Erreur interne' }, { status: 500 });
   }
 }
 

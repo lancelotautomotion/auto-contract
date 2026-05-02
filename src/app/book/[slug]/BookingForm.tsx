@@ -113,6 +113,13 @@ export default function BookingForm({ giteSlug, giteName, giteCity, giteLogoUrl,
             </div>
           </div>
         </div>
+        <button
+          type="button"
+          onClick={() => setStep('form')}
+          className="book-reset-btn"
+        >
+          Faire une autre demande
+        </button>
       </div>
     );
   }

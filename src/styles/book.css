@@ -118,6 +118,8 @@
 .bss-body{display:flex;flex-direction:column;gap:2px}
 .bss-body strong{font-size:14px;font-weight:700;color:var(--ink)}
 .bss-body span{font-size:13px;color:var(--ink-soft)}
+.book-reset-btn{margin-top:24px;background:none;border:1.5px solid var(--line);border-radius:10px;padding:10px 22px;font-size:13px;font-weight:600;color:var(--ink-soft);cursor:pointer;transition:border-color .15s,color .15s}
+.book-reset-btn:hover{border-color:var(--ink-soft);color:var(--ink)}
 
 /* ─── FOOTER ─── */
 .pub-footer{text-align:center;padding:16px 28px;font-size:11px;color:var(--ink-lighter)}
