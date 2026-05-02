@@ -19,6 +19,20 @@ export async function POST(req: NextRequest) {
     });
   }
 
+  const checkIn = new Date(body.checkIn);
+  const checkOut = new Date(body.checkOut);
+  if (isNaN(checkIn.getTime()) || isNaN(checkOut.getTime()))
+    return NextResponse.json({ error: "Dates invalides" }, { status: 400 });
+  if (checkOut <= checkIn)
+    return NextResponse.json({ error: "La date de départ doit être après l'arrivée" }, { status: 400 });
+
+  const rent = parseFloat(body.rent);
+  const deposit = parseFloat(body.deposit);
+  const cleaningFee = parseFloat(body.cleaningFee ?? 90);
+  const touristTax = parseFloat(body.touristTax ?? 1.32);
+  if (isNaN(rent) || rent < 0) return NextResponse.json({ error: "Loyer invalide" }, { status: 400 });
+  if (isNaN(deposit) || deposit < 0) return NextResponse.json({ error: "Acompte invalide" }, { status: 400 });
+
   const selectedIds: string[] = Array.isArray(body.selectedOptionIds) ? body.selectedOptionIds : [];
   const selectedOptions = gite.options.filter((o) => selectedIds.includes(o.id));
 
@@ -32,12 +46,12 @@ export async function POST(req: NextRequest) {
       clientAddress: body.clientAddress ?? "",
       clientCity: body.clientCity ?? "",
       clientZipCode: body.clientZipCode ?? "",
-      checkIn: new Date(body.checkIn),
-      checkOut: new Date(body.checkOut),
-      rent: parseFloat(body.rent),
-      deposit: parseFloat(body.deposit),
-      cleaningFee: parseFloat(body.cleaningFee ?? 90),
-      touristTax: parseFloat(body.touristTax ?? 1.32),
+      checkIn,
+      checkOut,
+      rent,
+      deposit,
+      cleaningFee: isNaN(cleaningFee) ? 90 : cleaningFee,
+      touristTax: isNaN(touristTax) ? 1.32 : touristTax,
       notes: body.notes ?? "",
       reservationOptions: {
         create: selectedOptions.map((o) => ({

@@ -19,6 +19,20 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ slu
     return NextResponse.json({ error: "Champs obligatoires manquants" }, { status: 400 });
   }
 
+  const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRe.test(body.email))
+    return NextResponse.json({ error: "Adresse email invalide" }, { status: 400 });
+
+  const checkIn = new Date(body.checkIn);
+  const checkOut = new Date(body.checkOut);
+  if (isNaN(checkIn.getTime()) || isNaN(checkOut.getTime()))
+    return NextResponse.json({ error: "Dates invalides" }, { status: 400 });
+  if (checkOut <= checkIn)
+    return NextResponse.json({ error: "La date de départ doit être après l'arrivée" }, { status: 400 });
+
+  if ((body.address?.length ?? 0) > 500 || (body.city?.length ?? 0) > 200 || (body.notes?.length ?? 0) > 2000)
+    return NextResponse.json({ error: "Données trop longues" }, { status: 400 });
+
   const selectedIds: string[] = Array.isArray(body.selectedOptionIds) ? body.selectedOptionIds : [];
   const selectedOptions = gite.options.filter(o => selectedIds.includes(o.id));
 
@@ -36,8 +50,8 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ slu
       clientAddress: body.address ?? "",
       clientCity: body.city ?? "",
       clientZipCode: body.zipCode ?? "",
-      checkIn: new Date(body.checkIn),
-      checkOut: new Date(body.checkOut),
+      checkIn,
+      checkOut,
       guestCount,
       notes: body.notes ?? "",
       rent: null,

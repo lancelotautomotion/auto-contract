@@ -19,7 +19,11 @@ export async function POST(req: NextRequest) {
   if (file.size > maxMb * 1024 * 1024)
     return NextResponse.json({ error: `Fichier trop volumineux (max ${maxMb} Mo)` }, { status: 413 });
 
-  const ext = file.name.split('.').pop() ?? 'bin';
+  const ALLOWED_EXTS = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'pdf', 'doc', 'docx'];
+  const ext = (file.name.split('.').pop() ?? '').toLowerCase();
+  if (!ALLOWED_EXTS.includes(ext))
+    return NextResponse.json({ error: "Type de fichier non autorisé (jpg, png, pdf, doc autorisés)" }, { status: 400 });
+
   const safeName = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
   const bucket = "uploads";
 

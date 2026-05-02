@@ -200,7 +200,7 @@ export default function BookingForm({ giteSlug, giteName, giteCity, giteLogoUrl,
                   <label className="book-label">Départ <span className="req">*</span></label>
                   <input
                     className="book-date" type="date" required
-                    min={form.checkIn || today} value={form.checkOut}
+                    min={form.checkIn ? new Date(new Date(form.checkIn).getTime() + 86400000).toISOString().slice(0, 10) : today} value={form.checkOut}
                     onChange={e => set('checkOut', e.target.value)}
                   />
                 </div>

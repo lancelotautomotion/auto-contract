@@ -28,7 +28,8 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     });
 
     if (!reservation) return NextResponse.json({ error: "Réservation introuvable" }, { status: 404 });
-    if (reservation.status === "REFUSED") return NextResponse.json({ error: "Déjà refusée" }, { status: 400 });
+    if (!['PENDING_REVIEW', 'NEW'].includes(reservation.status))
+      return NextResponse.json({ error: "Cette réservation ne peut pas être refusée dans son état actuel" }, { status: 400 });
 
     await prisma.reservation.update({
       where: { id },

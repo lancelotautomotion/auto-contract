@@ -44,11 +44,14 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
 
   const pdfBuffer = await generateContractPdf(data);
 
-  await prisma.contract.upsert({
-    where: { reservationId: id },
-    create: { reservationId: id, status: "GENERATED", driveFileUrl: null },
-    update: { status: "GENERATED" },
-  });
+  const existingContract = await prisma.contract.findUnique({ where: { reservationId: id } });
+  if (existingContract?.status !== 'SIGNED') {
+    await prisma.contract.upsert({
+      where: { reservationId: id },
+      create: { reservationId: id, status: "GENERATED", driveFileUrl: null },
+      update: { status: "GENERATED" },
+    });
+  }
 
   return new NextResponse(new Uint8Array(pdfBuffer), {
     headers: {
