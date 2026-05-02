@@ -64,6 +64,17 @@ body:has(nav.nav){padding-top:var(--nav-h)}
 .hero-sub{font-size:17px;line-height:1.7;color:var(--ink-soft);margin-bottom:32px;max-width:460px}
 .hero-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
 .hero-note{margin-top:14px;font-size:13px;color:var(--ink-lighter);display:flex;align-items:center;gap:6px}
+.hero-tag{display:inline-flex;align-items:center;gap:8px;background:var(--green-light);color:var(--green-dark);font-size:12px;font-weight:600;padding:7px 16px;border-radius:100px;margin-bottom:24px;letter-spacing:.02em}
+.hero-trust{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:16px}
+.hero-trust-item{display:inline-flex;align-items:center;gap:5px;font-size:13px;color:var(--ink-lighter)}
+.hero-trust-sep{color:var(--ink-lighter);opacity:.45;font-size:13px}
+.hero-social-proof{display:flex;align-items:center;gap:14px;margin-top:22px;padding-top:18px;border-top:1px solid var(--line-light)}
+.hsp-avatars{display:flex}
+.hsp-av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;border:2px solid #fff;margin-left:-8px;flex-shrink:0}
+.hsp-avatars .hsp-av:first-child{margin-left:0}
+.hsp-text{display:flex;flex-direction:column;gap:3px}
+.hsp-stars{font-size:13px;color:#F59E0B;line-height:1;letter-spacing:.05em}
+.hsp-quote{font-size:13px;color:var(--ink-soft);font-style:italic;line-height:1.4}
 
 /* MOCKUP */
 .hero-visual{position:relative}
@@ -207,7 +218,8 @@ h2.st .g{color:var(--green)}h2.st .v{color:var(--violet)}
 .pc{background:var(--white);border:1.5px solid var(--line);border-radius:16px;padding:32px;transition:all .3s ease;position:relative;display:flex;flex-direction:column}
 .pc:hover{transform:translateY(-4px);box-shadow:0 20px 60px -12px rgba(44,44,42,.10)}
 .pc.feat{border-color:var(--violet);background:var(--violet-light)}
-.pc.feat::before{content:'Populaire';position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--violet);color:#fff;font-size:11px;font-weight:700;padding:4px 14px;border-radius:100px}
+.pc.feat::before{content:none}
+.pc-badge{position:absolute;top:-14px;left:50%;transform:translateX(-50%);background:var(--violet);color:#fff;font-size:11px;font-weight:700;padding:5px 16px;border-radius:100px;white-space:nowrap;letter-spacing:.02em}
 .pc-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:16px}
 .pc-icon.g{background:var(--green-light)}.pc-icon.v{background:var(--violet-light)}
 .pc-plan{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--ink-lighter);margin-bottom:20px}
@@ -220,6 +232,14 @@ h2.st .g{color:var(--green)}h2.st .v{color:var(--violet)}
 .pc-feat{list-style:none;display:flex;flex-direction:column;gap:10px;margin-bottom:24px;flex:1}
 .pc-feat li{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--ink-soft)}
 .pc-feat li svg{flex-shrink:0}
+
+/* PRICING FAQ */
+.pricing-faq{margin-top:64px;padding-top:56px;border-top:1px solid var(--line-light)}
+.pfaq-title{font-weight:700;font-size:20px;text-align:center;margin-bottom:32px;color:var(--ink)}
+.pfaq-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.pfaq-item{background:var(--white);border:1px solid var(--line);border-radius:12px;padding:24px}
+.pfaq-q{display:flex;align-items:flex-start;gap:10px;font-size:14px;font-weight:600;color:var(--ink);margin-bottom:10px;line-height:1.45}
+.pfaq-a{font-size:14px;color:var(--ink-soft);line-height:1.65}
 
 /* TESTI */
 .testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:48px}
@@ -263,6 +283,7 @@ footer{background:var(--ink);color:rgba(255,255,255,.5);padding:56px 28px 28px}
   .hero{padding:48px 20px 0}
   .hero-top,.feat-split,.feat-split.rev{grid-template-columns:1fr;gap:32px}
   .feat-split.rev .feat-txt,.feat-split.rev .feat-vis{order:unset}
+  .pfaq-grid{grid-template-columns:1fr}
 
   /* Feature illustrations — compact on mobile */
   .contract-card,.cal-card{max-width:360px;margin:0 auto}
@@ -340,6 +361,8 @@ footer{background:var(--ink);color:rgba(255,255,255,.5);padding:56px 28px 28px}
   .hero-actions{flex-direction:column;align-items:stretch;gap:10px}
   .hero-actions .btn{justify-content:center;width:100%}
   .hero-note{justify-content:center;text-align:center}
+  .hero-trust{justify-content:center}
+  .hero-social-proof{justify-content:center}
 
   /* Hide feature illustrations on smartphone for shorter scroll */
   .feat-vis{display:none}

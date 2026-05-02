@@ -7,20 +7,29 @@ export default function Hero() {
 
         {/* Left — copy */}
         <div>
+
+          {/* Qualification tag — who this is for */}
+          <div className="hero-tag">
+            <svg width="13" height="13" fill="none" viewBox="0 0 13 13">
+              <path d="M6.5 1.5L2 4v3.5c0 3 2 5 4.5 6 2.5-1 4.5-3 4.5-6V4L6.5 1.5z" stroke="#4A7353" strokeWidth="1.1" strokeLinecap="round"/>
+              <path d="M4.5 6.5l1.5 1.5L9.5 5" stroke="#4A7353" strokeWidth="1.1" strokeLinecap="round"/>
+            </svg>
+            Pour les gérants de gîtes · Location saisonnière
+          </div>
+
           <h1>
-            Vos réservations,<br />
-            <span className="green">structurées.</span><br />
-            Vos contrats,<br />
-            <span className="violet">signés.</span>
+            Vos contrats de location,<br />
+            <span className="green">générés et signés</span><br />
+            <span className="violet">en 3 minutes.</span>
           </h1>
 
           <p className="hero-sub">
-            Kordia centralise vos réservations, génère vos contrats et les fait signer en ligne. En 3 minutes, pas 30.
+            Fini le copier-coller sur Word. Kordia génère le contrat, l&apos;envoie par email et le fait signer en ligne — le locataire signe en 30 secondes depuis son téléphone, sans créer de compte.
           </p>
 
           <div className="hero-actions">
             <Link className="btn btn-violet btn-xl" href="/sign-up">
-              Démarrer l&apos;essai gratuit
+              Essayer gratuitement 1 mois
               <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
                 <path d="M3 8h10m-4-4l4 4-4 4" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
@@ -28,13 +37,44 @@ export default function Hero() {
             <a className="btn btn-green btn-lg" href="#fonctionnalites">Voir comment ça marche</a>
           </div>
 
-          <p className="hero-note">
-            <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
-              <path d="M7 1v6l3 3" stroke="#A3A3A0" strokeWidth="1.2" strokeLinecap="round" />
-              <circle cx="7" cy="7" r="5.5" stroke="#A3A3A0" strokeWidth="1" />
-            </svg>
-            Essai gratuit 1 mois · Sans carte bancaire
-          </p>
+          {/* Trust signals */}
+          <div className="hero-trust">
+            <span className="hero-trust-item">
+              <svg width="13" height="13" fill="none" viewBox="0 0 13 13">
+                <path d="M6.5 1v8M4 6.5l2.5 2.5 2.5-2.5" stroke="#A3A3A0" strokeWidth="1.1" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+              Sans carte bancaire
+            </span>
+            <span className="hero-trust-sep">·</span>
+            <span className="hero-trust-item">
+              <svg width="13" height="13" fill="none" viewBox="0 0 13 13">
+                <circle cx="6.5" cy="6.5" r="5" stroke="#A3A3A0" strokeWidth="1.1"/>
+                <path d="M6.5 4v2.5l1.5 1" stroke="#A3A3A0" strokeWidth="1.1" strokeLinecap="round"/>
+              </svg>
+              Configuré en 5 minutes
+            </span>
+            <span className="hero-trust-sep">·</span>
+            <span className="hero-trust-item">
+              <svg width="13" height="13" fill="none" viewBox="0 0 13 13">
+                <path d="M3 6.5l2.5 2.5L10 4.5" stroke="#A3A3A0" strokeWidth="1.1" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+              Résiliable à tout moment
+            </span>
+          </div>
+
+          {/* Social proof strip */}
+          <div className="hero-social-proof">
+            <div className="hsp-avatars">
+              <div className="hsp-av" style={{ background: '#D1EDD4', color: '#2D6A31' }}>MV</div>
+              <div className="hsp-av" style={{ background: '#DAD7F0', color: '#5B52B5' }}>FB</div>
+              <div className="hsp-av" style={{ background: '#D1EDD4', color: '#2D6A31' }}>SL</div>
+            </div>
+            <div className="hsp-text">
+              <span className="hsp-stars">★★★★★</span>
+              <span className="hsp-quote">« Mes locataires signent le jour même. »</span>
+            </div>
+          </div>
+
         </div>
 
         {/* Right — mockup */}
