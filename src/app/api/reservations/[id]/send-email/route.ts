@@ -22,11 +22,12 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
 
   const existingContract = await prisma.contract.findUnique({ where: { reservationId: id } });
   const signatureToken = existingContract?.signatureToken ?? randomBytes(32).toString("hex");
+  const signatureTokenExpiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
 
   await prisma.contract.upsert({
     where: { reservationId: id },
-    create: { reservationId: id, status: "GENERATED", signatureToken, emailStatus: "SENT", emailSentAt: new Date() },
-    update: { signatureToken, emailStatus: "SENT", emailSentAt: new Date() },
+    create: { reservationId: id, status: "GENERATED", signatureToken, signatureTokenExpiresAt, emailStatus: "SENT", emailSentAt: new Date() },
+    update: { signatureToken, signatureTokenExpiresAt, emailStatus: "SENT", emailSentAt: new Date() },
   });
 
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";

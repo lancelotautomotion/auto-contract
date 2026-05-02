@@ -585,7 +585,7 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
                 <input type="text" className="option-name" placeholder="Nom de l'option..." value={opt.label} onChange={e => updateOption(i, 'label', e.target.value)} />
                 <input type="number" className="option-price" min="0" step="0.01" placeholder="Gratuit" value={opt.price === 0 ? '' : String(opt.price)} onChange={e => updateOption(i, 'price', e.target.value)} />
                 <span className="option-unit">€</span>
-                <button type="button" className="option-del" onClick={() => removeOption(i)} title="Supprimer">
+                <button type="button" className="option-del" onClick={() => removeOption(i)} title="Supprimer" aria-label="Supprimer">
                   <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
                     <path d="M2.5 3.5h9M5 3.5V2.5a1 1 0 011-1h2a1 1 0 011 1v1M3.5 3.5l.5 8.5a1 1 0 001 1h4a1 1 0 001-1l.5-8.5M5.5 6v4M8.5 6v4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
                   </svg>
@@ -677,11 +677,11 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
                   Règlement Intérieur
                 </button>
                 {activeEditorZone === 'general' ? (
-                  <button type="button" className="editor-zone-reset" onClick={handleResetGeneral} title="Réinitialiser les Conditions Générales">
+                  <button type="button" className="editor-zone-reset" onClick={handleResetGeneral} title="Réinitialiser les Conditions Générales" aria-label="Réinitialiser les Conditions Générales">
                     Réinitialiser
                   </button>
                 ) : (
-                  <button type="button" className="editor-zone-reset" onClick={handleResetHouseRules} title="Effacer le Règlement Intérieur">
+                  <button type="button" className="editor-zone-reset" onClick={handleResetHouseRules} title="Effacer le Règlement Intérieur" aria-label="Effacer le Règlement Intérieur">
                     Effacer
                   </button>
                 )}

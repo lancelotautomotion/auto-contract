@@ -15,6 +15,9 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ tok
     if (!contract || !contract.reservation) {
       return NextResponse.json({ error: 'Lien invalide' }, { status: 404 });
     }
+    if (contract.signatureTokenExpiresAt && contract.signatureTokenExpiresAt < new Date()) {
+      return NextResponse.json({ error: 'Lien de signature expiré' }, { status: 410 });
+    }
     const { reservation } = contract;
     const fmt = (d: Date) => new Date(d).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
     const data: ContractData = {
@@ -77,6 +80,8 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ tok
 
     if (!contract || !contract.reservation) return NextResponse.json({ error: 'Lien invalide' }, { status: 404 });
     if (contract.status === 'SIGNED') return NextResponse.json({ error: 'Déjà signé' }, { status: 400 });
+    if (contract.signatureTokenExpiresAt && contract.signatureTokenExpiresAt < new Date())
+      return NextResponse.json({ error: 'Lien de signature expiré' }, { status: 410 });
 
     const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? req.headers.get('x-real-ip') ?? 'inconnue';
     const signedAt = new Date();

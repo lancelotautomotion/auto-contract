@@ -156,8 +156,9 @@ model Contract {
   driveFileId  String?
   driveFileUrl String?
 
-  signatureToken String?   @unique
-  signedAt       DateTime?
+  signatureToken          String?   @unique
+  signatureTokenExpiresAt DateTime?
+  signedAt                DateTime?
   signedByName   String?
   signedByIp     String?
 
