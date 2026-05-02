@@ -128,10 +128,10 @@ export default async function ReservationDetailPage({ params }: { params: Promis
               <DeleteReservationButton reservationId={id} clientName={clientName} />
             </div>
           </div>
-        ) : (
+        ) : (contractStatus !== 'SIGNED' || reservation.status === 'PENDING_REVIEW') ? (
           /* Bandeau iCal + boutons Modifier/Refuser inline */
           <div className="ical-status-row">
-            {icalConflicts.length > 0 ? (
+            {reservation.status === 'PENDING_REVIEW' && icalConflicts.length > 0 ? (
               <div style={{
                 flex: 1, display: 'flex', alignItems: 'center', gap: '12px',
                 background: '#FEF3CD', border: '1px solid #F5C842',
@@ -160,7 +160,7 @@ export default async function ReservationDetailPage({ params }: { params: Promis
                   </div>
                 </div>
               </div>
-            ) : (
+            ) : reservation.status === 'PENDING_REVIEW' ? (
               <div style={{
                 flex: 1, display: 'flex', alignItems: 'center', gap: '12px',
                 background: '#F0FDF4', border: '1px solid #86EFAC',
@@ -176,6 +176,8 @@ export default async function ReservationDetailPage({ params }: { params: Promis
                     : 'Dates disponibles'}
                 </div>
               </div>
+            ) : (
+              <div style={{ flex: 1 }} />
             )}
             <div className="ical-status-actions">
               <Link href={`/dashboard/reservations/${id}/edit`} className="btn btn-outline">
@@ -184,7 +186,7 @@ export default async function ReservationDetailPage({ params }: { params: Promis
               <RefuseReservationButton reservationId={id} clientName={clientName} />
             </div>
           </div>
-        )}
+        ) : null}
 
         {/* Detail grid */}
         <div className="detail-grid">
