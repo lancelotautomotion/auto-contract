@@ -12,14 +12,13 @@ export default async function OnboardingPage() {
   const dbUser = await prisma.user.findUnique({ where: { clerkId: userId } }).catch(() => null);
   if (dbUser) {
     const gite = await prisma.gite.findFirst({ where: { userId: dbUser.id } }).catch(() => null);
-    if (gite?.name && gite.name !== "Mon Gîte") redirect("/dashboard");
+    if (gite) redirect("/dashboard");
   }
 
   return (
     <>
       <header className="ob-header">
-        <span className="ob-header-brand">Kordia</span>
-        <span className="ob-header-label">Configuration initiale</span>
+        <img src="/logotype_KORDIA.svg" alt="Kordia" className="ob-header-logo" />
       </header>
 
       <main className="ob-main">
