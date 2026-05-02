@@ -4,6 +4,12 @@ import { useState, useMemo } from "react";
 import Image from "next/image";
 
 interface GiteOption { id: string; label: string; price: number; }
+interface IcalBlock { start: string; end: string; platform: string; label: string; }
+
+const PLATFORM_LABELS: Record<string, string> = {
+  airbnb: "Airbnb", abritel: "Abritel / VRBO", booking: "Booking.com",
+  gites_de_france: "Gîtes de France", autre: "Autre",
+};
 
 interface Props {
   giteSlug: string;
@@ -11,6 +17,7 @@ interface Props {
   giteCity?: string | null;
   giteLogoUrl?: string | null;
   options: GiteOption[];
+  icalBlocked?: IcalBlock[];
 }
 
 function countNights(a: string, b: string) {
@@ -24,7 +31,7 @@ function fmtDate(d: string) {
   return new Date(d + 'T12:00:00').toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
 }
 
-export default function BookingForm({ giteSlug, giteName, giteCity, giteLogoUrl, options }: Props) {
+export default function BookingForm({ giteSlug, giteName, giteCity, giteLogoUrl, options, icalBlocked = [] }: Props) {
   const [step, setStep] = useState<'form' | 'success'>('form');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -42,6 +49,10 @@ export default function BookingForm({ giteSlug, giteName, giteCity, giteLogoUrl,
   const today = new Date().toISOString().split('T')[0];
   const nights = useMemo(() => countNights(form.checkIn, form.checkOut), [form.checkIn, form.checkOut]);
   const selectedOpts = options.filter(o => selectedOptions.has(o.id));
+  const icalConflicts = useMemo(() => {
+    if (!form.checkIn || !form.checkOut) return [];
+    return icalBlocked.filter(b => b.start < form.checkOut && b.end > form.checkIn);
+  }, [form.checkIn, form.checkOut, icalBlocked]);
 
   const toggleOption = (id: string) => setSelectedOptions(prev => {
     const next = new Set(prev);
@@ -211,6 +222,21 @@ export default function BookingForm({ giteSlug, giteName, giteCity, giteLogoUrl,
                     <path d="M9.5 7A5 5 0 0 1 5 1.5 4 4 0 1 0 9.5 7z" stroke="#7F77DD" strokeWidth="1.1"/>
                   </svg>
                   {nights} nuit{nights > 1 ? 's' : ''}
+                </div>
+              )}
+              {icalConflicts.length > 0 && (
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', background: '#FEF3CD', border: '1px solid #F5C842', borderRadius: '10px', padding: '12px 14px', marginTop: '10px' }}>
+                  <svg width="16" height="16" fill="none" viewBox="0 0 16 16" style={{ flexShrink: 0, color: '#B7791F', marginTop: '1px' }}>
+                    <path d="M8 1.5L1 13.5h14L8 1.5z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round"/>
+                    <path d="M8 6.5v3.5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
+                    <circle cx="8" cy="11.5" r="0.7" fill="currentColor"/>
+                  </svg>
+                  <div>
+                    <div style={{ fontSize: '12px', fontWeight: 700, color: '#7B4F0A', marginBottom: '2px' }}>Ces dates sont peut-être déjà prises</div>
+                    <div style={{ fontSize: '11.5px', color: '#92610E', lineHeight: 1.5 }}>
+                      Le gérant a des réservations sur cette période via une autre plateforme. Vous pouvez tout de même envoyer votre demande — il vous confirmera la disponibilité.
+                    </div>
+                  </div>
                 </div>
               )}
               <div className="book-group" style={{ marginTop: '14px' }}>

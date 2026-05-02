@@ -176,11 +176,18 @@ function readEditorTemplate(el: HTMLDivElement): string {
 // Nettoie le texte brut collé depuis Word ou d'autres sources
 function sanitizePastedText(text: string): string {
   return text
-    .replace(/[‘’]/g, "'")   // guillemets simples typographiques → apostrophe droite
-    .replace(/[“”]/g, '"')   // guillemets doubles typographiques → guillemet droit
-    .replace(/ /g, ' ')           // espace insécable → espace normale
-    .replace(/…/g, '...')         // points de suspension → trois points
-    .replace(/\n{3,}/g, '\n\n');       // max 2 lignes vides consécutives
+    .replace(/[‘’‚‛]/g, "'")   // guillemets simples typographiques → apostrophe droite
+    .replace(/[“”„‟]/g, '"')    // guillemets doubles typographiques → guillemet droit
+    .replace(/[«»]/g, '"')                // guillemets français «» → guillemet droit
+    .replace(/[   ]/g, ' ')          // espaces insécables/fines → espace normale
+    .replace(/­/g, '')                         // tiret conditionnel (soft hyphen) → supprimé
+    .replace(/‑/g, '-')                        // tiret insécable → tiret normal
+    .replace(/–/g, '-')                        // tiret moyen (en-dash) → tiret normal
+    .replace(/—/g, ' - ')                      // tiret long (em-dash) → espace-tiret-espace
+    .replace(/…/g, '...')                      // points de suspension → trois points
+    .replace(/[​‌‍﻿]/g, '')     // caractères de largeur nulle
+    .replace(/\r\n/g, '\n')                       // fins de ligne Windows \u2192 Unix
+    .replace(/\n{3,}/g, '\n\n');                 // max 2 lignes vides consécutives
 }
 
 export default function EtablissementForm({ gite }: { gite: GiteData }) {

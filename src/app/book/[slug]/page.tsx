@@ -7,10 +7,19 @@ export default async function BookingPage({ params }: { params: Promise<{ slug: 
 
   const gite = await prisma.gite.findUnique({
     where: { slug },
-    include: { options: { orderBy: { position: 'asc' } } },
+    include: {
+      options: { orderBy: { position: 'asc' } },
+      icalFeeds: true,
+    },
   });
 
   if (!gite) notFound();
+
+  const icalBlocked = gite.icalFeeds.flatMap(feed =>
+    ((feed.blockedDates as Array<{ start: string; end: string }>) ?? []).map(e => ({
+      start: e.start, end: e.end, platform: feed.platform, label: feed.label,
+    }))
+  );
 
   return (
     <>
@@ -28,6 +37,7 @@ export default async function BookingPage({ params }: { params: Promise<{ slug: 
           giteCity={gite.city}
           giteLogoUrl={gite.logoUrl}
           options={gite.options.map(o => ({ id: o.id, label: o.label, price: o.price }))}
+          icalBlocked={icalBlocked}
         />
       </div>
 

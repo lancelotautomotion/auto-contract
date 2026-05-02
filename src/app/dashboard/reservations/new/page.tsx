@@ -13,9 +13,18 @@ export default async function NewReservationPage() {
 
   const gite = await prisma.gite.findFirst({
     where: { userId: dbUser.id },
-    include: { options: { orderBy: { position: 'asc' } } },
+    include: {
+      options: { orderBy: { position: 'asc' } },
+      icalFeeds: true,
+    },
   });
   if (!gite) redirect("/onboarding");
+
+  const icalBlocked = gite.icalFeeds.flatMap(feed =>
+    ((feed.blockedDates as Array<{ start: string; end: string }>) ?? []).map(e => ({
+      start: e.start, end: e.end, platform: feed.platform, label: feed.label,
+    }))
+  );
 
   return (
     <>
@@ -53,6 +62,7 @@ export default async function NewReservationPage() {
           defaultCleaningFee={gite.cleaningFee.toString()}
           defaultTouristTax={gite.touristTax.toString()}
           availableOptions={gite.options.map(o => ({ id: o.id, label: o.label, price: o.price }))}
+          icalBlocked={icalBlocked}
         />
       </div>
     </>
