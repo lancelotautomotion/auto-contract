@@ -62,19 +62,6 @@ export default function Hero() {
             </span>
           </div>
 
-          {/* Social proof strip */}
-          <div className="hero-social-proof">
-            <div className="hsp-avatars">
-              <div className="hsp-av" style={{ background: '#D1EDD4', color: '#2D6A31' }}>MV</div>
-              <div className="hsp-av" style={{ background: '#DAD7F0', color: '#5B52B5' }}>FB</div>
-              <div className="hsp-av" style={{ background: '#D1EDD4', color: '#2D6A31' }}>SL</div>
-            </div>
-            <div className="hsp-text">
-              <span className="hsp-stars">★★★★★</span>
-              <span className="hsp-quote">« Mes locataires signent le jour même. »</span>
-            </div>
-          </div>
-
         </div>
 
         {/* Right — mockup */}
