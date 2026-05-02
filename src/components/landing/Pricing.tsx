@@ -90,9 +90,6 @@ export default function Pricing() {
             <Link className="btn btn-violet" style={{ width: '100%' }} href="/sign-up">
               Démarrer l&apos;essai gratuit
             </Link>
-            <p style={{ fontSize: '11px', color: 'var(--ink-lighter, #A3A3A0)', textAlign: 'center', margin: '10px 0 0' }}>
-              1 réservation directe en plus = 1 an d&apos;abonnement remboursé.
-            </p>
           </div>
 
           {/* Multi-gîtes */}
