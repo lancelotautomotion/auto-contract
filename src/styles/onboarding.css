@@ -58,7 +58,7 @@
 .ob-price-unit{font-size:13px;color:var(--ink-lighter)}
 
 /* ─── CGU ─── */
-.ob-cgu{display:flex;align-items:flex-start;gap:10px;cursor:pointer;margin-bottom:8px}
+.ob-cgu{display:flex;align-items:flex-start;gap:10px;cursor:pointer;margin-top:20px;margin-bottom:8px}
 .ob-cgu input{width:16px;height:16px;accent-color:var(--violet);flex-shrink:0;margin-top:2px;cursor:pointer}
 .ob-cgu-text{font-size:13px;color:var(--ink-soft);line-height:1.5}
 .ob-cgu-text a{color:var(--violet);font-weight:600;text-decoration:none}

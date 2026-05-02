@@ -22,7 +22,7 @@ export default function StepSuccess({
       <h2 className="ob-success-title">Votre espace est prêt&nbsp;!</h2>
 
       <p className="ob-success-text">
-        <strong>{giteName}</strong> est configuré. Pour finaliser votre profil
+        <strong style={{ color: '#689D71' }}>{giteName}</strong>{" "}est configuré. Pour finaliser votre profil
         et envoyer vos premiers contrats, n&apos;oubliez pas d&apos;ajouter
         votre logo et vos documents dans les paramètres.
       </p>
