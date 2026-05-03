@@ -166,6 +166,65 @@ body { font-family: var(--ff); color: var(--ink); background: var(--bg); -webkit
 .ac-email-quota-bar { height: 100%; background: var(--violet); border-radius: 3px; transition: width .4s ease; }
 .ac-email-quota span { font-size: 12px; color: var(--ink-soft); }
 
+/* ── STATS SECONDAIRES ROW ─────────────────────────────────────────────── */
+.admin-stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 32px;
+}
+.admin-stat-card {
+  background: var(--white); border: 1px solid var(--line);
+  border-radius: 14px; padding: 22px 20px;
+  display: flex; flex-direction: column; gap: 4px;
+  transition: box-shadow .2s ease;
+}
+.admin-stat-card:hover { box-shadow: 0 6px 24px -6px rgba(44,44,42,.10); }
+.asc-icon {
+  width: 36px; height: 36px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 10px; flex-shrink: 0;
+}
+.asc-icon-violet { background: var(--violet-light); color: var(--violet-dark); }
+.asc-icon-green  { background: var(--green-light);  color: var(--green-dark); }
+.asc-icon-amber  { background: #FEF3CD; color: #92610E; }
+.asc-icon-red    { background: #FEE2E2; color: #B91C1C; }
+.asc-value {
+  font-size: 32px; font-weight: 800; letter-spacing: -.03em; line-height: 1;
+  color: var(--ink);
+}
+.asc-value-red { color: #B91C1C; }
+.asc-unit { font-size: 16px; font-weight: 500; color: var(--ink-soft); }
+.asc-label { font-size: 13px; font-weight: 600; color: var(--ink); margin-top: 4px; }
+.asc-sub   { font-size: 11px; color: var(--ink-light); line-height: 1.4; }
+
+/* ── FUNNEL ─────────────────────────────────────────────────────────────── */
+.admin-card-funnel {
+  display: flex; flex-direction: column; gap: 16px;
+}
+.funnel-step {}
+.funnel-step-header {
+  display: flex; align-items: center; gap: 8px; margin-bottom: 6px;
+}
+.funnel-step-label { font-size: 13px; color: var(--ink-soft); flex: 1; }
+.funnel-step-count { font-size: 14px; font-weight: 700; color: var(--ink); }
+.funnel-step-pct {
+  font-size: 12px; font-weight: 600; min-width: 38px; text-align: right;
+  color: var(--ink-light);
+}
+.funnel-bar-wrap {
+  width: 100%; height: 8px; background: var(--line-light);
+  border-radius: 4px; overflow: hidden;
+}
+.funnel-bar { height: 100%; border-radius: 4px; transition: width .5s ease; }
+
+/* ── DEUX COLONNES ──────────────────────────────────────────────────────── */
+.admin-two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
 /* SECTION */
 .admin-section-header {
   display: flex; align-items: center; justify-content: space-between;
@@ -213,9 +272,14 @@ body { font-family: var(--ff); color: var(--ink); background: var(--bg); -webkit
 .at-badge-expired { background: var(--line-light); color: var(--ink-light); }
 
 /* ── RESPONSIVE ─────────────────────────────── */
+@media (max-width: 1100px) {
+  .admin-stats-row { grid-template-columns: repeat(2, 1fr); }
+}
 @media (max-width: 900px) {
   .admin-bento { grid-template-columns: 1fr; }
   .admin-card-full { grid-column: 1; }
+  .admin-two-col { grid-template-columns: 1fr; }
+  .admin-stats-row { grid-template-columns: repeat(2, 1fr); }
   .admin-page { padding: 24px 20px 48px; }
   .admin-header-inner { padding: 0 20px; }
   .ac-email-row { gap: 0; }
@@ -227,6 +291,9 @@ body { font-family: var(--ff); color: var(--ink); background: var(--bg); -webkit
   .admin-header-inner { padding: 0 14px; justify-content: center; }
   .admin-header-env { display: none; }
   .admin-header-brand { justify-content: center; }
+  .admin-stats-row { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .admin-stat-card { padding: 16px 14px; }
+  .asc-value { font-size: 26px; }
   .admin-table th:nth-child(2), .admin-table td:nth-child(2) { display: none; }
   .ac-big { font-size: 40px; }
   .ac-chips { flex-direction: column; }
