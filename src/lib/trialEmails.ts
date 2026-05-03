@@ -5,7 +5,7 @@ function appBaseUrl() {
   return (process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000").replace(/\/$/, "");
 }
 
-export type ReminderDay = 7 | 3 | 1 | 0;
+export type ReminderDay = 15 | 5 | 1 | 0;
 
 interface SendTrialReminderOptions {
   to: string;
@@ -18,12 +18,12 @@ export async function sendTrialReminder({ to, name, daysLeft }: SendTrialReminde
   const greeting = name?.split(" ")[0] ?? undefined;
 
   const configs: Record<ReminderDay, { subject: string; preheader: string; body: string }> = {
-    7: {
-      subject: "Il vous reste 7 jours d'essai — Kordia",
-      preheader: "Votre essai Kordia se termine dans 7 jours.",
+    15: {
+      subject: "Il vous reste 15 jours d'essai — Kordia",
+      preheader: "Votre essai Kordia se termine dans 15 jours.",
       body: `
         <p style="font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif;font-size:15px;line-height:1.7;color:#71716E;margin:0 0 16px;">
-          Votre essai gratuit se termine dans <strong style="color:#2C2C2A;">7 jours</strong>.
+          Votre essai gratuit se termine dans <strong style="color:#2C2C2A;">15 jours</strong>.
           Vous avez encore le temps d'explorer toutes les fonctionnalités de Kordia.
         </p>
         <p style="font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif;font-size:15px;line-height:1.7;color:#71716E;margin:0 0 24px;">
@@ -35,16 +35,16 @@ export async function sendTrialReminder({ to, name, daysLeft }: SendTrialReminde
         ${muted("Sans engagement · Résiliable à tout moment")}
       `,
     },
-    3: {
-      subject: "Plus que 3 jours d'essai — Kordia",
-      preheader: "Votre essai Kordia se termine dans 3 jours.",
+    5: {
+      subject: "Plus que 5 jours d'essai — Kordia",
+      preheader: "Votre essai Kordia se termine dans 5 jours.",
       body: `
         <p style="font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif;font-size:15px;line-height:1.7;color:#71716E;margin:0 0 16px;">
-          Votre essai gratuit se termine dans <strong style="color:#2C2C2A;">3 jours</strong>.
+          Votre essai gratuit se termine dans <strong style="color:#2C2C2A;">5 jours</strong>.
         </p>
         <p style="font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif;font-size:15px;line-height:1.7;color:#71716E;margin:0 0 24px;">
-          Pour ne pas perdre l'accès à vos réservations et contrats,
-          abonnez-vous dès maintenant. Toutes vos données sont conservées.
+          Pour ne pas perdre l'accès aux fonctionnalités, abonnez-vous dès maintenant.
+          Vos réservations et contrats restent intacts.
         </p>
         ${ctaButton("Continuer avec Kordia", upgradeUrl)}
         ${divider()}
@@ -59,8 +59,8 @@ export async function sendTrialReminder({ to, name, daysLeft }: SendTrialReminde
           Votre essai gratuit se termine <strong style="color:#2C2C2A;">demain</strong>.
         </p>
         <p style="font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif;font-size:15px;line-height:1.7;color:#71716E;margin:0 0 24px;">
-          Pour conserver l'accès à Kordia et continuer à gérer vos contrats,
-          souscrivez avant demain. Vos données restent intactes.
+          Après demain, les fonctionnalités seront désactivées — vos données restent accessibles.
+          Souscrivez avant demain pour continuer à gérer vos contrats sans interruption.
         </p>
         ${ctaButton("S'abonner maintenant", upgradeUrl)}
         ${divider()}
@@ -69,14 +69,14 @@ export async function sendTrialReminder({ to, name, daysLeft }: SendTrialReminde
     },
     0: {
       subject: "Votre essai Kordia est terminé",
-      preheader: "Votre essai gratuit a expiré. Retrouvez vos données en vous abonnant.",
+      preheader: "Votre essai a expiré. Vos données sont conservées — abonnez-vous pour retrouver les fonctionnalités.",
       body: `
         <p style="font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif;font-size:15px;line-height:1.7;color:#71716E;margin:0 0 16px;">
           Votre essai gratuit a expiré aujourd'hui.
         </p>
         <p style="font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif;font-size:15px;line-height:1.7;color:#71716E;margin:0 0 24px;">
-          Vos réservations et contrats sont conservés pendant <strong style="color:#2C2C2A;">30 jours</strong>.
-          Abonnez-vous pour retrouver immédiatement l'accès à toutes vos données.
+          Vos réservations et contrats sont <strong style="color:#2C2C2A;">conservés pendant 30 jours</strong>.
+          Pour retrouver l'accès aux fonctionnalités et reprendre vos contrats, souscrivez à tout moment.
         </p>
         ${ctaButton("Réactiver mon compte", upgradeUrl)}
         ${divider()}

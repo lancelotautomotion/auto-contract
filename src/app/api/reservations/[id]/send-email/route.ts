@@ -3,12 +3,12 @@ import { prisma } from "@/lib/prisma";
 import { resend, getFromEmail } from "@/lib/resend";
 import { randomBytes } from "crypto";
 import { buildEmailHtml, recapCard, ctaButton, divider, infoBox, muted, signOff } from "@/lib/emailTemplate";
-import { requireAuth } from "@/lib/auth";
+import { requireActivePlan } from "@/lib/auth";
 
 export async function POST(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
   const { id } = await params;
-  const [ctx, err] = await requireAuth();
+  const [ctx, err] = await requireActivePlan();
   if (err) return err;
 
   const reservation = await prisma.reservation.findFirst({

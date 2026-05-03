@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { requireAuth } from "@/lib/auth";
+import { requireActivePlan } from "@/lib/auth";
 
 export async function POST(req: NextRequest) {
-  const [ctx, err] = await requireAuth();
+  const [ctx, err] = await requireActivePlan();
   if (err) return err;
 
   const body = await req.json();
@@ -67,7 +67,7 @@ export async function POST(req: NextRequest) {
 }
 
 export async function GET() {
-  const [ctx, err] = await requireAuth();
+  const [ctx, err] = await requireActivePlan();
   if (err) return err;
 
   const reservations = await prisma.reservation.findMany({

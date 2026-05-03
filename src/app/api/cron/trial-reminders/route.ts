@@ -22,12 +22,12 @@ export async function GET(req: Request) {
     const { daysLeft, isExpired } = getTrialInfo(user);
 
     let day: ReminderDay | null = null;
-    let field: "trialEmailSent7" | "trialEmailSent3" | "trialEmailSent1" | "trialEmailSent0" | null = null;
+    let field: "trialEmailSent15" | "trialEmailSent5" | "trialEmailSent1" | "trialEmailSent0" | null = null;
 
-    if (daysLeft === 7 && !user.trialEmailSent7) {
-      day = 7; field = "trialEmailSent7";
-    } else if (daysLeft === 3 && !user.trialEmailSent3) {
-      day = 3; field = "trialEmailSent3";
+    if (daysLeft === 15 && !user.trialEmailSent15) {
+      day = 15; field = "trialEmailSent15";
+    } else if (daysLeft === 5 && !user.trialEmailSent5) {
+      day = 5; field = "trialEmailSent5";
     } else if (daysLeft === 1 && !user.trialEmailSent1) {
       day = 1; field = "trialEmailSent1";
     } else if ((isExpired || daysLeft <= 0) && !user.trialEmailSent0) {

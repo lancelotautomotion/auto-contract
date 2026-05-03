@@ -50,7 +50,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   return (
     <DashboardShell fontClass={font.className} pendingCount={pendingCount} trialInfo={trialInfo}>
-      {trialInfo?.isTrial && !trialInfo.isExpired && trialInfo.daysLeft <= 7 && (
+      {trialInfo?.isTrial && !trialInfo.isExpired && trialInfo.daysLeft <= 15 && (
         <TrialBanner daysLeft={trialInfo.daysLeft} />
       )}
       {children}
