@@ -8,25 +8,19 @@ export default async function AdminPage() {
   const minus30 = new Date(now.getTime() - 30 * 86400_000);
 
   const [
-    // Acquisition
     totalUsers, usersLast7, usersLast30, usersPrev7, usersPrev30,
-    // Activation / funnel
-    totalGites, gitesWithRealName,
-    // Usage
+    totalGites,
+    usersWithGite,        // funnel étape 2 — utilisateurs avec gîte configuré
     totalContracts, contractsLast30, contractsToday,
     emailedContracts, signedContracts, signedToday,
-    // Business
     planGroups,
-    // Emails Resend
     emailsToday, emailsYesterday, emailsLast7,
-    // Engagement
     activeUsers7,
     churnWeekly,
-    // Acomptes en attente
+    usersWithEmailSent,   // funnel étape 3 — utilisateurs ayant envoyé ≥1 contrat
+    usersWithSigned,      // funnel étape 4 — utilisateurs avec ≥1 contrat signé
     depositsPending,
-    // Top gîtes
     topGites,
-    // Derniers inscrits
     latestUsers,
   ] = await Promise.all([
     // Acquisition
@@ -36,9 +30,11 @@ export default async function AdminPage() {
     prisma.user.count({ where: { createdAt: { gte: new Date(now.getTime() - 14 * 86400_000), lt: minus7 } } }),
     prisma.user.count({ where: { createdAt: { gte: new Date(now.getTime() - 60 * 86400_000), lt: minus30 } } }),
 
-    // Activation
     prisma.gite.count(),
-    prisma.gite.count({ where: { name: { not: "Mon Gîte" }, AND: [{ name: { not: "" } }] } }),
+    // Funnel étape 2 : users avec au moins 1 gîte correctement nommé
+    prisma.user.count({
+      where: { gites: { some: { name: { not: "Mon Gîte", AND: [{ name: { not: "" } }] } } } },
+    }),
 
     // Usage
     prisma.contract.count(),
@@ -51,18 +47,24 @@ export default async function AdminPage() {
     // Business
     prisma.user.groupBy({ by: ["planStatus"], _count: { id: true } }),
 
-    // Emails
+    // Emails Resend
     prisma.contract.count({ where: { emailSentAt: { gte: startOfToday } } }),
     prisma.contract.count({ where: { emailSentAt: { gte: startOfYesterday, lt: startOfToday } } }),
     prisma.contract.count({ where: { emailSentAt: { gte: minus7 } } }),
 
-    // Utilisateurs actifs 7j (au moins 1 réservation créée)
+    // Engagement
     prisma.user.count({
       where: { gites: { some: { reservations: { some: { createdAt: { gte: minus7 } } } } } },
     }),
-
-    // Churn hebdo (essais expirés cette semaine)
     prisma.user.count({ where: { planStatus: "EXPIRED", updatedAt: { gte: minus7 } } }),
+
+    // Funnel étapes 3 & 4 : utilisateurs (pas contrats)
+    prisma.user.count({
+      where: { gites: { some: { reservations: { some: { contract: { emailStatus: "SENT" } } } } } },
+    }),
+    prisma.user.count({
+      where: { gites: { some: { reservations: { some: { contract: { status: "SIGNED" } } } } } },
+    }),
 
     // Acomptes en attente > 7j après signature
     prisma.contract.findMany({
@@ -73,14 +75,14 @@ export default async function AdminPage() {
         signedAt: true,
         reservation: {
           select: {
-            clientFirstName: true, clientLastName: true, deposit: true,
+            checkIn: true, checkOut: true, deposit: true,
             gite: { select: { name: true } },
           },
         },
       },
     }),
 
-    // Top 5 gîtes par nombre de réservations
+    // Top 5 gîtes
     prisma.gite.findMany({
       take: 5,
       select: {
@@ -100,11 +102,9 @@ export default async function AdminPage() {
     }),
   ]);
 
-  // Time-to-value : délai moyen (heures) entre inscription et 1er email contrat
+  // Raw SQL
   const ttvResult = await prisma.$queryRaw<[{ avg_hours: number | null }]>`
-    SELECT AVG(
-      EXTRACT(EPOCH FROM (c."emailSentAt" - u."createdAt")) / 3600.0
-    )::float AS avg_hours
+    SELECT AVG(EXTRACT(EPOCH FROM (c."emailSentAt" - u."createdAt")) / 3600.0)::float AS avg_hours
     FROM "User" u
     JOIN "Gite" g ON g."userId" = u.id
     JOIN "Reservation" r ON r."giteId" = g.id
@@ -113,11 +113,8 @@ export default async function AdminPage() {
   `;
   const avgTtvHours = ttvResult[0]?.avg_hours ?? null;
 
-  // Délai moyen de signature (heures entre envoi et signature)
   const sigDelayResult = await prisma.$queryRaw<[{ avg_hours: number | null }]>`
-    SELECT AVG(
-      EXTRACT(EPOCH FROM ("signedAt" - "emailSentAt")) / 3600.0
-    )::float AS avg_hours
+    SELECT AVG(EXTRACT(EPOCH FROM ("signedAt" - "emailSentAt")) / 3600.0)::float AS avg_hours
     FROM "Contract"
     WHERE "signedAt" IS NOT NULL AND "emailSentAt" IS NOT NULL
   `;
@@ -128,8 +125,7 @@ export default async function AdminPage() {
   const delta30   = usersPrev30 > 0 ? Math.round(((usersLast30 - usersPrev30) / usersPrev30) * 100) : null;
   const emailDelta = emailsYesterday > 0 ? Math.round(((emailsToday - emailsYesterday) / emailsYesterday) * 100) : null;
 
-  const onboardingRate  = totalUsers > 0 ? Math.round((gitesWithRealName / totalUsers) * 100) : 0;
-  const emailRate       = totalContracts > 0 ? Math.round((emailedContracts / totalContracts) * 100) : 0;
+  const onboardingRate  = totalUsers > 0 ? Math.round((usersWithGite / totalUsers) * 100) : 0;
   const signatureRate   = emailedContracts > 0 ? Math.round((signedContracts / emailedContracts) * 100) : 0;
   const engagementRate  = totalUsers > 0 ? Math.round((activeUsers7 / totalUsers) * 100) : 0;
 
@@ -139,24 +135,30 @@ export default async function AdminPage() {
   const expiredCount = planCount("EXPIRED");
 
   const fmtDate  = (d: Date) => d.toLocaleDateString("fr-FR", { day: "2-digit", month: "short", year: "numeric" });
+  const fmtShort = (d: Date) => d.toLocaleDateString("fr-FR", { day: "2-digit", month: "short" });
   const fmtDelta = (d: number | null) => d === null ? null : (d >= 0 ? `+${d}%` : `${d}%`);
-
   const fmtDuration = (hours: number | null) => {
     if (hours === null) return "—";
     if (hours < 1) return `${Math.round(hours * 60)} min`;
     if (hours < 24) return `${Math.round(hours)} h`;
     return `${Math.round(hours / 24)} j`;
   };
-
   const daysSince = (d: Date | null) => {
     if (!d) return null;
     return Math.floor((now.getTime() - new Date(d).getTime()) / 86400_000);
   };
 
+  // Funnel : toutes les valeurs rapportées à totalUsers, plafonnées à 100%
+  const funnelSteps = [
+    { label: "Inscrits",         count: totalUsers,         pct: 100 },
+    { label: "Gîte configuré",   count: usersWithGite,      pct: totalUsers ? Math.min(Math.round((usersWithGite / totalUsers) * 100), 100) : 0 },
+    { label: "Contrat envoyé",   count: usersWithEmailSent, pct: totalUsers ? Math.min(Math.round((usersWithEmailSent / totalUsers) * 100), 100) : 0 },
+    { label: "Contrat signé",    count: usersWithSigned,    pct: totalUsers ? Math.min(Math.round((usersWithSigned / totalUsers) * 100), 100) : 0 },
+  ];
+
   return (
     <div className="admin-page">
 
-      {/* En-tête */}
       <div className="admin-page-header">
         <h1 className="admin-page-title">Vue d&apos;ensemble</h1>
         <p className="admin-page-sub">
@@ -164,10 +166,9 @@ export default async function AdminPage() {
         </p>
       </div>
 
-      {/* ── BENTO PRINCIPAL ─────────────────────────────────────────────── */}
+      {/* ── BENTO ───────────────────────────────────────────────────────── */}
       <div className="admin-bento">
 
-        {/* Acquisition */}
         <div className="admin-card">
           <div className="ac-label">Acquisition</div>
           <div className="ac-big">{totalUsers.toLocaleString("fr-FR")}</div>
@@ -190,7 +191,6 @@ export default async function AdminPage() {
           </div>
         </div>
 
-        {/* Business */}
         <div className="admin-card">
           <div className="ac-label">Business</div>
           <div className="ac-desc" style={{ marginBottom: 16 }}>Répartition des abonnements</div>
@@ -216,7 +216,6 @@ export default async function AdminPage() {
           )}
         </div>
 
-        {/* Usage */}
         <div className="admin-card admin-card-violet">
           <div className="ac-label" style={{ color: "rgba(255,255,255,.6)" }}>Usage — Core Value</div>
           <div className="ac-big" style={{ color: "#fff" }}>{totalContracts.toLocaleString("fr-FR")}</div>
@@ -240,16 +239,14 @@ export default async function AdminPage() {
           </div>
         </div>
 
-        {/* Activation */}
         <div className="admin-card">
           <div className="ac-label">Activation</div>
           <div className="ac-big">{onboardingRate}<span style={{ fontSize: 28, fontWeight: 600 }}>%</span></div>
           <div className="ac-desc">taux d&apos;onboarding</div>
-          <div className="ac-sub">{gitesWithRealName} gîtes configurés · {totalUsers} comptes</div>
+          <div className="ac-sub">{usersWithGite} gîtes configurés · {totalUsers} comptes</div>
           <div className="ac-bar-wrap"><div className="ac-bar" style={{ width: `${Math.min(onboardingRate, 100)}%` }} /></div>
         </div>
 
-        {/* Resend — pleine largeur */}
         <div className="admin-card admin-card-full">
           <div className="ac-label">Resend — Emails transactionnels</div>
           <div className="ac-email-row">
@@ -285,7 +282,7 @@ export default async function AdminPage() {
 
       </div>
 
-      {/* ── STATS SECONDAIRES ────────────────────────────────────────────── */}
+      {/* ── QUALITÉ PRODUIT ──────────────────────────────────────────────── */}
       <div className="admin-section-header" style={{ marginBottom: 16 }}>
         <h2 className="admin-section-title">Qualité du produit</h2>
       </div>
@@ -346,21 +343,25 @@ export default async function AdminPage() {
         <span className="admin-section-count">{totalUsers} inscrits au départ</span>
       </div>
       <div className="admin-card admin-card-funnel" style={{ marginBottom: 32 }}>
-        {[
-          { label: "Inscrits", count: totalUsers, pct: 100, color: "var(--violet)" },
-          { label: "Gîte configuré", count: gitesWithRealName, pct: totalUsers ? Math.round((gitesWithRealName / totalUsers) * 100) : 0, color: "var(--violet)" },
-          { label: "Contrat envoyé", count: emailedContracts, pct: totalUsers ? Math.round((emailedContracts / totalUsers) * 100) : 0, color: "var(--green)" },
-          { label: "Contrat signé", count: signedContracts, pct: totalUsers ? Math.round((signedContracts / totalUsers) * 100) : 0, color: "var(--green)" },
-        ].map((step, i) => (
+        {funnelSteps.map((step, i) => (
           <div key={i} className="funnel-step">
             <div className="funnel-step-header">
+              <span className="funnel-step-num">{i + 1}</span>
               <span className="funnel-step-label">{step.label}</span>
-              <span className="funnel-step-count">{step.count.toLocaleString("fr-FR")}</span>
+              <span className="funnel-step-count">{step.count.toLocaleString("fr-FR")} utilisateurs</span>
               <span className="funnel-step-pct">{step.pct}%</span>
             </div>
             <div className="funnel-bar-wrap">
-              <div className="funnel-bar" style={{ width: `${step.pct}%`, background: step.color }} />
+              <div className="funnel-bar" style={{
+                width: `${step.pct}%`,
+                background: i < 2 ? "var(--violet)" : "var(--green)",
+              }} />
             </div>
+            {i < funnelSteps.length - 1 && funnelSteps[i + 1].count < step.count && (
+              <div className="funnel-drop">
+                ↓ {step.count - funnelSteps[i + 1].count} utilisateurs perdus à cette étape
+              </div>
+            )}
           </div>
         ))}
       </div>
@@ -368,7 +369,6 @@ export default async function AdminPage() {
       {/* ── TOP GÎTES + ACOMPTES ────────────────────────────────────────── */}
       <div className="admin-two-col" style={{ marginBottom: 32 }}>
 
-        {/* Top gîtes */}
         <div>
           <div className="admin-section-header" style={{ marginBottom: 16 }}>
             <h2 className="admin-section-title">Top gîtes</h2>
@@ -376,14 +376,7 @@ export default async function AdminPage() {
           </div>
           <div className="admin-table-wrap">
             <table className="admin-table">
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Gîte</th>
-                  <th>Réservations</th>
-                  <th>Contrats signés</th>
-                </tr>
-              </thead>
+              <thead><tr><th>#</th><th>Gîte</th><th>Réservations</th><th>Contrats signés</th></tr></thead>
               <tbody>
                 {topGites.map((g, i) => {
                   const signed = g.reservations.filter(r => r.contract?.status === "SIGNED").length;
@@ -415,7 +408,6 @@ export default async function AdminPage() {
           </div>
         </div>
 
-        {/* Acomptes en attente */}
         <div>
           <div className="admin-section-header" style={{ marginBottom: 16 }}>
             <h2 className="admin-section-title">Acomptes en attente</h2>
@@ -429,20 +421,15 @@ export default async function AdminPage() {
             ) : (
               <table className="admin-table">
                 <thead>
-                  <tr>
-                    <th>Locataire</th>
-                    <th>Gîte</th>
-                    <th>Acompte</th>
-                    <th>Signé il y a</th>
-                  </tr>
+                  <tr><th>Gîte</th><th>Séjour</th><th>Acompte</th><th>Signé il y a</th></tr>
                 </thead>
                 <tbody>
                   {depositsPending.map((c, i) => (
                     <tr key={i}>
-                      <td style={{ fontWeight: 600, color: "var(--ink)" }}>
-                        {c.reservation.clientFirstName} {c.reservation.clientLastName}
+                      <td style={{ fontWeight: 600, color: "var(--ink)" }}>{c.reservation.gite.name}</td>
+                      <td style={{ fontSize: 12, color: "var(--ink-soft)", whiteSpace: "nowrap" }}>
+                        {fmtShort(c.reservation.checkIn)} → {fmtShort(c.reservation.checkOut)}
                       </td>
-                      <td style={{ fontSize: 12, color: "var(--ink-soft)" }}>{c.reservation.gite.name}</td>
                       <td style={{ fontWeight: 600, color: "var(--violet-dark)" }}>
                         {c.reservation.deposit ? `${c.reservation.deposit.toLocaleString("fr-FR")} €` : "—"}
                       </td>
@@ -473,13 +460,7 @@ export default async function AdminPage() {
       <div className="admin-table-wrap">
         <table className="admin-table">
           <thead>
-            <tr>
-              <th>Utilisateur</th>
-              <th>Email</th>
-              <th>Plan</th>
-              <th>Gîtes</th>
-              <th>Inscription</th>
-            </tr>
+            <tr><th>Utilisateur</th><th>Email</th><th>Plan</th><th>Gîtes</th><th>Inscription</th></tr>
           </thead>
           <tbody>
             {latestUsers.map(u => (
