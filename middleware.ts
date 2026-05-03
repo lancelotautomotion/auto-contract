@@ -1,4 +1,4 @@
-import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+import { clerkClient, clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
 const isAuthPage   = createRouteMatcher(["/sign-in(.*)", "/sign-up(.*)"]);
@@ -17,8 +17,18 @@ export default clerkMiddleware(async (auth, request) => {
     if (!userId) {
       return NextResponse.redirect(new URL("/sign-in", request.url));
     }
-    const role = (sessionClaims?.metadata as { role?: string } | undefined)?.role;
-    if (role !== "admin") {
+
+    // Essai via sessionClaims d'abord (JWT), fallback sur clerkClient (API)
+    const roleFromClaims = (sessionClaims?.metadata as Record<string, unknown> | undefined)?.role;
+
+    if (roleFromClaims === "admin") return; // JWT inclut déjà le rôle → OK
+
+    // JWT ne contient pas encore la metadata → vérification via API Clerk
+    const client = await clerkClient();
+    const user = await client.users.getUser(userId);
+    const roleFromApi = user.publicMetadata?.role;
+
+    if (roleFromApi !== "admin") {
       return NextResponse.redirect(new URL("/dashboard", request.url));
     }
   }
