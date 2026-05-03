@@ -17,8 +17,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <header className="admin-header">
         <div className="admin-header-inner">
           <div className="admin-header-brand">
-            <div className="admin-header-logo">K</div>
-            <span className="admin-header-title">Kordia</span>
+            <img
+              src="/logotype_KORDIA.svg"
+              alt="Kordia"
+              className="admin-header-logoimg"
+            />
             <span className="admin-header-badge">Admin</span>
           </div>
           <span className="admin-header-env">Vue CEO · Read-only</span>

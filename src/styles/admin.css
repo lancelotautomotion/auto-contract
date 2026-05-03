@@ -33,13 +33,12 @@ body { font-family: var(--ff); color: var(--ink); background: var(--bg); -webkit
   max-width: 1200px; margin: 0 auto; padding: 0 28px;
   height: 56px; display: flex; align-items: center; justify-content: space-between;
 }
-.admin-header-brand { display: flex; align-items: center; gap: 10px; }
-.admin-header-logo {
-  width: 28px; height: 28px; border-radius: 8px;
-  background: var(--violet); color: #fff;
-  font-size: 13px; font-weight: 800; display: flex; align-items: center; justify-content: center;
+.admin-header-brand { display: flex; align-items: center; gap: 12px; }
+.admin-header-logoimg {
+  height: 26px; width: auto;
+  filter: brightness(0) invert(1);
+  display: block;
 }
-.admin-header-title { font-size: 15px; font-weight: 700; color: #fff; letter-spacing: -.01em; }
 .admin-header-badge {
   font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em;
   background: rgba(127,119,221,.25); color: var(--violet); border: 1px solid rgba(127,119,221,.3);
@@ -60,7 +59,6 @@ body { font-family: var(--ff); color: var(--ink); background: var(--bg); -webkit
 .admin-bento {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  grid-template-rows: auto auto;
   gap: 16px;
   margin-bottom: 32px;
 }
@@ -75,11 +73,11 @@ body { font-family: var(--ff); color: var(--ink); background: var(--bg); -webkit
   transition: box-shadow .2s ease;
 }
 .admin-card:hover { box-shadow: 0 8px 32px -8px rgba(44,44,42,.10); }
-.admin-card-lg { grid-column: span 1; }
 .admin-card-violet {
   background: linear-gradient(135deg, var(--violet) 0%, var(--violet-dark) 100%);
   border-color: transparent;
 }
+.admin-card-full { grid-column: 1 / -1; }
 
 /* CARD INTERNALS */
 .ac-label {
@@ -93,20 +91,30 @@ body { font-family: var(--ff); color: var(--ink); background: var(--bg); -webkit
 .ac-desc { font-size: 13px; color: var(--ink-soft); }
 .ac-sub  { font-size: 12px; color: var(--ink-light); margin-top: 2px; }
 
-/* Chips (acquisition) */
+/* Chips — num + label séparés verticalement */
 .ac-chips { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
 .ac-chip {
-  display: flex; align-items: center; gap: 6px;
+  display: flex; flex-direction: column; gap: 3px;
   background: var(--line-light); border: 1px solid var(--line);
-  border-radius: 10px; padding: 8px 14px;
+  border-radius: 10px; padding: 12px 16px; min-width: 110px;
 }
-.ac-chip-num { font-size: 18px; font-weight: 700; color: var(--ink); }
-.ac-chip-lbl { font-size: 11px; color: var(--ink-soft); }
+.ac-chip-dark {
+  background: rgba(255,255,255,.12); border-color: rgba(255,255,255,.15);
+}
+.ac-chip-top {
+  display: flex; align-items: center; gap: 6px;
+}
+.ac-chip-num { font-size: 24px; font-weight: 800; color: var(--ink); letter-spacing: -.02em; line-height: 1; }
+.ac-chip-dark .ac-chip-num { color: #fff; }
+.ac-chip-lbl { font-size: 11px; color: var(--ink-soft); line-height: 1; }
+.ac-chip-dark .ac-chip-lbl { color: rgba(255,255,255,.65); }
 .ac-chip-delta {
   font-size: 11px; font-weight: 700; padding: 2px 6px; border-radius: 5px;
+  white-space: nowrap;
 }
 .ac-chip-delta.pos { background: var(--green-light); color: var(--green-dark); }
 .ac-chip-delta.neg { background: #FEE2E2; color: #B91C1C; }
+.ac-chip-dark .ac-chip-delta.pos { background: rgba(104,157,113,.3); color: #A8E6B0; }
 
 /* Progress bar (activation) */
 .ac-bar-wrap {
@@ -117,9 +125,7 @@ body { font-family: var(--ff); color: var(--ink); background: var(--bg); -webkit
 /* Plans */
 .ac-plans { display: flex; flex-direction: column; gap: 12px; }
 .ac-plan { display: flex; align-items: center; gap: 10px; }
-.ac-plan-dot {
-  width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
-}
+.ac-plan-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
 .ac-plan-dot.trial   { background: #F59E0B; }
 .ac-plan-dot.active  { background: var(--green); }
 .ac-plan-dot.expired { background: #D1D5DB; }
@@ -139,8 +145,28 @@ body { font-family: var(--ff); color: var(--ink); background: var(--bg); -webkit
 }
 .ac-mrr strong { font-weight: 700; }
 
+/* Emails Resend — carte pleine largeur */
+.ac-email-row {
+  display: flex; align-items: center; gap: 0;
+  margin-top: 12px; flex-wrap: wrap;
+}
+.ac-email-stat {
+  flex: 1; min-width: 120px;
+  display: flex; flex-direction: column; gap: 4px;
+  padding: 0 24px;
+}
+.ac-email-stat:first-child { padding-left: 0; }
+.ac-email-num { font-size: 36px; font-weight: 800; letter-spacing: -.03em; line-height: 1; color: var(--ink); }
+.ac-email-lbl { font-size: 12px; color: var(--ink-soft); }
+.ac-email-sublbl { font-size: 11px; font-weight: 600; color: var(--ink-light); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 6px; }
+.ac-email-divider { width: 1px; height: 48px; background: var(--line); flex-shrink: 0; align-self: center; }
+.ac-email-stat-muted { flex: 1.5; }
+.ac-email-quota { display: flex; flex-direction: column; gap: 6px; }
+.ac-email-quota-bar-wrap { width: 100%; height: 6px; background: var(--line-light); border-radius: 3px; overflow: hidden; }
+.ac-email-quota-bar { height: 100%; background: var(--violet); border-radius: 3px; transition: width .4s ease; }
+.ac-email-quota span { font-size: 12px; color: var(--ink-soft); }
+
 /* SECTION */
-.admin-section { }
 .admin-section-header {
   display: flex; align-items: center; justify-content: space-between;
   margin-bottom: 16px;
@@ -178,7 +204,6 @@ body { font-family: var(--ff); color: var(--ink); background: var(--bg); -webkit
 .at-email { font-size: 12px; color: var(--ink-light); }
 .at-center { text-align: center; font-weight: 600; color: var(--ink); }
 .at-date { font-size: 12px; white-space: nowrap; }
-
 .at-badge {
   font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 100px;
   display: inline-flex; align-items: center;
@@ -187,17 +212,26 @@ body { font-family: var(--ff); color: var(--ink); background: var(--bg); -webkit
 .at-badge-active  { background: var(--green-light); color: var(--green-dark); }
 .at-badge-expired { background: var(--line-light); color: var(--ink-light); }
 
-/* RESPONSIVE */
+/* ── RESPONSIVE ─────────────────────────────── */
 @media (max-width: 900px) {
   .admin-bento { grid-template-columns: 1fr; }
+  .admin-card-full { grid-column: 1; }
   .admin-page { padding: 24px 20px 48px; }
   .admin-header-inner { padding: 0 20px; }
+  .ac-email-row { gap: 0; }
+  .ac-email-stat { padding: 12px 16px; min-width: 0; flex: 1 1 40%; }
+  .ac-email-divider { display: none; }
 }
 @media (max-width: 640px) {
   .admin-page { padding: 20px 14px 40px; }
-  .admin-header-inner { padding: 0 14px; }
+  .admin-header-inner { padding: 0 14px; justify-content: center; }
   .admin-header-env { display: none; }
-  .admin-table th:nth-child(2),
-  .admin-table td:nth-child(2) { display: none; }
+  .admin-header-brand { justify-content: center; }
+  .admin-table th:nth-child(2), .admin-table td:nth-child(2) { display: none; }
   .ac-big { font-size: 40px; }
+  .ac-chips { flex-direction: column; }
+  .ac-chip { min-width: 0; flex-direction: row; align-items: center; justify-content: space-between; }
+  .ac-email-stat { flex: 1 1 100%; border-top: 1px solid var(--line); padding: 12px 0; }
+  .ac-email-stat:first-child { border-top: none; padding-top: 0; }
+  .ac-email-num { font-size: 28px; }
 }
