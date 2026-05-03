@@ -38,7 +38,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
       // planStatus may not exist if migration hasn't been applied yet
       try {
         trialInfo = getTrialInfo(dbUser);
-        if (trialInfo.isExpired) redirect('/upgrade');
+        // Ne pas rediriger : le dashboard reste visible mais verrouillé visuellement
       } catch (trialErr) {
         if ((trialErr as { digest?: string })?.digest?.startsWith('NEXT_')) throw trialErr;
         // planStatus column missing — skip trial check

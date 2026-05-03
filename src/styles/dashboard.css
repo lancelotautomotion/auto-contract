@@ -1279,3 +1279,62 @@
   background: rgba(217,119,6,0.08); border: 1px solid rgba(217,119,6,0.25);
   border-radius: 8px;
 }
+
+/* ── PLAN EXPIRÉ — verrouillage visuel ─────────────────────────────────── */
+.expired-banner {
+  display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+  background: #FEF3CD; border: 1px solid #F5C842; border-radius: 12px;
+  padding: 14px 18px; margin: 20px 24px 0;
+}
+.expired-banner-icon {
+  width: 32px; height: 32px; border-radius: 8px; flex-shrink: 0;
+  background: rgba(245,200,66,.25); display: flex; align-items: center;
+  justify-content: center; color: #92610E;
+}
+.expired-banner-text {
+  flex: 1; font-size: 13px; color: #7B4F0A; line-height: 1.5; min-width: 180px;
+}
+.expired-banner-cta {
+  flex-shrink: 0; font-size: 13px !important; padding: 9px 18px !important;
+}
+
+.plan-locked-wrap {
+  position: relative;
+}
+.plan-locked-content {
+  opacity: 0.38;
+  pointer-events: none;
+  user-select: none;
+  filter: grayscale(0.25);
+}
+.plan-locked-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 40;
+  cursor: pointer;
+}
+.plan-locked-tooltip {
+  position: fixed;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #2C2C2A;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 8px;
+  pointer-events: none;
+  white-space: nowrap;
+  box-shadow: 0 4px 16px rgba(44,44,42,.25);
+  letter-spacing: .01em;
+}
+
+@media (max-width: 1024px) {
+  .expired-banner { margin: 14px 16px 0; }
+}
+@media (max-width: 640px) {
+  .expired-banner { margin: 12px 12px 0; flex-direction: column; align-items: flex-start; }
+  .expired-banner-cta { width: 100%; justify-content: center; }
+}
