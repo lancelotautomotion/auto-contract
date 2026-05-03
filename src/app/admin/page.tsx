@@ -33,7 +33,7 @@ export default async function AdminPage() {
     prisma.gite.count(),
     // Funnel étape 2 : users avec au moins 1 gîte correctement nommé
     prisma.user.count({
-      where: { gites: { some: { name: { not: "Mon Gîte", AND: [{ name: { not: "" } }] } } } },
+      where: { gites: { some: { AND: [{ name: { not: "Mon Gîte" } }, { name: { not: "" } }] } } },
     }),
 
     // Usage
