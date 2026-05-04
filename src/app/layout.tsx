@@ -7,9 +7,6 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Kordia — Contrats de location pour gîtes, automatisés",
   description: "Automatisez vos contrats de location saisonnière en 2 minutes. Génération PDF, envoi email, suivi acompte. 30 jours gratuits, sans CB.",
-  verification: {
-    google: "s8tzRANeIeeYGfzPyfBWYA8XmqXBZP6A_clfEpNRKIA",
-  },
   icons: {
     icon: '/KORDIA.svg',
     apple: '/apple-touch-icon.png',
