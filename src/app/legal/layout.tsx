@@ -2,6 +2,7 @@ import '@/styles/landing.css';
 import './legal.css';
 import Nav from '@/components/landing/Nav';
 import Footer from '@/components/landing/Footer';
+import ScrollToTop from '@/components/landing/ScrollToTop';
 
 export default function LegalLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -11,6 +12,7 @@ export default function LegalLayout({ children }: { children: React.ReactNode })
         {children}
       </main>
       <Footer />
+      <ScrollToTop />
     </>
   );
 }

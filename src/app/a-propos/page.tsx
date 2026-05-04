@@ -6,6 +6,7 @@ import Image from 'next/image';
 import '@/styles/pages.css';
 
 import NavPages from '@/components/landing/NavPages';
+import ScrollToTop from '@/components/landing/ScrollToTop';
 import Footer from '@/components/landing/Footer';
 import ScrollReveal from '@/app/ScrollReveal';
 
@@ -170,6 +171,7 @@ export default function AProposPage() {
 
       <Footer />
       <ScrollReveal />
+      <ScrollToTop />
     </div>
   );
 }

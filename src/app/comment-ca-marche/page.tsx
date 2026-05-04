@@ -3,6 +3,7 @@ import '@/styles/landing.css';
 import './comment-ca-marche.css';
 import Nav from "@/components/landing/Nav";
 import Footer from "@/components/landing/Footer";
+import ScrollToTop from "@/components/landing/ScrollToTop";
 import FaqAccordion from "./FaqAccordion";
 import StepVisual from "./StepVisual";
 
@@ -199,6 +200,7 @@ export default function CommentCaMarche() {
       </main>
 
       <Footer />
+      <ScrollToTop />
     </>
   );
 }

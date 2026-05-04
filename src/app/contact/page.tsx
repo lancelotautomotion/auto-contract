@@ -4,6 +4,7 @@ import '@/styles/landing.css';
 import './contact.css';
 import Nav from '@/components/landing/Nav';
 import Footer from '@/components/landing/Footer';
+import ScrollToTop from '@/components/landing/ScrollToTop';
 import ContactForm from './ContactForm';
 
 export const metadata: Metadata = {
@@ -114,6 +115,7 @@ export default function ContactPage() {
       </main>
 
       <Footer />
+      <ScrollToTop />
     </>
   );
 }
