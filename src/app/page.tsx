@@ -4,6 +4,7 @@ import { Plus_Jakarta_Sans } from 'next/font/google';
 import '@/styles/landing.css';
 
 import ScrollReveal from './ScrollReveal';
+import ScrollToTop from '@/components/landing/ScrollToTop';
 import Nav from '@/components/landing/Nav';
 import Hero from '@/components/landing/Hero';
 import Frictions from '@/components/landing/Frictions';
@@ -41,6 +42,7 @@ export default function Home() {
       <CTA />
       <Footer />
       <ScrollReveal />
+      <ScrollToTop />
     </div>
   );
 }
