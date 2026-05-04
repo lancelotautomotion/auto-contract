@@ -14,6 +14,13 @@ const CheckViolet = () => (
   </svg>
 );
 
+const CheckGray = () => (
+  <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
+    <circle cx="8" cy="8" r="6" fill="#F0F0EE" />
+    <path d="M5 8l2.5 2.5L11 6" stroke="#A3A3A0" strokeWidth="1.2" strokeLinecap="round" />
+  </svg>
+);
+
 const faq = [
   {
     q: "Que se passe-t-il après le mois gratuit ?",
@@ -50,13 +57,16 @@ export default function Pricing() {
           <div className="pc reveal reveal-d1">
             <div className="pc-header">
               <div className="pc-icon g">
-                {/* Feuille / nature — gratuit, simple */}
+                {/* Mains ouvertes — accueil, gratuit */}
                 <svg width="20" height="20" fill="none" viewBox="0 0 20 20">
-                  <path d="M10 3C6 3 3 6.5 3 10.5c0 3 1.8 5.5 4.5 6.5V14c0-2.5 1.5-4.5 3.5-5.5C13 9.5 14.5 11 14.5 13v4c2.5-1.2 4-3.8 3.5-6.5C17.5 6 14 3 10 3z" stroke="#4A7353" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M4.5 9.5c0-.8.6-1.5 1.5-1.5s1.5.7 1.5 1.5V13" stroke="#4A7353" strokeWidth="1.3" strokeLinecap="round"/>
+                  <path d="M7.5 8c0-.8.6-1.5 1.5-1.5S10.5 7.2 10.5 8v5" stroke="#4A7353" strokeWidth="1.3" strokeLinecap="round"/>
+                  <path d="M10.5 8.5c0-.8.6-1.5 1.5-1.5s1.5.7 1.5 1.5V13" stroke="#4A7353" strokeWidth="1.3" strokeLinecap="round"/>
+                  <path d="M13.5 9.5c0-.8.6-1.5 1.5-1.5s1.5.7 1.5 1.5V12c0 2.8-2.2 4.5-5 4.5h-.5C7.2 16.5 5 14.8 5 12v-1" stroke="#4A7353" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               </div>
               <div className="pc-plan">Découverte</div>
-              <div className="pc-price"><sup>€</sup>0</div>
+              <div className="pc-price">0<sup>€</sup></div>
               <div className="pc-period">Gratuit · 1 mois pour tester</div>
             </div>
             <hr className="pc-div" />
@@ -82,7 +92,7 @@ export default function Pricing() {
                 </svg>
               </div>
               <div className="pc-plan">Essentiel</div>
-              <div className="pc-price"><sup>€</sup>9<span style={{ fontSize: '22px' }}>,99</span></div>
+              <div className="pc-price">9<span style={{ fontSize: '22px' }}>,99</span><sup>€</sup></div>
               <div className="pc-period">par mois · 1 hébergement</div>
             </div>
             <hr className="pc-div" />
@@ -98,8 +108,9 @@ export default function Pricing() {
             </Link>
           </div>
 
-          {/* Multi-gîtes */}
-          <div className="pc reveal reveal-d3">
+          {/* Multi-gîtes — en développement */}
+          <div className="pc reveal reveal-d3" style={{ opacity: 0.85 }}>
+            <div className="pc-badge-dev">En développement</div>
             <div className="pc-header">
               <div className="pc-icon g">
                 {/* Maisons — multi-hébergements */}
@@ -110,19 +121,45 @@ export default function Pricing() {
                 </svg>
               </div>
               <div className="pc-plan">Multi-gîtes</div>
-              <div className="pc-price"><sup>€</sup>15</div>
+              <div className="pc-price">14<span style={{ fontSize: '22px' }}>,99</span><sup>€</sup></div>
               <div className="pc-period">par mois · jusqu&apos;à 3 hébergements</div>
             </div>
             <hr className="pc-div" />
             <ul className="pc-feat">
-              <li><CheckGreen />Tout le plan Essentiel</li>
-              <li><CheckGreen />Jusqu&apos;à 3 hébergements</li>
-              <li><CheckGreen />Tableau de bord consolidé</li>
-              <li><CheckGreen />Support prioritaire</li>
+              <li><CheckGray />Tout le plan Essentiel</li>
+              <li><CheckGray />Jusqu&apos;à 3 hébergements</li>
+              <li><CheckGray />Tableau de bord consolidé</li>
+              <li><CheckGray />Support prioritaire</li>
             </ul>
-            <Link className="btn btn-outline" style={{ width: '100%' }} href="/sign-up">
-              Démarrer l&apos;essai gratuit
-            </Link>
+            <span className="pc-dev-cta">Bientôt disponible</span>
+          </div>
+
+          {/* Kordia Étape — en développement */}
+          <div className="pc reveal reveal-d4" style={{ opacity: 0.85 }}>
+            <div className="pc-badge-dev">En développement</div>
+            <div className="pc-header">
+              <div className="pc-icon g">
+                {/* Lits superposés — dortoirs, étapes */}
+                <svg width="20" height="20" fill="none" viewBox="0 0 20 20">
+                  <rect x="2" y="10" width="16" height="4" rx="1.5" stroke="#4A7353" strokeWidth="1.4"/>
+                  <rect x="2" y="5" width="16" height="4" rx="1.5" stroke="#4A7353" strokeWidth="1.4"/>
+                  <path d="M4 10V4M16 10V4" stroke="#4A7353" strokeWidth="1.4" strokeLinecap="round"/>
+                  <path d="M4 14v2M16 14v2" stroke="#4A7353" strokeWidth="1.4" strokeLinecap="round"/>
+                </svg>
+              </div>
+              <div className="pc-plan">Kordia Étape</div>
+              <div className="pc-price" style={{ fontSize: '28px', marginBottom: '8px' }}>Sur devis</div>
+              <div className="pc-period">dortoirs · chambres multiples</div>
+            </div>
+            <hr className="pc-div" />
+            <ul className="pc-feat">
+              <li><CheckGray />Chambres &amp; dortoirs simultanés</li>
+              <li><CheckGray />Réservation par lit ou par chambre</li>
+              <li><CheckGray />Gestion demi-pension</li>
+              <li><CheckGray />Planification multi-espaces</li>
+              <li><CheckGray />Facturation groupée</li>
+            </ul>
+            <span className="pc-dev-cta">Bientôt disponible</span>
           </div>
 
         </div>
