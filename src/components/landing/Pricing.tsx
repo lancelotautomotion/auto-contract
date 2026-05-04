@@ -48,14 +48,17 @@ export default function Pricing() {
 
           {/* Découverte */}
           <div className="pc reveal reveal-d1">
-            <div className="pc-icon g">
-              <svg width="18" height="18" fill="none" viewBox="0 0 18 18">
-                <path d="M9 2v14M5 6c0-2.2 1.8-4 4-4s4 1.8 4 4-1.8 4-4 4H5" stroke="#4A7353" strokeWidth="1.3" strokeLinecap="round" />
-              </svg>
+            <div className="pc-header">
+              <div className="pc-icon g">
+                {/* Feuille / nature — gratuit, simple */}
+                <svg width="20" height="20" fill="none" viewBox="0 0 20 20">
+                  <path d="M10 3C6 3 3 6.5 3 10.5c0 3 1.8 5.5 4.5 6.5V14c0-2.5 1.5-4.5 3.5-5.5C13 9.5 14.5 11 14.5 13v4c2.5-1.2 4-3.8 3.5-6.5C17.5 6 14 3 10 3z" stroke="#4A7353" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </div>
+              <div className="pc-plan">Découverte</div>
+              <div className="pc-price"><sup>€</sup>0</div>
+              <div className="pc-period">Gratuit · 1 mois pour tester</div>
             </div>
-            <div className="pc-plan">Découverte</div>
-            <div className="pc-price"><sup>€</sup>0</div>
-            <div className="pc-period">Gratuit · 1 mois pour tester</div>
             <hr className="pc-div" />
             <ul className="pc-feat">
               <li><CheckGreen />1 hébergement</li>
@@ -71,14 +74,17 @@ export default function Pricing() {
           {/* Essentiel — featured */}
           <div className="pc feat reveal reveal-d2">
             <div className="pc-badge">Le plus choisi</div>
-            <div className="pc-icon v">
-              <svg width="18" height="18" fill="none" viewBox="0 0 18 18">
-                <path d="M9 2l2 4h4l-3 3 1 4-4-2-4 2 1-4-3-3h4z" stroke="#5B52B5" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
+            <div className="pc-header">
+              <div className="pc-icon v">
+                {/* Éclair — productivité, puissance */}
+                <svg width="20" height="20" fill="none" viewBox="0 0 20 20">
+                  <path d="M11.5 3L5 11h6l-2.5 6L17 9h-6l.5-6z" stroke="#5B52B5" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </div>
+              <div className="pc-plan">Essentiel</div>
+              <div className="pc-price"><sup>€</sup>9<span style={{ fontSize: '22px' }}>,99</span></div>
+              <div className="pc-period">par mois · 1 hébergement</div>
             </div>
-            <div className="pc-plan">Essentiel</div>
-            <div className="pc-price"><sup>€</sup>9<span style={{ fontSize: '22px' }}>,99</span></div>
-            <div className="pc-period">par mois · 1 hébergement</div>
             <hr className="pc-div" />
             <ul className="pc-feat">
               <li><CheckViolet />Contrats illimités</li>
@@ -94,16 +100,19 @@ export default function Pricing() {
 
           {/* Multi-gîtes */}
           <div className="pc reveal reveal-d3">
-            <div className="pc-icon g">
-              <svg width="18" height="18" fill="none" viewBox="0 0 18 18">
-                <rect x="2" y="5" width="6" height="8" rx="1.5" stroke="#4A7353" strokeWidth="1.3" />
-                <rect x="10" y="5" width="6" height="8" rx="1.5" stroke="#4A7353" strokeWidth="1.3" />
-                <path d="M5 3v2M13 3v2" stroke="#4A7353" strokeWidth="1.3" strokeLinecap="round" />
-              </svg>
+            <div className="pc-header">
+              <div className="pc-icon g">
+                {/* Maisons — multi-hébergements */}
+                <svg width="20" height="20" fill="none" viewBox="0 0 20 20">
+                  <path d="M2 10l5-5 5 5v7H2v-7z" stroke="#4A7353" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M12 14l4-4 2 2v5h-6v-3z" stroke="#4A7353" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M7 17v-4h2v4" stroke="#4A7353" strokeWidth="1.4" strokeLinecap="round"/>
+                </svg>
+              </div>
+              <div className="pc-plan">Multi-gîtes</div>
+              <div className="pc-price"><sup>€</sup>15</div>
+              <div className="pc-period">par mois · jusqu&apos;à 3 hébergements</div>
             </div>
-            <div className="pc-plan">Multi-gîtes</div>
-            <div className="pc-price"><sup>€</sup>15</div>
-            <div className="pc-period">par mois · jusqu&apos;à 3 hébergements</div>
             <hr className="pc-div" />
             <ul className="pc-feat">
               <li><CheckGreen />Tout le plan Essentiel</li>
