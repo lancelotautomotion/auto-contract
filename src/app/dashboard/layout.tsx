@@ -26,8 +26,16 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   if (clerkId) {
     try {
-      const dbUser = await prisma.user.findUnique({ where: { clerkId } }).catch(() => null);
-      if (!dbUser) redirect('/onboarding');
+      let dbUser = null;
+      let dbError = false;
+      try {
+        dbUser = await prisma.user.findUnique({ where: { clerkId } });
+      } catch {
+        dbError = true;
+      }
+      // DB injoignable → dashboard vide plutôt que redirect onboarding
+      if (!dbError && !dbUser) redirect('/onboarding');
+      if (!dbUser) return; // DB error — skip remaining queries, render empty shell
 
       const gite = await prisma.gite.findFirst({ where: { userId: dbUser.id } }).catch(() => null);
       if (!gite || !gite.name?.trim() || gite.name === 'Mon Gîte') redirect('/onboarding');
@@ -36,13 +44,10 @@ export default async function DashboardLayout({ children }: { children: React.Re
         where: { gite: { userId: dbUser.id }, status: 'PENDING_REVIEW' },
       }).catch(() => 0);
 
-      // planStatus may not exist if migration hasn't been applied yet
       try {
         trialInfo = getTrialInfo(dbUser);
-        // Ne pas rediriger : le dashboard reste visible mais verrouillé visuellement
       } catch (trialErr) {
         if ((trialErr as { digest?: string })?.digest?.startsWith('NEXT_')) throw trialErr;
-        // planStatus column missing — skip trial check
       }
     } catch (err) {
       if ((err as { digest?: string })?.digest?.startsWith('NEXT_')) throw err;
