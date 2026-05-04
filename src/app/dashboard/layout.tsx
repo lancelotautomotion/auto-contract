@@ -19,6 +19,7 @@ const font = Plus_Jakarta_Sans({
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { userId: clerkId } = await auth();
+  if (!clerkId) redirect('/sign-in');
 
   let pendingCount = 0;
   let trialInfo = null;

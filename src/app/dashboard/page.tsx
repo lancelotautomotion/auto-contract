@@ -9,8 +9,13 @@ export default async function DashboardPage() {
   const { userId } = await auth();
   if (!userId) redirect("/sign-in");
 
-  const user = await currentUser();
-  const firstName = user?.firstName ?? 'vous';
+  let firstName = 'vous';
+  try {
+    const user = await currentUser();
+    firstName = user?.firstName ?? 'vous';
+  } catch {
+    // Clerk API error on fresh session — fallback to default
+  }
 
   const today = new Date();
   const dateStr = today.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
