@@ -46,8 +46,30 @@ export default function Pricing() {
 
         <div className="pricing-grid">
 
+          {/* Découverte */}
+          <div className="pc reveal reveal-d1">
+            <div className="pc-icon g">
+              <svg width="18" height="18" fill="none" viewBox="0 0 18 18">
+                <path d="M9 2v14M5 6c0-2.2 1.8-4 4-4s4 1.8 4 4-1.8 4-4 4H5" stroke="#4A7353" strokeWidth="1.3" strokeLinecap="round" />
+              </svg>
+            </div>
+            <div className="pc-plan">Découverte</div>
+            <div className="pc-price"><sup>€</sup>0</div>
+            <div className="pc-period">Gratuit · 1 mois pour tester</div>
+            <hr className="pc-div" />
+            <ul className="pc-feat">
+              <li><CheckGreen />1 hébergement</li>
+              <li><CheckGreen />Contrats illimités</li>
+              <li><CheckGreen />Signature électronique</li>
+              <li><CheckGreen />Calendrier &amp; archivage</li>
+            </ul>
+            <Link className="btn btn-outline" style={{ width: '100%' }} href="/sign-up">
+              Démarrer l&apos;essai gratuit
+            </Link>
+          </div>
+
           {/* Essentiel — featured */}
-          <div className="pc feat reveal reveal-d1">
+          <div className="pc feat reveal reveal-d2">
             <div className="pc-badge">Le plus choisi</div>
             <div className="pc-icon v">
               <svg width="18" height="18" fill="none" viewBox="0 0 18 18">
@@ -66,28 +88,6 @@ export default function Pricing() {
               <li><CheckViolet />Export comptable</li>
             </ul>
             <Link className="btn btn-violet" style={{ width: '100%' }} href="/sign-up">
-              Démarrer l&apos;essai gratuit
-            </Link>
-          </div>
-
-          {/* Découverte */}
-          <div className="pc reveal reveal-d2">
-            <div className="pc-icon g">
-              <svg width="18" height="18" fill="none" viewBox="0 0 18 18">
-                <path d="M9 2v14M5 6c0-2.2 1.8-4 4-4s4 1.8 4 4-1.8 4-4 4H5" stroke="#4A7353" strokeWidth="1.3" strokeLinecap="round" />
-              </svg>
-            </div>
-            <div className="pc-plan">Découverte</div>
-            <div className="pc-price"><sup>€</sup>0</div>
-            <div className="pc-period">Gratuit · 1 mois pour tester</div>
-            <hr className="pc-div" />
-            <ul className="pc-feat">
-              <li><CheckGreen />1 hébergement</li>
-              <li><CheckGreen />Contrats illimités</li>
-              <li><CheckGreen />Signature électronique</li>
-              <li><CheckGreen />Calendrier &amp; archivage</li>
-            </ul>
-            <Link className="btn btn-outline" style={{ width: '100%' }} href="/sign-up">
               Démarrer l&apos;essai gratuit
             </Link>
           </div>
