@@ -8,15 +8,6 @@ export default function Hero() {
         {/* Left — copy */}
         <div>
 
-          {/* Qualification tag — who this is for */}
-          <div className="hero-tag">
-            <svg width="13" height="13" fill="none" viewBox="0 0 13 13">
-              <path d="M6.5 1.5L2 4v3.5c0 3 2 5 4.5 6 2.5-1 4.5-3 4.5-6V4L6.5 1.5z" stroke="#4A7353" strokeWidth="1.1" strokeLinecap="round"/>
-              <path d="M4.5 6.5l1.5 1.5L9.5 5" stroke="#4A7353" strokeWidth="1.1" strokeLinecap="round"/>
-            </svg>
-            Pour les gérants de gîtes · Location saisonnière
-          </div>
-
           <h1>
             Vos contrats de location,<br />
             <span className="green">générés et signés</span><br />
