@@ -110,7 +110,7 @@ export default function Pricing() {
 
           {/* Multi-gîtes — en développement */}
           <div className="pc reveal reveal-d3" style={{ opacity: 0.85 }}>
-            <div className="pc-badge-dev">En développement</div>
+            <div className="pc-badge-dev">Bientôt disponible</div>
             <div className="pc-header">
               <div className="pc-icon g">
                 {/* Maisons — multi-hébergements */}
@@ -136,7 +136,7 @@ export default function Pricing() {
 
           {/* Kordia Étape — en développement */}
           <div className="pc reveal reveal-d4" style={{ opacity: 0.85 }}>
-            <div className="pc-badge-dev">En développement</div>
+            <div className="pc-badge-dev">Bientôt disponible</div>
             <div className="pc-header">
               <div className="pc-icon g">
                 {/* Lits superposés — dortoirs, étapes */}
@@ -148,8 +148,8 @@ export default function Pricing() {
                 </svg>
               </div>
               <div className="pc-plan">Kordia Étape</div>
-              <div className="pc-price" style={{ fontSize: '28px', marginBottom: '8px' }}>Sur devis</div>
-              <div className="pc-period">dortoirs · chambres multiples</div>
+              <div className="pc-price">24<span style={{ fontSize: '22px' }}>,99</span><sup>€</sup></div>
+              <div className="pc-period">par mois · hébergement multi-espaces</div>
             </div>
             <hr className="pc-div" />
             <ul className="pc-feat">
@@ -157,7 +157,6 @@ export default function Pricing() {
               <li><CheckGray />Réservation par lit ou par chambre</li>
               <li><CheckGray />Gestion demi-pension</li>
               <li><CheckGray />Planification multi-espaces</li>
-              <li><CheckGray />Facturation groupée</li>
             </ul>
             <span className="pc-dev-cta">Bientôt disponible</span>
           </div>
