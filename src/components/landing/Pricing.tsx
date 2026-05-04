@@ -57,12 +57,8 @@ export default function Pricing() {
           <div className="pc reveal reveal-d1">
             <div className="pc-header">
               <div className="pc-icon g">
-                {/* Mains ouvertes — accueil, gratuit */}
                 <svg width="20" height="20" fill="none" viewBox="0 0 20 20">
-                  <path d="M4.5 9.5c0-.8.6-1.5 1.5-1.5s1.5.7 1.5 1.5V13" stroke="#4A7353" strokeWidth="1.3" strokeLinecap="round"/>
-                  <path d="M7.5 8c0-.8.6-1.5 1.5-1.5S10.5 7.2 10.5 8v5" stroke="#4A7353" strokeWidth="1.3" strokeLinecap="round"/>
-                  <path d="M10.5 8.5c0-.8.6-1.5 1.5-1.5s1.5.7 1.5 1.5V13" stroke="#4A7353" strokeWidth="1.3" strokeLinecap="round"/>
-                  <path d="M13.5 9.5c0-.8.6-1.5 1.5-1.5s1.5.7 1.5 1.5V12c0 2.8-2.2 4.5-5 4.5h-.5C7.2 16.5 5 14.8 5 12v-1" stroke="#4A7353" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M10 2l2.2 5h5.3l-4.3 3.1 1.6 5.2L10 12l-4.8 3.3 1.6-5.2L2.5 7h5.3z" stroke="#4A7353" strokeWidth="1.3" strokeLinejoin="round"/>
                 </svg>
               </div>
               <div className="pc-plan">Découverte</div>
@@ -113,11 +109,11 @@ export default function Pricing() {
             <div className="pc-badge-dev">Bientôt disponible</div>
             <div className="pc-header">
               <div className="pc-icon g">
-                {/* Maisons — multi-hébergements */}
                 <svg width="20" height="20" fill="none" viewBox="0 0 20 20">
-                  <path d="M2 10l5-5 5 5v7H2v-7z" stroke="#4A7353" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
-                  <path d="M12 14l4-4 2 2v5h-6v-3z" stroke="#4A7353" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
-                  <path d="M7 17v-4h2v4" stroke="#4A7353" strokeWidth="1.4" strokeLinecap="round"/>
+                  <rect x="3" y="3" width="6" height="6" rx="1.5" stroke="#4A7353" strokeWidth="1.4"/>
+                  <rect x="11" y="3" width="6" height="6" rx="1.5" stroke="#4A7353" strokeWidth="1.4"/>
+                  <rect x="3" y="11" width="6" height="6" rx="1.5" stroke="#4A7353" strokeWidth="1.4"/>
+                  <rect x="11" y="11" width="6" height="6" rx="1.5" stroke="#4A7353" strokeWidth="1.4"/>
                 </svg>
               </div>
               <div className="pc-plan">Multi-gîtes</div>
@@ -139,12 +135,9 @@ export default function Pricing() {
             <div className="pc-badge-dev">Bientôt disponible</div>
             <div className="pc-header">
               <div className="pc-icon g">
-                {/* Lits superposés — dortoirs, étapes */}
                 <svg width="20" height="20" fill="none" viewBox="0 0 20 20">
-                  <rect x="2" y="10" width="16" height="4" rx="1.5" stroke="#4A7353" strokeWidth="1.4"/>
-                  <rect x="2" y="5" width="16" height="4" rx="1.5" stroke="#4A7353" strokeWidth="1.4"/>
-                  <path d="M4 10V4M16 10V4" stroke="#4A7353" strokeWidth="1.4" strokeLinecap="round"/>
-                  <path d="M4 14v2M16 14v2" stroke="#4A7353" strokeWidth="1.4" strokeLinecap="round"/>
+                  <path d="M4 17V5" stroke="#4A7353" strokeWidth="1.4" strokeLinecap="round"/>
+                  <path d="M4 6l8-3v5l-8 3V6z" stroke="#4A7353" strokeWidth="1.4" strokeLinejoin="round"/>
                 </svg>
               </div>
               <div className="pc-plan">Kordia Étape</div>
