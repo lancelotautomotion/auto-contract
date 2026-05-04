@@ -80,7 +80,9 @@ export default function ContactPage() {
                 <div className="ct-card-desc">Envie de voir Kordia en action&nbsp;? Réservez 15 min en visio, on vous montre tout.</div>
                 <a
                   className="ct-card-link"
-                  href="mailto:contact@kordia.fr?subject=Demande%20de%20d%C3%A9mo%20Kordia"
+                  href="https://calendar.app.google/ugX8Vy3h8zeyNPhe8"
+                  target="_blank"
+                  rel="noopener noreferrer"
                 >
                   Réserver un créneau
                   <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
