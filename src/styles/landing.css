@@ -288,8 +288,8 @@ footer{background:var(--ink);color:rgba(255,255,255,.5);padding:56px 28px 28px}
   /* Feature illustrations — compact on mobile */
   .contract-card,.cal-card{max-width:360px;margin:0 auto}
 
-  /* HORIZONTAL SWIPE CARDS — frictions, testimonials */
-  .friction-grid,.testi-grid{
+  /* HORIZONTAL SWIPE CARDS — frictions, pricing, testimonials */
+  .friction-grid,.pricing-grid,.testi-grid{
     display:flex;
     grid-template-columns:none;
     overflow-x:auto;
@@ -304,8 +304,9 @@ footer{background:var(--ink);color:rgba(255,255,255,.5);padding:56px 28px 28px}
     scrollbar-width:none;
   }
   .friction-grid::-webkit-scrollbar,
+  .pricing-grid::-webkit-scrollbar,
   .testi-grid::-webkit-scrollbar{display:none}
-  .fc,.tc{
+  .fc,.pc,.tc{
     flex:0 0 78%;
     max-width:320px;
     scroll-snap-align:start;
@@ -313,18 +314,11 @@ footer{background:var(--ink);color:rgba(255,255,255,.5);padding:56px 28px 28px}
   }
   /* Scroll hint row — dots indicator */
   .friction-grid::after,
+  .pricing-grid::after,
   .testi-grid::after{
     content:'';
     flex:0 0 4px;
   }
-  /* Pricing — stack vertical on mobile */
-  .pricing-grid{
-    display:flex;
-    flex-direction:column;
-    gap:16px;
-    margin-top:32px;
-  }
-  .pc{max-width:none;width:100%}
 
   /* Compare — compact side-by-side on mobile with shared header pills */
   .tr-panel{padding:4px}
