@@ -1,12 +1,5 @@
 import Link from 'next/link';
 
-const CheckGreen = () => (
-  <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
-    <circle cx="8" cy="8" r="6" fill="#EEF5EF" />
-    <path d="M5 8l2.5 2.5L11 6" stroke="#4A7353" strokeWidth="1.2" strokeLinecap="round" />
-  </svg>
-);
-
 const CheckViolet = () => (
   <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
     <circle cx="8" cy="8" r="6" fill="#EFEEF9" />
@@ -53,32 +46,8 @@ export default function Pricing() {
 
         <div className="pricing-grid">
 
-          {/* Découverte */}
-          <div className="pc reveal reveal-d1">
-            <div className="pc-header">
-              <div className="pc-icon g">
-                <svg width="20" height="20" fill="none" viewBox="0 0 20 20">
-                  <path d="M10 2l2.2 5h5.3l-4.3 3.1 1.6 5.2L10 12l-4.8 3.3 1.6-5.2L2.5 7h5.3z" stroke="#4A7353" strokeWidth="1.3" strokeLinejoin="round"/>
-                </svg>
-              </div>
-              <div className="pc-plan">Découverte</div>
-              <div className="pc-price">0<sup>€</sup></div>
-              <div className="pc-period">Gratuit · 1 mois pour tester</div>
-            </div>
-            <hr className="pc-div" />
-            <ul className="pc-feat">
-              <li><CheckGreen />1 hébergement</li>
-              <li><CheckGreen />Contrats illimités</li>
-              <li><CheckGreen />Signature électronique</li>
-              <li><CheckGreen />Calendrier &amp; archivage</li>
-            </ul>
-            <Link className="btn btn-outline" style={{ width: '100%' }} href="/sign-up">
-              Démarrer l&apos;essai gratuit
-            </Link>
-          </div>
-
           {/* Essentiel — featured */}
-          <div className="pc feat reveal reveal-d2">
+          <div className="pc feat reveal reveal-d1">
             <div className="pc-badge">Le plus choisi</div>
             <div className="pc-header">
               <div className="pc-icon v">
@@ -100,12 +69,12 @@ export default function Pricing() {
               <li><CheckViolet />Export comptable</li>
             </ul>
             <Link className="btn btn-violet" style={{ width: '100%' }} href="/sign-up">
-              Démarrer l&apos;essai gratuit
+              Essayer gratuitement 30 jours
             </Link>
           </div>
 
           {/* Multi-gîtes — en développement */}
-          <div className="pc reveal reveal-d3" style={{ opacity: 0.85 }}>
+          <div className="pc reveal reveal-d2" style={{ opacity: 0.85 }}>
             <div className="pc-badge-dev">Bientôt disponible</div>
             <div className="pc-header">
               <div className="pc-icon g">
@@ -131,7 +100,7 @@ export default function Pricing() {
           </div>
 
           {/* Kordia Étape — en développement */}
-          <div className="pc reveal reveal-d4" style={{ opacity: 0.85 }}>
+          <div className="pc reveal reveal-d3" style={{ opacity: 0.85 }}>
             <div className="pc-badge-dev">Bientôt disponible</div>
             <div className="pc-header">
               <div className="pc-icon g">
