@@ -20,7 +20,7 @@
   position: relative;
   overflow: hidden;
   background: linear-gradient(135deg, #EFEEF9 0%, #FCFFF2 50%, #EEF5EF 100%);
-  padding: 56px 20px 48px;
+  padding: 28px 20px 22px;
   text-align: center;
   border-bottom: 1px solid #E8E6E1;
 }
@@ -48,7 +48,7 @@
 
 .upgrade-main {
   flex: 1;
-  padding: 40px 20px 64px;
+  padding: 20px 20px 24px;
 }
 
 @media (max-width: 640px) {

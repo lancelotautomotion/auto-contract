@@ -75,10 +75,10 @@ export default async function UpgradePage({ searchParams }: { searchParams: Prom
             <span style={{ width: '16px', height: '2px', borderRadius: '1px', background: '#7F77DD' }}/>
             Tarifs
           </span>
-          <h1 style={{ fontSize: 'clamp(28px, 5vw, 42px)', fontWeight: 800, color: '#2C2C2A', letterSpacing: '-0.03em', margin: '0 0 12px', lineHeight: 1.15 }}>
+          <h1 style={{ fontSize: 'clamp(22px, 4vw, 34px)', fontWeight: 800, color: '#2C2C2A', letterSpacing: '-0.03em', margin: '0 0 8px', lineHeight: 1.15 }}>
             Choisissez votre <span style={{ color: '#7F77DD' }}>formule</span>
           </h1>
-          <p style={{ fontSize: '15px', color: '#71716E', margin: 0, lineHeight: 1.6 }}>
+          <p style={{ fontSize: '14px', color: '#71716E', margin: 0, lineHeight: 1.5 }}>
             Sans engagement. Annulable à tout moment.
           </p>
         </div>
@@ -124,16 +124,16 @@ export default async function UpgradePage({ searchParams }: { searchParams: Prom
             <div style={{ position: 'absolute', top: '16px', right: '16px', background: '#7F77DD', color: '#fff', fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', padding: '3px 10px', borderRadius: '20px' }}>
               Recommandé
             </div>
-            <div style={{ padding: '28px 28px 32px', display: 'flex', flexDirection: 'column', flex: 1 }}>
+            <div style={{ padding: '18px 22px 20px', display: 'flex', flexDirection: 'column', flex: 1 }}>
               <p style={{ fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color: '#7F77DD', margin: '0 0 6px' }}>Essentiel</p>
               <div style={{ display: 'flex', alignItems: 'flex-end', gap: '6px', marginBottom: '4px' }}>
-                <span style={{ fontSize: '36px', fontWeight: 800, color: '#2C2C2A', letterSpacing: '-0.04em', lineHeight: 1 }}>9,99 €</span>
+                <span style={{ fontSize: '30px', fontWeight: 800, color: '#2C2C2A', letterSpacing: '-0.04em', lineHeight: 1 }}>9,99 €</span>
                 <span style={{ fontSize: '13px', color: '#A3A3A0', paddingBottom: '6px' }}>HT / mois</span>
               </div>
-              <p style={{ fontSize: '13px', color: '#71716E', margin: '0 0 24px', lineHeight: 1.5 }}>
+              <p style={{ fontSize: '13px', color: '#71716E', margin: '0 0 10px', lineHeight: 1.4 }}>
                 Tout inclus. Sans engagement.
               </p>
-              <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 28px', display: 'flex', flexDirection: 'column', gap: '8px', flex: 1 }}>
+              <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 12px', display: 'flex', flexDirection: 'column', gap: '6px', flex: 1 }}>
                 {essentialFeatures.map(f => (
                   <li key={f} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', color: '#2C2C2A' }}>
                     <span style={{ width: '18px', height: '18px', borderRadius: '5px', backgroundColor: 'rgba(104,157,113,.15)', color: '#689D71', fontSize: '10px', fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>✓</span>
@@ -154,16 +154,16 @@ export default async function UpgradePage({ searchParams }: { searchParams: Prom
             <div style={{ position: 'absolute', top: '16px', right: '16px', background: '#689D71', color: '#fff', fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', padding: '3px 10px', borderRadius: '20px' }}>
               Bientôt
             </div>
-            <div style={{ padding: '28px 28px 32px', display: 'flex', flexDirection: 'column', flex: 1 }}>
+            <div style={{ padding: '18px 22px 20px', display: 'flex', flexDirection: 'column', flex: 1 }}>
               <p style={{ fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color: '#689D71', margin: '0 0 6px' }}>Multi-gîtes</p>
               <div style={{ display: 'flex', alignItems: 'flex-end', gap: '6px', marginBottom: '4px' }}>
-                <span style={{ fontSize: '36px', fontWeight: 800, color: '#2C2C2A', letterSpacing: '-0.04em', lineHeight: 1 }}>14,99 €</span>
+                <span style={{ fontSize: '30px', fontWeight: 800, color: '#2C2C2A', letterSpacing: '-0.04em', lineHeight: 1 }}>14,99 €</span>
                 <span style={{ fontSize: '13px', color: '#A3A3A0', paddingBottom: '6px' }}>HT / mois</span>
               </div>
-              <p style={{ fontSize: '13px', color: '#71716E', margin: '0 0 24px', lineHeight: 1.5 }}>
+              <p style={{ fontSize: '13px', color: '#71716E', margin: '0 0 10px', lineHeight: 1.4 }}>
                 Jusqu&apos;à 3 hébergements. Tout inclus.
               </p>
-              <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 28px', display: 'flex', flexDirection: 'column', gap: '8px', flex: 1 }}>
+              <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 12px', display: 'flex', flexDirection: 'column', gap: '6px', flex: 1 }}>
                 {["Jusqu'à 3 hébergements", 'Contrats illimités', "Tout ce qu'inclut Essentiel", 'Tableau de bord unifié', 'Support prioritaire'].map(f => (
                   <li key={f} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', color: '#71716E' }}>
                     <span style={{ width: '18px', height: '18px', borderRadius: '5px', backgroundColor: 'rgba(104,157,113,.1)', color: '#689D71', fontSize: '10px', fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>✓</span>
@@ -183,16 +183,16 @@ export default async function UpgradePage({ searchParams }: { searchParams: Prom
             <div style={{ position: 'absolute', top: '16px', right: '16px', background: '#689D71', color: '#fff', fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', padding: '3px 10px', borderRadius: '20px' }}>
               Bientôt
             </div>
-            <div style={{ padding: '28px 28px 32px', display: 'flex', flexDirection: 'column', flex: 1 }}>
+            <div style={{ padding: '18px 22px 20px', display: 'flex', flexDirection: 'column', flex: 1 }}>
               <p style={{ fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color: '#689D71', margin: '0 0 6px' }}>Kordia Étape</p>
               <div style={{ display: 'flex', alignItems: 'flex-end', gap: '6px', marginBottom: '4px' }}>
-                <span style={{ fontSize: '36px', fontWeight: 800, color: '#2C2C2A', letterSpacing: '-0.04em', lineHeight: 1 }}>24,99 €</span>
+                <span style={{ fontSize: '30px', fontWeight: 800, color: '#2C2C2A', letterSpacing: '-0.04em', lineHeight: 1 }}>24,99 €</span>
                 <span style={{ fontSize: '13px', color: '#A3A3A0', paddingBottom: '6px' }}>HT / mois</span>
               </div>
-              <p style={{ fontSize: '13px', color: '#71716E', margin: '0 0 24px', lineHeight: 1.5 }}>
+              <p style={{ fontSize: '13px', color: '#71716E', margin: '0 0 10px', lineHeight: 1.4 }}>
                 Dortoirs, chambres multiples &amp; demi-pension.
               </p>
-              <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 28px', display: 'flex', flexDirection: 'column', gap: '8px', flex: 1 }}>
+              <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 12px', display: 'flex', flexDirection: 'column', gap: '6px', flex: 1 }}>
                 {['Chambres & dortoirs simultanés', 'Réservation par lit ou par chambre', 'Gestion demi-pension', 'Planification multi-espaces', "Tout ce qu'inclut Essentiel"].map(f => (
                   <li key={f} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', color: '#71716E' }}>
                     <span style={{ width: '18px', height: '18px', borderRadius: '5px', backgroundColor: 'rgba(104,157,113,.1)', color: '#689D71', fontSize: '10px', fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>✓</span>
@@ -210,7 +210,7 @@ export default async function UpgradePage({ searchParams }: { searchParams: Prom
 
         {/* Back link — more visible */}
         {!isExpired && (
-          <div style={{ textAlign: 'center', marginTop: '32px' }}>
+          <div style={{ textAlign: 'center', marginTop: '16px' }}>
             <a
               href="/dashboard"
               style={{
