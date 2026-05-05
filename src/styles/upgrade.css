@@ -7,12 +7,14 @@
   grid-template-columns: repeat(3, 1fr);
   gap: 16px;
   align-items: stretch;
+  flex: 1;
 }
 
 @media (max-width: 860px) {
   .upgrade-grid {
     grid-template-columns: 1fr;
     max-width: 480px;
+    flex: none;
   }
 }
 
@@ -49,7 +51,10 @@
 .upgrade-main {
   flex: 1;
   padding: 20px 20px 24px;
+  display: flex;
+  flex-direction: column;
 }
+
 
 @media (max-width: 640px) {
   .upgrade-main {
