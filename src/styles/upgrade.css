@@ -55,6 +55,18 @@
   flex-direction: column;
 }
 
+.upgrade-card-top {
+  min-height: 120px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.upgrade-card-divider {
+  border: none;
+  border-top: 1px solid #E8E6E1;
+  margin: 16px 0;
+}
 
 @media (max-width: 640px) {
   .upgrade-main {

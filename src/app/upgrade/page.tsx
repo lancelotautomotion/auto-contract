@@ -125,14 +125,17 @@ export default async function UpgradePage({ searchParams }: { searchParams: Prom
               Recommandé
             </div>
             <div style={{ padding: '24px 26px 24px', display: 'flex', flexDirection: 'column', flex: 1 }}>
-              <p style={{ fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color: '#7F77DD', margin: '0 0 6px' }}>Essentiel</p>
-              <div style={{ display: 'flex', alignItems: 'flex-end', gap: '6px', marginBottom: '4px' }}>
-                <span style={{ fontSize: '30px', fontWeight: 800, color: '#2C2C2A', letterSpacing: '-0.04em', lineHeight: 1 }}>9,99 €</span>
-                <span style={{ fontSize: '13px', color: '#A3A3A0', paddingBottom: '6px' }}>HT / mois</span>
+              <div className="upgrade-card-top">
+                <p style={{ fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color: '#7F77DD', margin: '0 0 6px' }}>Essentiel</p>
+                <div style={{ display: 'flex', alignItems: 'flex-end', gap: '6px', marginBottom: '4px' }}>
+                  <span style={{ fontSize: '30px', fontWeight: 800, color: '#2C2C2A', letterSpacing: '-0.04em', lineHeight: 1 }}>9,99 €</span>
+                  <span style={{ fontSize: '13px', color: '#A3A3A0', paddingBottom: '6px' }}>HT / mois</span>
+                </div>
+                <p style={{ fontSize: '13px', color: '#71716E', margin: 0, lineHeight: 1.5 }}>
+                  Tout inclus. Sans engagement.
+                </p>
               </div>
-              <p style={{ fontSize: '13px', color: '#71716E', margin: '0 0 16px', lineHeight: 1.5 }}>
-                Tout inclus. Sans engagement.
-              </p>
+              <hr className="upgrade-card-divider" />
               <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 16px', display: 'flex', flexDirection: 'column', gap: '8px', flex: 1 }}>
                 {essentialFeatures.map(f => (
                   <li key={f} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', color: '#2C2C2A' }}>
@@ -155,14 +158,17 @@ export default async function UpgradePage({ searchParams }: { searchParams: Prom
               Bientôt
             </div>
             <div style={{ padding: '24px 26px 24px', display: 'flex', flexDirection: 'column', flex: 1 }}>
-              <p style={{ fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color: '#689D71', margin: '0 0 6px' }}>Multi-gîtes</p>
-              <div style={{ display: 'flex', alignItems: 'flex-end', gap: '6px', marginBottom: '4px' }}>
-                <span style={{ fontSize: '30px', fontWeight: 800, color: '#2C2C2A', letterSpacing: '-0.04em', lineHeight: 1 }}>14,99 €</span>
-                <span style={{ fontSize: '13px', color: '#A3A3A0', paddingBottom: '6px' }}>HT / mois</span>
+              <div className="upgrade-card-top">
+                <p style={{ fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color: '#689D71', margin: '0 0 6px' }}>Multi-gîtes</p>
+                <div style={{ display: 'flex', alignItems: 'flex-end', gap: '6px', marginBottom: '4px' }}>
+                  <span style={{ fontSize: '30px', fontWeight: 800, color: '#2C2C2A', letterSpacing: '-0.04em', lineHeight: 1 }}>14,99 €</span>
+                  <span style={{ fontSize: '13px', color: '#A3A3A0', paddingBottom: '6px' }}>HT / mois</span>
+                </div>
+                <p style={{ fontSize: '13px', color: '#71716E', margin: 0, lineHeight: 1.5 }}>
+                  Jusqu&apos;à 3 hébergements. Tout inclus.
+                </p>
               </div>
-              <p style={{ fontSize: '13px', color: '#71716E', margin: '0 0 16px', lineHeight: 1.5 }}>
-                Jusqu&apos;à 3 hébergements. Tout inclus.
-              </p>
+              <hr className="upgrade-card-divider" />
               <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 16px', display: 'flex', flexDirection: 'column', gap: '8px', flex: 1 }}>
                 {["Jusqu'à 3 hébergements", 'Contrats illimités', "Tout ce qu'inclut Essentiel", 'Tableau de bord unifié', 'Support prioritaire'].map(f => (
                   <li key={f} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', color: '#71716E' }}>
@@ -184,14 +190,17 @@ export default async function UpgradePage({ searchParams }: { searchParams: Prom
               Bientôt
             </div>
             <div style={{ padding: '24px 26px 24px', display: 'flex', flexDirection: 'column', flex: 1 }}>
-              <p style={{ fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color: '#689D71', margin: '0 0 6px' }}>Kordia Étape</p>
-              <div style={{ display: 'flex', alignItems: 'flex-end', gap: '6px', marginBottom: '4px' }}>
-                <span style={{ fontSize: '30px', fontWeight: 800, color: '#2C2C2A', letterSpacing: '-0.04em', lineHeight: 1 }}>24,99 €</span>
-                <span style={{ fontSize: '13px', color: '#A3A3A0', paddingBottom: '6px' }}>HT / mois</span>
+              <div className="upgrade-card-top">
+                <p style={{ fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color: '#689D71', margin: '0 0 6px' }}>Kordia Étape</p>
+                <div style={{ display: 'flex', alignItems: 'flex-end', gap: '6px', marginBottom: '4px' }}>
+                  <span style={{ fontSize: '30px', fontWeight: 800, color: '#2C2C2A', letterSpacing: '-0.04em', lineHeight: 1 }}>24,99 €</span>
+                  <span style={{ fontSize: '13px', color: '#A3A3A0', paddingBottom: '6px' }}>HT / mois</span>
+                </div>
+                <p style={{ fontSize: '13px', color: '#71716E', margin: 0, lineHeight: 1.5 }}>
+                  Dortoirs, chambres multiples &amp; demi-pension.
+                </p>
               </div>
-              <p style={{ fontSize: '13px', color: '#71716E', margin: '0 0 16px', lineHeight: 1.5 }}>
-                Dortoirs, chambres multiples &amp; demi-pension.
-              </p>
+              <hr className="upgrade-card-divider" />
               <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 16px', display: 'flex', flexDirection: 'column', gap: '8px', flex: 1 }}>
                 {['Chambres & dortoirs simultanés', 'Réservation par lit ou par chambre', 'Gestion demi-pension', 'Planification multi-espaces', "Tout ce qu'inclut Essentiel"].map(f => (
                   <li key={f} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', color: '#71716E' }}>
