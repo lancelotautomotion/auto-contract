@@ -94,6 +94,13 @@ export default async function UpgradePage({ searchParams }: { searchParams: Prom
             </p>
           </div>
         )}
+        {isTrial && (
+          <div style={{ maxWidth: '960px', margin: '0 auto 28px', padding: '14px 20px', backgroundColor: 'rgba(127,119,221,.08)', border: '1.5px solid rgba(127,119,221,.25)', borderRadius: '12px' }}>
+            <p style={{ fontSize: '14px', color: '#5B52B5', margin: 0, lineHeight: 1.6, fontWeight: 600 }}>
+              Essai gratuit en cours — {trialInfo?.daysLeft ?? 0} jour{(trialInfo?.daysLeft ?? 0) > 1 ? 's' : ''} restant{(trialInfo?.daysLeft ?? 0) > 1 ? 's' : ''}. Aucun prélèvement avant la fin.
+            </p>
+          </div>
+        )}
         {showCanceled && !isActive && (
           <div style={{ maxWidth: '960px', margin: '0 auto 24px', padding: '12px 20px', backgroundColor: '#FEF2F2', border: '1px solid #FCA5A5', borderRadius: '10px' }}>
             <p style={{ fontSize: '13px', color: '#b91c1c', margin: 0, lineHeight: 1.5 }}>Paiement annulé. Vous pouvez réessayer quand vous voulez.</p>
@@ -108,33 +115,8 @@ export default async function UpgradePage({ searchParams }: { searchParams: Prom
           </div>
         )}
 
-        {/* Pricing grid — equal-height cards with bottom-aligned CTAs */}
+        {/* Pricing grid */}
         <div className="upgrade-grid">
-
-          {/* Plan Gratuit */}
-          <div style={{ backgroundColor: '#FFFFFF', borderRadius: '16px', border: '1px solid #E8E6E1', overflow: 'hidden', opacity: isExpired ? 0.6 : 1, display: 'flex', flexDirection: 'column' }}>
-            <div style={{ height: '4px', background: 'linear-gradient(90deg, #689D71 0%, #9B95E8 100%)', flexShrink: 0 }}/>
-            <div style={{ padding: '28px 28px 32px', display: 'flex', flexDirection: 'column', flex: 1 }}>
-              <p style={{ fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color: '#689D71', margin: '0 0 6px' }}>Gratuit</p>
-              <div style={{ display: 'flex', alignItems: 'flex-end', gap: '6px', marginBottom: '4px' }}>
-                <span style={{ fontSize: '36px', fontWeight: 800, color: '#2C2C2A', letterSpacing: '-0.04em', lineHeight: 1 }}>0 €</span>
-              </div>
-              <p style={{ fontSize: '13px', color: '#71716E', margin: '0 0 24px', lineHeight: 1.5 }}>
-                {isExpired ? 'Période d\'essai expirée.' : isTrial ? `${trialInfo?.daysLeft ?? 0} jour${(trialInfo?.daysLeft ?? 0) > 1 ? 's' : ''} restant${(trialInfo?.daysLeft ?? 0) > 1 ? 's' : ''} dans votre essai.` : 'Essai 30 jours inclus.'}
-              </p>
-              <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 28px', display: 'flex', flexDirection: 'column', gap: '8px', flex: 1 }}>
-                {['1 hébergement', '3 contrats / mois', 'Signature eIDAS', 'Email automatique'].map(f => (
-                  <li key={f} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', color: isExpired ? '#A3A3A0' : '#2C2C2A' }}>
-                    <span style={{ width: '18px', height: '18px', borderRadius: '5px', backgroundColor: 'rgba(104,157,113,.15)', color: '#689D71', fontSize: '10px', fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>✓</span>
-                    {f}
-                  </li>
-                ))}
-              </ul>
-              <div style={{ padding: '11px 16px', background: isExpired ? '#FEF2F2' : 'rgba(104,157,113,.1)', border: `1px solid ${isExpired ? 'rgba(220,38,38,.2)' : 'rgba(104,157,113,.25)'}`, borderRadius: '10px', textAlign: 'center', fontSize: '13px', fontWeight: 700, color: isExpired ? '#b91c1c' : '#4A7353' }}>
-                {isTrial ? '✓ Plan actuel' : isExpired ? 'Expiré' : 'Plan actuel'}
-              </div>
-            </div>
-          </div>
 
           {/* Plan Essentiel — Recommandé */}
           <div style={{ backgroundColor: '#FFFFFF', borderRadius: '16px', border: '2px solid #7F77DD', overflow: 'hidden', position: 'relative', display: 'flex', flexDirection: 'column' }}>
@@ -166,31 +148,60 @@ export default async function UpgradePage({ searchParams }: { searchParams: Prom
             </div>
           </div>
 
-          {/* Plan Multi-hébergement — Coming soon */}
-          <div style={{ backgroundColor: '#FFFFFF', borderRadius: '16px', border: '1.5px solid rgba(104,157,113,.3)', overflow: 'hidden', position: 'relative', display: 'flex', flexDirection: 'column' }}>
+          {/* Plan Multi-gîtes — Bientôt */}
+          <div style={{ backgroundColor: '#FFFFFF', borderRadius: '16px', border: '1.5px solid rgba(104,157,113,.3)', overflow: 'hidden', position: 'relative', display: 'flex', flexDirection: 'column', opacity: 0.85 }}>
             <div style={{ height: '4px', backgroundColor: '#689D71', flexShrink: 0 }}/>
             <div style={{ position: 'absolute', top: '16px', right: '16px', background: '#689D71', color: '#fff', fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', padding: '3px 10px', borderRadius: '20px' }}>
               Bientôt
             </div>
             <div style={{ padding: '28px 28px 32px', display: 'flex', flexDirection: 'column', flex: 1 }}>
-              <p style={{ fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color: '#689D71', margin: '0 0 6px' }}>Multi-hébergement</p>
+              <p style={{ fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color: '#689D71', margin: '0 0 6px' }}>Multi-gîtes</p>
               <div style={{ display: 'flex', alignItems: 'flex-end', gap: '6px', marginBottom: '4px' }}>
-                <span style={{ fontSize: '36px', fontWeight: 800, color: '#2C2C2A', letterSpacing: '-0.04em', lineHeight: 1 }}>15 €</span>
+                <span style={{ fontSize: '36px', fontWeight: 800, color: '#2C2C2A', letterSpacing: '-0.04em', lineHeight: 1 }}>14,99 €</span>
                 <span style={{ fontSize: '13px', color: '#A3A3A0', paddingBottom: '6px' }}>HT / mois</span>
               </div>
               <p style={{ fontSize: '13px', color: '#71716E', margin: '0 0 24px', lineHeight: 1.5 }}>
                 Jusqu&apos;à 3 hébergements. Tout inclus.
               </p>
               <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 28px', display: 'flex', flexDirection: 'column', gap: '8px', flex: 1 }}>
-                {['Jusqu\'à 3 hébergements', 'Contrats illimités', 'Tout ce qu\'inclut Essentiel', 'Tableau de bord unifié'].map(f => (
-                  <li key={f} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', color: '#2C2C2A' }}>
-                    <span style={{ width: '18px', height: '18px', borderRadius: '5px', backgroundColor: 'rgba(104,157,113,.18)', color: '#689D71', fontSize: '10px', fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>✓</span>
+                {["Jusqu'à 3 hébergements", 'Contrats illimités', "Tout ce qu'inclut Essentiel", 'Tableau de bord unifié', 'Support prioritaire'].map(f => (
+                  <li key={f} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', color: '#71716E' }}>
+                    <span style={{ width: '18px', height: '18px', borderRadius: '5px', backgroundColor: 'rgba(104,157,113,.1)', color: '#689D71', fontSize: '10px', fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>✓</span>
                     {f}
                   </li>
                 ))}
               </ul>
               <div style={{ padding: '11px 16px', background: '#EEF5EF', border: '1px solid rgba(104,157,113,.25)', borderRadius: '10px', textAlign: 'center', fontSize: '13px', fontWeight: 700, color: '#4A7353' }}>
-                Disponible prochainement
+                Bientôt disponible
+              </div>
+            </div>
+          </div>
+
+          {/* Plan Kordia Étape — Bientôt */}
+          <div style={{ backgroundColor: '#FFFFFF', borderRadius: '16px', border: '1.5px solid rgba(104,157,113,.3)', overflow: 'hidden', position: 'relative', display: 'flex', flexDirection: 'column', opacity: 0.85 }}>
+            <div style={{ height: '4px', backgroundColor: '#689D71', flexShrink: 0 }}/>
+            <div style={{ position: 'absolute', top: '16px', right: '16px', background: '#689D71', color: '#fff', fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', padding: '3px 10px', borderRadius: '20px' }}>
+              Bientôt
+            </div>
+            <div style={{ padding: '28px 28px 32px', display: 'flex', flexDirection: 'column', flex: 1 }}>
+              <p style={{ fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color: '#689D71', margin: '0 0 6px' }}>Kordia Étape</p>
+              <div style={{ display: 'flex', alignItems: 'flex-end', gap: '6px', marginBottom: '4px' }}>
+                <span style={{ fontSize: '36px', fontWeight: 800, color: '#2C2C2A', letterSpacing: '-0.04em', lineHeight: 1 }}>24,99 €</span>
+                <span style={{ fontSize: '13px', color: '#A3A3A0', paddingBottom: '6px' }}>HT / mois</span>
+              </div>
+              <p style={{ fontSize: '13px', color: '#71716E', margin: '0 0 24px', lineHeight: 1.5 }}>
+                Dortoirs, chambres multiples &amp; demi-pension.
+              </p>
+              <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 28px', display: 'flex', flexDirection: 'column', gap: '8px', flex: 1 }}>
+                {['Chambres & dortoirs simultanés', 'Réservation par lit ou par chambre', 'Gestion demi-pension', 'Planification multi-espaces', "Tout ce qu'inclut Essentiel"].map(f => (
+                  <li key={f} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', color: '#71716E' }}>
+                    <span style={{ width: '18px', height: '18px', borderRadius: '5px', backgroundColor: 'rgba(104,157,113,.1)', color: '#689D71', fontSize: '10px', fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>✓</span>
+                    {f}
+                  </li>
+                ))}
+              </ul>
+              <div style={{ padding: '11px 16px', background: '#EEF5EF', border: '1px solid rgba(104,157,113,.25)', borderRadius: '10px', textAlign: 'center', fontSize: '13px', fontWeight: 700, color: '#4A7353' }}>
+                Bientôt disponible
               </div>
             </div>
           </div>
