@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import TopbarSignOut from "@/app/dashboard/TopbarSignOut";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import EtablissementForm from "./EtablissementForm";
@@ -27,18 +28,7 @@ export default async function EtablissementPage() {
           <div className="topbar-breadcrumb">Kordia / <span>Mon hébergement</span></div>
         </div>
         <div className="topbar-right">
-          <button className="topbar-btn">
-            <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
-              <circle cx="7" cy="7" r="4.5" stroke="currentColor" strokeWidth="1.3"/>
-              <path d="M10.5 10.5l3 3" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
-            </svg>
-          </button>
-          <button className="topbar-btn">
-            <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
-              <path d="M4 6a4 4 0 018 0v3l1.5 2H2.5L4 9V6z" stroke="currentColor" strokeWidth="1.3"/>
-              <path d="M6.5 13a1.5 1.5 0 003 0" stroke="currentColor" strokeWidth="1.3"/>
-            </svg>
-          </button>
+          <TopbarSignOut />
         </div>
       </div>
 

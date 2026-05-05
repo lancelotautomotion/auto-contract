@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import TopbarSignOut from "@/app/dashboard/TopbarSignOut";
 import { redirect, notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
@@ -32,12 +33,7 @@ export default async function EditReservationPage({ params }: { params: Promise<
           <div className="topbar-breadcrumb">Kordia / Réservations / <span>Modifier</span></div>
         </div>
         <div className="topbar-right">
-          <button className="topbar-btn">
-            <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
-              <circle cx="7" cy="7" r="4.5" stroke="currentColor" strokeWidth="1.3"/>
-              <path d="M10.5 10.5l3 3" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
-            </svg>
-          </button>
+          <TopbarSignOut />
         </div>
       </div>
 
