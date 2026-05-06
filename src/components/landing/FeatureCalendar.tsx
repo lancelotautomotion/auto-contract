@@ -8,7 +8,7 @@ const items = [
       </svg>
     ),
     title: 'Calendrier avec statuts',
-    desc: 'Chaque réservation affiche son statut : signé, envoyé, en attente.',
+    desc: 'Visualisez toutes vos réservations d\'un coup d\'œil. Chaque séjour affiche son statut en temps réel : signé, envoyé, en attente.',
   },
   {
     icon: (
@@ -18,7 +18,28 @@ const items = [
       </svg>
     ),
     title: 'Relances automatiques',
-    desc: 'Contrat non signé à J+2 ? Kordia relance automatiquement.',
+    desc: 'Contrat non signé à J+2 ? Kordia relance le locataire par email sans que vous n\'ayez à intervenir.',
+  },
+  {
+    icon: (
+      <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
+        <path d="M10 2H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V5l-3-3z" stroke="#5B52B5" strokeWidth="1.3" strokeLinejoin="round"/>
+        <path d="M10 2v3h3" stroke="#5B52B5" strokeWidth="1.3" strokeLinejoin="round"/>
+        <path d="M5 9l2 2 4-3" stroke="#5B52B5" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
+      </svg>
+    ),
+    title: 'Signature électronique eIDAS',
+    desc: 'Le locataire signe son contrat depuis son téléphone en quelques secondes. Valeur légale garantie, zéro papier.',
+  },
+  {
+    icon: (
+      <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
+        <rect x="2" y="2" width="12" height="12" rx="2" stroke="#5B52B5" strokeWidth="1.3"/>
+        <path d="M5 8h6M5 5h3M5 11h4" stroke="#5B52B5" strokeWidth="1.3" strokeLinecap="round"/>
+      </svg>
+    ),
+    title: 'Archivage & téléchargement',
+    desc: 'Tous vos contrats signés sont archivés automatiquement et téléchargeables à tout moment depuis votre tableau de bord.',
   },
 ];
 
@@ -73,7 +94,7 @@ function PhoneMockup() {
 
           {/* Corps */}
           <div className="dpm-body">
-            <div className="dpm-greeting">Bonjour, Guillaume<span className="dpm-dot">.</span></div>
+            <div className="dpm-greeting">Bonjour, Louna<span className="dpm-dot">.</span></div>
             <div className="dpm-date">Mercredi 6 mai 2026</div>
 
             <div className="dpm-ctas">
