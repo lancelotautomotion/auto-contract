@@ -151,23 +151,29 @@ h2.st .g{color:var(--green)}h2.st .v{color:var(--violet)}
 .cc-status{font-size:12px;font-weight:600;color:var(--green-dark);display:flex;align-items:center;gap:5px}
 
 /* CAL */
-.cal-card{background:var(--white);border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:0 24px 64px -12px rgba(44,44,42,.08)}
-.cal-head{background:linear-gradient(135deg,var(--green),var(--green-dark));padding:18px 20px;color:#fff;display:flex;justify-content:space-between;align-items:center}
-.cal-month{font-weight:700;font-size:15px}
-.cal-arrows{display:flex;gap:6px}
-.cal-arr{width:24px;height:24px;border-radius:6px;background:rgba(255,255,255,.2);border:none;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:11px}
-.cal-grid{padding:14px;display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
-.cal-dn{font-size:10px;font-weight:700;color:var(--ink-lighter);text-align:center;padding:4px 0;text-transform:uppercase}
-.cd{font-size:12px;text-align:center;padding:5px 2px;border-radius:6px;font-weight:500;transition:background .2s}
-.cd.bg{background:var(--green-light);color:var(--green-dark);font-weight:600}
-.cd.bv{background:var(--violet-light);color:var(--violet-dark);font-weight:600}
-.cd.today{background:var(--ink);color:#fff;font-weight:700}
-.cd.e{visibility:hidden}
-.cal-bks{padding:0 16px 16px}
-.cal-bk{display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid var(--line-light);font-size:12px}
-.cal-bk:last-child{border:none}
-.bk-bar{width:4px;height:28px;border-radius:2px}.bk-g{background:var(--green)}.bk-v{background:var(--violet)}
-.bk-name{font-weight:600;color:var(--ink)}.bk-date{color:var(--ink-soft)}
+/* Dashboard mockup — FeatureCalendar */
+.dash-mock-card{background:var(--white);border:1px solid var(--line);border-radius:20px;overflow:hidden;box-shadow:0 24px 64px -12px rgba(44,44,42,.10);max-width:400px;margin:0 auto}
+.dm-header{background:linear-gradient(135deg,#7F77DD 0%,#5B52B5 100%);padding:16px 20px;display:flex;justify-content:space-between;align-items:center}
+.dm-title{font-size:14px;font-weight:700;color:#fff;letter-spacing:-.01em}
+.dm-avatar{width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.25);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.dm-stats{display:flex;align-items:center;padding:16px 20px;gap:0;border-bottom:1px solid var(--line-light)}
+.dm-stat{flex:1;text-align:center}
+.dm-stat-val{font-size:28px;font-weight:800;color:var(--ink);letter-spacing:-.04em;line-height:1}
+.dm-stat-lbl{font-size:11px;color:var(--ink-soft);margin-top:4px;font-weight:500}
+.dm-stat-div{width:1px;height:36px;background:var(--line);margin:0 8px}
+.dm-section{padding:14px 20px 18px}
+.dm-section-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-lighter);margin-bottom:10px}
+.dm-rows{display:flex;flex-direction:column;gap:6px}
+.dm-row{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:10px;background:var(--cream)}
+.dm-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.dm-dot-g{background:var(--green)}.dm-dot-v{background:var(--violet)}.dm-dot-o{background:#E8A020}
+.dm-row-info{flex:1;min-width:0}
+.dm-row-name{font-size:12px;font-weight:600;color:var(--ink)}
+.dm-row-date{font-size:11px;color:var(--ink-soft);margin-top:1px}
+.dm-pill{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;flex-shrink:0}
+.dm-pill-g{background:var(--green-light);color:var(--green-dark)}
+.dm-pill-v{background:var(--violet-light);color:var(--violet-dark)}
+.dm-pill-o{background:#FEF3C7;color:#92400E}
 
 /* AVANT/APRÈS */
 .compare{background:var(--ink);color:#fff;overflow:hidden;position:relative}
@@ -289,7 +295,7 @@ footer{background:var(--ink);color:rgba(255,255,255,.5);padding:56px 28px 28px}
   .pfaq-grid{grid-template-columns:1fr}
 
   /* Feature illustrations — compact on mobile */
-  .contract-card,.cal-card{max-width:360px;margin:0 auto}
+  .contract-card,.dash-mock-card{max-width:360px;margin:0 auto}
 
   /* HORIZONTAL SWIPE CARDS — frictions, pricing, testimonials */
   .friction-grid,.pricing-grid,.testi-grid{
