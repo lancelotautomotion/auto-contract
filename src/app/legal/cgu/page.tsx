@@ -104,7 +104,7 @@ export default function CguPage() {
 
           <h2 id="art10"><span className="num">10.</span> Résiliation</h2>
           <p>L&apos;Utilisateur peut résilier son abonnement à tout moment depuis les paramètres de son compte. La résiliation prend effet à la fin de la période d&apos;abonnement en cours. Aucun remboursement au prorata ne sera effectué.</p>
-          <p>À la résiliation, l&apos;Utilisateur conserve l&apos;accès en lecture seule à ses contrats archivés pendant une durée de <strong>12 mois</strong>, après quoi les données pourront être supprimées conformément à la politique de conservation des données.</p>
+          <p>À la résiliation ou à l&apos;expiration de la période d&apos;essai sans souscription, l&apos;Utilisateur conserve l&apos;accès en lecture seule à ses données pendant une durée de <strong>2 mois</strong>. Passé ce délai, un email d&apos;avertissement est envoyé 30 jours avant la suppression définitive du compte et de l&apos;ensemble des données associées, conformément à la politique de conservation des données.</p>
           <p>L&apos;Éditeur se réserve le droit de résilier un compte en cas de violation grave des présentes CGU, avec notification préalable par email.</p>
 
           <h2 id="art11"><span className="num">11.</span> Droit applicable et juridiction</h2>

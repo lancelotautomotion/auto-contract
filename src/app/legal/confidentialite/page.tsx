@@ -102,15 +102,15 @@ export default function ConfidentialitePage() {
             <table className="data-table">
               <thead><tr><th>Données</th><th>Durée</th></tr></thead>
               <tbody>
-                <tr><td>Données de compte Utilisateur</td><td>Durée de l&apos;abonnement + 12 mois après résiliation</td></tr>
+                <tr><td>Données de compte Utilisateur</td><td>Durée de l&apos;abonnement + <strong>2 mois</strong> après résiliation ou expiration de l&apos;essai</td></tr>
                 <tr><td>Contrats signés et preuves de signature</td><td>5 ans à compter de la date de signature</td></tr>
                 <tr><td>Données de facturation</td><td>10 ans (obligation comptable)</td></tr>
-                <tr><td>Données de connexion (logs)</td><td>12 mois</td></tr>
+                <tr><td>Données de connexion (logs)</td><td>2 mois</td></tr>
                 <tr><td>Données des Locataires</td><td>Durée de conservation du contrat associé</td></tr>
               </tbody>
             </table>
           </div>
-          <p>À l&apos;expiration de ces durées, les données sont supprimées ou anonymisées de manière irréversible.</p>
+          <p>À l&apos;expiration de ces durées, les données sont supprimées ou anonymisées de manière irréversible. Un email d&apos;avertissement est envoyé 30 jours avant toute suppression.</p>
 
           <h2 id="art6"><span className="num-g">06.</span> Destinataires des données</h2>
           <p><strong>— L&apos;éditeur :</strong> Lancelot Loubier, dans le cadre de l&apos;exploitation et du support de la plateforme.</p>
