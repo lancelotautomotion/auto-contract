@@ -26,9 +26,6 @@ function PhoneMockup() {
   return (
     <div className="phone-wrap">
       <div className="phone-frame">
-        {/* Dynamic island */}
-        <div className="phone-island" />
-
         {/* Screen */}
         <div className="phone-screen">
           {/* Status bar */}
