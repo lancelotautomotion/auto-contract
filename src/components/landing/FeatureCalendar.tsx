@@ -27,7 +27,7 @@ function PhoneMockup() {
     <div className="phone-wrap">
       <div className="phone-frame">
         <div className="phone-screen">
-          {/* Status bar — dark comme le vrai topbar */}
+          {/* Status bar */}
           <div className="phone-statusbar">
             <span className="phone-time">9:41</span>
             <div className="phone-icons">
@@ -50,21 +50,17 @@ function PhoneMockup() {
             </div>
           </div>
 
-          {/* Topbar — identique au vrai dashboard */}
+          {/* Topbar avec vrai logo */}
           <div className="dpm-topbar">
             <div className="dpm-hamburger">
               <svg width="13" height="9" fill="none" viewBox="0 0 13 9">
                 <path d="M0 1h13M0 4.5h13M0 8h13" stroke="#fff" strokeWidth="1.6" strokeLinecap="round"/>
               </svg>
             </div>
-            <div className="dpm-logo">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
-                <path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.35C17.25 22.15 21 17.25 21 12V7L12 2z" fill="#689D71"/>
-              </svg>
-              KORDIA
-            </div>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/logotype_KORDIA.svg" alt="Kordia" className="dpm-logo-img" />
             <div className="dpm-topbar-icon">
-              <svg width="13" height="13" fill="none" viewBox="0 0 24 24">
+              <svg width="14" height="14" fill="none" viewBox="0 0 24 24">
                 <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" stroke="rgba(255,255,255,.4)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </div>
@@ -102,6 +98,35 @@ function PhoneMockup() {
                 <div className="dpm-card-lbl">En attente</div>
                 <div className="dpm-card-num">6</div>
                 <div className="dpm-card-sub">Tout est à jour</div>
+              </div>
+            </div>
+
+            {/* Planning */}
+            <div className="dpm-planning">
+              <div className="dpm-plan-head">
+                <div className="dpm-plan-title">
+                  <svg width="13" height="13" fill="none" viewBox="0 0 16 16">
+                    <rect x="2" y="3" width="12" height="11" rx="2" stroke="#7F77DD" strokeWidth="1.4"/>
+                    <path d="M2 7h12" stroke="#7F77DD" strokeWidth="1.4"/>
+                    <path d="M6 1v4M10 1v4" stroke="#7F77DD" strokeWidth="1.4" strokeLinecap="round"/>
+                  </svg>
+                  Planning
+                </div>
+                <div className="dpm-plan-legend">
+                  <span className="dpm-leg"><span className="dpm-leg-dot" style={{background:'#689D71'}}/>Signé</span>
+                  <span className="dpm-leg"><span className="dpm-leg-dot" style={{background:'#7F77DD'}}/>Envoyé</span>
+                  <span className="dpm-leg"><span className="dpm-leg-dot" style={{background:'#E8A020'}}/>En attente</span>
+                </div>
+              </div>
+              <div className="dpm-plan-nav">
+                <div className="dpm-nav-btn">←</div>
+                <span className="dpm-plan-month">MAI 2026</span>
+                <div className="dpm-nav-btn">→</div>
+              </div>
+              <div className="dpm-plan-days">
+                {['LU','MA','ME','JE','VE','SA','DI'].map(d => (
+                  <div key={d} className="dpm-day-hdr">{d}</div>
+                ))}
               </div>
             </div>
           </div>
