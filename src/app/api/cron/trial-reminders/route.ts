@@ -24,13 +24,14 @@ export async function GET(req: Request) {
     let day: ReminderDay | null = null;
     let field: "trialEmailSent15" | "trialEmailSent5" | "trialEmailSent1" | "trialEmailSent0" | null = null;
 
-    if (daysLeft === 15 && !user.trialEmailSent15) {
+    // Plages larges pour résister aux décalages horaires et runs manqués
+    if (daysLeft <= 15 && daysLeft > 5 && !user.trialEmailSent15) {
       day = 15; field = "trialEmailSent15";
-    } else if (daysLeft === 5 && !user.trialEmailSent5) {
+    } else if (daysLeft <= 5 && daysLeft > 1 && !user.trialEmailSent5) {
       day = 5; field = "trialEmailSent5";
-    } else if (daysLeft === 1 && !user.trialEmailSent1) {
+    } else if (daysLeft <= 1 && daysLeft > 0 && !user.trialEmailSent1) {
       day = 1; field = "trialEmailSent1";
-    } else if ((isExpired || daysLeft <= 0) && !user.trialEmailSent0) {
+    } else if (daysLeft <= 0 && !user.trialEmailSent0) {
       day = 0; field = "trialEmailSent0";
     }
 
