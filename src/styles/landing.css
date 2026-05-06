@@ -176,8 +176,8 @@ h2.st .g{color:var(--green)}h2.st .v{color:var(--violet)}
 .dm-pill-o{background:#FEF3C7;color:#92400E}
 
 /* Phone mockup frame — FeatureCalendar */
-.phone-wrap{display:flex;justify-content:center;align-items:flex-start;position:relative;height:500px;overflow:hidden;padding-top:24px}
-.phone-wrap::after{content:'';position:absolute;bottom:0;left:0;right:0;height:260px;background:linear-gradient(to top,#FCFFF2 40%,transparent);pointer-events:none;z-index:2}
+.phone-wrap{display:flex;justify-content:center;align-items:flex-start;position:relative;height:580px;overflow:hidden;padding-top:24px}
+.phone-wrap::after{content:'';position:absolute;bottom:0;left:0;right:0;height:100px;background:linear-gradient(to top,#FCFFF2 60%,transparent);pointer-events:none;z-index:2}
 .phone-frame{width:310px;flex-shrink:0;background:linear-gradient(175deg,#2E2E2E 0%,#1A1A1A 60%,#111 100%);border-radius:46px;padding:6px 6px 28px;box-shadow:0 0 0 1px rgba(255,255,255,.12) inset,0 0 0 2px rgba(10,10,10,.9),0 0 0 5px rgba(50,50,50,.5),0 0 0 6px rgba(255,255,255,.04),0 48px 120px -24px rgba(44,44,42,.45)}
 .phone-screen{background:#fff;border-radius:40px;overflow:hidden}
 .phone-statusbar{display:flex;justify-content:space-between;align-items:center;padding:10px 20px 6px;background:linear-gradient(135deg,#7F77DD 0%,#5B52B5 100%);color:#fff}
