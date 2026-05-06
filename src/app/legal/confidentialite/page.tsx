@@ -103,10 +103,10 @@ export default function ConfidentialitePage() {
               <thead><tr><th>Données</th><th>Durée</th></tr></thead>
               <tbody>
                 <tr><td>Données de compte Utilisateur</td><td>Durée de l&apos;abonnement + <strong>2 mois</strong> après résiliation ou expiration de l&apos;essai</td></tr>
-                <tr><td>Contrats signés et preuves de signature</td><td>5 ans à compter de la date de signature</td></tr>
+                <tr><td>Contrats signés, PDF et preuves de signature</td><td>2 mois après résiliation ou expiration de l&apos;essai — l&apos;Utilisateur est responsable de conserver ses propres copies</td></tr>
                 <tr><td>Données de facturation</td><td>10 ans (obligation comptable)</td></tr>
                 <tr><td>Données de connexion (logs)</td><td>2 mois</td></tr>
-                <tr><td>Données des Locataires</td><td>Durée de conservation du contrat associé</td></tr>
+                <tr><td>Données des Locataires</td><td>2 mois après résiliation ou expiration de l&apos;essai</td></tr>
               </tbody>
             </table>
           </div>
