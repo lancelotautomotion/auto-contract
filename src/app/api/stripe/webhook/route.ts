@@ -25,7 +25,7 @@ async function setPlanExpiredByCustomer(customerId: string) {
   if (!user) return;
   await prisma.user.update({
     where: { id: user.id },
-    data: { planStatus: "EXPIRED" },
+    data: { planStatus: "EXPIRED", planExpiredAt: new Date() },
   });
 }
 

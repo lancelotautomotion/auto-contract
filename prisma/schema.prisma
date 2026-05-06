@@ -27,6 +27,10 @@ model User {
   trialEmailSent1  Boolean @default(false)
   trialEmailSent0  Boolean @default(false)
 
+  // Suppression automatique des comptes inactifs
+  planExpiredAt       DateTime? // date à laquelle le compte est passé EXPIRED
+  deletionWarningAt   DateTime? // date d'envoi de l'email d'avertissement J+30
+
   gites Gite[]
 }
 

@@ -41,7 +41,14 @@ export async function GET(req: Request) {
 
     try {
       await sendTrialReminder({ to: user.email, name: user.name, daysLeft: day });
-      await prisma.user.update({ where: { id: user.id }, data: { [field]: true } });
+      await prisma.user.update({
+        where: { id: user.id },
+        data: {
+          [field]: true,
+          // À l'expiration, on fixe planExpiredAt pour le cron de suppression
+          ...(day === 0 ? { planExpiredAt: user.trialEndsAt ?? new Date() } : {}),
+        },
+      });
       results.sent++;
     } catch {
       results.errors++;

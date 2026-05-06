@@ -75,12 +75,12 @@ export async function sendTrialReminder({ to, name, daysLeft }: SendTrialReminde
           Votre essai gratuit a expiré aujourd'hui.
         </p>
         <p style="font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif;font-size:15px;line-height:1.7;color:#71716E;margin:0 0 24px;">
-          Vos réservations et contrats sont <strong style="color:#2C2C2A;">conservés pendant 30 jours</strong>.
-          Pour retrouver l'accès aux fonctionnalités et reprendre vos contrats, souscrivez à tout moment.
+          Vos réservations et contrats sont <strong style="color:#2C2C2A;">conservés pendant 2 mois</strong>.
+          Pour retrouver l'accès aux fonctionnalités et télécharger vos contrats, souscrivez à tout moment.
         </p>
         ${ctaButton("Réactiver mon compte", upgradeUrl)}
         ${divider()}
-        ${muted("Vos données sont conservées 30 jours · 9,99 € HT/mois · Sans engagement")}
+        ${muted("Vos données sont conservées 2 mois · 9,99 € HT/mois · Sans engagement")}
       `,
     },
   };
@@ -99,6 +99,43 @@ export async function sendTrialReminder({ to, name, daysLeft }: SendTrialReminde
     from: getFromEmail(),
     to,
     subject,
+    html,
+  });
+}
+
+// --- Suppression automatique ---
+
+export async function sendDeletionWarning({ to, name }: { to: string; name: string | null }) {
+  const upgradeUrl = `${appBaseUrl()}/upgrade`;
+  const greeting = name?.split(" ")[0] ?? undefined;
+
+  const html = buildEmailHtml({
+    giteName: "Kordia",
+    docLabel: "Suppression du compte",
+    preheader: "Votre compte Kordia sera supprimé dans 30 jours.",
+    greeting,
+    body: `
+      <p style="font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif;font-size:15px;line-height:1.7;color:#71716E;margin:0 0 16px;">
+        Votre compte Kordia est inactif depuis plus d'un mois.
+      </p>
+      <p style="font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif;font-size:15px;line-height:1.7;color:#71716E;margin:0 0 16px;">
+        Conformément à notre <a href="${appBaseUrl()}/legal/confidentialite" style="color:#7F77DD;">politique de confidentialité</a>,
+        <strong style="color:#2C2C2A;">votre compte et l'ensemble de vos données seront définitivement supprimés dans 30 jours</strong>
+        (réservations, contrats signés, documents).
+      </p>
+      <p style="font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif;font-size:15px;line-height:1.7;color:#71716E;margin:0 0 24px;">
+        Si vous souhaitez conserver vos données, téléchargez vos contrats depuis vos archives ou réactivez votre abonnement.
+      </p>
+      ${ctaButton("Réactiver mon compte", upgradeUrl)}
+      ${divider()}
+      ${muted("Si vous ne souhaitez pas réactiver, aucune action n'est requise — votre compte sera supprimé automatiquement.")}
+    `,
+  });
+
+  return resend.emails.send({
+    from: getFromEmail(),
+    to,
+    subject: "Votre compte Kordia sera supprimé dans 30 jours",
     html,
   });
 }
