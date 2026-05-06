@@ -26,22 +26,26 @@ function PhoneMockup() {
   return (
     <div className="phone-wrap">
       <div className="phone-frame">
+        {/* Screen */}
         <div className="phone-screen">
           {/* Status bar */}
           <div className="phone-statusbar">
             <span className="phone-time">9:41</span>
             <div className="phone-icons">
+              {/* WiFi */}
               <svg width="14" height="10" fill="none" viewBox="0 0 14 10">
                 <path d="M7 8a1 1 0 1 1 0 2 1 1 0 0 1 0-2z" fill="currentColor"/>
                 <path d="M3.8 5.8C4.9 4.7 5.9 4.2 7 4.2s2.1.5 3.2 1.6" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
                 <path d="M1.2 3.2C3 1.5 5 .5 7 .5s4 1 5.8 2.7" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
               </svg>
+              {/* Signal */}
               <svg width="13" height="10" fill="none" viewBox="0 0 13 10">
                 <rect x="0" y="6" width="2.2" height="4" rx="0.5" fill="currentColor"/>
                 <rect x="3.5" y="4" width="2.2" height="6" rx="0.5" fill="currentColor"/>
                 <rect x="7" y="2" width="2.2" height="8" rx="0.5" fill="currentColor"/>
                 <rect x="10.5" y="0" width="2.2" height="10" rx="0.5" fill="currentColor"/>
               </svg>
+              {/* Battery */}
               <svg width="22" height="11" fill="none" viewBox="0 0 22 11">
                 <rect x="0.5" y="0.5" width="18" height="10" rx="2.5" stroke="currentColor" strokeOpacity=".4"/>
                 <rect x="19.5" y="3" width="2" height="5" rx="1" fill="currentColor" fillOpacity=".4"/>
@@ -50,58 +54,68 @@ function PhoneMockup() {
             </div>
           </div>
 
-          {/* Topbar sombre — comme le vrai dashboard */}
-          <div className="pm-topbar">
-            <div className="pm-hamburger">
-              <svg width="14" height="10" fill="none" viewBox="0 0 14 10">
-                <path d="M0 1h14M0 5h14M0 9h14" stroke="#fff" strokeWidth="1.8" strokeLinecap="round"/>
-              </svg>
+          {/* App header */}
+          <div className="dm-header">
+            <div>
+              <div className="dm-greeting">Bonjour, Guillaume</div>
+              <div className="dm-title">Tableau de bord</div>
             </div>
-            <div className="pm-logo">
-              <svg width="14" height="14" fill="none" viewBox="0 0 24 24">
-                <path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.35C17.25 22.15 21 17.25 21 12V7L12 2z" fill="#689D71"/>
-              </svg>
-              <span>KORDIA</span>
+            <div className="dm-avatar">G</div>
+          </div>
+
+          {/* Stats */}
+          <div className="dm-stats">
+            <div className="dm-stat">
+              <div className="dm-stat-val">24</div>
+              <div className="dm-stat-lbl">Réservations</div>
             </div>
-            <div className="pm-topbar-right">
-              <svg width="14" height="14" fill="none" viewBox="0 0 24 24">
-                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" stroke="rgba(255,255,255,.5)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
+            <div className="dm-stat-div" />
+            <div className="dm-stat">
+              <div className="dm-stat-val">18</div>
+              <div className="dm-stat-lbl">Signés</div>
+            </div>
+            <div className="dm-stat-div" />
+            <div className="dm-stat">
+              <div className="dm-stat-val">6</div>
+              <div className="dm-stat-lbl">En attente</div>
             </div>
           </div>
 
-          {/* Breadcrumb */}
-          <div className="pm-breadcrumb">
-            Kordia / <strong>Tableau de bord</strong>
-          </div>
-
-          {/* Corps */}
-          <div className="pm-body">
-            <div className="pm-greeting">Bonjour, Guillaume<span className="pm-dot">.</span></div>
-            <div className="pm-date">Mercredi 6 mai 2026</div>
-
-            <div className="pm-ctas">
-              <div className="pm-cta pm-cta-green">Lien de réservation</div>
-              <div className="pm-cta pm-cta-violet">+ Nouvelle réservation</div>
-            </div>
-
-            <div className="pm-grid">
-              <div className="pm-card pm-card-green">
-                <div className="pm-card-label">RÉSERVATIONS</div>
-                <div className="pm-card-num">24</div>
+          {/* À venir */}
+          <div className="dm-section">
+            <div className="dm-section-title">À venir</div>
+            <div className="dm-rows">
+              <div className="dm-row">
+                <div className="dm-dot dm-dot-g" />
+                <div className="dm-row-info">
+                  <div className="dm-row-name">Martin D.</div>
+                  <div className="dm-row-date">12 – 19 juil.</div>
+                </div>
+                <div className="dm-pill dm-pill-g">Signé</div>
               </div>
-              <div className="pm-card pm-card-violet">
-                <div className="pm-card-label">CONTRATS GÉNÉRÉS</div>
-                <div className="pm-card-num">18</div>
+              <div className="dm-row">
+                <div className="dm-dot dm-dot-v" />
+                <div className="dm-row-info">
+                  <div className="dm-row-name">Charles B.</div>
+                  <div className="dm-row-date">26 – 31 juil.</div>
+                </div>
+                <div className="dm-pill dm-pill-v">Envoyé</div>
               </div>
-              <div className="pm-card pm-card-green">
-                <div className="pm-card-label">CONTRATS SIGNÉS</div>
-                <div className="pm-card-num">18</div>
+              <div className="dm-row">
+                <div className="dm-dot dm-dot-o" />
+                <div className="dm-row-info">
+                  <div className="dm-row-name">Sophie M.</div>
+                  <div className="dm-row-date">2 – 9 août</div>
+                </div>
+                <div className="dm-pill dm-pill-o">En attente</div>
               </div>
-              <div className="pm-card pm-card-orange">
-                <div className="pm-card-label">EN ATTENTE</div>
-                <div className="pm-card-num">6</div>
-                <div className="pm-card-sub">Tout est à jour</div>
+              <div className="dm-row">
+                <div className="dm-dot dm-dot-g" />
+                <div className="dm-row-info">
+                  <div className="dm-row-name">Léa R.</div>
+                  <div className="dm-row-date">15 – 22 août</div>
+                </div>
+                <div className="dm-pill dm-pill-g">Signé</div>
               </div>
             </div>
           </div>
