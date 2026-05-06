@@ -153,13 +153,13 @@ h2.st .g{color:var(--green)}h2.st .v{color:var(--violet)}
 /* CAL */
 /* Dashboard mockup — FeatureCalendar */
 .dash-mock-card{background:var(--white);border:1px solid var(--line);border-radius:20px;overflow:hidden;box-shadow:0 24px 64px -12px rgba(44,44,42,.10);max-width:400px;margin:0 auto}
-.dm-header{background:linear-gradient(135deg,#7F77DD 0%,#5B52B5 100%);padding:16px 20px;display:flex;justify-content:space-between;align-items:center}
-.dm-title{font-size:14px;font-weight:700;color:#fff;letter-spacing:-.01em}
-.dm-avatar{width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.25);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center}
-.dm-stats{display:flex;align-items:center;padding:16px 20px;gap:0;border-bottom:1px solid var(--line-light)}
+.dm-header{background:linear-gradient(135deg,#7F77DD 0%,#5B52B5 100%);padding:14px 20px 16px;display:flex;justify-content:space-between;align-items:center}
+.dm-title{font-size:15px;font-weight:700;color:#fff;letter-spacing:-.01em}
+.dm-avatar{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.22);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;border:1.5px solid rgba(255,255,255,.3)}
+.dm-stats{display:flex;align-items:center;padding:14px 16px;gap:0;border-bottom:1px solid var(--line-light)}
 .dm-stat{flex:1;text-align:center}
-.dm-stat-val{font-size:28px;font-weight:800;color:var(--ink);letter-spacing:-.04em;line-height:1}
-.dm-stat-lbl{font-size:11px;color:var(--ink-soft);margin-top:4px;font-weight:500}
+.dm-stat-val{font-size:22px;font-weight:800;color:var(--ink);letter-spacing:-.04em;line-height:1}
+.dm-stat-lbl{font-size:10px;color:var(--ink-soft);margin-top:3px;font-weight:500}
 .dm-stat-div{width:1px;height:36px;background:var(--line);margin:0 8px}
 .dm-section{padding:14px 20px 18px}
 .dm-section-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-lighter);margin-bottom:10px}
@@ -176,14 +176,15 @@ h2.st .g{color:var(--green)}h2.st .v{color:var(--violet)}
 .dm-pill-o{background:#FEF3C7;color:#92400E}
 
 /* Phone mockup frame — FeatureCalendar */
-.phone-wrap{display:flex;justify-content:center;align-items:center;padding:16px 0}
-.phone-frame{width:240px;background:#1A1A1A;border-radius:40px;padding:10px 10px 14px;box-shadow:0 32px 80px -16px rgba(44,44,42,.28),0 0 0 1px rgba(255,255,255,.07) inset,0 0 0 6px #111 inset}
-.phone-island{width:72px;height:22px;background:#000;border-radius:20px;margin:4px auto 8px}
-.phone-screen{background:#fff;border-radius:28px;overflow:hidden}
-.phone-statusbar{display:flex;justify-content:space-between;align-items:center;padding:8px 16px 4px;background:linear-gradient(135deg,#7F77DD 0%,#5B52B5 100%);color:#fff}
-.phone-time{font-size:10px;font-weight:700;letter-spacing:.02em}
-.phone-icons{display:flex;gap:4px;align-items:center;color:#fff}
-.phone-home{width:80px;height:4px;background:rgba(255,255,255,.22);border-radius:2px;margin:8px auto 0}
+.phone-wrap{display:flex;justify-content:center;align-items:flex-start;position:relative;height:560px;overflow:hidden;padding-top:24px}
+.phone-wrap::after{content:'';position:absolute;bottom:0;left:0;right:0;height:200px;background:linear-gradient(to top,#FCFFF2 20%,transparent);pointer-events:none;z-index:2}
+.phone-frame{width:310px;flex-shrink:0;background:linear-gradient(175deg,#2E2E2E 0%,#1A1A1A 60%,#111 100%);border-radius:54px;padding:14px 13px 28px;box-shadow:0 0 0 1px rgba(255,255,255,.12) inset,0 0 0 2px rgba(10,10,10,.9),0 0 0 5px rgba(50,50,50,.5),0 0 0 6px rgba(255,255,255,.04),0 48px 120px -24px rgba(44,44,42,.45)}
+.phone-island{width:108px;height:28px;background:#000;border-radius:20px;margin:2px auto 10px}
+.phone-screen{background:#fff;border-radius:40px;overflow:hidden}
+.phone-statusbar{display:flex;justify-content:space-between;align-items:center;padding:10px 20px 6px;background:linear-gradient(135deg,#7F77DD 0%,#5B52B5 100%);color:#fff}
+.phone-time{font-size:12px;font-weight:700;letter-spacing:.01em}
+.phone-icons{display:flex;gap:5px;align-items:center;color:#fff}
+.dm-greeting{font-size:10px;color:rgba(255,255,255,.6);font-weight:500;margin-bottom:2px}
 
 /* AVANT/APRÈS */
 .compare{background:var(--ink);color:#fff;overflow:hidden;position:relative}

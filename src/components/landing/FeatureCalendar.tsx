@@ -35,23 +35,34 @@ function PhoneMockup() {
           <div className="phone-statusbar">
             <span className="phone-time">9:41</span>
             <div className="phone-icons">
-              <svg width="12" height="10" fill="none" viewBox="0 0 12 10">
-                <rect x="0" y="3" width="2" height="7" rx="0.5" fill="currentColor" opacity=".4"/>
-                <rect x="3" y="2" width="2" height="8" rx="0.5" fill="currentColor" opacity=".6"/>
-                <rect x="6" y="1" width="2" height="9" rx="0.5" fill="currentColor" opacity=".8"/>
-                <rect x="9" y="0" width="2" height="10" rx="0.5" fill="currentColor"/>
-              </svg>
+              {/* WiFi */}
               <svg width="14" height="10" fill="none" viewBox="0 0 14 10">
-                <rect x="0.5" y="0.5" width="11" height="9" rx="2" stroke="currentColor"/>
-                <rect x="12" y="3" width="1.5" height="4" rx="0.75" fill="currentColor"/>
-                <rect x="2" y="2" width="7" height="6" rx="1" fill="currentColor"/>
+                <path d="M7 8a1 1 0 1 1 0 2 1 1 0 0 1 0-2z" fill="currentColor"/>
+                <path d="M3.8 5.8C4.9 4.7 5.9 4.2 7 4.2s2.1.5 3.2 1.6" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
+                <path d="M1.2 3.2C3 1.5 5 .5 7 .5s4 1 5.8 2.7" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
+              </svg>
+              {/* Signal */}
+              <svg width="13" height="10" fill="none" viewBox="0 0 13 10">
+                <rect x="0" y="6" width="2.2" height="4" rx="0.5" fill="currentColor"/>
+                <rect x="3.5" y="4" width="2.2" height="6" rx="0.5" fill="currentColor"/>
+                <rect x="7" y="2" width="2.2" height="8" rx="0.5" fill="currentColor"/>
+                <rect x="10.5" y="0" width="2.2" height="10" rx="0.5" fill="currentColor"/>
+              </svg>
+              {/* Battery */}
+              <svg width="22" height="11" fill="none" viewBox="0 0 22 11">
+                <rect x="0.5" y="0.5" width="18" height="10" rx="2.5" stroke="currentColor" strokeOpacity=".4"/>
+                <rect x="19.5" y="3" width="2" height="5" rx="1" fill="currentColor" fillOpacity=".4"/>
+                <rect x="2" y="2" width="13" height="7" rx="1.5" fill="currentColor"/>
               </svg>
             </div>
           </div>
 
           {/* App header */}
           <div className="dm-header">
-            <span className="dm-title">Tableau de bord</span>
+            <div>
+              <div className="dm-greeting">Bonjour, Guillaume</div>
+              <div className="dm-title">Tableau de bord</div>
+            </div>
             <div className="dm-avatar">G</div>
           </div>
 
@@ -64,7 +75,12 @@ function PhoneMockup() {
             <div className="dm-stat-div" />
             <div className="dm-stat">
               <div className="dm-stat-val">18</div>
-              <div className="dm-stat-lbl">Contrats signés</div>
+              <div className="dm-stat-lbl">Signés</div>
+            </div>
+            <div className="dm-stat-div" />
+            <div className="dm-stat">
+              <div className="dm-stat-val">6</div>
+              <div className="dm-stat-lbl">En attente</div>
             </div>
           </div>
 
@@ -76,7 +92,7 @@ function PhoneMockup() {
                 <div className="dm-dot dm-dot-g" />
                 <div className="dm-row-info">
                   <div className="dm-row-name">Martin D.</div>
-                  <div className="dm-row-date">12 – 19 juil. · Signé</div>
+                  <div className="dm-row-date">12 – 19 juil.</div>
                 </div>
                 <div className="dm-pill dm-pill-g">Signé</div>
               </div>
@@ -84,7 +100,7 @@ function PhoneMockup() {
                 <div className="dm-dot dm-dot-v" />
                 <div className="dm-row-info">
                   <div className="dm-row-name">Charles B.</div>
-                  <div className="dm-row-date">26 – 31 juil. · Envoyé</div>
+                  <div className="dm-row-date">26 – 31 juil.</div>
                 </div>
                 <div className="dm-pill dm-pill-v">Envoyé</div>
               </div>
@@ -92,16 +108,21 @@ function PhoneMockup() {
                 <div className="dm-dot dm-dot-o" />
                 <div className="dm-row-info">
                   <div className="dm-row-name">Sophie M.</div>
-                  <div className="dm-row-date">2 – 9 août · En attente</div>
+                  <div className="dm-row-date">2 – 9 août</div>
                 </div>
                 <div className="dm-pill dm-pill-o">En attente</div>
+              </div>
+              <div className="dm-row">
+                <div className="dm-dot dm-dot-g" />
+                <div className="dm-row-info">
+                  <div className="dm-row-name">Léa R.</div>
+                  <div className="dm-row-date">15 – 22 août</div>
+                </div>
+                <div className="dm-pill dm-pill-g">Signé</div>
               </div>
             </div>
           </div>
         </div>
-
-        {/* Home indicator */}
-        <div className="phone-home" />
       </div>
     </div>
   );
