@@ -11,6 +11,8 @@ interface Props {
   signedByName: string | null;
   depositReceived: boolean;
   createdAt: string;
+  reminderCount: number;
+  lastReminderAt: Date | null;
 }
 
 const fmtDate = (d: Date) =>
@@ -52,6 +54,8 @@ export default function ContractActions({
   signedByName,
   depositReceived: initialDepositReceived,
   createdAt,
+  reminderCount,
+  lastReminderAt,
 }: Props) {
   const [status, setStatus] = useState(contractStatus);
   const [mailStatus, setMailStatus] = useState(emailStatus);
@@ -216,6 +220,28 @@ export default function ContractActions({
               <div className="tl-date">{step2Date}</div>
             </div>
           </div>
+          {/* Relances automatiques — visible si au moins 1 relance envoyée et contrat non signé */}
+          {reminderCount > 0 && !isSigned && (
+            <div className="tl-item current">
+              <div className="tl-dot current">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                  <path d="M7 2v4l2.5 2" stroke="#5B52B5" strokeWidth="1.3" strokeLinecap="round"/>
+                  <circle cx="7" cy="7" r="5.5" stroke="#5B52B5" strokeWidth="1.3"/>
+                </svg>
+              </div>
+              <div className="tl-content">
+                <div className="tl-label">
+                  {reminderCount === 1 ? "1 relance automatique envoyée" : `${reminderCount} relances automatiques envoyées`}
+                </div>
+                <div className="tl-date">
+                  {lastReminderAt
+                    ? `Dernière le ${new Date(lastReminderAt).toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' })}`
+                    : ""}
+                </div>
+              </div>
+            </div>
+          )}
+
           <div className={`tl-item ${step3State}`}>
             <TlDot state={step3State} />
             <div className="tl-content">

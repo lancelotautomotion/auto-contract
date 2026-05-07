@@ -304,6 +304,8 @@ export default async function ReservationDetailPage({ params }: { params: Promis
           signedByName={reservation.contract?.signedByName ?? null}
           depositReceived={reservation.contract?.depositReceived ?? false}
           createdAt={reservation.createdAt.toISOString()}
+          reminderCount={reservation.contract?.reminderCount ?? 0}
+          lastReminderAt={reservation.contract?.lastReminderAt ?? null}
         />
 
         {/* Notes card */}

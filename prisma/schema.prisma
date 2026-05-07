@@ -170,8 +170,10 @@ model Contract {
   depositReceivedAt DateTime?
   signedPdfUrl      String?   // Vercel Blob URL of the signed PDF
 
-  emailSentAt DateTime?
-  emailStatus EmailStatus @default(NOT_SENT)
+  emailSentAt    DateTime?
+  emailStatus    EmailStatus @default(NOT_SENT)
+  reminderCount  Int         @default(0)
+  lastReminderAt DateTime?
 
   reservationId String      @unique
   reservation   Reservation @relation(fields: [reservationId], references: [id], onDelete: Cascade)
