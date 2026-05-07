@@ -7,6 +7,7 @@
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { getTrialInfo } from "@/lib/trial";
 
 type AuthErr = NextResponse;
 export type AuthCtx = { userId: string };
@@ -62,4 +63,24 @@ export async function requireAdmin(): Promise<[AuthCtx, null] | [null, AuthErr]>
     return [null, NextResponse.json({ error: "Accès refusé" }, { status: 403 })];
 
   return [{ userId: clerkId }, null];
+}
+
+export async function requireActivePlan(): Promise<[GiteCtx, null] | [null, AuthErr]> {
+  const { userId: clerkId } = await auth();
+  if (!clerkId)
+    return [null, NextResponse.json({ error: "Non autorisé" }, { status: 401 })];
+
+  const user = await prisma.user.findUnique({ where: { clerkId } });
+  if (!user)
+    return [null, NextResponse.json({ error: "Utilisateur introuvable" }, { status: 404 })];
+
+  const trialInfo = getTrialInfo(user);
+  if (trialInfo.isExpired)
+    return [null, NextResponse.json({ error: "Essai expiré. Abonnez-vous pour continuer." }, { status: 403 })];
+
+  const gite = await prisma.gite.findFirst({ where: { userId: user.id } });
+  if (!gite)
+    return [null, NextResponse.json({ error: "Gîte introuvable" }, { status: 404 })];
+
+  return [{ userId: user.id, giteId: gite.id }, null];
 }
