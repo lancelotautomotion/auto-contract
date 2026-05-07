@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import AdminUsersManager from "./AdminUsersManager";
 
 export default async function AdminPage() {
   const now = new Date();
@@ -94,13 +95,23 @@ export default async function AdminPage() {
       orderBy: { reservations: { _count: "desc" } },
     }),
 
-    // Derniers inscrits
+    // Derniers inscrits (aperçu)
     prisma.user.findMany({
       take: 10,
       orderBy: { createdAt: "desc" },
       include: { gites: { select: { id: true } } },
     }),
   ]);
+
+  // Tous les utilisateurs pour la gestion des comptes
+  const allUsers = await prisma.user.findMany({
+    orderBy: { createdAt: "desc" },
+    select: {
+      id: true, name: true, email: true, planStatus: true,
+      createdAt: true, stripeSubscriptionId: true,
+      _count: { select: { gites: true } },
+    },
+  });
 
   // Raw SQL
   const ttvResult = await prisma.$queryRaw<[{ avg_hours: number | null }]>`
@@ -484,6 +495,23 @@ export default async function AdminPage() {
           </tbody>
         </table>
       </div>
+
+      {/* ── GESTION DES COMPTES ─────────────────────────────────────────── */}
+      <div className="admin-section-header" style={{ margin: "40px 0 16px" }}>
+        <h2 className="admin-section-title">Gestion des comptes</h2>
+        <span className="admin-section-count">{allUsers.length} utilisateurs</span>
+      </div>
+      <AdminUsersManager
+        initialUsers={allUsers.map(u => ({
+          id: u.id,
+          name: u.name,
+          email: u.email,
+          planStatus: u.planStatus,
+          createdAt: u.createdAt.toISOString(),
+          gitesCount: u._count.gites,
+          hasStripe: !!u.stripeSubscriptionId,
+        }))}
+      />
 
     </div>
   );

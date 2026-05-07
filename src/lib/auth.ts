@@ -45,10 +45,25 @@ export async function requireGite(): Promise<[GiteCtx, null] | [null, AuthErr]> 
 }
 
 /**
- * Like requireGite(), but also blocks users whose trial has expired.
- * Use on premium write routes (generate-contract, send-email, create reservation).
+ * Vérifie que l'appelant a le rôle "admin" dans Clerk.
+ * Utilise le JWT d'abord (sessionClaims), puis l'API Clerk si absent.
  */
-export async function requireActivePlan(): Promise<[GiteCtx, null] | [null, AuthErr]> {
+export async function requireAdmin(): Promise<[AuthCtx, null] | [null, AuthErr]> {
+  const { userId: clerkId, sessionClaims } = await auth();
+  if (!clerkId)
+    return [null, NextResponse.json({ error: "Non autorisé" }, { status: 401 })];
+
+  const roleFromClaims = (sessionClaims?.metadata as Record<string, unknown> | undefined)?.role;
+  if (roleFromClaims === "admin") return [{ userId: clerkId }, null];
+
+  const { clerkClient } = await import("@clerk/nextjs/server");
+  const client = await clerkClient();
+  const user = await client.users.getUser(clerkId);
+  if (user.publicMetadata?.role !== "admin")
+    return [null, NextResponse.json({ error: "Accès refusé" }, { status: 403 })];
+
+  return [{ userId: clerkId }, null];
+}
   const { userId: clerkId } = await auth();
   if (!clerkId)
     return [null, NextResponse.json({ error: "Non autorisé" }, { status: 401 })];

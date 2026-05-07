@@ -302,3 +302,33 @@ body { font-family: var(--ff); color: var(--ink); background: var(--bg); -webkit
   .ac-email-stat:first-child { border-top: none; padding-top: 0; }
   .ac-email-num { font-size: 28px; }
 }
+
+/* ── GESTION DES COMPTES ─────────────────────────────────────────────── */
+.mgmt-filters { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+.mgmt-search { flex: 1; min-width: 200px; height: 38px; border: 1px solid var(--line); border-radius: 8px; padding: 0 12px; font-family: var(--ff); font-size: 13px; color: var(--ink); background: var(--white); outline: none; }
+.mgmt-search:focus { border-color: var(--violet); box-shadow: 0 0 0 3px rgba(127,119,221,.12); }
+.mgmt-plan-tabs { display: flex; gap: 4px; }
+.mgmt-tab { height: 36px; padding: 0 14px; border: 1px solid var(--line); border-radius: 8px; background: var(--white); font-family: var(--ff); font-size: 12px; font-weight: 600; color: var(--ink-soft); cursor: pointer; transition: all .15s; }
+.mgmt-tab:hover { border-color: var(--ink); color: var(--ink); }
+.mgmt-tab.active { background: var(--ink); border-color: var(--ink); color: #fff; }
+.mgmt-delete-btn { display: inline-flex; align-items: center; gap: 5px; padding: 5px 10px; border: 1px solid #FCA5A5; border-radius: 7px; background: #FFF5F5; color: #DC2626; font-size: 12px; font-weight: 600; font-family: var(--ff); cursor: pointer; transition: all .15s; }
+.mgmt-delete-btn:hover { background: #FEE2E2; border-color: #F87171; }
+
+/* MODAL */
+.mgmt-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.45); backdrop-filter: blur(4px); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 20px; }
+.mgmt-modal { background: var(--white); border-radius: 16px; padding: 32px; width: 100%; max-width: 460px; box-shadow: 0 32px 80px rgba(0,0,0,.2); }
+.mgmt-modal-icon { width: 48px; height: 48px; background: #FEE2E2; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 16px; }
+.mgmt-modal-title { font-size: 18px; font-weight: 800; color: var(--ink); letter-spacing: -.02em; margin-bottom: 8px; }
+.mgmt-modal-desc { font-size: 13px; color: var(--ink-soft); line-height: 1.6; margin-bottom: 20px; }
+.mgmt-modal-user-card { display: flex; align-items: center; gap: 12px; padding: 12px 14px; background: var(--bg); border: 1px solid var(--line); border-radius: 10px; margin-bottom: 20px; }
+.mgmt-modal-av { width: 36px; height: 36px; border-radius: 50%; background: var(--violet-light); color: var(--violet-dark); font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.mgmt-confirm-label { display: block; font-size: 12px; font-weight: 600; color: var(--ink-soft); margin-bottom: 6px; }
+.mgmt-confirm-input { width: 100%; height: 40px; border: 1px solid var(--line); border-radius: 8px; padding: 0 12px; font-family: var(--ff); font-size: 13px; color: var(--ink); outline: none; margin-bottom: 6px; }
+.mgmt-confirm-input:focus { border-color: #DC2626; box-shadow: 0 0 0 3px rgba(220,38,38,.1); }
+.mgmt-error { font-size: 12px; color: #DC2626; margin-bottom: 12px; }
+.mgmt-modal-actions { display: flex; gap: 10px; margin-top: 20px; }
+.mgmt-cancel-btn { flex: 1; height: 40px; border: 1px solid var(--line); border-radius: 8px; background: var(--white); font-family: var(--ff); font-size: 14px; font-weight: 600; color: var(--ink-soft); cursor: pointer; transition: all .15s; }
+.mgmt-cancel-btn:hover:not(:disabled) { border-color: var(--ink); color: var(--ink); }
+.mgmt-confirm-btn { flex: 2; height: 40px; border: none; border-radius: 8px; background: #DC2626; font-family: var(--ff); font-size: 14px; font-weight: 700; color: #fff; cursor: pointer; transition: background .15s; }
+.mgmt-confirm-btn:hover:not(:disabled) { background: #B91C1C; }
+.mgmt-confirm-btn:disabled { opacity: .4; cursor: not-allowed; }
