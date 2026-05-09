@@ -297,16 +297,21 @@ h2.st .g{color:var(--green)}h2.st .v{color:var(--violet)}
 .pfaq-q{display:flex;align-items:flex-start;gap:10px;font-size:14px;font-weight:600;color:var(--ink);margin-bottom:10px;line-height:1.45}
 .pfaq-a{font-size:14px;color:var(--ink-soft);line-height:1.65}
 
-/* TESTI */
-.testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:48px}
-.tc{background:var(--white);border:1px solid var(--line);border-radius:14px;padding:28px;transition:all .3s ease}
-.tc:hover{border-color:var(--green);transform:translateY(-3px);box-shadow:0 8px 24px rgba(104,157,113,.08)}
-.tc-stars{display:flex;gap:2px;margin-bottom:16px}
-.tc-quote{font-size:15px;line-height:1.7;color:var(--ink);margin-bottom:24px;font-style:italic}
-.tc-author{display:flex;align-items:center;gap:12px}
-.ta-av{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
-.ta-g{background:var(--green-light);color:var(--green-dark)}.ta-v{background:var(--violet-light);color:var(--violet-dark)}
-.ta-name{font-size:14px;font-weight:600}.ta-role{font-size:12px;color:var(--ink-soft)}
+/* BENTO TESTIMONIALS */
+.tb-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:48px;align-items:stretch}
+.tb-col{display:flex;flex-direction:column;gap:14px}
+.tb-card{border-radius:16px;padding:28px;display:flex;flex-direction:column;justify-content:flex-end;position:relative;overflow:hidden}
+.tb-v{background:var(--violet);color:#fff;flex:7}
+.tb-g{background:var(--green);color:#fff;flex:3}
+.tb-d{background:var(--ink);color:#fff;flex:1}
+.tb-v::before,.tb-g::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(90deg,rgba(255,255,255,.06) 0,rgba(255,255,255,.06) 1px,transparent 1px,transparent 50px),repeating-linear-gradient(0deg,rgba(255,255,255,.06) 0,rgba(255,255,255,.06) 1px,transparent 1px,transparent 56px);pointer-events:none}
+.tb-stars{display:flex;gap:3px;margin-bottom:14px;position:relative;z-index:1}
+.tb-quote{font-size:15px;line-height:1.75;font-style:italic;color:rgba(255,255,255,.9);margin-bottom:20px;position:relative;z-index:1}
+.tb-author{display:flex;align-items:center;gap:12px;position:relative;z-index:1}
+.tb-av{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;background:rgba(255,255,255,.15);color:#fff}
+.tb-name{font-size:14px;font-weight:700;color:#fff}
+.tb-role{font-size:12px;color:rgba(255,255,255,.6)}
+.st-sub{font-size:16px;color:var(--ink-soft);margin-top:12px;max-width:500px;margin-left:auto;margin-right:auto}
 
 /* CTA */
 .cta-section{background:linear-gradient(135deg,var(--violet) 0%,var(--violet-dark) 100%);padding:80px 28px;text-align:center;position:relative;overflow:hidden}
@@ -344,8 +349,8 @@ footer{background:var(--ink);color:rgba(255,255,255,.5);padding:56px 28px 28px}
   /* Feature illustrations — compact on mobile */
   .contract-card,.dash-mock-card{max-width:360px;margin:0 auto}
 
-  /* HORIZONTAL SWIPE CARDS — frictions, pricing, testimonials */
-  .friction-grid,.pricing-grid,.testi-grid{
+  /* HORIZONTAL SWIPE CARDS — frictions, pricing */
+  .friction-grid,.pricing-grid{
     display:flex;
     grid-template-columns:none;
     overflow-x:auto;
@@ -360,21 +365,41 @@ footer{background:var(--ink);color:rgba(255,255,255,.5);padding:56px 28px 28px}
     scrollbar-width:none;
   }
   .friction-grid::-webkit-scrollbar,
-  .pricing-grid::-webkit-scrollbar,
-  .testi-grid::-webkit-scrollbar{display:none}
-  .fc,.pc,.tc{
+  .pricing-grid::-webkit-scrollbar{display:none}
+  .fc,.pc{
     flex:0 0 78%;
     max-width:320px;
     scroll-snap-align:start;
     scroll-snap-stop:always;
   }
-  /* Scroll hint row — dots indicator */
   .friction-grid::after,
-  .pricing-grid::after,
-  .testi-grid::after{
+  .pricing-grid::after{
     content:'';
     flex:0 0 4px;
   }
+  /* TESTIMONIALS BENTO — scroll horizontal sur mobile */
+  .tb-grid{
+    display:flex;
+    overflow-x:auto;
+    overflow-y:visible;
+    scroll-snap-type:x mandatory;
+    scroll-behavior:smooth;
+    gap:14px;
+    margin:0 -20px;
+    padding:20px 20px 24px;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
+  }
+  .tb-grid::-webkit-scrollbar{display:none}
+  .tb-col{
+    flex:0 0 78%;
+    max-width:300px;
+    scroll-snap-align:start;
+    scroll-snap-stop:always;
+    flex-direction:column;
+  }
+  .tb-card{flex:unset}
+  .tb-v,.tb-g,.tb-d{flex:unset}
 
   /* Compare — compact side-by-side on mobile with shared header pills */
   .tr-panel{padding:4px}
@@ -448,7 +473,7 @@ footer{background:var(--ink);color:rgba(255,255,255,.5);padding:56px 28px 28px}
   .fc{padding:22px}
   .pc{padding:26px 22px}
   .pc-price{font-size:40px}
-  .tc{padding:22px}
+  .tb-card{padding:22px}
   .cta-section{padding:56px 16px}
   .cta-section h2{font-size:30px}
   .cta-section p{font-size:15px}
