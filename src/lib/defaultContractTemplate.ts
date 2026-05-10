@@ -1,7 +1,16 @@
 export function mergeTemplates(general: string, houseRules: string | null | undefined): string {
   const rules = houseRules?.trim();
   if (!rules) return general;
-  return `${general}\n\nRÈGLEMENT INTÉRIEUR\n\n${rules}`;
+
+  // Insère avant le bloc signature ("Fait à …") pour que le règlement
+  // apparaisse dans le corps du contrat, pas après les signatures.
+  const marker = '\nFait à ';
+  const idx = general.indexOf(marker);
+  if (idx === -1) {
+    return `${general}\n\nRÈGLEMENT INTÉRIEUR\n\n${rules}`;
+  }
+
+  return `${general.slice(0, idx)}\n\nRÈGLEMENT INTÉRIEUR\n\n${rules}${general.slice(idx)}`;
 }
 
 export const DEFAULT_CONTRACT_TEMPLATE = `CONTRAT DE LOCATION SAISONNIÈRE
