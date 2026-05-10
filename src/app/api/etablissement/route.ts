@@ -1,12 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { requireAuth } from "@/lib/auth";
+import { requireGiteById } from "@/lib/auth";
 
 export async function POST(req: NextRequest) {
-  const [ctx, err] = await requireAuth();
-  if (err) return err;
-
   const body = await req.json();
+  const [ctx, err] = await requireGiteById(body.giteId);
+  if (err) return err;
 
   const giteData = {
     name: body.giteName,
@@ -24,17 +23,14 @@ export async function POST(req: NextRequest) {
     touristTax: parseFloat(body.touristTax ?? "1.32"),
   };
 
-  let gite = await prisma.gite.findFirst({ where: { userId: ctx.userId } });
-  if (!gite) return NextResponse.json({ error: "Gîte introuvable" }, { status: 404 });
-
-  gite = await prisma.gite.update({ where: { id: gite.id }, data: giteData });
+  let gite = await prisma.gite.update({ where: { id: ctx.giteId }, data: giteData });
 
   if (Array.isArray(body.options)) {
-    await prisma.giteOption.deleteMany({ where: { giteId: gite.id } });
+    await prisma.giteOption.deleteMany({ where: { giteId: ctx.giteId } });
     if (body.options.length > 0) {
       await prisma.giteOption.createMany({
         data: body.options.map((opt: { label: string; price: number }, i: number) => ({
-          giteId: gite!.id,
+          giteId: ctx.giteId,
           label: opt.label,
           price: parseFloat(String(opt.price ?? 0)),
           position: i,

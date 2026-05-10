@@ -74,7 +74,7 @@ const s = {
   },
 };
 
-export default function IcalTab() {
+export default function IcalTab({ giteId }: { giteId?: string }) {
   const [feeds, setFeeds] = useState<Feed[]>([]);
   const [loading, setLoading] = useState(true);
   const [syncing, setSyncing] = useState<string | null>(null);
@@ -87,7 +87,8 @@ export default function IcalTab() {
   const [addError, setAddError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch('/api/gite/ical')
+    const url = giteId ? `/api/gite/ical?giteId=${giteId}` : '/api/gite/ical';
+    fetch(url)
       .then(r => r.json())
       .then(d => { setFeeds(d.feeds ?? []); setLoading(false); })
       .catch(() => setLoading(false));
@@ -107,7 +108,7 @@ export default function IcalTab() {
       const res = await fetch('/api/gite/ical', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ platform, label, url }),
+        body: JSON.stringify({ giteId, platform, label, url }),
       });
       const data = await res.json();
       if (!res.ok) { setAddError(data.error ?? "Erreur"); setAdding(false); return; }

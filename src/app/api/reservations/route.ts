@@ -1,23 +1,26 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { requireActivePlan } from "@/lib/auth";
+import { requireActivePlan, requireGiteById } from "@/lib/auth";
 
 export async function POST(req: NextRequest) {
-  const [ctx, err] = await requireActivePlan();
-  if (err) return err;
-
   const body = await req.json();
 
-  let gite = await prisma.gite.findFirst({
-    where: { userId: ctx.userId },
+  // requireActivePlan checks trial expiry; requireGiteById verifies ownership
+  const [planCtx, planErr] = await requireActivePlan();
+  if (planErr) return planErr;
+
+  const [ctx, giteErr] = await requireGiteById(body.giteId);
+  if (giteErr) return giteErr;
+
+  const gite = await prisma.gite.findUnique({
+    where: { id: ctx.giteId },
     include: { options: true },
   });
-  if (!gite) {
-    gite = await prisma.gite.create({
-      data: { name: "Mon Gîte", userId: ctx.userId },
-      include: { options: true },
-    });
-  }
+  if (!gite) return NextResponse.json({ error: "Gîte introuvable" }, { status: 404 });
+
+  // Verify same user — requireActivePlan and requireGiteById both validate auth independently
+  if (planCtx.userId !== ctx.userId)
+    return NextResponse.json({ error: "Accès refusé" }, { status: 403 });
 
   const checkIn = new Date(body.checkIn);
   const checkOut = new Date(body.checkOut);
@@ -38,7 +41,7 @@ export async function POST(req: NextRequest) {
 
   const reservation = await prisma.reservation.create({
     data: {
-      giteId: gite.id,
+      giteId: ctx.giteId,
       clientFirstName: body.clientFirstName,
       clientLastName: body.clientLastName,
       clientEmail: body.clientEmail,
@@ -66,12 +69,19 @@ export async function POST(req: NextRequest) {
   return NextResponse.json(reservation, { status: 201 });
 }
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   const [ctx, err] = await requireActivePlan();
   if (err) return err;
 
+  const { searchParams } = req.nextUrl;
+  const giteId = searchParams.get('giteId');
+
+  const where = giteId
+    ? { giteId, gite: { userId: ctx.userId } }
+    : { gite: { userId: ctx.userId } };
+
   const reservations = await prisma.reservation.findMany({
-    where: { gite: { userId: ctx.userId } },
+    where,
     include: { contract: true, reservationOptions: true },
     orderBy: { createdAt: "desc" },
   });

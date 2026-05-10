@@ -2,10 +2,7 @@ import type { Metadata } from "next";
 import { auth } from "@clerk/nextjs/server";
 import { Plus_Jakarta_Sans } from 'next/font/google';
 import { redirect } from "next/navigation";
-import DashboardShell from "./DashboardShell";
-import TrialBanner from "./TrialBanner";
 import { prisma } from "@/lib/prisma";
-import { getTrialInfo } from "@/lib/trial";
 import '@/styles/dashboard.css';
 
 export const metadata: Metadata = { title: "Kordia" };
@@ -21,45 +18,19 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const { userId: clerkId } = await auth();
   if (!clerkId) redirect('/sign-in');
 
-  let pendingCount = 0;
-  let trialInfo = null;
+  try {
+    const dbUser = await prisma.user.findUnique({ where: { clerkId } });
+    if (!dbUser) redirect('/onboarding');
 
-  if (clerkId) {
-    try {
-      let dbUser = null;
-      let dbError = false;
-      try {
-        dbUser = await prisma.user.findUnique({ where: { clerkId } });
-      } catch {
-        dbError = true;
-      }
-      // DB injoignable → dashboard vide plutôt que redirect onboarding
-      if (!dbError && !dbUser) redirect('/onboarding');
-      if (!dbUser) return; // DB error — skip remaining queries, render empty shell
-
-      const gite = await prisma.gite.findFirst({ where: { userId: dbUser.id } }).catch(() => null);
-      if (!gite || !gite.name?.trim() || gite.name === 'Mon Gîte') redirect('/onboarding');
-
-      pendingCount = await prisma.reservation.count({
-        where: { gite: { userId: dbUser.id }, status: 'PENDING_REVIEW' },
-      }).catch(() => 0);
-
-      try {
-        trialInfo = getTrialInfo(dbUser);
-      } catch (trialErr) {
-        if ((trialErr as { digest?: string })?.digest?.startsWith('NEXT_')) throw trialErr;
-      }
-    } catch (err) {
-      if ((err as { digest?: string })?.digest?.startsWith('NEXT_')) throw err;
-    }
+    const gite = await prisma.gite.findFirst({ where: { userId: dbUser.id } });
+    if (!gite || !gite.name?.trim() || gite.name === 'Mon Gîte') redirect('/onboarding');
+  } catch (err) {
+    if ((err as { digest?: string })?.digest?.startsWith('NEXT_')) throw err;
   }
 
   return (
-    <DashboardShell fontClass={font.className} pendingCount={pendingCount} trialInfo={trialInfo}>
-      {trialInfo?.isTrial && !trialInfo.isExpired && trialInfo.daysLeft <= 15 && (
-        <TrialBanner daysLeft={trialInfo.daysLeft} />
-      )}
+    <div className={font.className}>
       {children}
-    </DashboardShell>
+    </div>
   );
 }

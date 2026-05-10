@@ -31,6 +31,9 @@ model User {
   planExpiredAt       DateTime? // date à laquelle le compte est passé EXPIRED
   deletionWarningAt   DateTime? // date d'envoi de l'email d'avertissement J+30
 
+  // Tier du plan souscrit — "essential" (1 gîte) ou "multi" (3 gîtes max)
+  planTier  String @default("essential")
+
   gites Gite[]
 }
 

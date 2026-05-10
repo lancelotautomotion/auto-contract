@@ -65,6 +65,24 @@ export async function requireAdmin(): Promise<[AuthCtx, null] | [null, AuthErr]>
   return [{ userId: clerkId }, null];
 }
 
+/**
+ * Validates that a specific giteId exists and belongs to the authenticated user.
+ * Use this in route handlers that receive a giteId from the request body/params.
+ */
+export async function requireGiteById(giteId: string): Promise<[GiteCtx, null] | [null, AuthErr]> {
+  const [ctx, err] = await requireAuth();
+  if (err) return [null, err];
+
+  if (!giteId)
+    return [null, NextResponse.json({ error: "giteId manquant" }, { status: 400 })];
+
+  const gite = await prisma.gite.findFirst({ where: { id: giteId, userId: ctx.userId } });
+  if (!gite)
+    return [null, NextResponse.json({ error: "Gîte introuvable ou accès refusé" }, { status: 404 })];
+
+  return [{ userId: ctx.userId, giteId: gite.id }, null];
+}
+
 export async function requireActivePlan(): Promise<[GiteCtx, null] | [null, AuthErr]> {
   const { userId: clerkId } = await auth();
   if (!clerkId)

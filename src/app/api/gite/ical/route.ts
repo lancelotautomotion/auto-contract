@@ -1,17 +1,28 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { requireAuth } from "@/lib/auth";
+import { requireAuth, requireGiteById } from "@/lib/auth";
 import { fetchAndParseIcal } from "@/lib/ical";
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   const [ctx, err] = await requireAuth();
   if (err) return err;
 
-  const gite = await prisma.gite.findFirst({ where: { userId: ctx.userId } });
-  if (!gite) return NextResponse.json({ feeds: [] });
+  const { searchParams } = req.nextUrl;
+  const giteId = searchParams.get("giteId") ?? "";
+
+  let giteWhere = {};
+  if (giteId) {
+    const gite = await prisma.gite.findFirst({ where: { id: giteId, userId: ctx.userId } });
+    if (!gite) return NextResponse.json({ feeds: [] });
+    giteWhere = { giteId };
+  } else {
+    const gite = await prisma.gite.findFirst({ where: { userId: ctx.userId } });
+    if (!gite) return NextResponse.json({ feeds: [] });
+    giteWhere = { giteId: gite.id };
+  }
 
   const feeds = await prisma.icalFeed.findMany({
-    where: { giteId: gite.id },
+    where: giteWhere,
     orderBy: { createdAt: 'asc' },
     select: { id: true, platform: true, label: true, url: true, syncedAt: true },
   });
@@ -19,13 +30,23 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
-  const [ctx, err] = await requireAuth();
-  if (err) return err;
+  const body = await req.json();
 
-  const gite = await prisma.gite.findFirst({ where: { userId: ctx.userId } });
-  if (!gite) return NextResponse.json({ error: "Gîte introuvable" }, { status: 404 });
+  let resolvedGiteId: string;
 
-  const { platform, label, url } = await req.json();
+  if (body.giteId) {
+    const [ctx, err] = await requireGiteById(body.giteId);
+    if (err) return err;
+    resolvedGiteId = ctx.giteId;
+  } else {
+    const [ctx, err] = await requireAuth();
+    if (err) return err;
+    const gite = await prisma.gite.findFirst({ where: { userId: ctx.userId } });
+    if (!gite) return NextResponse.json({ error: "Gîte introuvable" }, { status: 404 });
+    resolvedGiteId = gite.id;
+  }
+
+  const { platform, label, url } = body;
   if (!platform || !label || !url) {
     return NextResponse.json({ error: "Champs manquants" }, { status: 400 });
   }
@@ -46,12 +67,10 @@ export async function POST(req: NextRequest) {
     const events = await fetchAndParseIcal(url);
     blockedDates = events;
     syncedAt = new Date();
-  } catch {
-    // Save the feed even if initial sync fails — user can retry
-  }
+  } catch { /* Save the feed even if initial sync fails */ }
 
   const feed = await prisma.icalFeed.create({
-    data: { giteId: gite.id, platform, label, url, blockedDates, syncedAt },
+    data: { giteId: resolvedGiteId, platform, label, url, blockedDates, syncedAt },
     select: { id: true, platform: true, label: true, url: true, syncedAt: true },
   });
   return NextResponse.json({ feed });

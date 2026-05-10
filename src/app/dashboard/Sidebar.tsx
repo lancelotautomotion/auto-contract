@@ -3,18 +3,22 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { TrialInfo } from "@/lib/trial";
+import GiteSelector from "@/components/GiteSelector";
 
-export default function Sidebar({ pendingCount = 0, trialInfo, mobileOpen, onMobileClose }: {
+export default function Sidebar({ pendingCount = 0, trialInfo, mobileOpen, onMobileClose, gites = [], activeGiteId = '' }: {
   pendingCount?: number;
   trialInfo?: TrialInfo | null;
   mobileOpen?: boolean;
   onMobileClose?: () => void;
+  gites?: Array<{ id: string; name: string }>;
+  activeGiteId?: string;
 }) {
   const pathname = usePathname();
+  const base = activeGiteId ? `/dashboard/${activeGiteId}` : '/dashboard';
 
   const active = (href: string) =>
-    href === '/dashboard'
-      ? pathname === '/dashboard'
+    href === base
+      ? pathname === base || pathname === '/dashboard'
       : pathname.startsWith(href);
 
   return (
@@ -32,11 +36,18 @@ export default function Sidebar({ pendingCount = 0, trialInfo, mobileOpen, onMob
         </button>
       </div>
 
+      {/* Gite selector */}
+      {gites.length > 0 && activeGiteId && (
+        <div className="sb-gite-selector">
+          <GiteSelector gites={gites} activeGiteId={activeGiteId} />
+        </div>
+      )}
+
       <nav className="sb-nav">
         <div className="sb-section">
           <div className="sb-section-title">Principal</div>
 
-          <Link href="/dashboard" className={`sb-link${active('/dashboard') ? ' active' : ''}`}>
+          <Link href={base} className={`sb-link${active(base) ? ' active' : ''}`}>
             <span className="sb-icon">
               <svg width="18" height="18" fill="none" viewBox="0 0 18 18">
                 <rect x="2" y="2" width="6" height="6" rx="1.5" stroke="currentColor" strokeWidth="1.3"/>
@@ -48,7 +59,7 @@ export default function Sidebar({ pendingCount = 0, trialInfo, mobileOpen, onMob
             Tableau de bord
           </Link>
 
-          <Link href="/dashboard/reservations" className={`sb-link${active('/dashboard/reservations') ? ' active' : ''}`}>
+          <Link href={`${base}/reservations`} className={`sb-link${active(`${base}/reservations`) ? ' active' : ''}`}>
             <span className="sb-icon">
               <svg width="18" height="18" fill="none" viewBox="0 0 18 18">
                 <rect x="2" y="3" width="14" height="12" rx="2" stroke="currentColor" strokeWidth="1.3"/>
@@ -62,7 +73,7 @@ export default function Sidebar({ pendingCount = 0, trialInfo, mobileOpen, onMob
             )}
           </Link>
 
-          <Link href="/dashboard/etablissement" className={`sb-link${active('/dashboard/etablissement') ? ' active' : ''}`}>
+          <Link href={`${base}/etablissement`} className={`sb-link${active(`${base}/etablissement`) ? ' active' : ''}`}>
             <span className="sb-icon">
               <svg width="18" height="18" fill="none" viewBox="0 0 18 18">
                 <path d="M3 14V8l6-5 6 5v6a1.5 1.5 0 01-1.5 1.5h-9A1.5 1.5 0 013 14z" stroke="currentColor" strokeWidth="1.3"/>
@@ -76,7 +87,7 @@ export default function Sidebar({ pendingCount = 0, trialInfo, mobileOpen, onMob
         <div className="sb-section">
           <div className="sb-section-title">Gestion</div>
 
-          <Link href="/dashboard/archives" className={`sb-link${active('/dashboard/archives') ? ' active' : ''}`}>
+          <Link href={`${base}/archives`} className={`sb-link${active(`${base}/archives`) ? ' active' : ''}`}>
             <span className="sb-icon">
               <svg width="18" height="18" fill="none" viewBox="0 0 18 18">
                 <rect x="3" y="5" width="12" height="10" rx="1.5" stroke="currentColor" strokeWidth="1.3"/>
@@ -123,7 +134,6 @@ export default function Sidebar({ pendingCount = 0, trialInfo, mobileOpen, onMob
           </Link>
         </div>
 
-        {/* Trial upgrade CTA in sidebar */}
         {trialInfo?.isTrial && !trialInfo.isExpired && (
           <div className="sb-trial-card">
             <div className="sb-trial-header">
@@ -144,7 +154,7 @@ export default function Sidebar({ pendingCount = 0, trialInfo, mobileOpen, onMob
       </nav>
 
       <div className="sb-bottom">
-        <Link href="/dashboard/settings" className={`sb-link${active('/dashboard/settings') ? ' active' : ''}`}>
+        <Link href={`${base}/settings`} className={`sb-link${active(`${base}/settings`) ? ' active' : ''}`}>
           <span className="sb-icon">
             <svg width="18" height="18" fill="none" viewBox="0 0 18 18">
               <circle cx="9" cy="9" r="3" stroke="currentColor" strokeWidth="1.3"/>

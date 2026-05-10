@@ -10,7 +10,7 @@ interface GiteDoc {
   createdAt: string;
 }
 
-export default function DocumentsTab({ initialDocs }: { initialDocs: GiteDoc[] }) {
+export default function DocumentsTab({ giteId, initialDocs }: { giteId?: string; initialDocs: GiteDoc[] }) {
   const [docs, setDocs] = useState<GiteDoc[]>(initialDocs);
   const [label, setLabel] = useState('');
   const [uploading, setUploading] = useState(false);
@@ -32,7 +32,7 @@ export default function DocumentsTab({ initialDocs }: { initialDocs: GiteDoc[] }
       const res = await fetch('/api/etablissement/documents', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ label: label.trim(), fileName: file.name, mimeType: file.type || 'application/octet-stream', fileUrl }),
+        body: JSON.stringify({ giteId, label: label.trim(), fileName: file.name, mimeType: file.type || 'application/octet-stream', fileUrl }),
       });
       if (!res.ok) { const data = await res.json(); setError(data.error ?? "Erreur lors de l'import"); return; }
       const doc = await res.json();
