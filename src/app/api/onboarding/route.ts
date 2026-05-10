@@ -1,5 +1,6 @@
 import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
+import { cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
 import { TRIAL_DAYS } from "@/lib/trial";
 
@@ -19,17 +20,21 @@ export async function POST(req: NextRequest) {
 
     const body = await req.json();
 
+    const cookieStore = await cookies();
+    const planIntent = cookieStore.get("kordia_plan_intent")?.value;
+    const planTier = planIntent === "multi" ? "multi" : "essential";
+
     let user = await prisma.user.findUnique({ where: { clerkId: userId } }).catch(() => null);
     if (!user) {
       const trialEndsAt = new Date();
       trialEndsAt.setDate(trialEndsAt.getDate() + TRIAL_DAYS);
       try {
         user = await prisma.user.create({
-          data: { clerkId: userId, email: body.email, name: body.giteName, trialEndsAt },
+          data: { clerkId: userId, email: body.email, name: body.giteName, trialEndsAt, planTier },
         });
       } catch {
         user = await prisma.user.create({
-          data: { clerkId: userId, email: body.email, name: body.giteName },
+          data: { clerkId: userId, email: body.email, name: body.giteName, planTier },
         });
       }
     }
@@ -77,7 +82,9 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    return NextResponse.json(gite, { status: 200 });
+    const response = NextResponse.json(gite, { status: 200 });
+    response.cookies.delete("kordia_plan_intent");
+    return response;
   } catch (err) {
     console.error("[onboarding] POST error:", err);
     return NextResponse.json({ error: "Erreur serveur. Veuillez réessayer." }, { status: 500 });

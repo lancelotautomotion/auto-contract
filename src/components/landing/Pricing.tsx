@@ -96,7 +96,7 @@ export default function Pricing() {
               <li><CheckViolet />Tableau de bord multi-gîtes</li>
               <li><CheckViolet />Support prioritaire</li>
             </ul>
-            <Link className="btn btn-violet" style={{ width: '100%', background: '#689D71' }} href="/sign-up">
+            <Link className="btn btn-violet" style={{ width: '100%', background: '#689D71' }} href="/sign-up?plan=multi">
               Essayer gratuitement 30 jours
             </Link>
           </div>

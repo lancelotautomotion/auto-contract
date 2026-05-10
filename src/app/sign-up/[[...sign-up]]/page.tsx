@@ -1,8 +1,10 @@
 import { SignUp } from '@clerk/nextjs';
 import Link from 'next/link';
+import { Suspense } from 'react';
 
 import { Plus_Jakarta_Sans } from 'next/font/google';
 import '@/styles/pages.css';
+import PlanIntentSetter from '../PlanIntentSetter';
 
 const font = Plus_Jakarta_Sans({
   subsets: ['latin'],
@@ -89,6 +91,7 @@ export default function SignUpPage() {
               <Link href="/sign-in" className="auth-tab">Se connecter</Link>
               <Link href="/sign-up" className="auth-tab auth-tab--active">Créer un compte</Link>
             </div>
+            <Suspense><PlanIntentSetter /></Suspense>
             <SignUp appearance={clerkAppearance} />
           </div>
         </div>
