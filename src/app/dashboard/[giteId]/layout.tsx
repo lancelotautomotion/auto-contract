@@ -15,8 +15,10 @@ export default async function GiteLayout({
   params: Promise<{ giteId: string }>;
 }) {
   const { giteId } = await params;
-  const { userId: clerkId } = await auth();
+  const { userId: clerkId, sessionClaims } = await auth();
   if (!clerkId) redirect('/sign-in');
+
+  const isAdmin = (sessionClaims?.metadata as Record<string, unknown> | undefined)?.role === "admin";
 
   let pendingCount = 0;
   let trialInfo = null;
@@ -57,6 +59,7 @@ export default async function GiteLayout({
       trialInfo={trialInfo}
       gites={gites}
       activeGiteId={giteId}
+      isAdmin={isAdmin}
     >
       {trialInfo?.isTrial && !trialInfo.isExpired && trialInfo.daysLeft <= 15 && (
         <TrialBanner daysLeft={trialInfo.daysLeft} />

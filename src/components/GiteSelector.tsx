@@ -9,6 +9,7 @@ interface Gite { id: string; name: string; }
 interface Props {
   gites: Gite[];
   activeGiteId: string;
+  isAdmin?: boolean;
 }
 
 function ChevronDown() {
@@ -27,7 +28,7 @@ function PlusIcon() {
   );
 }
 
-export default function GiteSelector({ gites, activeGiteId }: Props) {
+export default function GiteSelector({ gites, activeGiteId, isAdmin = false }: Props) {
   const router = useRouter();
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
@@ -140,8 +141,8 @@ export default function GiteSelector({ gites, activeGiteId }: Props) {
             setShowAddModal(false);
             router.push(`/dashboard/${newGiteId}/etablissement`);
           }}
-          onUpgradeRequired={() => { setShowAddModal(false); setShowUpgrade(true); }}
-          onMaxReached={() => { setShowAddModal(false); setShowMaxReached(true); }}
+          onUpgradeRequired={isAdmin ? () => {} : () => { setShowAddModal(false); setShowUpgrade(true); }}
+          onMaxReached={isAdmin ? () => {} : () => { setShowAddModal(false); setShowMaxReached(true); }}
         />,
         document.body
       )}
