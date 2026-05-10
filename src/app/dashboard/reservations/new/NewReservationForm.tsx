@@ -13,13 +13,14 @@ const PLATFORM_LABELS: Record<string, string> = {
 };
 
 interface Props {
+  giteId?: string;
   defaultCleaningFee: string;
   defaultTouristTax: string;
   availableOptions: GiteOption[];
   icalBlocked?: IcalBlock[];
 }
 
-export default function NewReservationForm({ defaultCleaningFee, defaultTouristTax, availableOptions, icalBlocked = [] }: Props) {
+export default function NewReservationForm({ giteId, defaultCleaningFee, defaultTouristTax, availableOptions, icalBlocked = [] }: Props) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
@@ -53,9 +54,9 @@ export default function NewReservationForm({ defaultCleaningFee, defaultTouristT
       const res = await fetch('/api/reservations', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...form, selectedOptionIds: Array.from(selectedOptions) }),
+        body: JSON.stringify({ ...form, giteId, selectedOptionIds: Array.from(selectedOptions) }),
       });
-      if (res.ok) router.push('/dashboard');
+      if (res.ok) router.push(giteId ? `/dashboard/${giteId}/reservations` : '/dashboard');
     } finally {
       setLoading(false);
     }

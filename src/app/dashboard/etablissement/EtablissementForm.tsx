@@ -398,7 +398,7 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
       const res = await fetch('/api/etablissement', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...form, contractTemplateGeneral, contractTemplateHouseRules, options, logoUrl }),
+        body: JSON.stringify({ giteId: gite.id, ...form, contractTemplateGeneral, contractTemplateHouseRules, options, logoUrl }),
       });
       if (res.ok) { setSaved(true); setSavedSlug(form.slug); }
     } finally { setLoading(false); }
@@ -819,11 +819,11 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
 
       {/* ═══ DOCUMENTS ═══ */}
       {activeTab === 'Documents' && (
-        <DocumentsTab initialDocs={gite.documents} />
+        <DocumentsTab giteId={gite.id} initialDocs={gite.documents} />
       )}
 
       {activeTab === 'iCal' && (
-        <IcalTab />
+        <IcalTab giteId={gite.id} />
       )}
 
     </form>

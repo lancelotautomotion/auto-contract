@@ -44,7 +44,59 @@
   height: 100dvh;
   align-self: flex-start;
 }
-.sb-logo { padding: 24px 24px 32px; display: flex; align-items: center; }
+.sb-logo { padding: 24px 24px 16px; display: flex; align-items: center; }
+.sb-gite-selector { padding: 0 12px 20px; }
+
+/* Gite Selector */
+.gite-selector { position: relative; display: flex; align-items: center; gap: 6px; }
+.gs-trigger {
+  display: flex; align-items: center; gap: 8px;
+  width: 100%; padding: 8px 10px; border-radius: 10px;
+  background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.1);
+  color: rgba(255,255,255,.85); font-family: var(--ff); font-size: 13px; font-weight: 600;
+  cursor: pointer; text-align: left; transition: background .2s;
+}
+.gs-trigger:hover { background: rgba(255,255,255,.13); }
+.gs-house-icon { color: rgba(255,255,255,.5); flex-shrink: 0; display: flex; align-items: center; }
+.gs-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.gs-chevron { color: rgba(255,255,255,.4); flex-shrink: 0; display: flex; align-items: center; }
+.gs-add-inline {
+  display: flex; align-items: center; justify-content: center;
+  width: 30px; height: 30px; border-radius: 8px; flex-shrink: 0;
+  background: rgba(127,119,221,.25); border: 1px solid rgba(127,119,221,.4);
+  color: rgba(255,255,255,.7); cursor: pointer; transition: background .2s;
+}
+.gs-add-inline:hover { background: rgba(127,119,221,.4); color: #fff; }
+.gs-dropdown {
+  position: absolute; top: calc(100% + 6px); left: 0; right: 0;
+  background: #fff; border: 1px solid #E8E6E1; border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0,0,0,.16); z-index: 200;
+  padding: 6px;
+}
+.gs-option {
+  display: flex; align-items: center; gap: 8px;
+  width: 100%; padding: 9px 10px; border-radius: 8px;
+  background: none; border: none; cursor: pointer;
+  font-family: var(--ff); font-size: 13px; font-weight: 500;
+  color: #2C2C2A; text-align: left; transition: background .15s;
+}
+.gs-option:hover { background: #F4F3F0; }
+.gs-option.active { background: rgba(127,119,221,.08); color: #5B52B5; font-weight: 600; }
+.gs-opt-dot {
+  width: 6px; height: 6px; border-radius: 50%; background: #CEC8BF; flex-shrink: 0;
+}
+.gs-option.active .gs-opt-dot { background: #7F77DD; }
+.gs-opt-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.gs-separator { height: 1px; background: #F0EDE8; margin: 6px 0; }
+.gs-add-btn {
+  display: flex; align-items: center; gap: 8px;
+  width: 100%; padding: 9px 10px; border-radius: 8px;
+  background: none; border: none; cursor: pointer;
+  font-family: var(--ff); font-size: 13px; font-weight: 600;
+  color: #7F77DD; text-align: left; transition: background .15s;
+}
+.gs-add-btn:hover { background: rgba(127,119,221,.08); }
+
 .sb-nav { flex: 1; padding: 0 12px; }
 .sb-section { margin-bottom: 24px; }
 .sb-section-title {

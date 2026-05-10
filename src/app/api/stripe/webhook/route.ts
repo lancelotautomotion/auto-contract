@@ -5,10 +5,17 @@ import { STRIPE_WEBHOOK_SECRET, stripe } from "@/lib/stripe";
 
 export const runtime = "nodejs";
 
+function derivePlanTier(priceId: string | null | undefined): string {
+  const multiPriceId = process.env.STRIPE_PRICE_ID_MULTI;
+  if (multiPriceId && priceId === multiPriceId) return "multi";
+  return "essential";
+}
+
 async function setPlanActive(params: {
   userId: string;
   customerId: string;
   subscriptionId: string;
+  priceId?: string | null;
 }) {
   await prisma.user.update({
     where: { id: params.userId },
@@ -16,6 +23,7 @@ async function setPlanActive(params: {
       planStatus: "ACTIVE",
       stripeCustomerId: params.customerId,
       stripeSubscriptionId: params.subscriptionId,
+      planTier: derivePlanTier(params.priceId),
     },
   });
 }
@@ -59,7 +67,13 @@ export async function POST(req: NextRequest) {
           typeof session.subscription === "string" ? session.subscription : session.subscription?.id;
 
         if (userId && customerId && subscriptionId) {
-          await setPlanActive({ userId, customerId, subscriptionId });
+          // Retrieve price ID from the subscription to determine plan tier
+          let priceId: string | null = null;
+          try {
+            const sub = await stripe.subscriptions.retrieve(subscriptionId);
+            priceId = sub.items.data[0]?.price?.id ?? null;
+          } catch { /* best-effort */ }
+          await setPlanActive({ userId, customerId, subscriptionId, priceId });
         }
         break;
       }
@@ -74,11 +88,12 @@ export async function POST(req: NextRequest) {
         const ended = sub.status === "canceled" || sub.status === "unpaid" || sub.status === "incomplete_expired";
 
         if (active) {
+          const priceId = sub.items.data[0]?.price?.id ?? null;
           if (userId) {
-            await setPlanActive({ userId, customerId, subscriptionId: sub.id });
+            await setPlanActive({ userId, customerId, subscriptionId: sub.id, priceId });
           } else {
             const user = await prisma.user.findFirst({ where: { stripeCustomerId: customerId } });
-            if (user) await setPlanActive({ userId: user.id, customerId, subscriptionId: sub.id });
+            if (user) await setPlanActive({ userId: user.id, customerId, subscriptionId: sub.id, priceId });
           }
         } else if (ended) {
           await setPlanExpiredByCustomer(customerId);

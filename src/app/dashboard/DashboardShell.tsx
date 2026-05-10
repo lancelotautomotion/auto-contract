@@ -9,7 +9,9 @@ interface Props {
   children: React.ReactNode;
   pendingCount: number;
   trialInfo: TrialInfo | null;
-  fontClass: string;
+  fontClass?: string;
+  gites?: Array<{ id: string; name: string }>;
+  activeGiteId?: string;
 }
 
 function LockIcon() {
@@ -21,7 +23,7 @@ function LockIcon() {
   );
 }
 
-export default function DashboardShell({ children, pendingCount, trialInfo, fontClass }: Props) {
+export default function DashboardShell({ children, pendingCount, trialInfo, fontClass, gites, activeGiteId }: Props) {
   const [open, setOpen] = useState(false);
   const [tooltip, setTooltip] = useState<{ x: number; y: number } | null>(null);
   const pathname = usePathname();
@@ -32,7 +34,7 @@ export default function DashboardShell({ children, pendingCount, trialInfo, font
   const isExpired = trialInfo?.isExpired ?? false;
 
   return (
-    <div className={`${fontClass} app`}>
+    <div className={`${fontClass ?? ''} app`}>
       {open && (
         <div className="sb-overlay" onClick={() => setOpen(false)} aria-hidden="true"/>
       )}
@@ -41,6 +43,8 @@ export default function DashboardShell({ children, pendingCount, trialInfo, font
         trialInfo={trialInfo}
         mobileOpen={open}
         onMobileClose={() => setOpen(false)}
+        gites={gites ?? []}
+        activeGiteId={activeGiteId ?? ''}
       />
       <div className="main">
         <header className="mobile-header">

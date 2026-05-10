@@ -6,13 +6,14 @@ import Link from "next/link";
 import { useTheme } from "@/providers/ThemeProvider";
 
 interface Props {
+  giteId?: string;
   notificationEmail: string;
   notifNewReservation: boolean;
   notifContractSigned: boolean;
   notifPrysmNews: boolean;
 }
 
-export default function SettingsForm({ notificationEmail, notifNewReservation, notifContractSigned, notifPrysmNews }: Props) {
+export default function SettingsForm({ giteId, notificationEmail, notifNewReservation, notifContractSigned, notifPrysmNews }: Props) {
   const { dark, toggle } = useTheme();
   const [notifEmail, setNotifEmail] = useState(notificationEmail);
   const [newRes, setNewRes] = useState(notifNewReservation);
@@ -62,6 +63,7 @@ export default function SettingsForm({ notificationEmail, notifNewReservation, n
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          giteId,
           notificationEmail: notifEmail,
           notifNewReservation: newRes,
           notifContractSigned: contractSigned,
