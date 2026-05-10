@@ -73,9 +73,9 @@ export default function Pricing() {
             </Link>
           </div>
 
-          {/* Multi-gîtes — en développement */}
-          <div className="pc reveal reveal-d2" style={{ opacity: 0.85 }}>
-            <div className="pc-badge-dev">Bientôt disponible</div>
+          {/* Multi-gîtes */}
+          <div className="pc reveal reveal-d2">
+            <div className="pc-badge" style={{ background: '#689D71' }}>30 j. gratuits</div>
             <div className="pc-header">
               <div className="pc-icon g">
                 <svg width="20" height="20" fill="none" viewBox="0 0 20 20">
@@ -91,12 +91,14 @@ export default function Pricing() {
             </div>
             <hr className="pc-div" />
             <ul className="pc-feat">
-              <li><CheckGray />Tout le plan Essentiel</li>
-              <li><CheckGray />Jusqu&apos;à 3 hébergements</li>
-              <li><CheckGray />Tableau de bord consolidé</li>
-              <li><CheckGray />Support prioritaire</li>
+              <li><CheckViolet />Tout le plan Essentiel</li>
+              <li><CheckViolet />Jusqu&apos;à 3 hébergements</li>
+              <li><CheckViolet />Tableau de bord multi-gîtes</li>
+              <li><CheckViolet />Support prioritaire</li>
             </ul>
-            <span className="pc-dev-cta">Bientôt disponible</span>
+            <Link className="btn btn-violet" style={{ width: '100%', background: '#689D71' }} href="/sign-up">
+              Essayer gratuitement 30 jours
+            </Link>
           </div>
 
           {/* Kordia Étape — en développement */}

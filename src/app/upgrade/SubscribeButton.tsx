@@ -2,7 +2,13 @@
 
 import { useState } from "react";
 
-export default function SubscribeButton({ disabled }: { disabled?: boolean }) {
+interface Props {
+  disabled?: boolean;
+  plan?: "essential" | "multi";
+  showTrial?: boolean;
+}
+
+export default function SubscribeButton({ disabled, plan = "essential", showTrial = false }: Props) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -10,7 +16,11 @@ export default function SubscribeButton({ disabled }: { disabled?: boolean }) {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch("/api/stripe/checkout", { method: "POST" });
+      const res = await fetch("/api/stripe/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ plan }),
+      });
       const data = await res.json().catch(() => ({}));
       if (!res.ok || !data.url) {
         setError(data.error ?? "Impossible de démarrer le paiement.");
@@ -23,6 +33,14 @@ export default function SubscribeButton({ disabled }: { disabled?: boolean }) {
       setLoading(false);
     }
   };
+
+  const label = loading
+    ? "Redirection vers le paiement…"
+    : plan === "multi"
+      ? showTrial
+        ? "Essayer gratuitement 30 jours"
+        : "Passer au Multi-gîtes — 14,99 € HT / mois"
+      : "Souscrire — 9,99 € HT / mois";
 
   return (
     <div>
@@ -43,8 +61,13 @@ export default function SubscribeButton({ disabled }: { disabled?: boolean }) {
           transition: "background-color .15s",
         }}
       >
-        {loading ? "Redirection vers le paiement…" : "Souscrire — 9,99 € HT / mois"}
+        {label}
       </button>
+      {plan === "multi" && showTrial && !loading && !disabled && (
+        <p style={{ fontSize: "11px", color: "#A3A3A0", textAlign: "center", margin: "8px 0 0", lineHeight: 1.5 }}>
+          Sans carte bancaire — 14,99 € HT / mois après l&apos;essai.
+        </p>
+      )}
       {error && (
         <p style={{ fontSize: "12px", color: "#B23A3A", textAlign: "center", margin: "10px 0 0", lineHeight: 1.5 }}>
           {error}

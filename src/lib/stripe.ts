@@ -13,6 +13,7 @@ export const stripe = new Stripe(secret ?? "sk_test_unset", {
 });
 
 export const STRIPE_PRICE_ID = process.env.STRIPE_PRICE_ID ?? "";
+export const STRIPE_PRICE_ID_MULTI = process.env.STRIPE_PRICE_ID_MULTI ?? "";
 export const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET ?? "";
 
 export function appUrl(path = ""): string {
