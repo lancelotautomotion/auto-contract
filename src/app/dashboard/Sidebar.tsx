@@ -5,13 +5,14 @@ import { usePathname } from "next/navigation";
 import type { TrialInfo } from "@/lib/trial";
 import GiteSelector from "@/components/GiteSelector";
 
-export default function Sidebar({ pendingCount = 0, trialInfo, mobileOpen, onMobileClose, gites = [], activeGiteId = '' }: {
+export default function Sidebar({ pendingCount = 0, trialInfo, mobileOpen, onMobileClose, gites = [], activeGiteId = '', isAdmin = false }: {
   pendingCount?: number;
   trialInfo?: TrialInfo | null;
   mobileOpen?: boolean;
   onMobileClose?: () => void;
   gites?: Array<{ id: string; name: string }>;
   activeGiteId?: string;
+  isAdmin?: boolean;
 }) {
   const pathname = usePathname();
   const base = activeGiteId ? `/dashboard/${activeGiteId}` : '/dashboard';
@@ -39,7 +40,7 @@ export default function Sidebar({ pendingCount = 0, trialInfo, mobileOpen, onMob
       {/* Gite selector */}
       {gites.length > 0 && activeGiteId && (
         <div className="sb-gite-selector">
-          <GiteSelector gites={gites} activeGiteId={activeGiteId} />
+          <GiteSelector gites={gites} activeGiteId={activeGiteId} isAdmin={isAdmin} />
         </div>
       )}
 

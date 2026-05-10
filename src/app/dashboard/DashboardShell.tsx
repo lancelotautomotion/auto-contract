@@ -12,6 +12,7 @@ interface Props {
   fontClass?: string;
   gites?: Array<{ id: string; name: string }>;
   activeGiteId?: string;
+  isAdmin?: boolean;
 }
 
 function LockIcon() {
@@ -23,7 +24,7 @@ function LockIcon() {
   );
 }
 
-export default function DashboardShell({ children, pendingCount, trialInfo, fontClass, gites, activeGiteId }: Props) {
+export default function DashboardShell({ children, pendingCount, trialInfo, fontClass, gites, activeGiteId, isAdmin }: Props) {
   const [open, setOpen] = useState(false);
   const [tooltip, setTooltip] = useState<{ x: number; y: number } | null>(null);
   const pathname = usePathname();
@@ -45,6 +46,7 @@ export default function DashboardShell({ children, pendingCount, trialInfo, font
         onMobileClose={() => setOpen(false)}
         gites={gites ?? []}
         activeGiteId={activeGiteId ?? ''}
+        isAdmin={isAdmin}
       />
       <div className="main">
         <header className="mobile-header">
