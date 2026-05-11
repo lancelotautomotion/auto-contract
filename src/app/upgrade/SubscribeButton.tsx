@@ -5,10 +5,9 @@ import { useState } from "react";
 interface Props {
   disabled?: boolean;
   plan?: "essential" | "multi";
-  showTrial?: boolean;
 }
 
-export default function SubscribeButton({ disabled, plan = "essential", showTrial = false }: Props) {
+export default function SubscribeButton({ disabled, plan = "essential" }: Props) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -37,9 +36,7 @@ export default function SubscribeButton({ disabled, plan = "essential", showTria
   const label = loading
     ? "Redirection vers le paiement…"
     : plan === "multi"
-      ? showTrial
-        ? "Essayer gratuitement 30 jours"
-        : "Passer au Multi-gîtes — 14,99 € HT / mois"
+      ? "Souscrire — 14,99 € HT / mois"
       : "Souscrire — 9,99 € HT / mois";
 
   return (
@@ -63,11 +60,6 @@ export default function SubscribeButton({ disabled, plan = "essential", showTria
       >
         {label}
       </button>
-      {plan === "multi" && showTrial && !loading && !disabled && (
-        <p style={{ fontSize: "11px", color: "#A3A3A0", textAlign: "center", margin: "8px 0 0", lineHeight: 1.5 }}>
-          Sans carte bancaire — 14,99 € HT / mois après l&apos;essai.
-        </p>
-      )}
       {error && (
         <p style={{ fontSize: "12px", color: "#B23A3A", textAlign: "center", margin: "10px 0 0", lineHeight: 1.5 }}>
           {error}

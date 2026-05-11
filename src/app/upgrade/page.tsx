@@ -39,8 +39,6 @@ export default async function UpgradePage({ searchParams }: { searchParams: Prom
   const isExpired = trialInfo?.isExpired ?? false;
   const isActive = trialInfo?.isActive ?? false;
   const isTrial = trialInfo && !trialInfo.isExpired && !isActive;
-  // Multi trial available only if user has never paid (not ACTIVE on Essentiel)
-  const multiTrialEligible = !isActive;
   const { canceled } = await searchParams;
   const showCanceled = canceled === "1";
 
@@ -156,11 +154,6 @@ export default async function UpgradePage({ searchParams }: { searchParams: Prom
           {/* Plan Multi-gîtes */}
           <div style={{ backgroundColor: '#FFFFFF', borderRadius: '16px', border: '1.5px solid rgba(104,157,113,.4)', overflow: 'hidden', position: 'relative', display: 'flex', flexDirection: 'column' }}>
             <div style={{ height: '4px', backgroundColor: '#689D71', flexShrink: 0 }}/>
-            {multiTrialEligible && (
-              <div style={{ position: 'absolute', top: '16px', right: '16px', background: '#689D71', color: '#fff', fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', padding: '3px 10px', borderRadius: '20px' }}>
-                30 j. gratuits
-              </div>
-            )}
             <div style={{ padding: '24px 26px 24px', display: 'flex', flexDirection: 'column', flex: 1 }}>
               <div className="upgrade-card-top">
                 <p style={{ fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color: '#689D71', margin: '0 0 6px' }}>Multi-gîtes</p>
@@ -184,7 +177,7 @@ export default async function UpgradePage({ searchParams }: { searchParams: Prom
               <p style={{ fontSize: '11px', color: '#A3A3A0', textAlign: 'center', margin: '0 0 10px', lineHeight: 1.5 }}>
                 Paiement sécurisé par Stripe.
               </p>
-              <SubscribeButton disabled={isActive} plan="multi" showTrial={multiTrialEligible} />
+              <SubscribeButton disabled={isActive} plan="multi" />
             </div>
           </div>
 

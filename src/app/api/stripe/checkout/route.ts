@@ -21,9 +21,6 @@ export async function POST(req: NextRequest) {
   const clerkUser = await currentUser();
   const customerEmail = dbUser.email || clerkUser?.emailAddresses[0]?.emailAddress;
 
-  // Multi trial: 30 days without CC, only if user has never paid (not ACTIVE)
-  const eligibleForMultiTrial = plan === "multi" && dbUser.planStatus !== "ACTIVE";
-
   try {
     const session = await stripe.checkout.sessions.create({
       mode: "subscription",
@@ -33,18 +30,9 @@ export async function POST(req: NextRequest) {
       customer_email: dbUser.stripeCustomerId ? undefined : customerEmail,
       allow_promotion_codes: true,
       billing_address_collection: "auto",
-      ...(eligibleForMultiTrial && {
-        payment_method_collection: "if_required",
-        subscription_data: {
-          trial_period_days: 30,
-          metadata: { userId: dbUser.id, clerkId },
-        },
-      }),
-      ...(!eligibleForMultiTrial && {
-        subscription_data: {
-          metadata: { userId: dbUser.id, clerkId },
-        },
-      }),
+      subscription_data: {
+        metadata: { userId: dbUser.id, clerkId },
+      },
       metadata: { userId: dbUser.id, clerkId },
       success_url: appUrl("/upgrade/success?session_id={CHECKOUT_SESSION_ID}"),
       cancel_url: appUrl("/upgrade?canceled=1"),
