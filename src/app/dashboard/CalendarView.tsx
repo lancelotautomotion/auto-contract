@@ -15,10 +15,18 @@ interface Reservation {
 }
 
 interface IcalBlock {
-  start: string; // "YYYY-MM-DD"
+  start: string;
   end: string;
   platform: string;
   label: string;
+}
+
+export interface GiteCalendarData {
+  id: string;
+  name: string;
+  color: string;
+  reservations: Reservation[];
+  icalBlocked: IcalBlock[];
 }
 
 const SIGNED_BG   = '#D1EDD4'; const SIGNED_TEXT   = '#2D6A31';
@@ -35,7 +43,7 @@ const PLATFORM_LABELS: Record<string, string> = {
   leboncoin: "Leboncoin", gites_de_france: "Gîtes de France", autre: "Autre",
 };
 
-function getColor(r: Reservation) {
+function getContractColor(r: Reservation) {
   if (r.contractStatus === 'SIGNED')    return { bg: SIGNED_BG,  text: SIGNED_TEXT };
   if (r.contractStatus === 'GENERATED') return { bg: SENT_BG,    text: SENT_TEXT };
   return                                       { bg: WAITING_BG, text: WAITING_TEXT };
@@ -54,6 +62,10 @@ function nightsBetween(a: string, b: string) {
 function fmtDate(iso: string) {
   return new Date(iso).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' });
 }
+function fmtShort(iso: string) {
+  const d = new Date(iso.length === 10 ? iso + 'T12:00:00' : iso);
+  return d.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' });
+}
 function toDateStr(year: number, month: number, day: number): string {
   return `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
 }
@@ -67,9 +79,12 @@ const STATUS_LABELS: Record<string, { label: string; bg: string; color: string }
   default:   { label: 'En attente',  bg: WAITING_BG, color: WAITING_TEXT },
 };
 
+type UnifiedEntry = { gite: GiteCalendarData; reservation?: Reservation; ical?: IcalBlock };
+
 type TooltipData =
   | { kind: 'reservation'; reservation: Reservation; rect: DOMRect }
-  | { kind: 'ical'; block: IcalBlock; rect: DOMRect };
+  | { kind: 'ical'; block: IcalBlock; rect: DOMRect }
+  | { kind: 'unified'; entries: UnifiedEntry[]; rect: DOMRect; dateLabel: string };
 
 function tooltipPosition(rect: DOMRect, width: number) {
   const gap = 8;
@@ -81,10 +96,9 @@ function tooltipPosition(rect: DOMRect, width: number) {
 function ReservationTooltip({ reservation: r, rect }: { reservation: Reservation; rect: DOMRect }) {
   const nights = nightsBetween(r.checkIn, r.checkOut);
   const initials = `${r.clientFirstName[0]}${r.clientLastName[0]}`.toUpperCase();
-  const color = getColor(r);
+  const color = getContractColor(r);
   const statusStyle = STATUS_LABELS[r.contractStatus ?? 'default'] ?? STATUS_LABELS.default;
   const { left, top } = tooltipPosition(rect, 220);
-
   return (
     <div style={{
       position: 'fixed', top, left, transform: 'translateY(-100%)',
@@ -124,7 +138,6 @@ function IcalTooltip({ block: b, rect }: { block: IcalBlock; rect: DOMRect }) {
   const platformColor = PLATFORM_COLORS[b.platform] ?? '#7F77DD';
   const platformName  = PLATFORM_LABELS[b.platform]  ?? b.label;
   const { left, top } = tooltipPosition(rect, 200);
-
   return (
     <div style={{
       position: 'fixed', top, left, transform: 'translateY(-100%)',
@@ -162,24 +175,93 @@ function IcalTooltip({ block: b, rect }: { block: IcalBlock; rect: DOMRect }) {
   );
 }
 
+function UnifiedTooltip({ entries, rect, dateLabel }: { entries: UnifiedEntry[]; rect: DOMRect; dateLabel: string }) {
+  const { left, top } = tooltipPosition(rect, 260);
+  return (
+    <div style={{
+      position: 'fixed', top, left, transform: 'translateY(-100%)',
+      width: '260px', background: '#fff', border: '1px solid #E8E6E1',
+      borderRadius: '12px', boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
+      padding: '12px 14px', zIndex: 9999, pointerEvents: 'none',
+      fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
+    }}>
+      <div style={{ position: 'absolute', bottom: '-6px', left: '50%', transform: 'translateX(-50%)', width: '10px', height: '10px', background: '#fff', border: '1px solid #E8E6E1', borderTop: 'none', borderLeft: 'none', rotate: '45deg' }} />
+      <div style={{ fontSize: '10px', fontWeight: 700, color: '#A3A3A0', textTransform: 'uppercase', letterSpacing: '.07em', marginBottom: '10px' }}>{dateLabel}</div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+        {entries.map((e, i) => (
+          <div key={e.gite.id} style={{ display: 'flex', gap: '10px', alignItems: 'flex-start', paddingTop: i > 0 ? '10px' : 0, borderTop: i > 0 ? '1px solid #F0EDE8' : 'none' }}>
+            <div style={{ width: '10px', height: '10px', borderRadius: '3px', background: e.gite.color, flexShrink: 0, marginTop: '3px' }} />
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontSize: '10px', fontWeight: 700, color: e.gite.color, marginBottom: '3px', textTransform: 'uppercase', letterSpacing: '.04em' }}>{e.gite.name}</div>
+              {e.reservation ? (
+                <>
+                  <div style={{ fontSize: '12px', fontWeight: 700, color: '#2C2C2A' }}>
+                    {e.reservation.clientFirstName} {e.reservation.clientLastName}
+                  </div>
+                  <div style={{ fontSize: '11px', color: '#71716E', marginTop: '2px' }}>
+                    {fmtShort(e.reservation.checkIn)} → {fmtShort(e.reservation.checkOut)}
+                    {' · '}{nightsBetween(e.reservation.checkIn, e.reservation.checkOut)} nuits
+                  </div>
+                </>
+              ) : e.ical ? (
+                <>
+                  <div style={{ fontSize: '12px', fontWeight: 600, color: '#71716E' }}>
+                    {PLATFORM_LABELS[e.ical.platform] ?? e.ical.label}
+                  </div>
+                  <div style={{ fontSize: '11px', color: '#A3A3A0', marginTop: '2px' }}>
+                    {fmtShort(e.ical.start)} → {fmtShort(e.ical.end)}
+                  </div>
+                </>
+              ) : null}
+            </div>
+            {e.reservation && (
+              <div style={{
+                flexShrink: 0,
+                background: (STATUS_LABELS[e.reservation.contractStatus ?? 'default'] ?? STATUS_LABELS.default).bg,
+                color: (STATUS_LABELS[e.reservation.contractStatus ?? 'default'] ?? STATUS_LABELS.default).color,
+                fontSize: '10px', fontWeight: 600, borderRadius: '20px', padding: '2px 7px',
+              }}>
+                {(STATUS_LABELS[e.reservation.contractStatus ?? 'default'] ?? STATUS_LABELS.default).label}
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function CalendarView({
   reservations,
   icalBlocked = [],
+  multiGites,
+  currentGiteId,
 }: {
   reservations: Reservation[];
   icalBlocked?: IcalBlock[];
+  multiGites?: GiteCalendarData[];
+  currentGiteId?: string;
 }) {
   const today = new Date();
   const [baseMonth, setBaseMonth] = useState({ year: today.getFullYear(), month: today.getMonth() });
   const [tooltip, setTooltip] = useState<TooltipData | null>(null);
 
-  const months = [{ year: baseMonth.year, month: baseMonth.month }];
-  const hasIcal = icalBlocked.length > 0;
+  const showMultiToggle = multiGites && multiGites.length > 1;
+  const [activeView, setActiveView] = useState<'all' | string>(showMultiToggle ? 'all' : (currentGiteId ?? 'all'));
+
+  const isUnified = showMultiToggle && activeView === 'all';
+
+  // Data for current view
+  const activeGiteData = showMultiToggle && activeView !== 'all'
+    ? multiGites!.find(g => g.id === activeView)
+    : null;
+
+  const displayReservations = activeGiteData ? activeGiteData.reservations : reservations;
+  const displayIcal = activeGiteData ? activeGiteData.icalBlocked : icalBlocked;
 
   function getReservationForDay(year: number, month: number, day: number): Reservation | null {
-    const date = new Date(year, month, day);
-    date.setHours(12, 0, 0, 0);
-    for (const r of reservations) {
+    const date = new Date(year, month, day); date.setHours(12, 0, 0, 0);
+    for (const r of displayReservations) {
       const ci = new Date(r.checkIn);  ci.setHours(0, 0, 0, 0);
       const co = new Date(r.checkOut); co.setHours(23, 59, 59, 999);
       if (date >= ci && date <= co) return r;
@@ -189,15 +271,99 @@ export default function CalendarView({
 
   function getIcalForDay(year: number, month: number, day: number): IcalBlock | null {
     const ds = toDateStr(year, month, day);
-    for (const b of icalBlocked) {
+    for (const b of displayIcal) {
       if (ds >= b.start && ds < b.end) return b;
     }
     return null;
   }
 
+  function getUnifiedEntriesForDay(year: number, month: number, day: number): UnifiedEntry[] {
+    const date = new Date(year, month, day); date.setHours(12, 0, 0, 0);
+    const ds = toDateStr(year, month, day);
+    const entries: UnifiedEntry[] = [];
+    for (const g of multiGites!) {
+      let reservation: Reservation | undefined;
+      let ical: IcalBlock | undefined;
+      for (const r of g.reservations) {
+        const ci = new Date(r.checkIn);  ci.setHours(0, 0, 0, 0);
+        const co = new Date(r.checkOut); co.setHours(23, 59, 59, 999);
+        if (date >= ci && date <= co) { reservation = r; break; }
+      }
+      if (!reservation) {
+        for (const b of g.icalBlocked) {
+          if (ds >= b.start && ds < b.end) { ical = b; break; }
+        }
+      }
+      if (reservation || ical) entries.push({ gite: g, reservation, ical });
+    }
+    return entries;
+  }
+
+  const daysInMonth = getDaysInMonth(baseMonth.year, baseMonth.month);
+  const firstDay    = getFirstDayOfWeek(baseMonth.year, baseMonth.month);
+
   return (
     <div>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+      {/* Multi-gîte toggle */}
+      {showMultiToggle && (
+        <div style={{ display: 'flex', gap: '6px', marginBottom: '14px', flexWrap: 'wrap' }}>
+          <button
+            onClick={() => setActiveView('all')}
+            style={{
+              padding: '5px 12px', borderRadius: '20px', fontSize: '12px', fontWeight: 600,
+              border: activeView === 'all' ? '1.5px solid #2C2C2A' : '1.5px solid #E8E6E1',
+              background: activeView === 'all' ? '#2C2C2A' : '#fff',
+              color: activeView === 'all' ? '#fff' : '#71716E',
+              cursor: 'pointer', fontFamily: 'inherit', transition: 'all .15s',
+            }}
+          >
+            Tous les hébergements
+          </button>
+          {multiGites!.map(g => (
+            <button
+              key={g.id}
+              onClick={() => setActiveView(g.id)}
+              style={{
+                padding: '5px 12px', borderRadius: '20px', fontSize: '12px', fontWeight: 600,
+                border: activeView === g.id ? `1.5px solid ${g.color}` : '1.5px solid #E8E6E1',
+                background: activeView === g.id ? g.color : '#fff',
+                color: activeView === g.id ? '#fff' : '#71716E',
+                cursor: 'pointer', fontFamily: 'inherit', transition: 'all .15s',
+                display: 'flex', alignItems: 'center', gap: '6px',
+              }}
+            >
+              <span style={{
+                width: '8px', height: '8px', borderRadius: '50%',
+                background: activeView === g.id ? '#fff' : g.color,
+                flexShrink: 0,
+              }} />
+              {g.name}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {/* Legend */}
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginBottom: '12px', fontSize: '11px', color: '#71716E' }}>
+        {isUnified ? (
+          multiGites!.map(g => (
+            <span key={g.id} style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+              <span style={{ display: 'inline-block', width: '12px', height: '8px', borderRadius: '3px', background: g.color }} />
+              {g.name}
+            </span>
+          ))
+        ) : (
+          <>
+            <span><span style={{ display: 'inline-block', width: '10px', height: '10px', borderRadius: '3px', background: SIGNED_BG, border: `1px solid ${SIGNED_TEXT}30`, marginRight: '4px', verticalAlign: 'middle' }} />Signé</span>
+            <span><span style={{ display: 'inline-block', width: '10px', height: '10px', borderRadius: '3px', background: SENT_BG, border: `1px solid ${SENT_TEXT}30`, marginRight: '4px', verticalAlign: 'middle' }} />Envoyé</span>
+            <span><span style={{ display: 'inline-block', width: '10px', height: '10px', borderRadius: '3px', background: WAITING_BG, border: `1px solid ${WAITING_TEXT}30`, marginRight: '4px', verticalAlign: 'middle' }} />En attente</span>
+            {displayIcal.length > 0 && <span><span style={{ display: 'inline-block', width: '10px', height: '10px', borderRadius: '3px', background: ICAL_BG, border: '1px solid #CEC8BF', marginRight: '4px', verticalAlign: 'middle' }} />Autres plateformes</span>}
+          </>
+        )}
+      </div>
+
+      {/* Month nav */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
         <button
           onClick={() => setBaseMonth(b => ({ year: b.month === 0 ? b.year - 1 : b.year, month: b.month === 0 ? 11 : b.month - 1 }))}
           style={{ padding: '6px 14px', border: '1px solid #CEC8BF', backgroundColor: 'transparent', borderRadius: '8px', cursor: 'pointer', fontSize: '13px', color: '#1C1C1A' }}
@@ -211,60 +377,102 @@ export default function CalendarView({
         >→</button>
       </div>
 
-      {months.map(({ year, month }) => {
-        const daysInMonth = getDaysInMonth(year, month);
-        const firstDay    = getFirstDayOfWeek(year, month);
+      {/* Grid */}
+      <div style={{ backgroundColor: '#F7F4F0', border: '1px solid #CEC8BF', borderRadius: '10px', padding: '12px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '3px' }}>
+          {DAYS.map(d => (
+            <div key={d} style={{ textAlign: 'center', fontSize: '9px', letterSpacing: '0.1em', color: '#7A7570', paddingBottom: '4px', textTransform: 'uppercase' }}>{d}</div>
+          ))}
+          {Array.from({ length: firstDay }).map((_, i) => <div key={`e-${i}`} />)}
 
-        return (
-          <div key={`${year}-${month}`} style={{ backgroundColor: '#F7F4F0', border: '1px solid #CEC8BF', borderRadius: '10px', padding: '16px' }}>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '2px' }}>
-              {DAYS.map(d => (
-                <div key={d} style={{ textAlign: 'center', fontSize: '9px', letterSpacing: '0.1em', color: '#7A7570', paddingBottom: '4px', textTransform: 'uppercase' }}>{d}</div>
-              ))}
-              {Array.from({ length: firstDay }).map((_, i) => <div key={`e-${i}`} />)}
-              {Array.from({ length: daysInMonth }).map((_, i) => {
-                const day         = i + 1;
-                const reservation = getReservationForDay(year, month, day);
-                const icalBlock   = !reservation ? getIcalForDay(year, month, day) : null;
-                const color       = reservation ? getColor(reservation) : icalBlock ? { bg: ICAL_BG, text: ICAL_TEXT } : null;
-                const isToday     = year === today.getFullYear() && month === today.getMonth() && day === today.getDate();
+          {Array.from({ length: daysInMonth }).map((_, i) => {
+            const day = i + 1;
+            const isToday = baseMonth.year === today.getFullYear() && baseMonth.month === today.getMonth() && day === today.getDate();
 
-                const cell = (
-                  <div
-                    onMouseEnter={reservation
-                      ? (e) => setTooltip({ kind: 'reservation', reservation, rect: (e.currentTarget as HTMLElement).getBoundingClientRect() })
-                      : icalBlock
-                      ? (e) => setTooltip({ kind: 'ical', block: icalBlock, rect: (e.currentTarget as HTMLElement).getBoundingClientRect() })
-                      : undefined}
-                    onMouseLeave={(reservation || icalBlock) ? () => setTooltip(null) : undefined}
-                    style={{
-                      textAlign: 'center', fontSize: '11px', padding: '4px 2px',
-                      borderRadius: '4px',
-                      backgroundColor: color?.bg ?? 'transparent',
-                      color: color?.text ?? (isToday ? '#1C1C1A' : '#7A7570'),
-                      fontWeight: isToday ? 700 : 400,
-                      cursor: reservation ? 'pointer' : 'default',
-                      border: isToday && !color ? '1px solid #1C1C1A' : '1px solid transparent',
-                      opacity: icalBlock ? 0.8 : 1,
-                    }}
-                  >{day}</div>
-                );
+            if (isUnified) {
+              const entries = getUnifiedEntriesForDay(baseMonth.year, baseMonth.month, day);
+              const hasEntries = entries.length > 0;
+              const dateLabel = new Date(baseMonth.year, baseMonth.month, day).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
+              return (
+                <div
+                  key={day}
+                  onMouseEnter={hasEntries ? (e) => setTooltip({ kind: 'unified', entries, rect: (e.currentTarget as HTMLElement).getBoundingClientRect(), dateLabel }) : undefined}
+                  onMouseLeave={hasEntries ? () => setTooltip(null) : undefined}
+                  style={{
+                    borderRadius: '6px',
+                    background: '#fff',
+                    border: isToday ? '1.5px solid #2C2C2A' : '1.5px solid transparent',
+                    cursor: hasEntries ? 'pointer' : 'default',
+                    padding: '4px 3px 5px',
+                    minHeight: '54px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'stretch',
+                    gap: '2px',
+                  }}
+                >
+                  <div style={{
+                    textAlign: 'center', fontSize: '11px',
+                    color: isToday ? '#1C1C1A' : '#7A7570',
+                    fontWeight: isToday ? 700 : 400,
+                    marginBottom: entries.length > 0 ? '3px' : 0,
+                  }}>{day}</div>
+                  {entries.map(entry => (
+                    <div
+                      key={entry.gite.id}
+                      style={{
+                        height: '9px',
+                        borderRadius: '4px',
+                        background: entry.reservation ? entry.gite.color : ICAL_BG,
+                        opacity: entry.ical ? 0.7 : 1,
+                        flexShrink: 0,
+                      }}
+                    />
+                  ))}
+                </div>
+              );
+            }
 
-                return reservation ? (
-                  <Link key={day} href={`/dashboard/reservations/${reservation.id}`} style={{ textDecoration: 'none' }}>
-                    {cell}
-                  </Link>
-                ) : (
-                  <div key={day}>{cell}</div>
-                );
-              })}
-            </div>
-          </div>
-        );
-      })}
+            // Single-gîte mode (original behavior)
+            const reservation = getReservationForDay(baseMonth.year, baseMonth.month, day);
+            const icalBlock   = !reservation ? getIcalForDay(baseMonth.year, baseMonth.month, day) : null;
+            const color       = reservation ? getContractColor(reservation) : icalBlock ? { bg: ICAL_BG, text: ICAL_TEXT } : null;
+
+            const cell = (
+              <div
+                onMouseEnter={reservation
+                  ? (e) => setTooltip({ kind: 'reservation', reservation, rect: (e.currentTarget as HTMLElement).getBoundingClientRect() })
+                  : icalBlock
+                  ? (e) => setTooltip({ kind: 'ical', block: icalBlock, rect: (e.currentTarget as HTMLElement).getBoundingClientRect() })
+                  : undefined}
+                onMouseLeave={(reservation || icalBlock) ? () => setTooltip(null) : undefined}
+                style={{
+                  textAlign: 'center', fontSize: '11px', padding: '4px 2px',
+                  borderRadius: '4px',
+                  backgroundColor: color?.bg ?? 'transparent',
+                  color: color?.text ?? (isToday ? '#1C1C1A' : '#7A7570'),
+                  fontWeight: isToday ? 700 : 400,
+                  cursor: reservation ? 'pointer' : 'default',
+                  border: isToday && !color ? '1px solid #1C1C1A' : '1px solid transparent',
+                  opacity: icalBlock ? 0.8 : 1,
+                }}
+              >{day}</div>
+            );
+
+            return reservation ? (
+              <Link key={day} href={`/dashboard/${activeGiteData?.id ?? currentGiteId}/reservations/${reservation.id}`} style={{ textDecoration: 'none' }}>
+                {cell}
+              </Link>
+            ) : (
+              <div key={day}>{cell}</div>
+            );
+          })}
+        </div>
+      </div>
 
       {tooltip?.kind === 'reservation' && <ReservationTooltip reservation={tooltip.reservation} rect={tooltip.rect} />}
-      {tooltip?.kind === 'ical' && <IcalTooltip block={tooltip.block} rect={tooltip.rect} />}
+      {tooltip?.kind === 'ical'         && <IcalTooltip block={tooltip.block} rect={tooltip.rect} />}
+      {tooltip?.kind === 'unified'      && <UnifiedTooltip entries={tooltip.entries} rect={tooltip.rect} dateLabel={tooltip.dateLabel} />}
     </div>
   );
 }

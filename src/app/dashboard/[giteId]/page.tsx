@@ -3,8 +3,10 @@ import TopbarSignOut from "@/app/dashboard/TopbarSignOut";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
-import CalendarView from "@/app/dashboard/CalendarView";
+import CalendarView, { type GiteCalendarData } from "@/app/dashboard/CalendarView";
 import CopyBookingUrlButton from "@/app/dashboard/CopyBookingUrlButton";
+
+const GITE_COLORS = ['#7F77DD', '#689D71', '#E08B4A'];
 
 export default async function DashboardPage({ params }: { params: Promise<{ giteId: string }> }) {
   const { giteId } = await params;
@@ -27,35 +29,61 @@ export default async function DashboardPage({ params }: { params: Promise<{ gite
   const gite = await prisma.gite.findFirst({ where: { id: giteId, userId: dbUser.id } }).catch(() => null);
   if (!gite) redirect("/dashboard");
 
+  const isMultiPlan = dbUser.planTier === 'multi';
+
   let pendingReservations: Array<{ id: string; clientFirstName: string; clientLastName: string; checkIn: Date; checkOut: Date }> = [];
   let reservations: Array<{ id: string; clientFirstName: string; clientLastName: string; checkIn: Date; checkOut: Date; status: string; contract: { status: string; emailStatus: string } | null }> = [];
+  let calendarReservations: Array<{ id: string; clientFirstName: string; clientLastName: string; checkIn: string; checkOut: string; status: string; contractStatus: string | null; rent: null }> = [];
   let icalBlocked: Array<{ start: string; end: string; platform: string; label: string }> = [];
+  let multiGites: GiteCalendarData[] | undefined;
 
   try {
-    const [res1, res2, icalFeeds] = await Promise.all([
+    // Fetch gîte list: all for multi plan, just current for essential
+    const allUserGites = isMultiPlan
+      ? await prisma.gite.findMany({ where: { userId: dbUser.id }, orderBy: { createdAt: 'asc' } })
+      : [gite];
+
+    const allGiteIds = allUserGites.map(g => g.id);
+
+    const [res1, allRes, allIcalFeeds] = await Promise.all([
       prisma.reservation.findMany({ where: { giteId, status: 'PENDING_REVIEW' }, orderBy: { createdAt: 'desc' } }),
-      prisma.reservation.findMany({ where: { giteId }, include: { contract: true }, orderBy: { checkIn: 'asc' } }),
-      prisma.icalFeed.findMany({ where: { giteId } }),
+      prisma.reservation.findMany({ where: { giteId: { in: allGiteIds } }, include: { contract: true }, orderBy: { checkIn: 'asc' } }),
+      prisma.icalFeed.findMany({ where: { giteId: { in: allGiteIds } } }),
     ]);
+
     pendingReservations = res1;
-    reservations = res2;
-    icalBlocked = icalFeeds.flatMap(feed =>
-      ((feed.blockedDates as Array<{ start: string; end: string }>) ?? []).map(e => ({
-        start: e.start, end: e.end, platform: feed.platform, label: feed.label,
-      }))
-    );
+    reservations = allRes.filter(r => r.giteId === giteId);
+
+    // Build per-gîte data for unified calendar
+    const gitesData: GiteCalendarData[] = allUserGites.map((g, i) => ({
+      id: g.id,
+      name: g.name,
+      color: GITE_COLORS[i] ?? '#7F77DD',
+      reservations: allRes
+        .filter(r => r.giteId === g.id && r.status !== 'REFUSED')
+        .map(r => ({
+          id: r.id, clientFirstName: r.clientFirstName, clientLastName: r.clientLastName,
+          checkIn: r.checkIn.toISOString(), checkOut: r.checkOut.toISOString(),
+          status: r.status, contractStatus: r.contract?.status ?? null, rent: null,
+        })),
+      icalBlocked: allIcalFeeds
+        .filter(f => f.giteId === g.id)
+        .flatMap(feed => ((feed.blockedDates as Array<{ start: string; end: string }>) ?? []).map(e => ({
+          start: e.start, end: e.end, platform: feed.platform, label: feed.label,
+        }))),
+    }));
+
+    const currentGiteData = gitesData.find(g => g.id === giteId);
+    calendarReservations = currentGiteData?.reservations ?? [];
+    icalBlocked = currentGiteData?.icalBlocked ?? [];
+
+    if (isMultiPlan && allUserGites.length > 1) {
+      multiGites = gitesData;
+    }
   } catch { /* render with empty state */ }
 
   const contractsGenerated = reservations.filter(r => r.contract?.status === 'GENERATED' || r.contract?.status === 'SIGNED').length;
   const contractsSigned = reservations.filter(r => r.contract?.status === 'SIGNED').length;
-
-  const calendarReservations = reservations
-    .filter(r => r.status !== 'REFUSED')
-    .map(r => ({
-      id: r.id, clientFirstName: r.clientFirstName, clientLastName: r.clientLastName,
-      checkIn: r.checkIn.toISOString(), checkOut: r.checkOut.toISOString(),
-      status: r.status, contractStatus: r.contract?.status ?? null, rent: null,
-    }));
 
   const upcoming = reservations
     .filter(r => r.status !== 'PENDING_REVIEW' && r.status !== 'REFUSED' && new Date(r.checkIn) >= today)
@@ -141,15 +169,14 @@ export default async function DashboardPage({ params }: { params: Promise<{ gite
                 <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><rect x="2" y="3" width="12" height="10" rx="1.5" stroke="#7F77DD" strokeWidth="1.2"/><path d="M2 6.5h12" stroke="#7F77DD" strokeWidth="1.2"/><path d="M5.5 1.5v3M10.5 1.5v3" stroke="#7F77DD" strokeWidth="1.2" strokeLinecap="round"/></svg>
                 Planning
               </div>
-              <div className="card-legend">
-                <span><span className="legend-dot g"></span>Signé</span>
-                <span><span className="legend-dot v"></span>Envoyé</span>
-                <span><span className="legend-dot a"></span>En attente</span>
-                {icalBlocked.length > 0 && <span><span className="legend-dot" style={{ background: '#E4E2DE', border: '1px solid #CEC8BF' }}></span>Autres plateformes</span>}
-              </div>
             </div>
             <div style={{ padding: '16px 20px' }}>
-              <CalendarView reservations={calendarReservations} icalBlocked={icalBlocked} />
+              <CalendarView
+                reservations={calendarReservations}
+                icalBlocked={icalBlocked}
+                multiGites={multiGites}
+                currentGiteId={giteId}
+              />
             </div>
           </div>
 
