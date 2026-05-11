@@ -41,6 +41,7 @@ export default function OnboardingContainer({ firstName, defaultEmail }: { first
   const [submitError, setSubmitError] = useState<string | null>(null);
 
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
+  const [committedPlan, setCommittedPlan] = useState<Plan | null>(null);
   const [giteCount, setGiteCount] = useState<number | null>(null);
   const [giteNames, setGiteNames] = useState<string[]>(["", "", ""]);
   const [giteNameErrors, setGiteNameErrors] = useState<string[]>([]);
@@ -55,7 +56,7 @@ export default function OnboardingContainer({ firstName, defaultEmail }: { first
     mode: "onTouched",
   });
 
-  const steps = selectedPlan === "multi" ? MULTI_STEPS : ESSENTIAL_STEPS;
+  const steps = committedPlan === "multi" ? MULTI_STEPS : ESSENTIAL_STEPS;
   const currentStep = steps[stepIndex];
 
   // Dots count = form steps (everything except welcome + success)
@@ -83,7 +84,8 @@ export default function OnboardingContainer({ firstName, defaultEmail }: { first
     // Plan step: must have a plan selected
     if (currentStep === "plan") {
       if (!selectedPlan) return;
-      // If switching from multi to essential, reset multi state
+      setCommittedPlan(selectedPlan);
+      if (selectedPlan !== "multi") { setGiteCount(null); setGiteNames(["", "", ""]); }
       advance();
       return;
     }
@@ -128,8 +130,7 @@ export default function OnboardingContainer({ firstName, defaultEmail }: { first
     setSubmitting(true);
     setSubmitError(null);
 
-    // For multi, use giteNames[0] as primary gîte name
-    const primaryName = selectedPlan === "multi" ? (giteNames[0] || v.giteName) : v.giteName;
+    const primaryName = committedPlan === "multi" ? (giteNames[0] || v.giteName) : v.giteName;
 
     const slug = primaryName
       .toLowerCase()
@@ -153,9 +154,8 @@ export default function OnboardingContainer({ firstName, defaultEmail }: { first
           cleaningFee: Number(v.cleaningFee),
           touristTax: Number(v.touristTax),
           slug,
-          planTier: selectedPlan ?? "essential",
-          // Additional gîtes for multi
-          extraGites: selectedPlan === "multi" && giteCount
+          planTier: committedPlan ?? "essential",
+          extraGites: committedPlan === "multi" && giteCount
             ? giteNames.slice(1, giteCount).filter(n => n.trim())
             : [],
         }),
@@ -214,8 +214,6 @@ export default function OnboardingContainer({ firstName, defaultEmail }: { first
               {currentStep === "plan" && (
                 <StepPlan selected={selectedPlan} onSelect={(p) => {
                   setSelectedPlan(p as Plan);
-                  // Reset multi-specific state when switching plans
-                  if (p !== "multi") { setGiteCount(null); setGiteNames(["", "", ""]); }
                 }} />
               )}
               {currentStep === "gite-count" && (
@@ -240,7 +238,7 @@ export default function OnboardingContainer({ firstName, defaultEmail }: { first
               )}
               {currentStep === "success" && (
                 <StepSuccess
-                  giteName={selectedPlan === "multi" ? giteNames[0] : getValues("giteName")}
+                  giteName={committedPlan === "multi" ? giteNames[0] : getValues("giteName")}
                   onDashboard={() => router.push("/dashboard")}
                 />
               )}
