@@ -169,6 +169,12 @@ export default async function DashboardPage({ params }: { params: Promise<{ gite
                 <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><rect x="2" y="3" width="12" height="10" rx="1.5" stroke="#7F77DD" strokeWidth="1.2"/><path d="M2 6.5h12" stroke="#7F77DD" strokeWidth="1.2"/><path d="M5.5 1.5v3M10.5 1.5v3" stroke="#7F77DD" strokeWidth="1.2" strokeLinecap="round"/></svg>
                 Planning
               </div>
+              <div className="card-legend">
+                <span><span className="legend-dot g" />Signé</span>
+                <span><span className="legend-dot v" />Envoyé</span>
+                <span><span className="legend-dot a" />En attente</span>
+                {icalBlocked.length > 0 && <span><span className="legend-dot" style={{ background: '#E4E2DE', border: '1px solid #CEC8BF' }} />Autres plateformes</span>}
+              </div>
             </div>
             <div style={{ padding: '16px 20px' }}>
               <CalendarView

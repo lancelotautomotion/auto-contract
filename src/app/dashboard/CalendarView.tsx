@@ -343,25 +343,6 @@ export default function CalendarView({
         </div>
       )}
 
-      {/* Legend */}
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginBottom: '12px', fontSize: '11px', color: '#71716E' }}>
-        {isUnified ? (
-          multiGites!.map(g => (
-            <span key={g.id} style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-              <span style={{ display: 'inline-block', width: '12px', height: '8px', borderRadius: '3px', background: g.color }} />
-              {g.name}
-            </span>
-          ))
-        ) : (
-          <>
-            <span><span style={{ display: 'inline-block', width: '10px', height: '10px', borderRadius: '3px', background: SIGNED_BG, border: `1px solid ${SIGNED_TEXT}30`, marginRight: '4px', verticalAlign: 'middle' }} />Signé</span>
-            <span><span style={{ display: 'inline-block', width: '10px', height: '10px', borderRadius: '3px', background: SENT_BG, border: `1px solid ${SENT_TEXT}30`, marginRight: '4px', verticalAlign: 'middle' }} />Envoyé</span>
-            <span><span style={{ display: 'inline-block', width: '10px', height: '10px', borderRadius: '3px', background: WAITING_BG, border: `1px solid ${WAITING_TEXT}30`, marginRight: '4px', verticalAlign: 'middle' }} />En attente</span>
-            {displayIcal.length > 0 && <span><span style={{ display: 'inline-block', width: '10px', height: '10px', borderRadius: '3px', background: ICAL_BG, border: '1px solid #CEC8BF', marginRight: '4px', verticalAlign: 'middle' }} />Autres plateformes</span>}
-          </>
-        )}
-      </div>
-
       {/* Month nav */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
         <button
