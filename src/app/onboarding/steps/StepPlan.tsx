@@ -1,8 +1,8 @@
-type Plan = "essential" | "multi" | "etape";
+type Plan = "essential" | "multi";
 
 interface Props {
   selected: Plan | null;
-  onSelect: (plan: Plan) => void;
+  onSelect: (plan: Plan | "etape") => void;
 }
 
 const plans: {

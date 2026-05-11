@@ -87,6 +87,29 @@ export async function POST(req: NextRequest) {
       }
     }
 
+    // Create additional gîtes for multi plan
+    if (Array.isArray(body.extraGites) && body.extraGites.length > 0) {
+      for (const extraName of body.extraGites as string[]) {
+        const trimmed = extraName.trim();
+        if (!trimmed) continue;
+        const extraSlug = await uniqueSlug(
+          trimmed.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "")
+        );
+        await prisma.gite.create({
+          data: {
+            userId: user.id,
+            name: trimmed,
+            email: body.email || null,
+            slug: extraSlug,
+            capacity: parseInt(body.capacity ?? "12"),
+            cleaningFee: parseFloat(body.cleaningFee ?? "90"),
+            touristTax: parseFloat(body.touristTax ?? "1.32"),
+            notificationEmail: body.email || null,
+          },
+        });
+      }
+    }
+
     const response = NextResponse.json(gite, { status: 200 });
     response.cookies.delete("kordia_plan_intent");
     return response;
