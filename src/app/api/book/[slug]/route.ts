@@ -106,7 +106,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ slu
   </td></tr>
 </table>
 ${divider()}
-${ctaButton('Voir la demande', `${process.env.NEXT_PUBLIC_APP_URL}/dashboard/reservations`)}
+${ctaButton('Voir la demande', `${process.env.NEXT_PUBLIC_APP_URL}/dashboard/${gite.id}/reservations`)}
 ${muted('Cette demande est en attente de votre confirmation dans Kordia.')}
 `;
 
