@@ -9,7 +9,10 @@ import StepWelcome from "./steps/StepWelcome";
 import StepProperty from "./steps/StepProperty";
 import StepManager from "./steps/StepManager";
 import StepConfig from "./steps/StepConfig";
+import StepPlan from "./steps/StepPlan";
 import StepSuccess from "./steps/StepSuccess";
+
+type Plan = "essential" | "multi" | "etape";
 
 const STEP_FIELDS: Record<number, (keyof OnboardingValues)[]> = {
   1: ["giteName"],
@@ -17,7 +20,7 @@ const STEP_FIELDS: Record<number, (keyof OnboardingValues)[]> = {
   3: ["capacity", "cleaningFee", "touristTax", "cguAccepted"],
 };
 
-const TOTAL_FORM_STEPS = 3;
+const TOTAL_FORM_STEPS = 4;
 
 const variants = {
   enter: (dir: number) => ({ x: dir > 0 ? "100%" : "-100%", opacity: 0 }),
@@ -39,6 +42,7 @@ export default function OnboardingContainer({
   const [direction, setDirection] = useState(1);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
 
   const { register, trigger, getValues, formState: { errors } } = useForm<OnboardingValues>({
     defaultValues: {
@@ -72,7 +76,8 @@ export default function OnboardingContainer({
       const valid = await trigger(fields);
       if (!valid) return;
     }
-    if (step === 3) {
+    if (step === 4) {
+      if (!selectedPlan || selectedPlan === "etape") return;
       await handleSubmit();
     } else {
       advance();
@@ -106,6 +111,7 @@ export default function OnboardingContainer({
           cleaningFee: Number(v.cleaningFee),
           touristTax: Number(v.touristTax),
           slug,
+          planTier: selectedPlan ?? "essential",
         }),
       });
 
@@ -122,8 +128,11 @@ export default function OnboardingContainer({
     }
   };
 
-  const showDots = step >= 1 && step <= 3;
-  const showNav = step >= 1 && step <= 3;
+  const showDots = step >= 1 && step <= 4;
+  const showNav = step >= 1 && step <= 4;
+
+  const isSubmitStep = step === 4;
+  const submitDisabled = submitting || (isSubmitStep && (!selectedPlan || selectedPlan === "etape"));
 
   return (
     <div className="ob-stepped">
@@ -169,6 +178,9 @@ export default function OnboardingContainer({
                 <StepConfig register={register} errors={errors} />
               )}
               {step === 4 && (
+                <StepPlan selected={selectedPlan} onSelect={setSelectedPlan} />
+              )}
+              {step === 5 && (
                 <StepSuccess
                   giteName={getValues("giteName")}
                   onDashboard={() => router.push("/dashboard")}
@@ -195,13 +207,13 @@ export default function OnboardingContainer({
             type="button"
             className="ob-submit ob-nav-next"
             onClick={goNext}
-            disabled={submitting}
+            disabled={submitDisabled}
           >
-            {step === 3 ? (
+            {isSubmitStep ? (
               submitting ? (
                 <span className="ob-spinner" />
               ) : (
-                <>Créer mon espace →</>
+                <>Commencer mon essai gratuit →</>
               )
             ) : (
               <>Continuer →</>

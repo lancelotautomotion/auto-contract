@@ -22,7 +22,12 @@ export async function POST(req: NextRequest) {
 
     const cookieStore = await cookies();
     const planIntent = cookieStore.get("kordia_plan_intent")?.value;
-    const planTier = planIntent === "multi" ? "multi" : "essential";
+    // planTier from request body takes priority (explicit onboarding step)
+    const planTier: string =
+      body.planTier === "multi" ? "multi"
+      : body.planTier === "essential" ? "essential"
+      : planIntent === "multi" ? "multi"
+      : "essential";
 
     let user = await prisma.user.findUnique({ where: { clerkId: userId } }).catch(() => null);
     if (!user) {
