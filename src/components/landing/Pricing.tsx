@@ -75,7 +75,6 @@ export default function Pricing() {
 
           {/* Multi-gîtes */}
           <div className="pc reveal reveal-d2">
-            <div className="pc-badge" style={{ background: '#689D71' }}>30 j. gratuits</div>
             <div className="pc-header">
               <div className="pc-icon g">
                 <svg width="20" height="20" fill="none" viewBox="0 0 20 20">
