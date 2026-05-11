@@ -57,12 +57,12 @@ export default function StepSuccess({
               Pour aller plus loin
             </p>
             <p style={{ fontSize: "13px", color: "#2C2C2A", margin: "0 0 10px", lineHeight: 1.55 }}>
-              Rendez-vous dans la section <strong>Hébergements</strong> pour personnaliser chaque bien&nbsp;:
+              Rendez-vous dans la section <strong>Hébergements</strong>{" "}pour personnaliser chaque bien&nbsp;:
             </p>
             <ul style={{ margin: 0, padding: "0 0 0 16px", display: "flex", flexDirection: "column", gap: "5px" }}>
               {[
-                "Ajouter un logo par hébergement",
-                "Configurer les options (draps, petit-déjeuner…)",
+                "Ajouter un logo — visible sur les contrats et dans les emails envoyés aux locataires",
+                "Configurer les options proposées (jacuzzi, linge de lit, ménage de fin de séjour…)",
                 "Personnaliser les modèles de contrat",
                 "Joindre des documents aux emails (règlement intérieur, guide d'accueil…)",
               ].map((item) => (
