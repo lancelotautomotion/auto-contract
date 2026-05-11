@@ -89,8 +89,8 @@ export async function POST(req: NextRequest) {
 
     // Create additional gîtes for multi plan
     if (Array.isArray(body.extraGites) && body.extraGites.length > 0) {
-      for (const extraName of body.extraGites as string[]) {
-        const trimmed = extraName.trim();
+      for (const extra of body.extraGites as { name: string; capacity?: number; cleaningFee?: number; touristTax?: number }[]) {
+        const trimmed = (extra.name ?? "").trim();
         if (!trimmed) continue;
         const extraSlug = await uniqueSlug(
           trimmed.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "")
@@ -101,9 +101,9 @@ export async function POST(req: NextRequest) {
             name: trimmed,
             email: body.email || null,
             slug: extraSlug,
-            capacity: parseInt(body.capacity ?? "12"),
-            cleaningFee: parseFloat(body.cleaningFee ?? "90"),
-            touristTax: parseFloat(body.touristTax ?? "1.32"),
+            capacity: extra.capacity ?? 0,
+            cleaningFee: extra.cleaningFee ?? 0,
+            touristTax: extra.touristTax ?? 0,
             notificationEmail: body.email || null,
           },
         });
