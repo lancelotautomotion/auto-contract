@@ -6,77 +6,121 @@ import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import type { OnboardingValues } from "./types";
 import StepWelcome from "./steps/StepWelcome";
+import StepPlan from "./steps/StepPlan";
+import StepGiteCount from "./steps/StepGiteCount";
+import StepGiteNames from "./steps/StepGiteNames";
 import StepProperty from "./steps/StepProperty";
 import StepManager from "./steps/StepManager";
 import StepConfig from "./steps/StepConfig";
 import StepSuccess from "./steps/StepSuccess";
 
-const STEP_FIELDS: Record<number, (keyof OnboardingValues)[]> = {
-  1: ["giteName"],
-  2: ["email"],
-  3: ["capacity", "cleaningFee", "touristTax", "cguAccepted"],
-};
+type Plan = "essential" | "multi";
+type StepId = "welcome" | "plan" | "gite-count" | "gite-names" | "property" | "contact" | "config" | "success";
 
-const TOTAL_FORM_STEPS = 3;
+const ESSENTIAL_STEPS: StepId[] = ["welcome", "plan", "property", "contact", "config", "success"];
+const MULTI_STEPS: StepId[] = ["welcome", "plan", "gite-count", "gite-names", "contact", "config", "success"];
+
+const STEP_FIELDS: Partial<Record<StepId, (keyof OnboardingValues)[]>> = {
+  property: ["giteName"],
+  contact: ["email"],
+  config: ["capacity", "cleaningFee", "touristTax", "cguAccepted"],
+};
 
 const variants = {
   enter: (dir: number) => ({ x: dir > 0 ? "100%" : "-100%", opacity: 0 }),
   center: { x: 0, opacity: 1 },
   exit: (dir: number) => ({ x: dir > 0 ? "-100%" : "100%", opacity: 0 }),
 };
-
 const transition = { duration: 0.3, ease: [0.32, 0.72, 0, 1] as const };
 
-export default function OnboardingContainer({
-  firstName,
-  defaultEmail,
-}: {
-  firstName: string;
-  defaultEmail: string;
-}) {
+export default function OnboardingContainer({ firstName, defaultEmail }: { firstName: string; defaultEmail: string }) {
   const router = useRouter();
-  const [step, setStep] = useState(0);
+  const [stepIndex, setStepIndex] = useState(0);
   const [direction, setDirection] = useState(1);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
+  const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
+  const [giteCount, setGiteCount] = useState<number | null>(null);
+  const [giteNames, setGiteNames] = useState<string[]>(["", "", ""]);
+  const [giteNameErrors, setGiteNameErrors] = useState<string[]>([]);
+
   const { register, trigger, getValues, formState: { errors } } = useForm<OnboardingValues>({
     defaultValues: {
-      giteName: "",
-      address: "",
-      city: "",
-      zipCode: "",
-      email: defaultEmail,
-      phone: "",
-      capacity: 12,
-      cleaningFee: 90,
-      touristTax: 1.32,
+      giteName: "", address: "", city: "", zipCode: "",
+      email: defaultEmail, phone: "",
+      capacity: 12, cleaningFee: 90, touristTax: 1.32,
       cguAccepted: false,
     },
     mode: "onTouched",
   });
 
-  const advance = () => {
-    setDirection(1);
-    setStep((s) => s + 1);
+  const steps = selectedPlan === "multi" ? MULTI_STEPS : ESSENTIAL_STEPS;
+  const currentStep = steps[stepIndex];
+
+  // Dots count = form steps (everything except welcome + success)
+  const formSteps = steps.filter(s => s !== "welcome" && s !== "success");
+  const dotIndex = formSteps.indexOf(currentStep);
+
+  const advance = () => { setDirection(1); setStepIndex(i => i + 1); };
+  const goBack = () => { setDirection(-1); setStepIndex(i => i - 1); };
+
+  const handleGiteNameChange = (index: number, value: string) => {
+    setGiteNames(prev => { const n = [...prev]; n[index] = value; return n; });
+    setGiteNameErrors(prev => { const e = [...prev]; e[index] = ""; return e; });
   };
 
-  const goBack = () => {
-    setDirection(-1);
-    setStep((s) => s - 1);
+  const validateGiteNames = (): boolean => {
+    const count = giteCount ?? 1;
+    const errs = Array.from({ length: count }, (_, i) =>
+      giteNames[i]?.trim() ? "" : "Le nom est requis"
+    );
+    setGiteNameErrors(errs);
+    return errs.every(e => !e);
   };
 
   const goNext = async () => {
-    const fields = STEP_FIELDS[step];
+    // Plan step: must have a plan selected
+    if (currentStep === "plan") {
+      if (!selectedPlan) return;
+      // If switching from multi to essential, reset multi state
+      advance();
+      return;
+    }
+
+    // Gite count step (multi only)
+    if (currentStep === "gite-count") {
+      if (!giteCount) return;
+      advance();
+      return;
+    }
+
+    // Gite names step (multi only)
+    if (currentStep === "gite-names") {
+      if (!validateGiteNames()) return;
+      // Sync first gîte name to form
+      const form = getValues();
+      if (!form.giteName && giteNames[0]) {
+        // We'll use giteNames[0] directly in submit
+      }
+      advance();
+      return;
+    }
+
+    // Form-validated steps
+    const fields = STEP_FIELDS[currentStep];
     if (fields) {
       const valid = await trigger(fields);
       if (!valid) return;
     }
-    if (step === 3) {
+
+    // Last step before success → submit
+    if (currentStep === "config") {
       await handleSubmit();
-    } else {
-      advance();
+      return;
     }
+
+    advance();
   };
 
   const handleSubmit = async () => {
@@ -84,7 +128,10 @@ export default function OnboardingContainer({
     setSubmitting(true);
     setSubmitError(null);
 
-    const slug = v.giteName
+    // For multi, use giteNames[0] as primary gîte name
+    const primaryName = selectedPlan === "multi" ? (giteNames[0] || v.giteName) : v.giteName;
+
+    const slug = primaryName
       .toLowerCase()
       .normalize("NFD")
       .replace(/[̀-ͯ]/g, "")
@@ -96,7 +143,7 @@ export default function OnboardingContainer({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          giteName: v.giteName,
+          giteName: primaryName,
           email: v.email,
           phone: v.phone || "",
           address: v.address || "",
@@ -106,6 +153,11 @@ export default function OnboardingContainer({
           cleaningFee: Number(v.cleaningFee),
           touristTax: Number(v.touristTax),
           slug,
+          planTier: selectedPlan ?? "essential",
+          // Additional gîtes for multi
+          extraGites: selectedPlan === "multi" && giteCount
+            ? giteNames.slice(1, giteCount).filter(n => n.trim())
+            : [],
         }),
       });
 
@@ -122,22 +174,22 @@ export default function OnboardingContainer({
     }
   };
 
-  const showDots = step >= 1 && step <= 3;
-  const showNav = step >= 1 && step <= 3;
+  const showNav = currentStep !== "welcome" && currentStep !== "success";
+  const isSubmitStep = currentStep === "config";
+
+  const isNextDisabled =
+    submitting ||
+    (currentStep === "plan" && !selectedPlan) ||
+    (currentStep === "gite-count" && !giteCount);
 
   return (
     <div className="ob-stepped">
-      <div className={`ob-dots${showDots ? " ob-dots--show" : ""}`} aria-hidden="true">
-        {Array.from({ length: TOTAL_FORM_STEPS }).map((_, i) => (
+      {/* Progress dots — only for form steps */}
+      <div className={`ob-dots${showNav ? " ob-dots--show" : ""}`} aria-hidden="true">
+        {formSteps.map((_, i) => (
           <div
             key={i}
-            className={`ob-dot${
-              i + 1 === step
-                ? " ob-dot--active"
-                : i + 1 < step
-                ? " ob-dot--done"
-                : ""
-            }`}
+            className={`ob-dot${i === dotIndex ? " ob-dot--active" : i < dotIndex ? " ob-dot--done" : ""}`}
           />
         ))}
       </div>
@@ -147,7 +199,7 @@ export default function OnboardingContainer({
         <div className="ob-slide-outer">
           <AnimatePresence mode="wait" custom={direction}>
             <motion.div
-              key={step}
+              key={`${currentStep}-${giteCount}`}
               custom={direction}
               variants={variants}
               initial="enter"
@@ -156,21 +208,39 @@ export default function OnboardingContainer({
               transition={transition}
               className="ob-card-inner"
             >
-              {step === 0 && (
+              {currentStep === "welcome" && (
                 <StepWelcome firstName={firstName} onStart={advance} />
               )}
-              {step === 1 && (
+              {currentStep === "plan" && (
+                <StepPlan selected={selectedPlan} onSelect={(p) => {
+                  setSelectedPlan(p as Plan);
+                  // Reset multi-specific state when switching plans
+                  if (p !== "multi") { setGiteCount(null); setGiteNames(["", "", ""]); }
+                }} />
+              )}
+              {currentStep === "gite-count" && (
+                <StepGiteCount selected={giteCount} onSelect={setGiteCount} />
+              )}
+              {currentStep === "gite-names" && (
+                <StepGiteNames
+                  count={giteCount ?? 1}
+                  names={giteNames}
+                  onChange={handleGiteNameChange}
+                  errors={giteNameErrors}
+                />
+              )}
+              {currentStep === "property" && (
                 <StepProperty register={register} errors={errors} />
               )}
-              {step === 2 && (
+              {currentStep === "contact" && (
                 <StepManager register={register} errors={errors} />
               )}
-              {step === 3 && (
+              {currentStep === "config" && (
                 <StepConfig register={register} errors={errors} />
               )}
-              {step === 4 && (
+              {currentStep === "success" && (
                 <StepSuccess
-                  giteName={getValues("giteName")}
+                  giteName={selectedPlan === "multi" ? giteNames[0] : getValues("giteName")}
                   onDashboard={() => router.push("/dashboard")}
                 />
               )}
@@ -181,13 +251,8 @@ export default function OnboardingContainer({
 
       {showNav && (
         <div className="ob-nav">
-          {step > 1 && (
-            <button
-              type="button"
-              className="ob-nav-back"
-              onClick={goBack}
-              disabled={submitting}
-            >
+          {stepIndex > 1 && (
+            <button type="button" className="ob-nav-back" onClick={goBack} disabled={submitting}>
               ← Retour
             </button>
           )}
@@ -195,17 +260,11 @@ export default function OnboardingContainer({
             type="button"
             className="ob-submit ob-nav-next"
             onClick={goNext}
-            disabled={submitting}
+            disabled={isNextDisabled}
           >
-            {step === 3 ? (
-              submitting ? (
-                <span className="ob-spinner" />
-              ) : (
-                <>Créer mon espace →</>
-              )
-            ) : (
-              <>Continuer →</>
-            )}
+            {isSubmitStep
+              ? submitting ? <span className="ob-spinner" /> : <>Commencer mon essai gratuit →</>
+              : <>Continuer →</>}
           </button>
         </div>
       )}

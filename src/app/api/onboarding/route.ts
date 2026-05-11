@@ -22,7 +22,12 @@ export async function POST(req: NextRequest) {
 
     const cookieStore = await cookies();
     const planIntent = cookieStore.get("kordia_plan_intent")?.value;
-    const planTier = planIntent === "multi" ? "multi" : "essential";
+    // planTier from request body takes priority (explicit onboarding step)
+    const planTier: string =
+      body.planTier === "multi" ? "multi"
+      : body.planTier === "essential" ? "essential"
+      : planIntent === "multi" ? "multi"
+      : "essential";
 
     let user = await prisma.user.findUnique({ where: { clerkId: userId } }).catch(() => null);
     if (!user) {
@@ -78,6 +83,29 @@ export async function POST(req: NextRequest) {
             price: parseFloat(String(opt.price ?? 0)),
             position: i,
           })),
+        });
+      }
+    }
+
+    // Create additional gîtes for multi plan
+    if (Array.isArray(body.extraGites) && body.extraGites.length > 0) {
+      for (const extraName of body.extraGites as string[]) {
+        const trimmed = extraName.trim();
+        if (!trimmed) continue;
+        const extraSlug = await uniqueSlug(
+          trimmed.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "")
+        );
+        await prisma.gite.create({
+          data: {
+            userId: user.id,
+            name: trimmed,
+            email: body.email || null,
+            slug: extraSlug,
+            capacity: parseInt(body.capacity ?? "12"),
+            cleaningFee: parseFloat(body.cleaningFee ?? "90"),
+            touristTax: parseFloat(body.touristTax ?? "1.32"),
+            notificationEmail: body.email || null,
+          },
         });
       }
     }
