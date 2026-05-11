@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import type { OnboardingValues } from "./types";
+import type { GiteConfig, GiteConfigErrors } from "./steps/StepConfig";
 import StepWelcome from "./steps/StepWelcome";
 import StepPlan from "./steps/StepPlan";
 import StepGiteCount from "./steps/StepGiteCount";
@@ -26,6 +27,8 @@ const STEP_FIELDS: Partial<Record<StepId, (keyof OnboardingValues)[]>> = {
   config: ["capacity", "cleaningFee", "touristTax", "cguAccepted"],
 };
 
+const EMPTY_CONFIG: GiteConfig = { capacity: "", cleaningFee: "", touristTax: "" };
+
 const variants = {
   enter: (dir: number) => ({ x: dir > 0 ? "100%" : "-100%", opacity: 0 }),
   center: { x: 0, opacity: 1 },
@@ -45,6 +48,8 @@ export default function OnboardingContainer({ firstName, defaultEmail }: { first
   const [giteCount, setGiteCount] = useState<number | null>(null);
   const [giteNames, setGiteNames] = useState<string[]>(["", "", ""]);
   const [giteNameErrors, setGiteNameErrors] = useState<string[]>([]);
+  const [giteConfigs, setGiteConfigs] = useState<GiteConfig[]>([EMPTY_CONFIG, EMPTY_CONFIG, EMPTY_CONFIG]);
+  const [configErrors, setConfigErrors] = useState<GiteConfigErrors[]>([{}, {}, {}]);
 
   const { register, trigger, getValues, formState: { errors } } = useForm<OnboardingValues>({
     defaultValues: {
@@ -59,7 +64,6 @@ export default function OnboardingContainer({ firstName, defaultEmail }: { first
   const steps = committedPlan === "multi" ? MULTI_STEPS : ESSENTIAL_STEPS;
   const currentStep = steps[stepIndex];
 
-  // Dots count = form steps (everything except welcome + success)
   const formSteps = steps.filter(s => s !== "welcome" && s !== "success");
   const dotIndex = formSteps.indexOf(currentStep);
 
@@ -71,6 +75,19 @@ export default function OnboardingContainer({ firstName, defaultEmail }: { first
     setGiteNameErrors(prev => { const e = [...prev]; e[index] = ""; return e; });
   };
 
+  const handleGiteConfigChange = (index: number, field: keyof GiteConfig, value: string) => {
+    setGiteConfigs(prev => {
+      const next = [...prev];
+      next[index] = { ...next[index], [field]: value };
+      return next;
+    });
+    setConfigErrors(prev => {
+      const next = [...prev];
+      next[index] = { ...next[index], [field]: undefined };
+      return next;
+    });
+  };
+
   const validateGiteNames = (): boolean => {
     const count = giteCount ?? 1;
     const errs = Array.from({ length: count }, (_, i) =>
@@ -80,8 +97,25 @@ export default function OnboardingContainer({ firstName, defaultEmail }: { first
     return errs.every(e => !e);
   };
 
+  const validateGiteConfigs = (): boolean => {
+    const count = giteCount ?? 1;
+    const errs: GiteConfigErrors[] = Array.from({ length: count }, (_, i) => {
+      const c = giteConfigs[i] ?? EMPTY_CONFIG;
+      return {
+        capacity: !c.capacity.trim() ? "Requis" : Number(c.capacity) < 1 ? "Minimum 1" : undefined,
+        cleaningFee: !c.cleaningFee.trim() ? "Requis" : Number(c.cleaningFee) < 0 ? "Invalide" : undefined,
+        touristTax: !c.touristTax.trim() ? "Requis" : Number(c.touristTax) < 0 ? "Invalide" : undefined,
+      };
+    });
+    setConfigErrors(prev => {
+      const next = [...prev];
+      errs.forEach((e, i) => { next[i] = e; });
+      return next;
+    });
+    return errs.every(e => !e.capacity && !e.cleaningFee && !e.touristTax);
+  };
+
   const goNext = async () => {
-    // Plan step: must have a plan selected
     if (currentStep === "plan") {
       if (!selectedPlan) return;
       setCommittedPlan(selectedPlan);
@@ -90,36 +124,36 @@ export default function OnboardingContainer({ firstName, defaultEmail }: { first
       return;
     }
 
-    // Gite count step (multi only)
     if (currentStep === "gite-count") {
       if (!giteCount) return;
       advance();
       return;
     }
 
-    // Gite names step (multi only)
     if (currentStep === "gite-names") {
       if (!validateGiteNames()) return;
-      // Sync first gîte name to form
-      const form = getValues();
-      if (!form.giteName && giteNames[0]) {
-        // We'll use giteNames[0] directly in submit
-      }
       advance();
       return;
     }
 
-    // Form-validated steps
+    if (currentStep === "config") {
+      if (committedPlan === "multi") {
+        if (!validateGiteConfigs()) return;
+        const cguValid = await trigger(["cguAccepted"]);
+        if (!cguValid) return;
+      } else {
+        const fields = STEP_FIELDS["config"]!;
+        const valid = await trigger(fields);
+        if (!valid) return;
+      }
+      await handleSubmit();
+      return;
+    }
+
     const fields = STEP_FIELDS[currentStep];
     if (fields) {
       const valid = await trigger(fields);
       if (!valid) return;
-    }
-
-    // Last step before success → submit
-    if (currentStep === "config") {
-      await handleSubmit();
-      return;
     }
 
     advance();
@@ -139,6 +173,8 @@ export default function OnboardingContainer({ firstName, defaultEmail }: { first
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/^-+|-+$/g, "");
 
+    const primaryConfig = committedPlan === "multi" ? giteConfigs[0] : null;
+
     try {
       const res = await fetch("/api/onboarding", {
         method: "POST",
@@ -150,13 +186,18 @@ export default function OnboardingContainer({ firstName, defaultEmail }: { first
           address: v.address || "",
           city: v.city || "",
           zipCode: v.zipCode || "",
-          capacity: Number(v.capacity),
-          cleaningFee: Number(v.cleaningFee),
-          touristTax: Number(v.touristTax),
+          capacity: primaryConfig ? Number(primaryConfig.capacity) : Number(v.capacity),
+          cleaningFee: primaryConfig ? Number(primaryConfig.cleaningFee) : Number(v.cleaningFee),
+          touristTax: primaryConfig ? Number(primaryConfig.touristTax) : Number(v.touristTax),
           slug,
           planTier: committedPlan ?? "essential",
           extraGites: committedPlan === "multi" && giteCount
-            ? giteNames.slice(1, giteCount).filter(n => n.trim())
+            ? giteNames.slice(1, giteCount).map((name, i) => ({
+                name: name.trim(),
+                capacity: Number(giteConfigs[i + 1]?.capacity || 0),
+                cleaningFee: Number(giteConfigs[i + 1]?.cleaningFee || 0),
+                touristTax: Number(giteConfigs[i + 1]?.touristTax || 0),
+              })).filter(g => g.name)
             : [],
         }),
       });
@@ -184,7 +225,6 @@ export default function OnboardingContainer({ firstName, defaultEmail }: { first
 
   return (
     <div className="ob-stepped">
-      {/* Progress dots — only for form steps */}
       <div className={`ob-dots${showNav ? " ob-dots--show" : ""}`} aria-hidden="true">
         {formSteps.map((_, i) => (
           <div
@@ -234,7 +274,16 @@ export default function OnboardingContainer({ firstName, defaultEmail }: { first
                 <StepManager register={register} errors={errors} />
               )}
               {currentStep === "config" && (
-                <StepConfig register={register} errors={errors} />
+                <StepConfig
+                  register={register}
+                  errors={errors}
+                  isMulti={committedPlan === "multi"}
+                  giteNames={giteNames}
+                  giteCount={giteCount ?? 1}
+                  giteConfigs={giteConfigs}
+                  configErrors={configErrors}
+                  onConfigChange={handleGiteConfigChange}
+                />
               )}
               {currentStep === "success" && (
                 <StepSuccess

@@ -1,14 +1,39 @@
-import type { StepFormProps } from "../types";
+import type { UseFormRegister, FieldErrors } from "react-hook-form";
+import type { OnboardingValues } from "../types";
 
-export default function StepConfig({ register, errors }: StepFormProps) {
+export type GiteConfig = { capacity: string; cleaningFee: string; touristTax: string };
+export type GiteConfigErrors = { capacity?: string; cleaningFee?: string; touristTax?: string };
+
+interface Props {
+  register: UseFormRegister<OnboardingValues>;
+  errors: FieldErrors<OnboardingValues>;
+  isMulti?: boolean;
+  giteNames?: string[];
+  giteCount?: number;
+  giteConfigs?: GiteConfig[];
+  configErrors?: GiteConfigErrors[];
+  onConfigChange?: (index: number, field: keyof GiteConfig, value: string) => void;
+}
+
+function GiteConfigBlock({
+  label,
+  config,
+  errors,
+  onChange,
+}: {
+  label: string;
+  config: GiteConfig;
+  errors: GiteConfigErrors;
+  onChange: (field: keyof GiteConfig, value: string) => void;
+}) {
   return (
-    <div className="ob-step">
-      <p className="ob-section-title">Configuration de base</p>
-      <p className="ob-step-intro">
-        Ces valeurs s&apos;appliquent par défaut à toutes vos réservations.
-        Vous pourrez les ajuster sur chaque séjour.
-      </p>
-
+    <div style={{ marginBottom: "20px" }}>
+      <div style={{
+        fontSize: "12px", fontWeight: 700, color: "#689D71", textTransform: "uppercase",
+        letterSpacing: ".06em", marginBottom: "10px",
+      }}>
+        {label}
+      </div>
       <div className="ob-row-3">
         <div className="ob-field">
           <label className="ob-label">Capacité (pers.)</label>
@@ -17,17 +42,12 @@ export default function StepConfig({ register, errors }: StepFormProps) {
             type="number"
             min="1"
             max="100"
-            {...register("capacity", {
-              valueAsNumber: true,
-              required: true,
-              min: { value: 1, message: "Minimum 1 personne" },
-            })}
+            placeholder="12"
+            value={config.capacity}
+            onChange={(e) => onChange("capacity", e.target.value)}
           />
-          {errors.capacity && (
-            <span className="ob-field-error">{errors.capacity.message}</span>
-          )}
+          {errors.capacity && <span className="ob-field-error">{errors.capacity}</span>}
         </div>
-
         <div className="ob-field">
           <label className="ob-label">Frais ménage (€)</label>
           <input
@@ -35,17 +55,12 @@ export default function StepConfig({ register, errors }: StepFormProps) {
             type="number"
             min="0"
             step="0.01"
-            {...register("cleaningFee", {
-              valueAsNumber: true,
-              required: true,
-              min: { value: 0, message: "Valeur invalide" },
-            })}
+            placeholder="90"
+            value={config.cleaningFee}
+            onChange={(e) => onChange("cleaningFee", e.target.value)}
           />
-          {errors.cleaningFee && (
-            <span className="ob-field-error">{errors.cleaningFee.message}</span>
-          )}
+          {errors.cleaningFee && <span className="ob-field-error">{errors.cleaningFee}</span>}
         </div>
-
         <div className="ob-field">
           <label className="ob-label">Taxe séjour (€/nuit/pers.)</label>
           <input
@@ -53,19 +68,91 @@ export default function StepConfig({ register, errors }: StepFormProps) {
             type="number"
             min="0"
             step="0.01"
-            {...register("touristTax", {
-              valueAsNumber: true,
-              required: true,
-              min: { value: 0, message: "Valeur invalide" },
-            })}
+            placeholder="1,32"
+            value={config.touristTax}
+            onChange={(e) => onChange("touristTax", e.target.value)}
           />
-          {errors.touristTax && (
-            <span className="ob-field-error">{errors.touristTax.message}</span>
-          )}
+          {errors.touristTax && <span className="ob-field-error">{errors.touristTax}</span>}
         </div>
       </div>
+    </div>
+  );
+}
 
-      <label className="ob-cgu">
+export default function StepConfig({
+  register, errors,
+  isMulti, giteNames, giteCount, giteConfigs, configErrors, onConfigChange,
+}: Props) {
+  return (
+    <div className="ob-step">
+      <p className="ob-section-title">Configuration de base</p>
+      <p className="ob-step-intro">
+        {isMulti
+          ? "Configurez chaque hébergement indépendamment. Vous pourrez ajuster ces valeurs sur chaque séjour."
+          : "Ces valeurs s'appliquent par défaut à toutes vos réservations. Vous pourrez les ajuster sur chaque séjour."}
+      </p>
+
+      {isMulti && giteConfigs && onConfigChange ? (
+        Array.from({ length: giteCount ?? 1 }).map((_, i) => (
+          <GiteConfigBlock
+            key={i}
+            label={giteNames?.[i] || `Hébergement ${i + 1}`}
+            config={giteConfigs[i] ?? { capacity: "", cleaningFee: "", touristTax: "" }}
+            errors={configErrors?.[i] ?? {}}
+            onChange={(field, value) => onConfigChange(i, field, value)}
+          />
+        ))
+      ) : (
+        <div className="ob-row-3">
+          <div className="ob-field">
+            <label className="ob-label">Capacité (pers.)</label>
+            <input
+              className={`ob-input${errors.capacity ? " ob-input--error" : ""}`}
+              type="number"
+              min="1"
+              max="100"
+              {...register("capacity", {
+                valueAsNumber: true,
+                required: true,
+                min: { value: 1, message: "Minimum 1 personne" },
+              })}
+            />
+            {errors.capacity && <span className="ob-field-error">{errors.capacity.message}</span>}
+          </div>
+          <div className="ob-field">
+            <label className="ob-label">Frais ménage (€)</label>
+            <input
+              className={`ob-input${errors.cleaningFee ? " ob-input--error" : ""}`}
+              type="number"
+              min="0"
+              step="0.01"
+              {...register("cleaningFee", {
+                valueAsNumber: true,
+                required: true,
+                min: { value: 0, message: "Valeur invalide" },
+              })}
+            />
+            {errors.cleaningFee && <span className="ob-field-error">{errors.cleaningFee.message}</span>}
+          </div>
+          <div className="ob-field">
+            <label className="ob-label">Taxe séjour (€/nuit/pers.)</label>
+            <input
+              className={`ob-input${errors.touristTax ? " ob-input--error" : ""}`}
+              type="number"
+              min="0"
+              step="0.01"
+              {...register("touristTax", {
+                valueAsNumber: true,
+                required: true,
+                min: { value: 0, message: "Valeur invalide" },
+              })}
+            />
+            {errors.touristTax && <span className="ob-field-error">{errors.touristTax.message}</span>}
+          </div>
+        </div>
+      )}
+
+      <label className="ob-cgu" style={{ marginTop: isMulti ? "4px" : undefined }}>
         <input
           type="checkbox"
           {...register("cguAccepted", {
@@ -74,13 +161,9 @@ export default function StepConfig({ register, errors }: StepFormProps) {
         />
         <span className="ob-cgu-text">
           J&apos;accepte les{" "}
-          <a href="/legal/cgu" target="_blank" rel="noreferrer">
-            CGU
-          </a>{" "}
+          <a href="/legal/cgu" target="_blank" rel="noreferrer">CGU</a>{" "}
           et la{" "}
-          <a href="/legal/confidentialite" target="_blank" rel="noreferrer">
-            Politique de confidentialité
-          </a>{" "}
+          <a href="/legal/confidentialite" target="_blank" rel="noreferrer">Politique de confidentialité</a>{" "}
           de Kordia.
         </span>
       </label>
