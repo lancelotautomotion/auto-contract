@@ -288,6 +288,9 @@ export default function OnboardingContainer({ firstName, defaultEmail }: { first
               {currentStep === "success" && (
                 <StepSuccess
                   giteName={committedPlan === "multi" ? giteNames[0] : getValues("giteName")}
+                  isMulti={committedPlan === "multi"}
+                  giteCount={giteCount ?? 1}
+                  giteNames={giteNames}
                   onDashboard={() => router.push("/dashboard")}
                 />
               )}
