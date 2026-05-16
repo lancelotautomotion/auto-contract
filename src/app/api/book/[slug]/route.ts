@@ -2,9 +2,20 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { resend } from "@/lib/resend";
 import { buildEmailHtml, divider, ctaButton, muted } from "@/lib/emailTemplate";
+import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
+import { isHoneypotTriggered } from "@/lib/honeypot";
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
+
+  const ip = getClientIp(req);
+  const rl = checkRateLimit(`book:${ip}`, 10, 60_000);
+  if (!rl.ok) {
+    return NextResponse.json(
+      { error: "Trop de demandes. Veuillez réessayer dans quelques instants." },
+      { status: 429, headers: { "Retry-After": "60" } }
+    );
+  }
 
   const gite = await prisma.gite.findUnique({
     where: { slug },
@@ -14,6 +25,11 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ slu
   if (!gite) return NextResponse.json({ error: "Gîte introuvable" }, { status: 404 });
 
   const body = await req.json();
+
+  if (isHoneypotTriggered(body)) {
+    // Return a fake success to not reveal detection to bots
+    return NextResponse.json({ id: "ok" }, { status: 201 });
+  }
 
   if (!body.firstName || !body.lastName || !body.email || !body.phone || !body.checkIn || !body.checkOut) {
     return NextResponse.json({ error: "Champs obligatoires manquants" }, { status: 400 });
