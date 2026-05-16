@@ -32,12 +32,11 @@ const nextConfig: NextConfig = {
 };
 
 export default withSentryConfig(nextConfig, {
-  org: process.env.SENTRY_ORG,
-  project: process.env.SENTRY_PROJECT,
-  silent: true,
+  org: process.env.SENTRY_ORG ?? "lancelotautomation",
+  project: process.env.SENTRY_PROJECT ?? "javascript-nextjs",
+  silent: false,
   widenClientFileUpload: true,
-  tunnelRoute: "/monitoring",
   hideSourceMaps: true,
-  disableLogger: true,
+  disableLogger: false,
   automaticVercelMonitors: false,
 });
