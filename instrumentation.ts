@@ -1,6 +1,10 @@
 export async function register() {
+  console.log("[instrumentation] register called, runtime:", process.env.NEXT_RUNTIME);
   if (process.env.NEXT_RUNTIME === "nodejs") {
+    console.log("[instrumentation] loading sentry server config");
     await import("./sentry.server.config");
+    const { getClient } = await import("@sentry/nextjs");
+    console.log("[instrumentation] sentry client after init:", !!getClient());
   }
   if (process.env.NEXT_RUNTIME === "edge") {
     await import("./sentry.edge.config");
