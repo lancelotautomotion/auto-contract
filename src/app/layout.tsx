@@ -4,6 +4,12 @@ import { frFR } from "@clerk/localizations";
 import ThemeProvider from "@/providers/ThemeProvider";
 import "./globals.css";
 
+const localization = {
+  ...frFR,
+  formFieldInputPlaceholder__password: "Créez un mot de passe",
+  formFieldInputPlaceholder__newPassword: "Créez un mot de passe",
+};
+
 export const metadata: Metadata = {
   title: "Kordia — Contrats de location pour gîtes, automatisés",
   description: "Automatisez vos contrats de location saisonnière en 2 minutes. Génération PDF, envoi email, suivi acompte. 30 jours gratuits, sans CB.",
@@ -24,7 +30,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <ClerkProvider localization={frFR} signInFallbackRedirectUrl="/dashboard" signUpFallbackRedirectUrl="/onboarding">
+    <ClerkProvider localization={localization} signInFallbackRedirectUrl="/dashboard" signUpFallbackRedirectUrl="/onboarding">
       <html lang="fr" className="h-full antialiased" suppressHydrationWarning>
         <head>
           <link rel="icon" type="image/svg+xml" href="/KORDIA.svg" />
