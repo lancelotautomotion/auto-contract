@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
 import { TRIAL_DAYS } from "@/lib/trial";
+import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 
 async function uniqueSlug(base: string, excludeGiteId?: string): Promise<string> {
   const candidate = base || "gite";
@@ -17,6 +18,15 @@ export async function POST(req: NextRequest) {
   try {
     const { userId } = await auth();
     if (!userId) return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
+
+    const ip = getClientIp(req);
+    const rl = checkRateLimit(`onboarding:${userId}:${ip}`, 5, 600_000);
+    if (!rl.ok) {
+      return NextResponse.json(
+        { error: "Trop de tentatives. Veuillez réessayer dans quelques minutes." },
+        { status: 429, headers: { "Retry-After": "600" } }
+      );
+    }
 
     const body = await req.json();
 

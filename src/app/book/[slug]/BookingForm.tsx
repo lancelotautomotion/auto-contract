@@ -43,6 +43,7 @@ export default function BookingForm({ giteSlug, giteName, giteCity, giteLogoUrl,
     guestCount: '',
     notes: '',
     gdprConsent: false,
+    website: '',
   });
 
   const set = (k: string, v: string | boolean) => setForm(f => ({ ...f, [k]: v }));
@@ -137,6 +138,19 @@ export default function BookingForm({ giteSlug, giteName, giteCity, giteLogoUrl,
 
   return (
     <form onSubmit={handleSubmit} noValidate>
+      {/* Honeypot — hidden from real users, visible to bots */}
+      <div aria-hidden="true" style={{ position: 'absolute', left: '-9999px', width: '1px', height: '1px', overflow: 'hidden' }}>
+        <label htmlFor="website">Site web</label>
+        <input
+          id="website"
+          type="text"
+          name="website"
+          value={form.website}
+          onChange={e => set('website', e.target.value)}
+          tabIndex={-1}
+          autoComplete="off"
+        />
+      </div>
       <div className="book-layout">
 
         {/* ── COLONNE FORMULAIRE ── */}
