@@ -4,6 +4,7 @@ import { Plus_Jakarta_Sans } from 'next/font/google';
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import '@/styles/dashboard.css';
+import SentryUserContext from "./SentryUserContext";
 
 export const metadata: Metadata = { title: "Kordia" };
 export const dynamic = 'force-dynamic';
@@ -30,6 +31,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   return (
     <div className={font.className}>
+      <SentryUserContext />
       {children}
     </div>
   );
