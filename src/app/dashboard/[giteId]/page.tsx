@@ -3,8 +3,9 @@ import TopbarSignOut from "@/app/dashboard/TopbarSignOut";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
-import CalendarView, { type GiteCalendarData } from "@/app/dashboard/CalendarView";
+import { type GiteCalendarData } from "@/app/dashboard/CalendarView";
 import CopyBookingUrlButton from "@/app/dashboard/CopyBookingUrlButton";
+import DashboardMain from "@/app/dashboard/DashboardMain";
 
 const GITE_COLORS = ['#7F77DD', '#689D71', '#E08B4A'];
 
@@ -33,8 +34,6 @@ export default async function DashboardPage({ params }: { params: Promise<{ gite
 
   let pendingReservations: Array<{ id: string; clientFirstName: string; clientLastName: string; checkIn: Date; checkOut: Date }> = [];
   let reservations: Array<{ id: string; clientFirstName: string; clientLastName: string; checkIn: Date; checkOut: Date; status: string; contract: { status: string; emailStatus: string } | null }> = [];
-  let calendarReservations: Array<{ id: string; clientFirstName: string; clientLastName: string; checkIn: string; checkOut: string; status: string; contractStatus: string | null; rent: null }> = [];
-  let icalBlocked: Array<{ start: string; end: string; platform: string; label: string }> = [];
   let multiGites: GiteCalendarData[] | undefined;
 
   try {
@@ -73,33 +72,13 @@ export default async function DashboardPage({ params }: { params: Promise<{ gite
         }))),
     }));
 
-    const currentGiteData = gitesData.find(g => g.id === giteId);
-    calendarReservations = currentGiteData?.reservations ?? [];
-    icalBlocked = currentGiteData?.icalBlocked ?? [];
-
-    if (isMultiPlan && allUserGites.length > 1) {
-      multiGites = gitesData;
-    }
+    multiGites = gitesData;
   } catch { /* render with empty state */ }
 
   const contractsGenerated = reservations.filter(r => r.contract?.status === 'GENERATED' || r.contract?.status === 'SIGNED').length;
   const contractsSigned = reservations.filter(r => r.contract?.status === 'SIGNED').length;
 
-  const upcoming = reservations
-    .filter(r => r.status !== 'PENDING_REVIEW' && r.status !== 'REFUSED' && new Date(r.checkIn) >= today)
-    .sort((a, b) => new Date(a.checkIn).getTime() - new Date(b.checkIn).getTime())
-    .slice(0, 5);
-
-  const todayStr = today.toISOString().slice(0, 10);
-  const PLATFORM_LABELS_UP: Record<string, string> = {
-    airbnb: "Airbnb", abritel: "Abritel / VRBO", booking: "Booking.com",
-    gites_de_france: "Gîtes de France", autre: "Autre",
-  };
-  const upcomingIcal = icalBlocked.filter(b => b.end > todayStr).sort((a, b) => a.start < b.start ? -1 : 1).slice(0, 5);
-
   const fmt = (d: Date) => new Date(d).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
-  const fmtShort = (d: Date) => `${new Date(d).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' })}/${new Date(d).getFullYear()}`;
-  const fmtDateStr = (s: string) => new Date(s + 'T12:00:00').toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' }) + '/' + s.slice(0, 4);
 
   return (
     <>
@@ -162,75 +141,7 @@ export default async function DashboardPage({ params }: { params: Promise<{ gite
           <div className="stat-card amber"><div className="sc-top"><div className="sc-label">En attente</div><div className="sc-icon a"><svg width="16" height="16" fill="none" viewBox="0 0 16 16"><circle cx="8" cy="8" r="5" stroke="#8C6A00" strokeWidth="1.2"/><path d="M8 5v3l2 1.5" stroke="#8C6A00" strokeWidth="1.2" strokeLinecap="round"/></svg></div></div><div className="sc-num">{pendingReservations.length}</div>{pendingReservations.length === 0 && <div className="sc-change up">Tout est à jour</div>}</div>
         </div>
 
-        <div className="grid-2">
-          <div className="card">
-            <div className="card-header">
-              <div className="card-title">
-                <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><rect x="2" y="3" width="12" height="10" rx="1.5" stroke="#7F77DD" strokeWidth="1.2"/><path d="M2 6.5h12" stroke="#7F77DD" strokeWidth="1.2"/><path d="M5.5 1.5v3M10.5 1.5v3" stroke="#7F77DD" strokeWidth="1.2" strokeLinecap="round"/></svg>
-                Planning
-              </div>
-              <div className="card-legend">
-                <span><span className="legend-dot g" />Signé</span>
-                <span><span className="legend-dot v" />Envoyé</span>
-                <span><span className="legend-dot a" />En attente</span>
-                {icalBlocked.length > 0 && <span><span className="legend-dot" style={{ background: '#E4E2DE', border: '1px solid #CEC8BF' }} />Autres plateformes</span>}
-              </div>
-            </div>
-            <div style={{ padding: '16px 20px' }}>
-              <CalendarView
-                reservations={calendarReservations}
-                icalBlocked={icalBlocked}
-                multiGites={multiGites}
-                currentGiteId={giteId}
-              />
-            </div>
-          </div>
-
-          <div className="card">
-            <div className="card-header">
-              <div className="card-title">
-                <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><circle cx="8" cy="8" r="5.5" stroke="#7F77DD" strokeWidth="1.2"/><path d="M8 5v3l2 1.5" stroke="#7F77DD" strokeWidth="1.2" strokeLinecap="round"/></svg>
-                Prochaines arrivées
-              </div>
-            </div>
-            <div className="upcoming-list">
-              {upcoming.length === 0 && upcomingIcal.length === 0 ? (
-                <div style={{ padding: '24px 8px', textAlign: 'center', fontSize: '13px', color: 'var(--ink-lighter)' }}>Aucune arrivée à venir</div>
-              ) : (
-                <>
-                  {upcoming.map(r => {
-                    const status = r.contract?.status ?? null;
-                    const barClass = status === 'SIGNED' ? 'g' : status === 'GENERATED' ? 'v' : 'a';
-                    const pillClass = status === 'SIGNED' ? 'pill-g' : status === 'GENERATED' ? 'pill-v' : 'pill-a';
-                    const pillLabel = status === 'SIGNED' ? 'Signé' : status === 'GENERATED' ? 'Envoyé' : 'En attente';
-                    return (
-                      <Link key={r.id} href={`/dashboard/${giteId}/reservations/${r.id}`} style={{ textDecoration: 'none' }}>
-                        <div className="upcoming-item">
-                          <div className={`ui-bar ${barClass}`}></div>
-                          <div className="ui-info">
-                            <div className="ui-name">{r.clientFirstName} {r.clientLastName}</div>
-                            <div className="ui-dates">{fmtShort(r.checkIn)} → {fmtShort(r.checkOut)}</div>
-                          </div>
-                          <span className={`pill ${pillClass}`}>{pillLabel}</span>
-                        </div>
-                      </Link>
-                    );
-                  })}
-                  {upcomingIcal.map((b, i) => (
-                    <div key={`ical-${i}`} className="upcoming-item" style={{ cursor: 'default' }}>
-                      <div className="ui-bar" style={{ background: '#CEC8BF' }}></div>
-                      <div className="ui-info">
-                        <div className="ui-name" style={{ color: 'var(--ink-soft)' }}>{PLATFORM_LABELS_UP[b.platform] ?? b.label}</div>
-                        <div className="ui-dates">{fmtDateStr(b.start)} → {fmtDateStr(b.end)}</div>
-                      </div>
-                      <span className="pill" style={{ background: '#F0EDE8', color: '#71716E', border: '1px solid #E4E2DE' }}>Externe</span>
-                    </div>
-                  ))}
-                </>
-              )}
-            </div>
-          </div>
-        </div>
+        <DashboardMain multiGites={multiGites ?? []} currentGiteId={giteId} />
       </div>
     </>
   );
