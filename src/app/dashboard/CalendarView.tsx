@@ -236,18 +236,28 @@ export default function CalendarView({
   icalBlocked = [],
   multiGites,
   currentGiteId,
+  activeView: controlledView,
+  onActiveViewChange,
 }: {
   reservations: Reservation[];
   icalBlocked?: IcalBlock[];
   multiGites?: GiteCalendarData[];
   currentGiteId?: string;
+  activeView?: string;
+  onActiveViewChange?: (view: string) => void;
 }) {
   const today = new Date();
   const [baseMonth, setBaseMonth] = useState({ year: today.getFullYear(), month: today.getMonth() });
   const [tooltip, setTooltip] = useState<TooltipData | null>(null);
 
   const showMultiToggle = multiGites && multiGites.length > 1;
-  const [activeView, setActiveView] = useState<'all' | string>(showMultiToggle ? 'all' : (currentGiteId ?? 'all'));
+  const [internalView, setInternalView] = useState<'all' | string>(showMultiToggle ? 'all' : (currentGiteId ?? 'all'));
+
+  const activeView = controlledView !== undefined ? controlledView : internalView;
+  const setActiveView = (v: string) => {
+    if (onActiveViewChange) onActiveViewChange(v);
+    else setInternalView(v);
+  };
 
   const isUnified = showMultiToggle && activeView === 'all';
 
