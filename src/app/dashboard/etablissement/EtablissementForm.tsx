@@ -2,6 +2,11 @@
 
 import { useState, useRef, useCallback, useEffect, useMemo } from "react";
 import { DEFAULT_CONTRACT_TEMPLATE, mergeTemplates } from "@/lib/defaultContractTemplate";
+import {
+  parseStored, serializeLines, classifyLine, splitRunsAtPipe,
+  resolveRun, runsPlain, templateHasVar, domToLines, PREVIEW_SIZE_PX,
+  type Line, type Run, type RunSize,
+} from "@/lib/contractFormat";
 import DocumentsTab from "./DocumentsTab";
 import IcalTab from "./IcalTab";
 
@@ -16,8 +21,8 @@ const EXAMPLE_DATA: Record<string, string> = {
   date_du_jour: '28 mars 2026', code_postal_gite: '93400',
 };
 
-function buildPreview(template: string, form: { giteName: string; address: string; city: string; zipCode: string; email: string; phone: string }): string {
-  const vars: Record<string, string> = {
+function buildPreviewVars(form: { giteName: string; address: string; city: string; zipCode: string; email: string; phone: string }): Record<string, string> {
+  return {
     ...EXAMPLE_DATA,
     nom_gite: form.giteName || 'Le Clos du Marida',
     adresse_gite: form.address || '26 rue Soubise',
@@ -26,36 +31,70 @@ function buildPreview(template: string, form: { giteName: string; address: strin
     email_gite: form.email || 'contact@gite.fr',
     telephone_gite: form.phone || '07 81 52 27 76',
   };
-  return Object.entries(vars).reduce((t, [k, v]) => t.replaceAll(`{{${k}}}`, v), template);
 }
 
-function PreviewLine({ line, i }: { line: string; i: number }) {
-  const trimmed = line.trim();
-  if (trimmed === '') return <div key={i} style={{ height: '8px' }} />;
-  if (trimmed.includes(' | ')) {
-    const [left, right] = trimmed.split(' | ', 2);
-    const l = left.trim(); const r = right.trim();
-    const isSigLine = /^_+$/.test(l) && /^_+$/.test(r);
-    const isHeader = l === l.toUpperCase() && l.length > 2 && !isSigLine;
+function runCss(run: Run): React.CSSProperties {
+  return {
+    fontWeight: run.bold ? 700 : undefined,
+    fontStyle: run.italic ? 'italic' : undefined,
+    textDecoration: run.underline ? 'underline' : undefined,
+    fontSize: run.size ? `${PREVIEW_SIZE_PX[run.size]}px` : undefined,
+  };
+}
+
+function RunsView({ runs, vars }: { runs: Run[]; vars: Record<string, string> }) {
+  return (
+    <>
+      {runs.map((r, i) => {
+        const text = resolveRun(r, vars);
+        if (!text) return null;
+        return <span key={i} style={runCss(r)}>{text}</span>;
+      })}
+    </>
+  );
+}
+
+function PreviewLine({ line, vars }: { line: Line; vars: Record<string, string> }) {
+  const kind = classifyLine(line);
+  if (kind === 'empty') return <div style={{ height: '8px' }} />;
+
+  if (kind === 'twocol') {
+    const split = splitRunsAtPipe(line.runs);
+    if (!split) return null;
+    const lPlain = runsPlain(split.left).trim();
+    const rPlain = runsPlain(split.right).trim();
+    const isSigLine = /^_+$/.test(lPlain) && /^_+$/.test(rPlain);
+    const isHeader = lPlain === lPlain.toUpperCase() && lPlain.length > 2 && !isSigLine;
     if (isSigLine) return (
       <div style={{ display: 'flex', gap: '16px', margin: '6px 0 4px' }}>
         <div style={{ flex: 1, borderBottom: '0.5px solid #CEC8BF', height: '12px' }} />
         <div style={{ flex: 1, borderBottom: '0.5px solid #CEC8BF', height: '12px' }} />
       </div>
     );
+    const sideStyle: React.CSSProperties = { flex: 1, margin: 0, fontSize: isHeader ? '10px' : '11px', fontWeight: isHeader ? 700 : 400, color: isHeader ? '#7A7570' : '#1C1C1A', letterSpacing: isHeader ? '0.8px' : 0 };
     return (
       <div style={{ display: 'flex', gap: '16px', margin: isHeader ? '10px 0 4px' : '2px 0' }}>
-        <p style={{ flex: 1, margin: 0, fontSize: isHeader ? '10px' : '11px', fontWeight: isHeader ? 700 : 400, color: isHeader ? '#7A7570' : '#1C1C1A', letterSpacing: isHeader ? '0.8px' : 0 }}>{l}</p>
-        <p style={{ flex: 1, margin: 0, fontSize: isHeader ? '10px' : '11px', fontWeight: isHeader ? 700 : 400, color: isHeader ? '#7A7570' : '#1C1C1A', letterSpacing: isHeader ? '0.8px' : 0 }}>{r}</p>
+        <p style={sideStyle}>{isHeader ? lPlain : <RunsView runs={split.left} vars={vars} />}</p>
+        <p style={sideStyle}>{isHeader ? rPlain : <RunsView runs={split.right} vars={vars} />}</p>
       </div>
     );
   }
-  const isArticle = /^ARTICLE\s+\d+/i.test(trimmed);
-  const isSection = trimmed === trimmed.toUpperCase() && trimmed.length > 3 && trimmed.length < 40 && !trimmed.includes(':') && !trimmed.startsWith('-') && !/^\d/.test(trimmed);
-  if (isArticle) return <p style={{ fontSize: '12px', fontWeight: 700, color: '#1C1C1A', margin: '10px 0 3px', letterSpacing: '0.3px' }}>{trimmed}</p>;
-  if (isSection) return <p style={{ fontSize: '11px', fontWeight: 700, color: '#7A7570', letterSpacing: '1px', margin: '12px 0 4px', borderBottom: '0.5px solid #CEC8BF', paddingBottom: '3px' }}>{trimmed}</p>;
-  if (trimmed.startsWith('-')) return <p style={{ fontSize: '11px', color: '#1C1C1A', margin: '1px 0', paddingLeft: '8px' }}>{trimmed}</p>;
-  return <p style={{ fontSize: '11px', color: '#1C1C1A', margin: '1px 0', lineHeight: 1.5 }}>{line}</p>;
+
+  if (kind === 'article') {
+    const plain = line.runs.map(r => resolveRun(r, vars)).join('').trim();
+    return <p style={{ fontSize: '12px', fontWeight: 700, color: '#1C1C1A', margin: '10px 0 3px', letterSpacing: '0.3px' }}>{plain}</p>;
+  }
+  if (kind === 'label') {
+    const plain = line.runs.map(r => resolveRun(r, vars)).join('').trim();
+    return <p style={{ fontSize: '11px', fontWeight: 700, color: '#7A7570', letterSpacing: '1px', margin: '12px 0 4px', borderBottom: '0.5px solid #CEC8BF', paddingBottom: '3px' }}>{plain}</p>;
+  }
+
+  const isBullet = runsPlain(line.runs).trimStart().startsWith('-');
+  return (
+    <p style={{ fontSize: '11px', color: '#1C1C1A', margin: '1px 0', lineHeight: 1.5, textAlign: line.align, paddingLeft: isBullet ? '8px' : undefined }}>
+      <RunsView runs={line.runs} vars={vars} />
+    </p>
+  );
 }
 
 interface GiteOption { id?: string; label: string; price: number; }
@@ -149,34 +188,35 @@ function makeChipHTML(varName: string): string {
   );
 }
 
-function buildEditorHTML(template: string): string {
-  return template.split('\n').map(line => {
-    const content = line
-      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-      .replace(/\{\{([^}]+)\}\}/g, (_, v) => makeChipHTML(v));
-    return `<div>${content || '<br>'}</div>`;
-  }).join('');
+function escapeHtml(s: string): string {
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+function runToEditorHTML(run: Run): string {
+  if (run.varName) return makeChipHTML(run.varName);
+  let html = escapeHtml(run.text ?? '');
+  if (run.size === 'sm') html = `<span class="sz-sm">${html}</span>`;
+  else if (run.size === 'lg') html = `<span class="sz-lg">${html}</span>`;
+  if (run.underline) html = `<u>${html}</u>`;
+  if (run.italic) html = `<i>${html}</i>`;
+  if (run.bold) html = `<b>${html}</b>`;
+  return html;
+}
+
+function lineToEditorHTML(line: Line): string {
+  const inner = line.runs.map(runToEditorHTML).join('') || '<br>';
+  const align = line.align ? ` style="text-align:${line.align}"` : '';
+  return `<div${align}>${inner}</div>`;
+}
+
+function buildEditorHTML(stored: string): string {
+  const lines = parseStored(stored);
+  if (lines.length === 0) return '<div><br></div>';
+  return lines.map(lineToEditorHTML).join('');
 }
 
 function readEditorTemplate(el: HTMLDivElement): string {
-  function readNode(node: Node): string {
-    if (node.nodeType === Node.TEXT_NODE) return node.textContent || '';
-    if (node.nodeType !== Node.ELEMENT_NODE) return '';
-    const elem = node as HTMLElement;
-    if (elem.dataset.var) return `{{${elem.dataset.var}}}`;
-    if (elem.tagName === 'BR') return '';
-    return Array.from(elem.childNodes).map(readNode).join('');
-  }
-  const lines: string[] = [];
-  el.childNodes.forEach(child => {
-    if (child.nodeType === Node.ELEMENT_NODE) {
-      const div = child as HTMLElement;
-      if (div.tagName === 'DIV' || div.tagName === 'P') { lines.push(readNode(div)); return; }
-    }
-    const t = readNode(child);
-    if (t) lines.push(t);
-  });
-  return lines.join('\n');
+  return serializeLines(domToLines(el));
 }
 
 // Nettoie le texte brut collé depuis Word ou d'autres sources
@@ -231,6 +271,7 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
   // Initialise les deux éditeurs au premier affichage de l'onglet Contrat
   useEffect(() => {
     if (activeTab !== 'Contrat') return;
+    try { document.execCommand('styleWithCSS', false, 'true'); } catch { /* noop */ }
     if (editorGeneralRef.current && !editorGeneralRef.current.dataset.initialized) {
       editorGeneralRef.current.innerHTML = buildEditorHTML(contractTemplateGeneral);
       editorGeneralRef.current.dataset.initialized = 'true';
@@ -243,7 +284,7 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
 
   // Balises obligatoires manquantes dans les Conditions Générales
   const missingMandatoryTags = useMemo(() =>
-    MANDATORY_TAGS.filter(({ key }) => !contractTemplateGeneral.includes(`{{${key}}}`)),
+    MANDATORY_TAGS.filter(({ key }) => !templateHasVar(contractTemplateGeneral, key)),
     [contractTemplateGeneral]
   );
 
@@ -281,6 +322,62 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
   const handleEditorKeyDown = useCallback((e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === 'Tab') { e.preventDefault(); document.execCommand('insertText', false, '    '); }
   }, []);
+
+  const syncActive = useCallback((el: HTMLDivElement) => {
+    if (activeEditorZone === 'general') setContractTemplateGeneral(readEditorTemplate(el));
+    else setContractTemplateHouseRules(readEditorTemplate(el));
+    setSaved(false);
+  }, [activeEditorZone]);
+
+  const exec = useCallback((cmd: string, value?: string) => {
+    const el = getActiveEditorRef().current;
+    if (!el) return;
+    el.focus();
+    document.execCommand(cmd, false, value);
+    syncActive(el);
+  }, [getActiveEditorRef, syncActive]);
+
+  const applySize = useCallback((size: RunSize | 'normal') => {
+    const el = getActiveEditorRef().current;
+    if (!el) return;
+    el.focus();
+    const sel = window.getSelection();
+    if (!sel || sel.isCollapsed) return;
+    document.execCommand('fontSize', false, '7');
+    el.querySelectorAll('font[size="7"]').forEach(f => {
+      const span = document.createElement('span');
+      span.innerHTML = f.innerHTML;
+      span.querySelectorAll('.sz-sm, .sz-lg').forEach(inner => {
+        while (inner.firstChild) inner.parentNode!.insertBefore(inner.firstChild, inner);
+        inner.remove();
+      });
+      if (size !== 'normal') span.className = size === 'sm' ? 'sz-sm' : 'sz-lg';
+      f.replaceWith(span);
+    });
+    syncActive(el);
+  }, [getActiveEditorRef, syncActive]);
+
+  const toggleBullet = useCallback(() => {
+    const el = getActiveEditorRef().current;
+    if (!el) return;
+    el.focus();
+    const sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0) return;
+    let node: Node | null = sel.getRangeAt(0).startContainer;
+    while (node && node !== el && !(node.nodeType === Node.ELEMENT_NODE && ['DIV', 'P'].includes((node as HTMLElement).tagName))) {
+      node = node.parentNode;
+    }
+    if (!node || node === el) return;
+    const block = node as HTMLElement;
+    if ((block.textContent || '').trimStart().startsWith('-')) {
+      const walker = document.createTreeWalker(block, NodeFilter.SHOW_TEXT);
+      const first = walker.nextNode();
+      if (first) first.textContent = (first.textContent || '').replace(/^(\s*)-\s?/, '$1');
+    } else {
+      block.insertBefore(document.createTextNode('- '), block.firstChild);
+    }
+    syncActive(el);
+  }, [getActiveEditorRef, syncActive]);
 
   const flashChip = useCallback((chip: HTMLElement | null) => {
     if (!chip) return;
@@ -425,8 +522,8 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
     } finally { setLoading(false); }
   };
 
-  const mergedPreview = mergeTemplates(contractTemplateGeneral, contractTemplateHouseRules);
-  const previewLines = buildPreview(mergedPreview, form).split('\n');
+  const previewVars = buildPreviewVars(form);
+  const previewLineModels = parseStored(mergeTemplates(contractTemplateGeneral, contractTemplateHouseRules));
 
   const previewBody = (
     <>
@@ -441,7 +538,7 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
       </div>
       <p style={{ fontSize: '8.5px', fontWeight: 700, textAlign: 'center', letterSpacing: '0.8px', color: '#1C1C1A', margin: '0 0 2px' }}>CONTRAT DE LOCATION SAISONNIÈRE</p>
       <p style={{ fontSize: '7px', textAlign: 'center', color: '#7A7570', margin: '0 0 8px' }}>Établi le {EXAMPLE_DATA.date_du_jour}</p>
-      {previewLines.map((line, i) => <PreviewLine key={i} line={line} i={i} />)}
+      {previewLineModels.map((line, i) => <PreviewLine key={i} line={line} vars={previewVars} />)}
     </>
   );
 
@@ -745,6 +842,26 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
                   Zone libre pour les règles spécifiques de votre gîte (ménage, piscine, animaux, horaires…). Ce texte sera ajouté à la suite des Conditions Générales dans le PDF.
                 </div>
               )}
+
+              {/* Barre de formatage */}
+              <div className="contract-toolbar" onMouseDown={e => e.preventDefault()}>
+                <button type="button" className="ct-btn" title="Annuler" onClick={() => exec('undo')}>↶</button>
+                <button type="button" className="ct-btn" title="Rétablir" onClick={() => exec('redo')}>↷</button>
+                <span className="ct-sep" />
+                <button type="button" className="ct-btn" title="Gras" onClick={() => exec('bold')} style={{ fontWeight: 700 }}>B</button>
+                <button type="button" className="ct-btn" title="Italique" onClick={() => exec('italic')} style={{ fontStyle: 'italic' }}>I</button>
+                <button type="button" className="ct-btn" title="Souligné" onClick={() => exec('underline')} style={{ textDecoration: 'underline' }}>U</button>
+                <span className="ct-sep" />
+                <button type="button" className="ct-btn" title="Petit texte" onClick={() => applySize('sm')} style={{ fontSize: '11px' }}>A</button>
+                <button type="button" className="ct-btn" title="Taille normale" onClick={() => applySize('normal')}>A</button>
+                <button type="button" className="ct-btn" title="Grand texte" onClick={() => applySize('lg')} style={{ fontSize: '17px' }}>A</button>
+                <span className="ct-sep" />
+                <button type="button" className="ct-btn" title="Aligner à gauche" onClick={() => exec('justifyLeft')}>⯇</button>
+                <button type="button" className="ct-btn" title="Centrer" onClick={() => exec('justifyCenter')}>≡</button>
+                <button type="button" className="ct-btn" title="Aligner à droite" onClick={() => exec('justifyRight')}>⯈</button>
+                <span className="ct-sep" />
+                <button type="button" className="ct-btn" title="Liste à puces" onClick={toggleBullet}>•</button>
+              </div>
 
               {/* Éditeur Conditions Générales */}
               <div

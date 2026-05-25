@@ -1,5 +1,14 @@
 import 'server-only';
 import PDFDocument from 'pdfkit';
+import {
+  parseStored,
+  classifyLine,
+  splitRunsAtPipe,
+  resolveRun,
+  runsPlain,
+  PDF_SIZE_PT,
+  type Run,
+} from './contractFormat';
 
 export interface ContractData {
   template: string;
@@ -35,8 +44,8 @@ export interface SignatureInfo {
   managerSignedAt: Date;
 }
 
-// ─── Template substitution ────────────────────────────────────────────────────
-function buildText(data: ContractData): string {
+// ─── Valeurs des balises dynamiques ────────────────────────────────────────────
+function buildVars(data: ContractData): Record<string, string> {
   const optionsText = data.options.length === 0
     ? 'Aucune option sélectionnée'
     : data.options.map(o => o.price > 0
@@ -47,7 +56,7 @@ function buildText(data: ContractData): string {
   const solde = Math.max(0, data.loyer - data.acompte);
   const dateJour = new Date().toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' });
 
-  const vars: Record<string, string> = {
+  return {
     nom_client:          data.nom_client,
     prenom_client:       data.prenom_client,
     email_client:        data.email_client,
@@ -71,8 +80,19 @@ function buildText(data: ContractData): string {
     telephone_gite:      data.telephone_gite ?? '',
     date_du_jour:        dateJour,
   };
+}
 
-  return Object.entries(vars).reduce((t, [k, v]) => t.replaceAll(`{{${k}}}`, v), data.template);
+// ─── Sélection de police / taille selon le formatage du run ────────────────────
+function runFont(r: Run): string {
+  if (r.bold && r.italic) return 'Helvetica-BoldOblique';
+  if (r.bold) return 'Helvetica-Bold';
+  if (r.italic) return 'Helvetica-Oblique';
+  return 'Helvetica';
+}
+function runSize(r: Run, base: number): number {
+  if (r.size === 'sm') return PDF_SIZE_PT.sm;
+  if (r.size === 'lg') return PDF_SIZE_PT.lg;
+  return base;
 }
 
 // ─── Fetch logo image ─────────────────────────────────────────────────────────
@@ -98,9 +118,46 @@ const C = {
   violetBorder: '#DAD7F0',
 };
 
+type Doc = InstanceType<typeof PDFDocument>;
+
+// Rendu d'une séquence de runs dans le flux normal (retour à la ligne auto).
+function renderFlowRuns(
+  doc: Doc, runs: Run[], vars: Record<string, string>,
+  width: number, baseSize: number, align: 'left' | 'center' | 'right'
+) {
+  const segs = runs
+    .map(r => ({ text: resolveRun(r, vars), font: runFont(r), size: runSize(r, baseSize), underline: !!r.underline }))
+    .filter(s => s.text.length > 0);
+  if (segs.length === 0) { doc.moveDown(0.5); return; }
+  segs.forEach((s, i) => {
+    const isLast = i === segs.length - 1;
+    doc.font(s.font).fontSize(s.size).fillColor(C.dark);
+    doc.text(s.text, { continued: !isLast, underline: s.underline, width, align, lineGap: 2, paragraphGap: 0 });
+  });
+}
+
+// Rendu d'une séquence de runs à une position fixe (colonnes bailleur/locataire).
+function renderRunsAt(
+  doc: Doc, runs: Run[], vars: Record<string, string>,
+  x: number, y: number, colW: number, baseSize: number, color: string, forceFont?: string
+) {
+  const segs = runs
+    .map(r => ({ text: resolveRun(r, vars), font: forceFont ?? runFont(r), size: runSize(r, baseSize), underline: !!r.underline }))
+    .filter(s => s.text.length > 0);
+  if (segs.length === 0) return;
+  segs.forEach((s, i) => {
+    const isLast = i === segs.length - 1;
+    doc.font(s.font).fontSize(s.size).fillColor(color);
+    if (i === 0) doc.text(s.text, x, y, { continued: !isLast, underline: s.underline, width: colW, lineBreak: false });
+    else doc.text(s.text, { continued: !isLast, underline: s.underline, width: colW, lineBreak: false });
+  });
+}
+
 // ─── PDF renderer ─────────────────────────────────────────────────────────────
 async function _render(data: ContractData, sig: SignatureInfo | null): Promise<Buffer> {
-  const text = buildText(data).replace(/\n+$/, ''); // strip trailing blank lines
+  const vars = buildVars(data);
+  const lines = parseStored(data.template);
+  while (lines.length && classifyLine(lines[lines.length - 1]) === 'empty') lines.pop();
   const logoBuffer = data.logoUrl ? await fetchImageBuffer(data.logoUrl) : null;
 
   return new Promise((resolve, reject) => {
@@ -160,34 +217,25 @@ async function _render(data: ContractData, sig: SignatureInfo | null): Promise<B
     doc.moveDown(1.2);
 
     // ── Contract body ────────────────────────────────────────────────────────
-    const lines = text.split('\n');
-    const pending: string[] = [];
+    const colW = (W - 20) / 2;
 
-    const flushPending = () => {
-      if (!pending.length) return;
-      doc.font('Helvetica').fontSize(10).fillColor(C.dark)
-        .text(pending.join('\n'), { paragraphGap: 0, lineGap: 2 });
-      pending.length = 0;
-    };
-
-    for (const rawLine of lines) {
-      const trimmed = rawLine.trim();
+    for (const line of lines) {
+      const kind = classifyLine(line);
 
       // Empty line
-      if (trimmed === '') {
-        flushPending();
+      if (kind === 'empty') {
         doc.moveDown(0.6);
         continue;
       }
 
       // Two-column layout (bailleur | locataire)
-      if (trimmed.includes(' | ')) {
-        flushPending();
-        const [left, right] = trimmed.split(' | ', 2);
-        const l = left.trim(); const r = right.trim();
-        const isSigLine  = /^_+$/.test(l) && /^_+$/.test(r);
-        const isColHeader = l === l.toUpperCase() && l.length > 2 && !isSigLine;
-        const colW = (W - 20) / 2;
+      if (kind === 'twocol') {
+        const split = splitRunsAtPipe(line.runs);
+        if (!split) continue;
+        const lPlain = runsPlain(split.left).trim();
+        const rPlain = runsPlain(split.right).trim();
+        const isSigLine  = /^_+$/.test(lPlain) && /^_+$/.test(rPlain);
+        const isColHeader = lPlain === lPlain.toUpperCase() && lPlain.length > 2 && !isSigLine;
         const curY = doc.y;
 
         if (isSigLine) {
@@ -215,42 +263,32 @@ async function _render(data: ContractData, sig: SignatureInfo | null): Promise<B
             doc.y = curY + 26;
           }
         } else {
-          doc.font(isColHeader ? 'Helvetica-Bold' : 'Helvetica')
-            .fontSize(isColHeader ? 8 : 10)
-            .fillColor(isColHeader ? C.muted : C.dark)
-            .text(l, ml, curY, { width: colW, lineBreak: false });
-          doc.font(isColHeader ? 'Helvetica-Bold' : 'Helvetica')
-            .fontSize(isColHeader ? 8 : 10)
-            .fillColor(isColHeader ? C.muted : C.dark)
-            .text(r, ml + colW + 20, curY, { width: colW, lineBreak: false });
+          const baseSize = isColHeader ? 8 : 10;
+          const color = isColHeader ? C.muted : C.dark;
+          const forceFont = isColHeader ? 'Helvetica-Bold' : undefined;
+          renderRunsAt(doc, split.left,  vars, ml,             curY, colW, baseSize, color, forceFont);
+          renderRunsAt(doc, split.right, vars, ml + colW + 20, curY, colW, baseSize, color, forceFont);
           doc.y = curY + (isColHeader ? 22 : 16);
         }
         continue;
       }
 
       // Article heading
-      if (/^ARTICLE\s+\d+/i.test(trimmed)) {
-        flushPending();
+      if (kind === 'article') {
         doc.moveDown(0.9);
+        const plain = line.runs.map(r => resolveRun(r, vars)).join('').trim();
         doc.font('Helvetica-Bold').fontSize(10).fillColor(C.dark)
-          .text(trimmed, { paragraphGap: 0 });
+          .text(plain, { paragraphGap: 0, width: W });
         doc.moveDown(0.4);
         continue;
       }
 
       // Section label (ALL CAPS, short)
-      const isLabel = trimmed === trimmed.toUpperCase()
-        && trimmed.length > 3
-        && trimmed.length < 40
-        && !trimmed.includes(':')
-        && !trimmed.startsWith('-')
-        && !/^\d/.test(trimmed);
-
-      if (isLabel) {
-        flushPending();
+      if (kind === 'label') {
         doc.moveDown(0.8);
+        const plain = line.runs.map(r => resolveRun(r, vars)).join('').trim();
         doc.font('Helvetica-Bold').fontSize(8).fillColor(C.muted)
-          .text(trimmed, { paragraphGap: 0, characterSpacing: 0.5 });
+          .text(plain, { paragraphGap: 0, characterSpacing: 0.5, width: W });
         doc.moveDown(0.2);
         doc.moveTo(ml, doc.y).lineTo(ml + W, doc.y).lineWidth(0.5).strokeColor(C.border).stroke();
         doc.moveDown(0.4);
@@ -258,10 +296,16 @@ async function _render(data: ContractData, sig: SignatureInfo | null): Promise<B
         continue;
       }
 
-      // Lignes normales et items de liste — accumulés pour un seul appel text()
-      pending.push(trimmed.startsWith('-') ? `  ${trimmed}` : rawLine);
+      // Normal lines and list items (formatage inline + alignement)
+      const align = line.align ?? 'left';
+      let runs = line.runs;
+      if (runsPlain(runs).trimStart().startsWith('-')) {
+        runs = runs.slice();
+        const fi = runs.findIndex(r => r.text !== undefined && r.text.length > 0);
+        if (fi >= 0) runs[fi] = { ...runs[fi], text: '  ' + runs[fi].text };
+      }
+      renderFlowRuns(doc, runs, vars, W, 10, align);
     }
-    flushPending();
 
     // ── Signature block ──────────────────────────────────────────────────────
     if (sig) {
