@@ -188,6 +188,9 @@ export default function ContractActions({
     depositReceived ? 'done' :
     (isSigned && !depositReceived) ? 'current' : 'pending';
 
+  const step5State: 'done' | 'current' | 'pending' =
+    depositReceived ? 'done' : 'pending';
+
   // ── Timeline date labels ──
   const step0Date = fmtDate(new Date(createdAt));
 
@@ -202,8 +205,9 @@ export default function ContractActions({
   const step3Date =
     step3State === 'done' && signed ? fmtDate(signed.at) : '—';
 
-  const step4Date =
-    step4State === 'done' ? 'Contrat signé envoyé au locataire' : '—';
+  const step4Date = step4State === 'done' ? 'Acompte confirmé' : '—';
+
+  const step5Date = step5State === 'done' ? 'Contrat signé envoyé au locataire' : '—';
 
   return (
     <>
@@ -272,8 +276,15 @@ export default function ContractActions({
           <div className={`tl-item ${step4State}`}>
             <TlDot state={step4State} />
             <div className="tl-content">
-              <div className="tl-label">Archivage PDF</div>
+              <div className="tl-label">Acompte reçu</div>
               <div className="tl-date">{step4Date}</div>
+            </div>
+          </div>
+          <div className={`tl-item ${step5State}`}>
+            <TlDot state={step5State} />
+            <div className="tl-content">
+              <div className="tl-label">Contrat signé envoyé au locataire</div>
+              <div className="tl-date">{step5Date}</div>
             </div>
           </div>
         </div>
