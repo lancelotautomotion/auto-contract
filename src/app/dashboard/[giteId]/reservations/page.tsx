@@ -34,7 +34,7 @@ export default async function ReservationsPage({ params }: { params: Promise<{ g
   const reservationsForClient = allReservations.map(r => ({
     id: r.id, status: r.status, clientFirstName: r.clientFirstName, clientLastName: r.clientLastName,
     clientEmail: r.clientEmail, checkIn: r.checkIn.toISOString(), checkOut: r.checkOut.toISOString(),
-    rent: r.rent, contractStatus: r.contract?.status ?? null,
+    rent: r.rent, contractStatus: r.contract?.status ?? null, emailStatus: r.contract?.emailStatus ?? null,
   }));
 
   return (

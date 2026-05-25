@@ -14,6 +14,7 @@ type Reservation = {
   checkOut: string;
   rent: number | null;
   contractStatus: string | null;
+  emailStatus: string | null;
 };
 
 type Props = {
@@ -35,9 +36,10 @@ function getAvatarColor(name: string) {
 
 function getPill(r: Reservation) {
   if (r.status === 'REFUSED') return { cls: 'pill-refused', label: 'Refusée' };
-  if (r.status === 'PENDING_REVIEW') return { cls: 'pill-a', label: 'En attente' };
+  if (r.status === 'PENDING_REVIEW') return { cls: 'pill-a', label: 'Nouvelle demande' };
   if (r.contractStatus === 'SIGNED') return { cls: 'pill-g', label: 'Signé' };
-  if (r.contractStatus === 'GENERATED') return { cls: 'pill-v', label: 'Envoyé' };
+  if (r.contractStatus === 'GENERATED' && r.emailStatus === 'SENT') return { cls: 'pill-a', label: 'En attente' };
+  if (r.contractStatus === 'GENERATED') return { cls: 'pill-v', label: 'Contrat généré' };
   return { cls: 'pill-a', label: 'Sans contrat' };
 }
 
@@ -62,7 +64,8 @@ export default function ReservationsTable({ reservations, giteId }: Props) {
       case 'upcoming': return ci > today;
       case 'active': return ci <= today && co >= today;
       case 'past': return co < today;
-      case 'pending': return r.status === 'PENDING_REVIEW';
+      case 'pending': return r.contractStatus === 'GENERATED' && r.emailStatus === 'SENT';
+      case 'requests': return r.status === 'PENDING_REVIEW';
       case 'refused': return r.status === 'REFUSED';
       default: return true;
     }
@@ -76,7 +79,8 @@ export default function ReservationsTable({ reservations, giteId }: Props) {
         case 'upcoming': return ci > today;
         case 'active': return ci <= today && co >= today;
         case 'past': return co < today;
-        case 'pending': return r.status === 'PENDING_REVIEW';
+        case 'pending': return r.contractStatus === 'GENERATED' && r.emailStatus === 'SENT';
+        case 'requests': return r.status === 'PENDING_REVIEW';
         case 'refused': return r.status === 'REFUSED';
         default: return true;
       }
@@ -114,6 +118,7 @@ export default function ReservationsTable({ reservations, giteId }: Props) {
     { key: 'active', label: 'En cours' },
     { key: 'past', label: 'Passées' },
     { key: 'pending', label: 'En attente' },
+    { key: 'requests', label: 'Nouvelles demandes' },
     { key: 'refused', label: 'Refusées' },
   ];
 

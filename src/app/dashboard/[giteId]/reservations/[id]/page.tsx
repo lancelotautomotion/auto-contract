@@ -47,8 +47,10 @@ export default async function ReservationDetailPage({ params }: { params: Promis
 
   const isRefused = reservation.status === 'REFUSED';
   const contractStatus = reservation.contract?.status ?? null;
-  const pillClass = isRefused ? 'pill pill-refused pill-lg' : reservation.status === 'PENDING_REVIEW' ? 'pill pill-a pill-lg' : contractStatus === 'GENERATED' ? 'pill pill-v pill-lg' : contractStatus === 'SIGNED' ? 'pill pill-g pill-lg' : 'pill pill-a pill-lg';
-  const pillLabel = isRefused ? 'Refusée' : reservation.status === 'PENDING_REVIEW' ? 'En attente' : contractStatus === null ? 'Sans contrat' : contractStatus === 'GENERATING' ? 'En cours...' : contractStatus === 'GENERATED' ? 'Contrat généré' : contractStatus === 'SIGNED' ? 'Signé' : 'Sans contrat';
+  const emailStatus = reservation.contract?.emailStatus ?? null;
+  const isSentAwaiting = contractStatus === 'GENERATED' && emailStatus === 'SENT';
+  const pillClass = isRefused ? 'pill pill-refused pill-lg' : reservation.status === 'PENDING_REVIEW' ? 'pill pill-a pill-lg' : contractStatus === 'SIGNED' ? 'pill pill-g pill-lg' : isSentAwaiting ? 'pill pill-a pill-lg' : contractStatus === 'GENERATED' ? 'pill pill-v pill-lg' : 'pill pill-a pill-lg';
+  const pillLabel = isRefused ? 'Refusée' : reservation.status === 'PENDING_REVIEW' ? 'Nouvelle demande' : contractStatus === null ? 'Sans contrat' : contractStatus === 'GENERATING' ? 'En cours...' : isSentAwaiting ? 'En attente' : contractStatus === 'GENERATED' ? 'Contrat généré' : contractStatus === 'SIGNED' ? 'Signé' : 'Sans contrat';
   const clientName = `${reservation.clientFirstName} ${reservation.clientLastName}`;
 
   return (
