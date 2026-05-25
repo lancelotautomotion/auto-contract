@@ -33,7 +33,7 @@ export default function DashboardShell({ children, pendingCount, trialInfo, font
   useEffect(() => { setOpen(false); }, [pathname]);
 
   const isExpired = !isAdmin && (trialInfo?.isExpired ?? false);
-  const isUnlockedPage = pathname.includes('/archives') || pathname.includes('/compte');
+  const isUnlockedPage = pathname.includes('/archives') || pathname.includes('/compte') || pathname.includes('/settings');
 
   return (
     <div className={`${fontClass ?? ''} app`}>
