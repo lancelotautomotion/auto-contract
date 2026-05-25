@@ -16,6 +16,11 @@ type Reservation = {
   contractStatus: string | null;
 };
 
+type Props = {
+  reservations: Reservation[];
+  giteId: string;
+};
+
 const AVATAR_COLORS = [
   { bg: 'var(--green-light)', color: 'var(--green-dark)' },
   { bg: 'var(--violet-light)', color: 'var(--violet-dark)' },
@@ -38,7 +43,7 @@ function getPill(r: Reservation) {
 
 const PER_PAGE = 10;
 
-export default function ReservationsTable({ reservations }: { reservations: Reservation[] }) {
+export default function ReservationsTable({ reservations, giteId }: Props) {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState('all');
   const [search, setSearch] = useState('');
@@ -186,8 +191,8 @@ export default function ReservationsTable({ reservations }: { reservations: Rese
                 const av = getAvatarColor(`${r.clientFirstName}${r.clientLastName}`);
                 const pill = getPill(r);
                 const detailHref = r.status === 'PENDING_REVIEW'
-                  ? `/dashboard/reservations/${r.id}/complete`
-                  : `/dashboard/reservations/${r.id}`;
+                  ? `/dashboard/${giteId}/reservations/${r.id}/complete`
+                  : `/dashboard/${giteId}/reservations/${r.id}`;
                 return (
                   <tr key={r.id} onClick={() => router.push(detailHref)}>
                     <td>

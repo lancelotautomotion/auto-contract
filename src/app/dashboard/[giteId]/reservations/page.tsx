@@ -93,7 +93,7 @@ export default async function ReservationsPage({ params }: { params: Promise<{ g
           <div className="stat-card amber"><div className="sc-top"><div className="sc-label">En attente</div><div className="sc-icon a"><svg width="14" height="14" fill="none" viewBox="0 0 14 14"><circle cx="7" cy="7" r="5" stroke="#8C6A00" strokeWidth="1.2"/><path d="M7 4.5v2.5l2 1.5" stroke="#8C6A00" strokeWidth="1.2" strokeLinecap="round"/></svg></div></div><div className="sc-num">{pendingReservations.length}</div></div>
         </div>
 
-        <ReservationsTable reservations={reservationsForClient} />
+        <ReservationsTable reservations={reservationsForClient} giteId={giteId} />
       </div>
     </>
   );
