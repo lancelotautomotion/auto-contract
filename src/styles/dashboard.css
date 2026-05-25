@@ -1356,20 +1356,21 @@
 
 /* ── PLAN EXPIRÉ — verrouillage visuel ─────────────────────────────────── */
 .expired-banner {
-  display: flex; align-items: center; gap: 14px;
+  display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 14px;
   background: #FEF3CD; border: 1px solid #F5C842; border-radius: 12px;
   padding: 14px 18px; margin: 20px 24px 0;
 }
 .expired-banner-icon {
-  width: 32px; min-width: 32px; height: 32px; border-radius: 8px; flex-shrink: 0;
+  width: 32px; height: 32px; border-radius: 8px;
   background: rgba(245,200,66,.25); display: flex; align-items: center;
-  justify-content: center; color: #92610E; align-self: center;
+  justify-content: center; color: #92610E;
 }
 .expired-banner-text {
-  flex: 1; font-size: 13px; color: #7B4F0A; line-height: 1.5;
+  font-size: 13px; color: #7B4F0A; line-height: 1.5; min-width: 0;
 }
 .expired-banner-cta {
-  flex-shrink: 0; font-size: 13px !important; padding: 9px 18px !important; align-self: center;
+  font-size: 13px !important; padding: 9px 18px !important; margin: 0;
+  justify-self: end;
 }
 
 .plan-locked-wrap {
@@ -1409,6 +1410,6 @@
   .expired-banner { margin: 14px 16px 0; }
 }
 @media (max-width: 640px) {
-  .expired-banner { margin: 12px 12px 0; flex-direction: column; align-items: flex-start; }
-  .expired-banner-cta { width: 100%; justify-content: center; }
+  .expired-banner { margin: 12px 12px 0; grid-template-columns: auto 1fr; grid-template-rows: auto auto; }
+  .expired-banner-cta { grid-column: 1 / -1; justify-self: stretch; justify-content: center; }
 }
