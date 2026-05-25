@@ -644,7 +644,8 @@
 
 .etab-form { width: 100%; min-width: 0; }
 .contract-split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px; align-items: start; width: 100%; }
-.contract-left-col { display: flex; flex-direction: column; gap: 20px; min-width: 0; overflow: hidden; }
+.contract-left-col { display: flex; flex-direction: column; gap: 20px; min-width: 0; overflow-x: clip; }
+.variables-panel { position: sticky; top: 20px; z-index: 2; }
 .contract-right-col {
   display: flex; flex-direction: column; gap: 16px;
   position: sticky; top: 20px;
@@ -669,7 +670,7 @@
   color: var(--ink-lighter); display: flex; justify-content: space-between;
 }
 .cp-header .cp-sub { font-weight: 400; text-transform: none; letter-spacing: 0; font-style: italic; }
-.cp-body { padding: 16px; font-size: 11px; line-height: 1.8; color: var(--ink-soft); flex: 1; overflow-y: auto; min-height: 0; }
+.cp-body { padding: 16px; font-size: 13px; line-height: 1.8; color: var(--ink-soft); flex: 1; overflow-y: auto; min-height: 0; }
 .cp-body strong { color: var(--ink); font-weight: 600; }
 
 /* Flash de surbrillance quand une balise est insérée dans l'éditeur */

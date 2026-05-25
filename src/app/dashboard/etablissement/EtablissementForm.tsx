@@ -45,17 +45,17 @@ function PreviewLine({ line, i }: { line: string; i: number }) {
     );
     return (
       <div style={{ display: 'flex', gap: '16px', margin: isHeader ? '10px 0 4px' : '2px 0' }}>
-        <p style={{ flex: 1, margin: 0, fontSize: isHeader ? '7.5px' : '8.5px', fontWeight: isHeader ? 700 : 400, color: isHeader ? '#7A7570' : '#1C1C1A', letterSpacing: isHeader ? '0.8px' : 0 }}>{l}</p>
-        <p style={{ flex: 1, margin: 0, fontSize: isHeader ? '7.5px' : '8.5px', fontWeight: isHeader ? 700 : 400, color: isHeader ? '#7A7570' : '#1C1C1A', letterSpacing: isHeader ? '0.8px' : 0 }}>{r}</p>
+        <p style={{ flex: 1, margin: 0, fontSize: isHeader ? '10px' : '11px', fontWeight: isHeader ? 700 : 400, color: isHeader ? '#7A7570' : '#1C1C1A', letterSpacing: isHeader ? '0.8px' : 0 }}>{l}</p>
+        <p style={{ flex: 1, margin: 0, fontSize: isHeader ? '10px' : '11px', fontWeight: isHeader ? 700 : 400, color: isHeader ? '#7A7570' : '#1C1C1A', letterSpacing: isHeader ? '0.8px' : 0 }}>{r}</p>
       </div>
     );
   }
   const isArticle = /^ARTICLE\s+\d+/i.test(trimmed);
   const isSection = trimmed === trimmed.toUpperCase() && trimmed.length > 3 && trimmed.length < 40 && !trimmed.includes(':') && !trimmed.startsWith('-') && !/^\d/.test(trimmed);
-  if (isArticle) return <p style={{ fontSize: '9px', fontWeight: 700, color: '#1C1C1A', margin: '10px 0 3px', letterSpacing: '0.3px' }}>{trimmed}</p>;
-  if (isSection) return <p style={{ fontSize: '8px', fontWeight: 700, color: '#7A7570', letterSpacing: '1px', margin: '12px 0 4px', borderBottom: '0.5px solid #CEC8BF', paddingBottom: '3px' }}>{trimmed}</p>;
-  if (trimmed.startsWith('-')) return <p style={{ fontSize: '8.5px', color: '#1C1C1A', margin: '1px 0', paddingLeft: '8px' }}>{trimmed}</p>;
-  return <p style={{ fontSize: '8.5px', color: '#1C1C1A', margin: '1px 0', lineHeight: 1.5 }}>{line}</p>;
+  if (isArticle) return <p style={{ fontSize: '12px', fontWeight: 700, color: '#1C1C1A', margin: '10px 0 3px', letterSpacing: '0.3px' }}>{trimmed}</p>;
+  if (isSection) return <p style={{ fontSize: '11px', fontWeight: 700, color: '#7A7570', letterSpacing: '1px', margin: '12px 0 4px', borderBottom: '0.5px solid #CEC8BF', paddingBottom: '3px' }}>{trimmed}</p>;
+  if (trimmed.startsWith('-')) return <p style={{ fontSize: '11px', color: '#1C1C1A', margin: '1px 0', paddingLeft: '8px' }}>{trimmed}</p>;
+  return <p style={{ fontSize: '11px', color: '#1C1C1A', margin: '1px 0', lineHeight: 1.5 }}>{line}</p>;
 }
 
 interface GiteOption { id?: string; label: string; price: number; }
@@ -673,7 +673,7 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
               )}
 
               {/* Variables panel */}
-              <div className="form-card">
+              <div className="form-card variables-panel">
                 <div className="form-card-title">
                   <svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M4 2h6a1 1 0 011 1v8a1 1 0 01-1 1H4a1 1 0 01-1-1V3a1 1 0 011-1z" stroke="currentColor" strokeWidth="1.2"/><path d="M5 5h4M5 7h3M5 9h2" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/></svg>
                   Balises dynamiques
@@ -782,8 +782,8 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
             {/* RIGHT: info box + preview */}
             <div className="contract-right-col">
               <div className="info-box">
-                <strong>Comment fonctionnent les variables ?</strong><br />
-                Les balises ci-dessus représentent les informations de votre client et les vôtres. Cliquez dessus (ou glissez-les) dans la zone active pour les insérer. Lors de la génération, elles se transforment automatiquement avec les vraies données.
+                <strong>Comment fonctionnent les balises ?</strong><br />
+                Les balises ci-contre sont des variables qui seront remplacées par les données réelles de chaque réservation au moment de la génération du PDF. Cliquez sur une balise ou glissez-la dans la zone d&apos;édition (Conditions Générales ou Règlement Intérieur) pour l&apos;insérer à l&apos;endroit voulu dans votre contrat.
               </div>
               <button type="button" className="contract-preview-mobile-btn" onClick={() => setShowMobilePreview(true)}>
                 <svg width="15" height="15" fill="none" viewBox="0 0 15 15"><path d="M1 7.5S3.5 3 7.5 3s6.5 4.5 6.5 4.5-2.5 4.5-6.5 4.5S1 7.5 1 7.5z" stroke="currentColor" strokeWidth="1.2"/><circle cx="7.5" cy="7.5" r="2" stroke="currentColor" strokeWidth="1.2"/></svg>
