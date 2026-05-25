@@ -101,6 +101,12 @@ const VARIABLES: Array<[string, string, 'client' | 'booking' | 'gite']> = [
   ['{{date_du_jour}}', 'Date du jour', 'gite'],
 ];
 
+const VAR_GROUPS: Array<{ cat: 'client' | 'booking' | 'gite'; label: string }> = [
+  { cat: 'client', label: 'Client' },
+  { cat: 'booking', label: 'Réservation' },
+  { cat: 'gite', label: 'Gîte' },
+];
+
 // Balises dont l'absence rend le contrat juridiquement incomplet
 const MANDATORY_TAGS: Array<{ key: string; label: string }> = [
   { key: 'nom_client',    label: 'Nom client' },
@@ -193,6 +199,7 @@ function sanitizePastedText(text: string): string {
 export default function EtablissementForm({ gite }: { gite: GiteData }) {
   const [activeTab, setActiveTab] = useState<Tab>('Informations');
   const [activeEditorZone, setActiveEditorZone] = useState<EditorZone>('general');
+  const [showMobilePreview, setShowMobilePreview] = useState(false);
   const [loading, setLoading] = useState(false);
   const [saved, setSaved] = useState(false);
   const [origin, setOrigin] = useState('');
@@ -275,6 +282,12 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
     if (e.key === 'Tab') { e.preventDefault(); document.execCommand('insertText', false, '    '); }
   }, []);
 
+  const flashChip = useCallback((chip: HTMLElement | null) => {
+    if (!chip) return;
+    chip.classList.add('chip-flash');
+    setTimeout(() => chip.classList.remove('chip-flash'), 700);
+  }, []);
+
   const insertVariable = useCallback((varName: string) => {
     const el = getActiveEditorRef().current;
     if (!el) return;
@@ -292,11 +305,15 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
       chip.parentNode!.insertBefore(after, chip.nextSibling);
       range.setStart(after, 1); range.setEnd(after, 1);
       sel.removeAllRanges(); sel.addRange(range);
-    } else { el.innerHTML += chipHTML; }
+      flashChip(chip as HTMLElement);
+    } else {
+      el.innerHTML += chipHTML;
+      flashChip(el.querySelector('[data-var]:last-of-type'));
+    }
     if (activeEditorZone === 'general') setContractTemplateGeneral(readEditorTemplate(el));
     else setContractTemplateHouseRules(readEditorTemplate(el));
     setSaved(false);
-  }, [activeEditorZone, getActiveEditorRef]);
+  }, [activeEditorZone, getActiveEditorRef, flashChip]);
 
   const handleEditorDrop = useCallback((zone: EditorZone) => (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -332,11 +349,15 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
       chip.parentNode!.insertBefore(after, chip.nextSibling);
       r.setStart(after, 1); r.setEnd(after, 1);
       sel.removeAllRanges(); sel.addRange(r);
-    } else { el.innerHTML += chipHTML; }
+      flashChip(chip as HTMLElement);
+    } else {
+      el.innerHTML += chipHTML;
+      flashChip(el.querySelector('[data-var]:last-of-type'));
+    }
     if (zone === 'general') setContractTemplateGeneral(readEditorTemplate(el));
     else setContractTemplateHouseRules(readEditorTemplate(el));
     setSaved(false);
-  }, []);
+  }, [flashChip]);
 
   const handleResetGeneral = useCallback(() => {
     if (!confirm('Remettre les Conditions Générales par défaut ?')) return;
@@ -406,6 +427,23 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
 
   const mergedPreview = mergeTemplates(contractTemplateGeneral, contractTemplateHouseRules);
   const previewLines = buildPreview(mergedPreview, form).split('\n');
+
+  const previewBody = (
+    <>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', paddingBottom: '8px', borderBottom: '0.5px solid #CEC8BF', marginBottom: '8px' }}>
+        <div style={{ width: '50px', height: '20px', backgroundColor: '#EDE8E1', borderRadius: '2px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <span style={{ fontSize: '6px', color: '#7A7570' }}>LOGO</span>
+        </div>
+        <div style={{ textAlign: 'right' }}>
+          <p style={{ fontSize: '8.5px', fontWeight: 700, color: '#1C1C1A', margin: '0 0 1px' }}>{form.giteName || 'Nom du gîte'}</p>
+          <p style={{ fontSize: '7px', color: '#7A7570', margin: 0, lineHeight: 1.4 }}>{form.address || 'Adresse'}<br />{form.city || 'Ville'}</p>
+        </div>
+      </div>
+      <p style={{ fontSize: '8.5px', fontWeight: 700, textAlign: 'center', letterSpacing: '0.8px', color: '#1C1C1A', margin: '0 0 2px' }}>CONTRAT DE LOCATION SAISONNIÈRE</p>
+      <p style={{ fontSize: '7px', textAlign: 'center', color: '#7A7570', margin: '0 0 8px' }}>Établi le {EXAMPLE_DATA.date_du_jour}</p>
+      {previewLines.map((line, i) => <PreviewLine key={i} line={line} i={i} />)}
+    </>
+  );
 
   const SaveBar = ({ extra }: { extra?: React.ReactNode }) => (
     <div className="save-bar" style={{ marginTop: '8px' }}>
@@ -641,29 +679,36 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
                   Balises dynamiques
                   <span className="contract-zone-hint">→ zone active : <strong>{activeEditorZone === 'general' ? 'Conditions Générales' : 'Règlement Intérieur'}</strong></span>
                 </div>
-                <div className="variables-bar">
-                  {VARIABLES.map(([v, label, cat]) => {
-                    const varName = v.slice(2, -2);
-                    const isMandatory = MANDATORY_TAGS.some(t => t.key === varName);
-                    const isMissing = isMandatory && missingMandatoryTags.some(t => t.key === varName);
-                    return (
-                      <button
-                        key={v}
-                        type="button"
-                        className={`var-tag ${cat}${isMissing ? ' var-tag-missing' : ''}`}
-                        draggable
-                        onDragStart={e => e.dataTransfer.setData('text/plain', varName)}
-                        onClick={() => insertVariable(varName)}
-                      >
-                        {isMissing && (
-                          <svg width="9" height="9" fill="none" viewBox="0 0 9 9" style={{ marginRight: '3px', flexShrink: 0 }}>
-                            <path d="M4.5 1L8 7.5H1L4.5 1z" stroke="currentColor" strokeWidth="1.1" strokeLinejoin="round"/>
-                          </svg>
-                        )}
-                        {label}
-                      </button>
-                    );
-                  })}
+                <div className="variables-groups">
+                  {VAR_GROUPS.map(group => (
+                    <div key={group.cat} className="variables-group">
+                      <span className="variables-group-label">{group.label}</span>
+                      <div className="variables-bar">
+                        {VARIABLES.filter(([, , cat]) => cat === group.cat).map(([v, label, cat]) => {
+                          const varName = v.slice(2, -2);
+                          const isMandatory = MANDATORY_TAGS.some(t => t.key === varName);
+                          const isMissing = isMandatory && missingMandatoryTags.some(t => t.key === varName);
+                          return (
+                            <button
+                              key={v}
+                              type="button"
+                              className={`var-tag ${cat}${isMissing ? ' var-tag-missing' : ''}`}
+                              draggable
+                              onDragStart={e => e.dataTransfer.setData('text/plain', varName)}
+                              onClick={() => insertVariable(varName)}
+                            >
+                              {isMissing && (
+                                <svg width="9" height="9" fill="none" viewBox="0 0 9 9" style={{ marginRight: '3px', flexShrink: 0 }}>
+                                  <path d="M4.5 1L8 7.5H1L4.5 1z" stroke="currentColor" strokeWidth="1.1" strokeLinejoin="round"/>
+                                </svg>
+                              )}
+                              {label}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
 
@@ -740,24 +785,17 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
                 <strong>Comment fonctionnent les variables ?</strong><br />
                 Les balises ci-dessus représentent les informations de votre client et les vôtres. Cliquez dessus (ou glissez-les) dans la zone active pour les insérer. Lors de la génération, elles se transforment automatiquement avec les vraies données.
               </div>
+              <button type="button" className="contract-preview-mobile-btn" onClick={() => setShowMobilePreview(true)}>
+                <svg width="15" height="15" fill="none" viewBox="0 0 15 15"><path d="M1 7.5S3.5 3 7.5 3s6.5 4.5 6.5 4.5-2.5 4.5-6.5 4.5S1 7.5 1 7.5z" stroke="currentColor" strokeWidth="1.2"/><circle cx="7.5" cy="7.5" r="2" stroke="currentColor" strokeWidth="1.2"/></svg>
+                Aperçu du contrat
+              </button>
               <div className="contract-preview">
                 <div className="cp-header">
                   <span>Aperçu en direct</span>
                   <span className="cp-sub">données d&apos;exemple — les deux zones fusionnées</span>
                 </div>
                 <div className="cp-body">
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', paddingBottom: '8px', borderBottom: '0.5px solid #CEC8BF', marginBottom: '8px' }}>
-                    <div style={{ width: '50px', height: '20px', backgroundColor: '#EDE8E1', borderRadius: '2px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <span style={{ fontSize: '6px', color: '#7A7570' }}>LOGO</span>
-                    </div>
-                    <div style={{ textAlign: 'right' }}>
-                      <p style={{ fontSize: '8.5px', fontWeight: 700, color: '#1C1C1A', margin: '0 0 1px' }}>{form.giteName || 'Nom du gîte'}</p>
-                      <p style={{ fontSize: '7px', color: '#7A7570', margin: 0, lineHeight: 1.4 }}>{form.address || 'Adresse'}<br />{form.city || 'Ville'}</p>
-                    </div>
-                  </div>
-                  <p style={{ fontSize: '8.5px', fontWeight: 700, textAlign: 'center', letterSpacing: '0.8px', color: '#1C1C1A', margin: '0 0 2px' }}>CONTRAT DE LOCATION SAISONNIÈRE</p>
-                  <p style={{ fontSize: '7px', textAlign: 'center', color: '#7A7570', margin: '0 0 8px' }}>Établi le {EXAMPLE_DATA.date_du_jour}</p>
-                  {previewLines.map((line, i) => <PreviewLine key={i} line={line} i={i} />)}
+                  {previewBody}
                 </div>
               </div>
 
@@ -772,6 +810,23 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
             </div>
 
           </div>
+
+          {/* Aperçu plein écran (mobile) */}
+          {showMobilePreview && (
+            <div className="mobile-preview-overlay" onClick={() => setShowMobilePreview(false)}>
+              <div className="mobile-preview-sheet" onClick={e => e.stopPropagation()}>
+                <div className="cp-header">
+                  <span>Aperçu en direct</span>
+                  <button type="button" className="mobile-preview-close" onClick={() => setShowMobilePreview(false)} aria-label="Fermer l'aperçu">
+                    <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><path d="M3 3l10 10M13 3L3 13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>
+                  </button>
+                </div>
+                <div className="cp-body">
+                  {previewBody}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       )}
 
