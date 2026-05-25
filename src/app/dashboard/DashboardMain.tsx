@@ -74,9 +74,11 @@ export default function DashboardMain({ multiGites, currentGiteId }: Props) {
     return multiGites.find((g) => g.id === activeView)?.name ?? "";
   }, [activeView, multiGites]);
 
+  const allUpcoming = [...upcoming.map(r => ({ kind: 'resa' as const, ...r })), ...upcomingIcal.map(b => ({ kind: 'ical' as const, ...b }))].slice(0, 6);
+
   return (
-    <div className="grid-2">
-      {/* Planning */}
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '24px' }}>
+      {/* Planning — pleine largeur */}
       <div className="card">
         <div className="card-header">
           <div className="card-title">
@@ -111,7 +113,7 @@ export default function DashboardMain({ multiGites, currentGiteId }: Props) {
         </div>
       </div>
 
-      {/* Prochaines arrivées */}
+      {/* Prochaines arrivées — grille horizontale sous le planning */}
       <div className="card">
         <div className="card-header">
           <div className="card-title">
@@ -127,68 +129,56 @@ export default function DashboardMain({ multiGites, currentGiteId }: Props) {
             </div>
           )}
         </div>
-        <div className="upcoming-list">
-          {upcoming.length === 0 && upcomingIcal.length === 0 ? (
-            <div style={{ padding: "24px 8px", textAlign: "center", fontSize: "13px", color: "var(--ink-lighter)" }}>
-              Aucune arrivée à venir
-            </div>
-          ) : (
-            <>
-              {upcoming.map((r) => {
-                const status = r.contractStatus;
-                const barClass = status === "SIGNED" ? "g" : status === "GENERATED" ? "v" : "a";
-                const pillClass = status === "SIGNED" ? "pill-g" : status === "GENERATED" ? "pill-v" : "pill-a";
-                const pillLabel = status === "SIGNED" ? "Signé" : status === "GENERATED" ? "Envoyé" : "En attente";
+        {allUpcoming.length === 0 ? (
+          <div style={{ padding: "24px 16px", textAlign: "center", fontSize: "13px", color: "var(--ink-lighter)" }}>
+            Aucune arrivée à venir
+          </div>
+        ) : (
+          <div className="upcoming-grid-row">
+            {allUpcoming.map((item, idx) => {
+              if (item.kind === 'ical') {
                 return (
-                  <Link
-                    key={r.id}
-                    href={`/dashboard/${r.gite.id}/reservations/${r.id}`}
-                    style={{ textDecoration: "none" }}
-                  >
-                    <div className="upcoming-item">
-                      <div className={`ui-bar ${barClass}`} />
-                      <div className="ui-info">
-                        <div className="ui-name">
-                          {r.clientFirstName} {r.clientLastName}
-                        </div>
-                        <div className="ui-dates">
-                          {fmtShort(r.checkIn)} → {fmtShort(r.checkOut)}
-                          {showMultiToggle && activeView === "all" && (
-                            <span style={{ marginLeft: "6px", color: r.gite.color, fontWeight: 600 }}>
-                              · {r.gite.name}
-                            </span>
-                          )}
-                        </div>
+                  <div key={`ical-${idx}`} className="upcoming-item upcoming-item-compact" style={{ cursor: "default" }}>
+                    <div className="ui-bar" style={{ background: "#CEC8BF" }} />
+                    <div className="ui-info">
+                      <div className="ui-name" style={{ color: "var(--ink-soft)" }}>
+                        {PLATFORM_LABELS[item.platform] ?? item.label}
                       </div>
-                      <span className={`pill ${pillClass}`}>{pillLabel}</span>
+                      <div className="ui-dates">
+                        {fmtDateStr(item.start)} → {fmtDateStr(item.end)}
+                        {showMultiToggle && activeView === "all" && (
+                          <span style={{ marginLeft: "6px", color: item.gite.color, fontWeight: 600 }}>· {item.gite.name}</span>
+                        )}
+                      </div>
                     </div>
-                  </Link>
-                );
-              })}
-              {upcomingIcal.map((b, i) => (
-                <div key={`ical-${b.gite.id}-${i}`} className="upcoming-item" style={{ cursor: "default" }}>
-                  <div className="ui-bar" style={{ background: "#CEC8BF" }} />
-                  <div className="ui-info">
-                    <div className="ui-name" style={{ color: "var(--ink-soft)" }}>
-                      {PLATFORM_LABELS[b.platform] ?? b.label}
-                    </div>
-                    <div className="ui-dates">
-                      {fmtDateStr(b.start)} → {fmtDateStr(b.end)}
-                      {showMultiToggle && activeView === "all" && (
-                        <span style={{ marginLeft: "6px", color: b.gite.color, fontWeight: 600 }}>
-                          · {b.gite.name}
-                        </span>
-                      )}
-                    </div>
+                    <span className="pill" style={{ background: "#F0EDE8", color: "#71716E", border: "1px solid #E4E2DE" }}>Externe</span>
                   </div>
-                  <span className="pill" style={{ background: "#F0EDE8", color: "#71716E", border: "1px solid #E4E2DE" }}>
-                    Externe
-                  </span>
-                </div>
-              ))}
-            </>
-          )}
-        </div>
+                );
+              }
+              const status = item.contractStatus;
+              const barClass = status === "SIGNED" ? "g" : status === "GENERATED" ? "v" : "a";
+              const pillClass = status === "SIGNED" ? "pill-g" : status === "GENERATED" ? "pill-v" : "pill-a";
+              const pillLabel = status === "SIGNED" ? "Signé" : status === "GENERATED" ? "Envoyé" : "En attente";
+              return (
+                <Link key={item.id} href={`/dashboard/${item.gite.id}/reservations/${item.id}`} style={{ textDecoration: "none" }}>
+                  <div className="upcoming-item upcoming-item-compact">
+                    <div className={`ui-bar ${barClass}`} />
+                    <div className="ui-info">
+                      <div className="ui-name">{item.clientFirstName} {item.clientLastName}</div>
+                      <div className="ui-dates">
+                        {fmtShort(item.checkIn)} → {fmtShort(item.checkOut)}
+                        {showMultiToggle && activeView === "all" && (
+                          <span style={{ marginLeft: "6px", color: item.gite.color, fontWeight: 600 }}>· {item.gite.name}</span>
+                        )}
+                      </div>
+                    </div>
+                    <span className={`pill ${pillClass}`}>{pillLabel}</span>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        )}
       </div>
     </div>
   );
