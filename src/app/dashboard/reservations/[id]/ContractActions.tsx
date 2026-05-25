@@ -316,10 +316,6 @@ export default function ContractActions({
                   <path d="M6 3l5 5-5 5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               </button>
-              {/* Secondary: resend email */}
-              <button className="cc-sub-btn" onClick={sendEmail} disabled={loading !== null}>
-                {loading === 'email' ? 'Envoi...' : 'Renvoyer le contrat signé par email au locataire →'}
-              </button>
             </>
           ) : (
             <>
