@@ -656,7 +656,7 @@
 }
 .variables-panel::after {
   content: ''; position: absolute; z-index: -2;
-  top: -40px; left: -1px; right: -1px; bottom: -20px;
+  top: -24px; left: -1px; right: -1px; bottom: -20px;
   background: var(--line-light);
 }
 .contract-right-col {
