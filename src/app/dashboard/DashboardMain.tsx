@@ -77,8 +77,8 @@ export default function DashboardMain({ multiGites, currentGiteId }: Props) {
   const allUpcoming = [...upcoming.map(r => ({ kind: 'resa' as const, ...r })), ...upcomingIcal.map(b => ({ kind: 'ical' as const, ...b }))].slice(0, 6);
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '24px' }}>
-      {/* Planning — pleine largeur */}
+    <div className="grid-2">
+      {/* Planning */}
       <div className="card">
         <div className="card-header">
           <div className="card-title">
@@ -113,7 +113,7 @@ export default function DashboardMain({ multiGites, currentGiteId }: Props) {
         </div>
       </div>
 
-      {/* Prochaines arrivées — grille horizontale sous le planning */}
+      {/* Prochaines arrivées */}
       <div className="card">
         <div className="card-header">
           <div className="card-title">
@@ -134,7 +134,7 @@ export default function DashboardMain({ multiGites, currentGiteId }: Props) {
             Aucune arrivée à venir
           </div>
         ) : (
-          <div className="upcoming-grid-row">
+          <div className="upcoming-list">
             {allUpcoming.map((item, idx) => {
               if (item.kind === 'ical') {
                 return (
@@ -182,4 +182,5 @@ export default function DashboardMain({ multiGites, currentGiteId }: Props) {
       </div>
     </div>
   );
+
 }

@@ -394,8 +394,8 @@ export default function CalendarView({
                     background: '#fff',
                     border: isToday ? '1.5px solid #2C2C2A' : '1.5px solid transparent',
                     cursor: hasEntries ? 'pointer' : 'default',
-                    padding: '3px 4px 5px',
-                    minHeight: '38px',
+                    padding: '4px 4px 6px',
+                    minHeight: '46px',
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'stretch',
@@ -439,7 +439,7 @@ export default function CalendarView({
                 onMouseLeave={(reservation || icalBlock) ? () => setTooltip(null) : undefined}
                 style={{
                   textAlign: 'center', fontSize: '12px', padding: '4px',
-                  borderRadius: '6px', minHeight: '34px',
+                  borderRadius: '6px', minHeight: '46px',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   backgroundColor: color?.bg ?? 'transparent',
                   color: color?.text ?? (isToday ? '#1C1C1A' : '#7A7570'),
