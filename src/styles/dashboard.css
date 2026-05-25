@@ -111,6 +111,9 @@
   transition: all .2s; margin-bottom: 2px;
 }
 .sb-link:hover { color: rgba(255,255,255,.8); background: rgba(255,255,255,.06); }
+.sb-signout-btn { background: none; border: none; cursor: pointer; width: 100%; text-align: left; }
+.sb-signout-btn:hover { color: #f87171 !important; background: rgba(248,113,113,.08) !important; }
+.sb-signout-btn:hover .sb-icon { color: #f87171 !important; }
 .sb-link.active { color: #fff; background: rgba(127,119,221,.2); font-weight: 600; }
 .sb-link.active .sb-icon { color: var(--violet); }
 .sb-link:hover .sb-icon { color: rgba(255,255,255,.6); }

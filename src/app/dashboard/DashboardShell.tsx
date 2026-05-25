@@ -33,7 +33,7 @@ export default function DashboardShell({ children, pendingCount, trialInfo, font
   useEffect(() => { setOpen(false); }, [pathname]);
 
   const isExpired = !isAdmin && (trialInfo?.isExpired ?? false);
-  const isArchivesPage = pathname.includes('/archives');
+  const isUnlockedPage = pathname.includes('/archives') || pathname.includes('/compte');
 
   return (
     <div className={`${fontClass ?? ''} app`}>
@@ -90,8 +90,8 @@ export default function DashboardShell({ children, pendingCount, trialInfo, font
               </button>
             </div>
 
-            {isArchivesPage ? (
-              /* Archives accessibles même après expiration (téléchargement contrats signés) */
+            {isUnlockedPage ? (
+              /* Archives et compte accessibles même après expiration */
               children
             ) : (
               <>

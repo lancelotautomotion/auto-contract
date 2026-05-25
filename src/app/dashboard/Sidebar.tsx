@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useClerk } from "@clerk/nextjs";
 import type { TrialInfo } from "@/lib/trial";
 import GiteSelector from "@/components/GiteSelector";
 
@@ -15,6 +16,7 @@ export default function Sidebar({ pendingCount = 0, trialInfo, mobileOpen, onMob
   isAdmin?: boolean;
 }) {
   const pathname = usePathname();
+  const { signOut } = useClerk();
   const base = activeGiteId ? `/dashboard/${activeGiteId}` : '/dashboard';
 
   const active = (href: string) =>
@@ -180,6 +182,20 @@ export default function Sidebar({ pendingCount = 0, trialInfo, mobileOpen, onMob
           </span>
           Paramètres
         </Link>
+        <button
+          className="sb-link sb-signout-btn"
+          onClick={() => signOut({ redirectUrl: '/' })}
+          title="Se déconnecter"
+        >
+          <span className="sb-icon">
+            <svg width="18" height="18" fill="none" viewBox="0 0 18 18">
+              <path d="M7 4H4a1 1 0 00-1 1v8a1 1 0 001 1h3" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
+              <path d="M12 12.5l3.5-3.5L12 5.5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M15.5 9H7" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
+            </svg>
+          </span>
+          Se déconnecter
+        </button>
       </div>
     </aside>
   );
