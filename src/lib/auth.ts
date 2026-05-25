@@ -84,7 +84,7 @@ export async function requireGiteById(giteId: string): Promise<[GiteCtx, null] |
 }
 
 export async function requireActivePlan(): Promise<[GiteCtx, null] | [null, AuthErr]> {
-  const { userId: clerkId } = await auth();
+  const { userId: clerkId, sessionClaims } = await auth();
   if (!clerkId)
     return [null, NextResponse.json({ error: "Non autorisé" }, { status: 401 })];
 
@@ -92,9 +92,12 @@ export async function requireActivePlan(): Promise<[GiteCtx, null] | [null, Auth
   if (!user)
     return [null, NextResponse.json({ error: "Utilisateur introuvable" }, { status: 404 })];
 
-  const trialInfo = getTrialInfo(user);
-  if (trialInfo.isExpired)
-    return [null, NextResponse.json({ error: "Essai expiré. Abonnez-vous pour continuer." }, { status: 403 })];
+  const roleFromClaims = (sessionClaims?.metadata as Record<string, unknown> | undefined)?.role;
+  if (roleFromClaims !== "admin") {
+    const trialInfo = getTrialInfo(user);
+    if (trialInfo.isExpired)
+      return [null, NextResponse.json({ error: "Essai expiré. Abonnez-vous pour continuer." }, { status: 403 })];
+  }
 
   const gite = await prisma.gite.findFirst({ where: { userId: user.id } });
   if (!gite)
