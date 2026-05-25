@@ -645,18 +645,14 @@
 .etab-form { width: 100%; min-width: 0; }
 .contract-split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px; align-items: start; width: 100%; }
 .contract-left-col { display: flex; flex-direction: column; gap: 20px; min-width: 0; overflow-x: clip; }
-.variables-panel {
+.editor-left-sticky {
   position: sticky; top: 20px; z-index: 2;
-  background: transparent; border-color: transparent;
+  display: flex; flex-direction: column; gap: 20px;
+  margin-bottom: -20px;
 }
-.variables-panel::before {
-  content: ''; position: absolute; z-index: -1; box-sizing: border-box;
-  inset: -1px; border: 1px solid var(--line); border-radius: 14px;
-  background: var(--dash-white);
-}
-.variables-panel::after {
-  content: ''; position: absolute; z-index: -2;
-  top: -24px; left: -1px; right: -1px; bottom: -20px;
+.editor-left-sticky::after {
+  content: ''; position: absolute; z-index: -1;
+  top: -24px; left: 0; right: 0; bottom: 0;
   background: var(--line-light);
 }
 .contract-right-col {
@@ -676,6 +672,14 @@
 .contract-editor:focus { border-color: var(--violet); box-shadow: 0 0 0 3px rgba(127,119,221,.08); }
 .contract-editor .sz-sm { font-size: 0.8em; }
 .contract-editor .sz-lg { font-size: 1.35em; }
+
+/* Mise en page structurelle dans l'éditeur (cohérence avec l'aperçu) */
+.contract-editor [data-kind="article"] { font-weight: 700; }
+.contract-editor [data-kind="label"] {
+  font-weight: 700; color: var(--ink-soft);
+  border-bottom: 0.5px solid var(--line); padding-bottom: 2px; letter-spacing: 0.05em;
+}
+.contract-editor [data-kind="twocol"] { color: var(--ink-soft); }
 
 /* Barre de formatage de l'éditeur de contrat */
 .contract-toolbar {

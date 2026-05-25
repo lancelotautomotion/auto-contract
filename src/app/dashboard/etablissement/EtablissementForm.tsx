@@ -5,7 +5,7 @@ import { DEFAULT_CONTRACT_TEMPLATE, mergeTemplates } from "@/lib/defaultContract
 import {
   parseStored, serializeLines, classifyLine, splitRunsAtPipe,
   resolveRun, runsPlain, templateHasVar, domToLines, PREVIEW_SIZE_PX,
-  type Line, type Run, type RunSize,
+  type Line, type Run,
 } from "@/lib/contractFormat";
 import DocumentsTab from "./DocumentsTab";
 import IcalTab from "./IcalTab";
@@ -204,9 +204,22 @@ function runToEditorHTML(run: Run): string {
 }
 
 function lineToEditorHTML(line: Line): string {
+  const kind = classifyLine(line);
   const inner = line.runs.map(runToEditorHTML).join('') || '<br>';
   const align = line.align ? ` style="text-align:${line.align}"` : '';
-  return `<div${align}>${inner}</div>`;
+  const kindAttr = (kind !== 'normal' && kind !== 'empty') ? ` data-kind="${kind}"` : '';
+  return `<div${kindAttr}${align}>${inner}</div>`;
+}
+
+function applyEditorKinds(el: HTMLDivElement) {
+  const lines = domToLines(el);
+  Array.from(el.querySelectorAll(':scope > div')).forEach((div, i) => {
+    const line = lines[i];
+    if (!line) { div.removeAttribute('data-kind'); return; }
+    const kind = classifyLine(line);
+    if (kind !== 'normal' && kind !== 'empty') div.setAttribute('data-kind', kind);
+    else div.removeAttribute('data-kind');
+  });
 }
 
 function buildEditorHTML(stored: string): string {
@@ -275,10 +288,12 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
     if (editorGeneralRef.current && !editorGeneralRef.current.dataset.initialized) {
       editorGeneralRef.current.innerHTML = buildEditorHTML(contractTemplateGeneral);
       editorGeneralRef.current.dataset.initialized = 'true';
+      applyEditorKinds(editorGeneralRef.current);
     }
     if (editorHouseRulesRef.current && !editorHouseRulesRef.current.dataset.initialized) {
       editorHouseRulesRef.current.innerHTML = buildEditorHTML(contractTemplateHouseRules);
       editorHouseRulesRef.current.dataset.initialized = 'true';
+      applyEditorKinds(editorHouseRulesRef.current);
     }
   }, [activeTab]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -299,6 +314,7 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
     if (zone === 'general') setContractTemplateGeneral(readEditorTemplate(ref.current));
     else setContractTemplateHouseRules(readEditorTemplate(ref.current));
     setSaved(false);
+    applyEditorKinds(ref.current);
   }, []);
 
   const handleEditorClick = useCallback((zone: EditorZone) => (e: React.MouseEvent<HTMLDivElement>) => {
@@ -327,6 +343,7 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
     if (activeEditorZone === 'general') setContractTemplateGeneral(readEditorTemplate(el));
     else setContractTemplateHouseRules(readEditorTemplate(el));
     setSaved(false);
+    applyEditorKinds(el);
   }, [activeEditorZone]);
 
   const exec = useCallback((cmd: string, value?: string) => {
@@ -334,26 +351,6 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
     if (!el) return;
     el.focus();
     document.execCommand(cmd, false, value);
-    syncActive(el);
-  }, [getActiveEditorRef, syncActive]);
-
-  const applySize = useCallback((size: RunSize | 'normal') => {
-    const el = getActiveEditorRef().current;
-    if (!el) return;
-    el.focus();
-    const sel = window.getSelection();
-    if (!sel || sel.isCollapsed) return;
-    document.execCommand('fontSize', false, '7');
-    el.querySelectorAll('font[size="7"]').forEach(f => {
-      const span = document.createElement('span');
-      span.innerHTML = f.innerHTML;
-      span.querySelectorAll('.sz-sm, .sz-lg').forEach(inner => {
-        while (inner.firstChild) inner.parentNode!.insertBefore(inner.firstChild, inner);
-        inner.remove();
-      });
-      if (size !== 'normal') span.className = size === 'sm' ? 'sz-sm' : 'sz-lg';
-      f.replaceWith(span);
-    });
     syncActive(el);
   }, [getActiveEditorRef, syncActive]);
 
@@ -769,6 +766,8 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
                 </div>
               )}
 
+              <div className="editor-left-sticky">
+
               {/* Variables panel */}
               <div className="form-card variables-panel">
                 <div className="form-card-title">
@@ -852,16 +851,10 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
                 <button type="button" className="ct-btn" title="Italique" onClick={() => exec('italic')} style={{ fontStyle: 'italic' }}>I</button>
                 <button type="button" className="ct-btn" title="Souligné" onClick={() => exec('underline')} style={{ textDecoration: 'underline' }}>U</button>
                 <span className="ct-sep" />
-                <button type="button" className="ct-btn" title="Petit texte" onClick={() => applySize('sm')} style={{ fontSize: '11px' }}>A</button>
-                <button type="button" className="ct-btn" title="Taille normale" onClick={() => applySize('normal')}>A</button>
-                <button type="button" className="ct-btn" title="Grand texte" onClick={() => applySize('lg')} style={{ fontSize: '17px' }}>A</button>
-                <span className="ct-sep" />
-                <button type="button" className="ct-btn" title="Aligner à gauche" onClick={() => exec('justifyLeft')}>⯇</button>
-                <button type="button" className="ct-btn" title="Centrer" onClick={() => exec('justifyCenter')}>≡</button>
-                <button type="button" className="ct-btn" title="Aligner à droite" onClick={() => exec('justifyRight')}>⯈</button>
-                <span className="ct-sep" />
                 <button type="button" className="ct-btn" title="Liste à puces" onClick={toggleBullet}>•</button>
               </div>
+
+              </div>{/* end editor-left-sticky */}
 
               {/* Éditeur Conditions Générales */}
               <div
