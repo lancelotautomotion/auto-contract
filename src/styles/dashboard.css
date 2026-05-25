@@ -645,10 +645,19 @@
 .etab-form { width: 100%; min-width: 0; }
 .contract-split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px; align-items: start; width: 100%; }
 .contract-left-col { display: flex; flex-direction: column; gap: 20px; min-width: 0; overflow-x: clip; }
-.variables-panel { position: sticky; top: 20px; z-index: 2; }
+.variables-panel {
+  position: sticky; top: 20px; z-index: 2;
+  background: transparent; border-color: transparent;
+}
 .variables-panel::before {
-  content: ''; position: absolute; left: -1px; right: -1px; bottom: calc(100% + 1px);
-  height: 40px; background: var(--line-light);
+  content: ''; position: absolute; z-index: -1; box-sizing: border-box;
+  inset: -1px; border: 1px solid var(--line); border-radius: 14px;
+  background: var(--dash-white);
+}
+.variables-panel::after {
+  content: ''; position: absolute; z-index: -2;
+  top: -40px; left: -1px; right: -1px; bottom: -1px;
+  background: var(--line-light);
 }
 .contract-right-col {
   display: flex; flex-direction: column; gap: 16px;
