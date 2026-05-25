@@ -1353,20 +1353,20 @@
 
 /* ── PLAN EXPIRÉ — verrouillage visuel ─────────────────────────────────── */
 .expired-banner {
-  display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+  display: flex; align-items: center; gap: 14px;
   background: #FEF3CD; border: 1px solid #F5C842; border-radius: 12px;
   padding: 14px 18px; margin: 20px 24px 0;
 }
 .expired-banner-icon {
-  width: 32px; height: 32px; border-radius: 8px; flex-shrink: 0;
+  width: 32px; min-width: 32px; height: 32px; border-radius: 8px; flex-shrink: 0;
   background: rgba(245,200,66,.25); display: flex; align-items: center;
-  justify-content: center; color: #92610E;
+  justify-content: center; color: #92610E; align-self: center;
 }
 .expired-banner-text {
-  flex: 1; font-size: 13px; color: #7B4F0A; line-height: 1.5; min-width: 180px;
+  flex: 1; font-size: 13px; color: #7B4F0A; line-height: 1.5;
 }
 .expired-banner-cta {
-  flex-shrink: 0; font-size: 13px !important; padding: 9px 18px !important;
+  flex-shrink: 0; font-size: 13px !important; padding: 9px 18px !important; align-self: center;
 }
 
 .plan-locked-wrap {
