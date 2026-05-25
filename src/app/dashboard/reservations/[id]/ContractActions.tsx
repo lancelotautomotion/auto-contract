@@ -323,11 +323,33 @@ export default function ContractActions({
             </>
           ) : (
             <>
-              {/* Primary: send for signature */}
+              {/* First: download PDF preview */}
+              <button
+                className="cc-main-btn cc-main-btn-green"
+                onClick={downloadContract}
+                disabled={loading !== null}
+              >
+                <div className="cc-btn-icon">
+                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <path d="M5 3h7l5 5v9a1 1 0 01-1 1H5a1 1 0 01-1-1V4a1 1 0 011-1z" stroke="#4A7353" strokeWidth="1.4"/>
+                    <path d="M12 3v5h5" stroke="#4A7353" strokeWidth="1.4"/>
+                    <path d="M10 10v5M7.5 12.5L10 15l2.5-2.5" stroke="#4A7353" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </div>
+                <div className="cc-btn-text">
+                  <span className="cc-btn-label">{loading === 'generate' ? 'Génération...' : 'Télécharger l\'aperçu du contrat avant envoi'}</span>
+                  <span className="cc-btn-desc">Vérifiez le rendu du contrat avant de l&apos;envoyer au locataire</span>
+                </div>
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0, color: '#4A7353', opacity: 0.5 }}>
+                  <path d="M6 3l5 5-5 5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </button>
+              {/* Second: send for signature */}
               <button
                 className="cc-main-btn"
                 onClick={sendEmail}
                 disabled={loading !== null}
+                style={{ marginTop: '10px' }}
               >
                 <div className="cc-btn-icon">
                   <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
@@ -346,10 +368,6 @@ export default function ContractActions({
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0, color: '#5B52B5', opacity: 0.5 }}>
                   <path d="M6 3l5 5-5 5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
-              </button>
-              {/* Secondary: preview PDF before sending */}
-              <button className="cc-sub-btn" onClick={downloadContract} disabled={loading !== null}>
-                {loading === 'generate' ? 'Génération...' : 'Aperçu du contrat avant envoi →'}
               </button>
             </>
           )}
