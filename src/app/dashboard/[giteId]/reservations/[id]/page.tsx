@@ -48,7 +48,7 @@ export default async function ReservationDetailPage({ params }: { params: Promis
   const isRefused = reservation.status === 'REFUSED';
   const contractStatus = reservation.contract?.status ?? null;
   const pillClass = isRefused ? 'pill pill-refused pill-lg' : reservation.status === 'PENDING_REVIEW' ? 'pill pill-a pill-lg' : contractStatus === 'GENERATED' ? 'pill pill-v pill-lg' : contractStatus === 'SIGNED' ? 'pill pill-g pill-lg' : 'pill pill-a pill-lg';
-  const pillLabel = isRefused ? 'Refusée' : reservation.status === 'PENDING_REVIEW' ? 'En attente' : contractStatus === null ? 'En attente' : contractStatus === 'GENERATING' ? 'En cours...' : contractStatus === 'GENERATED' ? 'Contrat généré' : contractStatus === 'SIGNED' ? 'Signé' : 'En attente';
+  const pillLabel = isRefused ? 'Refusée' : reservation.status === 'PENDING_REVIEW' ? 'En attente' : contractStatus === null ? 'Sans contrat' : contractStatus === 'GENERATING' ? 'En cours...' : contractStatus === 'GENERATED' ? 'Contrat généré' : contractStatus === 'SIGNED' ? 'Signé' : 'Sans contrat';
   const clientName = `${reservation.clientFirstName} ${reservation.clientLastName}`;
 
   return (

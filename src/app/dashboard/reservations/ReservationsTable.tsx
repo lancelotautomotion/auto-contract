@@ -38,7 +38,7 @@ function getPill(r: Reservation) {
   if (r.status === 'PENDING_REVIEW') return { cls: 'pill-a', label: 'En attente' };
   if (r.contractStatus === 'SIGNED') return { cls: 'pill-g', label: 'Signé' };
   if (r.contractStatus === 'GENERATED') return { cls: 'pill-v', label: 'Envoyé' };
-  return { cls: 'pill-a', label: 'En attente' };
+  return { cls: 'pill-a', label: 'Sans contrat' };
 }
 
 const PER_PAGE = 10;
