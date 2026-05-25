@@ -273,22 +273,27 @@ async function _render(data: ContractData, sig: SignatureInfo | null): Promise<B
         continue;
       }
 
-      // Article heading
+      // Article heading — forced bold, per-run formatting (italique possible)
       if (kind === 'article') {
         doc.moveDown(0.9);
-        const plain = line.runs.map(r => resolveRun(r, vars)).join('').trim();
-        doc.font('Helvetica-Bold').fontSize(10).fillColor(C.dark)
-          .text(plain, { paragraphGap: 0, width: W });
+        const boldRuns = line.runs.map(r => ({ ...r, bold: true }));
+        renderFlowRuns(doc, boldRuns, vars, W, 10, 'left');
         doc.moveDown(0.4);
         continue;
       }
 
-      // Section label (ALL CAPS, short)
+      // Section label (ALL CAPS, short) — forced bold, muted color
       if (kind === 'label') {
         doc.moveDown(0.8);
-        const plain = line.runs.map(r => resolveRun(r, vars)).join('').trim();
-        doc.font('Helvetica-Bold').fontSize(8).fillColor(C.muted)
-          .text(plain, { paragraphGap: 0, characterSpacing: 0.5, width: W });
+        const boldRuns = line.runs.map(r => ({ ...r, bold: true }));
+        const segs = boldRuns
+          .map(r => ({ text: resolveRun(r, vars), font: runFont(r), size: runSize(r, 8), underline: !!r.underline }))
+          .filter(s => s.text.length > 0);
+        segs.forEach((s, i) => {
+          const isLast = i === segs.length - 1;
+          doc.font(s.font).fontSize(s.size).fillColor(C.muted)
+            .text(s.text, { continued: !isLast, underline: s.underline, width: W, characterSpacing: 0.5, paragraphGap: 0 });
+        });
         doc.moveDown(0.2);
         doc.moveTo(ml, doc.y).lineTo(ml + W, doc.y).lineWidth(0.5).strokeColor(C.border).stroke();
         doc.moveDown(0.4);
@@ -298,13 +303,24 @@ async function _render(data: ContractData, sig: SignatureInfo | null): Promise<B
 
       // Normal lines and list items (formatage inline + alignement)
       const align = line.align ?? 'left';
-      let runs = line.runs;
-      if (runsPlain(runs).trimStart().startsWith('-')) {
-        runs = runs.slice();
-        const fi = runs.findIndex(r => r.text !== undefined && r.text.length > 0);
-        if (fi >= 0) runs[fi] = { ...runs[fi], text: '  ' + runs[fi].text };
+      // Expand multi-line resolved values (e.g. {{options}})
+      const fullResolved = line.runs.map(r => resolveRun(r, vars)).join('');
+      if (fullResolved.includes('\n')) {
+        const subLines = fullResolved.split('\n').filter(s => s.trim() !== '');
+        for (const sub of subLines) {
+          const isBullet = sub.trimStart().startsWith('-');
+          doc.font('Helvetica').fontSize(10).fillColor(C.dark)
+            .text(isBullet ? '  ' + sub : sub, { width: W, align, lineGap: 2, paragraphGap: 1 });
+        }
+      } else {
+        let runs = line.runs;
+        if (runsPlain(runs).trimStart().startsWith('-')) {
+          runs = runs.slice();
+          const fi = runs.findIndex(r => r.text !== undefined && r.text.length > 0);
+          if (fi >= 0) runs[fi] = { ...runs[fi], text: '  ' + runs[fi].text };
+        }
+        renderFlowRuns(doc, runs, vars, W, 10, align);
       }
-      renderFlowRuns(doc, runs, vars, W, 10, align);
     }
 
     // ── Signature block ──────────────────────────────────────────────────────

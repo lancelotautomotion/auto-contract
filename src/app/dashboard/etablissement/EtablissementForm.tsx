@@ -81,12 +81,25 @@ function PreviewLine({ line, vars }: { line: Line; vars: Record<string, string> 
   }
 
   if (kind === 'article') {
-    const plain = line.runs.map(r => resolveRun(r, vars)).join('').trim();
-    return <p style={{ fontSize: '12px', fontWeight: 700, color: '#1C1C1A', margin: '10px 0 3px', letterSpacing: '0.3px' }}>{plain}</p>;
+    return <p style={{ fontSize: '12px', fontWeight: 700, color: '#1C1C1A', margin: '10px 0 3px', letterSpacing: '0.3px' }}><RunsView runs={line.runs} vars={vars} /></p>;
   }
   if (kind === 'label') {
-    const plain = line.runs.map(r => resolveRun(r, vars)).join('').trim();
-    return <p style={{ fontSize: '11px', fontWeight: 700, color: '#7A7570', letterSpacing: '1px', margin: '12px 0 4px', borderBottom: '0.5px solid #CEC8BF', paddingBottom: '3px' }}>{plain}</p>;
+    return <p style={{ fontSize: '11px', fontWeight: 700, color: '#7A7570', letterSpacing: '1px', margin: '12px 0 4px', borderBottom: '0.5px solid #CEC8BF', paddingBottom: '3px' }}><RunsView runs={line.runs} vars={vars} /></p>;
+  }
+
+  // Expand multi-line resolved values (e.g. {{options}} → plusieurs lignes)
+  const resolvedFull = line.runs.map(r => resolveRun(r, vars)).join('');
+  if (resolvedFull.includes('\n')) {
+    const subLines = resolvedFull.split('\n');
+    return (
+      <>
+        {subLines.map((sub, i) => {
+          if (!sub.trim()) return <div key={i} style={{ height: '4px' }} />;
+          const isBullet = sub.trimStart().startsWith('-');
+          return <p key={i} style={{ fontSize: '11px', color: '#1C1C1A', margin: '1px 0', lineHeight: 1.5, paddingLeft: isBullet ? '8px' : undefined }}>{sub}</p>;
+        })}
+      </>
+    );
   }
 
   const isBullet = runsPlain(line.runs).trimStart().startsWith('-');
