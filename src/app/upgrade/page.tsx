@@ -215,29 +215,27 @@ export default async function UpgradePage({ searchParams }: { searchParams: Prom
 
         </div>
 
-        {/* Back link — more visible */}
-        {!isExpired && (
-          <div style={{ textAlign: 'center', marginTop: '16px' }}>
-            <a
-              href="/dashboard"
-              style={{
-                display: 'inline-flex', alignItems: 'center', gap: '8px',
-                fontSize: '14px', fontWeight: 600, color: '#5B52B5',
-                textDecoration: 'none',
-                padding: '10px 20px',
-                border: '1.5px solid rgba(127,119,221,.35)',
-                borderRadius: '10px',
-                backgroundColor: 'rgba(127,119,221,.07)',
-                transition: 'background .15s',
-              }}
-            >
-              <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
-                <path d="M9 11L5 7l4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-              Retour au tableau de bord
-            </a>
-          </div>
-        )}
+        {/* Back link */}
+        <div style={{ textAlign: 'center', marginTop: '16px' }}>
+          <a
+            href="/dashboard"
+            style={{
+              display: 'inline-flex', alignItems: 'center', gap: '8px',
+              fontSize: '14px', fontWeight: 600, color: '#5B52B5',
+              textDecoration: 'none',
+              padding: '10px 20px',
+              border: '1.5px solid rgba(127,119,221,.35)',
+              borderRadius: '10px',
+              backgroundColor: 'rgba(127,119,221,.07)',
+              transition: 'background .15s',
+            }}
+          >
+            <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
+              <path d="M9 11L5 7l4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+            Retour au tableau de bord
+          </a>
+        </div>
       </main>
     </div>
   );
