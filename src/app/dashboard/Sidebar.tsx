@@ -152,6 +152,22 @@ export default function Sidebar({ pendingCount = 0, trialInfo, mobileOpen, onMob
             </Link>
           </div>
         )}
+
+        {trialInfo?.isExpired && !isAdmin && (
+          <div className="sb-upgrade-card">
+            <div className="sb-upgrade-header">
+              <svg width="14" height="14" fill="none" viewBox="0 0 14 14" className="sb-upgrade-lock">
+                <rect x="2.5" y="6" width="9" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.3"/>
+                <path d="M4.5 6V4.5a2.5 2.5 0 015 0V6" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
+              </svg>
+              <span className="sb-upgrade-label">Essai terminé</span>
+            </div>
+            <p className="sb-upgrade-text">Souscrivez pour débloquer toutes les fonctionnalités.</p>
+            <Link href="/upgrade" className="sb-upgrade-link">
+              Voir les offres →
+            </Link>
+          </div>
+        )}
       </nav>
 
       <div className="sb-bottom">

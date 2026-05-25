@@ -32,7 +32,8 @@ export default function DashboardShell({ children, pendingCount, trialInfo, font
 
   useEffect(() => { setOpen(false); }, [pathname]);
 
-  const isExpired = trialInfo?.isExpired ?? false;
+  const isExpired = !isAdmin && (trialInfo?.isExpired ?? false);
+  const isArchivesPage = pathname.includes('/archives');
 
   return (
     <div className={`${fontClass ?? ''} app`}>
@@ -89,30 +90,37 @@ export default function DashboardShell({ children, pendingCount, trialInfo, font
               </button>
             </div>
 
-            {/* Contenu grisé avec overlay interactif */}
-            <div className="plan-locked-wrap">
-              <div
-                className="plan-locked-overlay"
-                onMouseMove={e => setTooltip({ x: e.clientX, y: e.clientY })}
-                onMouseLeave={() => setTooltip(null)}
-                onClick={() => router.push('/upgrade')}
-                aria-hidden="true"
-              />
-              <div className="plan-locked-content" aria-hidden="true">
-                {children}
-              </div>
-            </div>
+            {isArchivesPage ? (
+              /* Archives accessibles même après expiration (téléchargement contrats signés) */
+              children
+            ) : (
+              <>
+                {/* Contenu grisé avec overlay interactif */}
+                <div className="plan-locked-wrap">
+                  <div
+                    className="plan-locked-overlay"
+                    onMouseMove={e => setTooltip({ x: e.clientX, y: e.clientY })}
+                    onMouseLeave={() => setTooltip(null)}
+                    onClick={() => router.push('/upgrade')}
+                    aria-hidden="true"
+                  />
+                  <div className="plan-locked-content" aria-hidden="true">
+                    {children}
+                  </div>
+                </div>
 
-            {/* Tooltip curseur */}
-            {tooltip && (
-              <div
-                className="plan-locked-tooltip"
-                style={{ left: tooltip.x + 14, top: tooltip.y + 14 }}
-                aria-hidden="true"
-              >
-                <LockIcon />
-                Fonction Premium
-              </div>
+                {/* Tooltip curseur */}
+                {tooltip && (
+                  <div
+                    className="plan-locked-tooltip"
+                    style={{ left: tooltip.x + 14, top: tooltip.y + 14 }}
+                    aria-hidden="true"
+                  >
+                    <LockIcon />
+                    Fonction Premium
+                  </div>
+                )}
+              </>
             )}
           </>
         ) : (
