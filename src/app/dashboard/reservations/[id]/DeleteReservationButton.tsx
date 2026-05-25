@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
-export default function DeleteReservationButton({ reservationId, clientName }: { reservationId: string; clientName: string }) {
+export default function DeleteReservationButton({ reservationId, clientName, redirectAfter }: { reservationId: string; clientName: string; redirectAfter?: string }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -18,7 +18,7 @@ export default function DeleteReservationButton({ reservationId, clientName }: {
     setError(null);
     const res = await fetch(`/api/reservations/${reservationId}`, { method: 'DELETE' });
     if (res.ok) {
-      router.push('/dashboard/reservations');
+      router.push(redirectAfter ?? '/dashboard/reservations');
     } else {
       setError('Erreur lors de la suppression.');
       setLoading(false);

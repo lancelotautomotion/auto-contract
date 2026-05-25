@@ -86,7 +86,7 @@ export default async function ReservationDetailPage({ params }: { params: Promis
             </div>
             <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexShrink: 0 }}>
               <RestoreReservationButton reservationId={id} />
-              <DeleteReservationButton reservationId={id} clientName={clientName} />
+              <DeleteReservationButton reservationId={id} clientName={clientName} redirectAfter={`/dashboard/${giteId}/reservations`} />
             </div>
           </div>
         ) : (contractStatus !== 'SIGNED' || reservation.status === 'PENDING_REVIEW') ? (

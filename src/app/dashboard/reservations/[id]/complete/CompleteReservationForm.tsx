@@ -5,13 +5,14 @@ import { useRouter } from "next/navigation";
 
 interface Props {
   id: string;
+  giteId: string;
   defaultCheckIn: string;
   defaultCheckOut: string;
   defaultCleaningFee: string;
   defaultTouristTax: string;
 }
 
-export default function CompleteReservationForm({ id, defaultCheckIn, defaultCheckOut, defaultCleaningFee, defaultTouristTax }: Props) {
+export default function CompleteReservationForm({ id, giteId, defaultCheckIn, defaultCheckOut, defaultCleaningFee, defaultTouristTax }: Props) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
@@ -35,7 +36,7 @@ export default function CompleteReservationForm({ id, defaultCheckIn, defaultChe
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form),
       });
-      if (res.ok) router.push(`/dashboard/reservations/${id}`);
+      if (res.ok) router.push(`/dashboard/${giteId}/reservations/${id}`);
     } finally {
       setLoading(false);
     }
@@ -132,7 +133,7 @@ export default function CompleteReservationForm({ id, defaultCheckIn, defaultChe
             <button
               type="button"
               className="btn btn-later btn-lg"
-              onClick={() => router.push('/dashboard/reservations')}
+              onClick={() => router.push(`/dashboard/${giteId}/reservations`)}
             >
               Plus tard
             </button>
