@@ -1,0 +1,205 @@
+{
+  "name": "Kordia - Sourcing gîtes",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "node-trigger",
+      "name": "Démarrer",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        240,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// >>> A MODIFIER : colle ta cle Google et liste tes departements <<<\nconst apiKey = \"COLLE_TA_CLE_GOOGLE_ICI\";\nconst departements = [\"Dordogne\", \"Luberon\", \"Finistère\"];\n\nconst modeles = [\"gîte {d}\", \"location saisonnière {d}\", \"chambre d'hôtes {d}\"];\nconst out = [];\nfor (const d of departements) {\n  for (const m of modeles) {\n    out.push({ json: { query: m.replace(\"{d}\", d), departement: d, apiKey } });\n  }\n}\nreturn out;\n"
+      },
+      "id": "node-preparer",
+      "name": "1. Préparer les recherches",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        460,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://places.googleapis.com/v1/places:searchText",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "X-Goog-Api-Key",
+              "value": "={{ $json.apiKey }}"
+            },
+            {
+              "name": "X-Goog-FieldMask",
+              "value": "places.displayName,places.formattedAddress,places.websiteUri,places.nationalPhoneNumber"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ textQuery: $json.query, languageCode: 'fr', regionCode: 'FR' }) }}",
+        "options": {}
+      },
+      "id": "node-places",
+      "name": "2. Google Places",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        680,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Aplatit les resultats Google, garde ceux avec un site, deduplique par domaine\nconst seen = new Set();\nconst out = [];\nfor (const item of $input.all()) {\n  const places = item.json.places || [];\n  for (const p of places) {\n    const site = p.websiteUri;\n    if (!site) continue;\n    let domain = \"\";\n    try { domain = new URL(site).hostname.replace(/^www\\./, \"\").toLowerCase(); }\n    catch (e) { continue; }\n    if (!domain || seen.has(domain)) continue;\n    seen.add(domain);\n    out.push({ json: {\n      nom: (p.displayName && p.displayName.text) || \"\",\n      adresse: p.formattedAddress || \"\",\n      telephone: p.nationalPhoneNumber || \"\",\n      site,\n    }});\n  }\n}\nreturn out;\n"
+      },
+      "id": "node-lister",
+      "name": "3. Lister les gîtes (dédup)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        900,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Visite chaque site et extrait le premier email de contact trouve\nconst EMAIL_RE = /[A-Za-z0-9._%+\\-]+@[A-Za-z0-9.\\-]+\\.[A-Za-z]{2,}/g;\nconst BLOCK = [\"example.com\", \"wixpress\", \"sentry\", \"godaddy\", \"jimdo\",\n  \"squarespace\", \".png\", \".jpg\", \".jpeg\", \".gif\", \".webp\", \".svg\", \"@2x\"];\nconst out = [];\nfor (const item of $input.all()) {\n  const d = item.json;\n  let html = \"\";\n  try {\n    const res = await this.helpers.httpRequest({\n      url: d.site,\n      method: \"GET\",\n      timeout: 12000,\n      headers: { \"User-Agent\": \"Mozilla/5.0 (KordiaProspection)\" },\n    });\n    html = typeof res === \"string\" ? res : JSON.stringify(res);\n  } catch (e) {\n    html = \"\";\n  }\n  const found = (html.match(EMAIL_RE) || [])\n    .map((e) => e.toLowerCase().replace(/\\.$/, \"\"))\n    .filter((e) => !BLOCK.some((b) => e.includes(b)));\n  out.push({ json: {\n    nom: d.nom,\n    email: found[0] || \"\",\n    telephone: d.telephone,\n    site: d.site,\n    adresse: d.adresse,\n  }});\n  await new Promise((r) => setTimeout(r, 800));\n}\nreturn out;\n"
+      },
+      "id": "node-visiter",
+      "name": "4. Visiter site + extraire email",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1120,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.email }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "node-filter",
+      "name": "5. Garder ceux avec email",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2,
+      "position": [
+        1340,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "csv",
+        "options": {}
+      },
+      "id": "node-csv",
+      "name": "6. Exporter en CSV",
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        1560,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "Démarrer": {
+      "main": [
+        [
+          {
+            "node": "1. Préparer les recherches",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "1. Préparer les recherches": {
+      "main": [
+        [
+          {
+            "node": "2. Google Places",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "2. Google Places": {
+      "main": [
+        [
+          {
+            "node": "3. Lister les gîtes (dédup)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "3. Lister les gîtes (dédup)": {
+      "main": [
+        [
+          {
+            "node": "4. Visiter site + extraire email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "4. Visiter site + extraire email": {
+      "main": [
+        [
+          {
+            "node": "5. Garder ceux avec email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "5. Garder ceux avec email": {
+      "main": [
+        [
+          {
+            "node": "6. Exporter en CSV",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}
