@@ -27,3 +27,7 @@ tsconfig.tsbuildinfo
 *~
 .idea/
 .vscode/
+
+# Python
+__pycache__/
+*.pyc
