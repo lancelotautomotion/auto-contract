@@ -156,7 +156,8 @@ const ZWSP = /​/g;
 interface InlineCtx { bold?: boolean; italic?: boolean; underline?: boolean; size?: RunSize; }
 
 function applyCtx(run: Run, ctx: InlineCtx): Run {
-  if (ctx.bold) run.bold = true;
+  if (ctx.bold === true) run.bold = true;
+  else if (ctx.bold === false) run.bold = false;
   if (ctx.italic) run.italic = true;
   if (ctx.underline) run.underline = true;
   if (ctx.size) run.size = ctx.size;
@@ -167,7 +168,7 @@ function emitText(runs: Run[], text: string, ctx: InlineCtx) {
   if (!text) return;
   const prev = runs[runs.length - 1];
   const same = prev && !prev.varName &&
-    !!prev.bold === !!ctx.bold && !!prev.italic === !!ctx.italic &&
+    prev.bold === ctx.bold && !!prev.italic === !!ctx.italic &&
     !!prev.underline === !!ctx.underline && (prev.size ?? undefined) === (ctx.size ?? undefined);
   if (same) { prev.text = (prev.text ?? '') + text; return; }
   runs.push(applyCtx({ text }, ctx));
@@ -190,6 +191,7 @@ function walkInline(node: Node, ctx: InlineCtx, runs: Run[]) {
     if (tag === 'u') next.underline = true;
     const fw = el.style.fontWeight;
     if (fw === 'bold' || (fw && parseInt(fw, 10) >= 600)) next.bold = true;
+    else if (fw === 'normal' || fw === '400' || (fw && !isNaN(parseInt(fw, 10)) && parseInt(fw, 10) < 600)) next.bold = false;
     if (el.style.fontStyle === 'italic') next.italic = true;
     const td = el.style.textDecorationLine || el.style.textDecoration;
     if (td && td.includes('underline')) next.underline = true;

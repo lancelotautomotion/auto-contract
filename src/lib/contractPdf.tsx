@@ -273,19 +273,19 @@ async function _render(data: ContractData, sig: SignatureInfo | null): Promise<B
         continue;
       }
 
-      // Article heading — forced bold, per-run formatting (italique possible)
+      // Article heading — bold par défaut, run.bold===false le désactive
       if (kind === 'article') {
         doc.moveDown(0.9);
-        const boldRuns = line.runs.map(r => ({ ...r, bold: true }));
+        const boldRuns = line.runs.map(r => ({ ...r, bold: r.bold !== false }));
         renderFlowRuns(doc, boldRuns, vars, W, 10, 'left');
         doc.moveDown(0.4);
         continue;
       }
 
-      // Section label (ALL CAPS, short) — forced bold, muted color
+      // Section label (ALL CAPS, short) — bold par défaut, run.bold===false le désactive
       if (kind === 'label') {
         doc.moveDown(0.8);
-        const boldRuns = line.runs.map(r => ({ ...r, bold: true }));
+        const boldRuns = line.runs.map(r => ({ ...r, bold: r.bold !== false }));
         const segs = boldRuns
           .map(r => ({ text: resolveRun(r, vars), font: runFont(r), size: runSize(r, 8), underline: !!r.underline }))
           .filter(s => s.text.length > 0);

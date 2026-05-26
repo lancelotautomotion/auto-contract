@@ -35,7 +35,7 @@ function buildPreviewVars(form: { giteName: string; address: string; city: strin
 
 function runCss(run: Run): React.CSSProperties {
   return {
-    fontWeight: run.bold ? 700 : undefined,
+    fontWeight: run.bold === true ? 700 : run.bold === false ? 400 : undefined,
     fontStyle: run.italic ? 'italic' : undefined,
     textDecoration: run.underline ? 'underline' : undefined,
     fontSize: run.size ? `${PREVIEW_SIZE_PX[run.size]}px` : undefined,
