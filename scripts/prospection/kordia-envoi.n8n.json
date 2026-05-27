@@ -1,0 +1,408 @@
+{
+  "name": "Kordia - Envoi cold email",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 9 * * *"
+            }
+          ]
+        }
+      },
+      "id": "n-cron",
+      "name": "9h chaque jour",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        240,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "COLLE_ID_DE_TON_GOOGLE_SHEET",
+          "mode": "list",
+          "cachedResultName": "Kordia - Prospection"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Leads",
+          "mode": "list",
+          "cachedResultName": "Leads"
+        },
+        "options": {}
+      },
+      "id": "n-read",
+      "name": "Lire les leads",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        440,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.statut }}",
+              "rightValue": "contacté",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            },
+            {
+              "leftValue": "={{ $json.email }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "n-filter",
+      "name": "Pas encore contactés",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2,
+      "position": [
+        640,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "maxItems": 25
+      },
+      "id": "n-limit",
+      "name": "Max 25 / jour",
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        840,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Construit l'email perso pour chaque lead + l'apercu pour validation\nconst VISIO = \"LIEN_VISIO_A_COLLER\"; // >>> colle ton lien Calendly / visio\nconst out = [];\nfor (const item of $input.all()) {\n  const d = item.json;\n  const subject = \"Vos contrats de location de gîte\";\n  const body = [\n    \"Bonjour,\",\n    \"\",\n    \"Mes parents tiennent un gîte depuis que je suis gamin. Et depuis tout petit, je leur file un coup de main, surtout sur la paperasse.\",\n    \"Les contrats de location, c'était toujours la même galère : une heure sur Word, des relances pour récupérer la signature, le doute de savoir si tout était bien en règle, et un suivi au cas par cas.\",\n    \"\",\n    \"Alors j'ai fini par leur construire un outil : Kordia.\",\n    \"Le gérant envoie un formulaire de réservation en ligne à son locataire, le contrat se génère en 1 clic, part par email, et le locataire signe en 30 secondes depuis son mobile.\",\n    \"Sans imprimer, sans scanner, sans créer de compte. Une signature en ligne parfaitement légale (conforme ALUR et eIDAS).\",\n    \"\",\n    \"En le faisant pour eux, je me suis dit que d'autres gérants vivaient sûrement la même chose.\",\n    \"\",\n    \"Vous gérez encore vos contrats à la main ? Si ça vous tente, c'est gratuit 1 mois, sans carte bancaire : https://kordia.fr/\",\n    \"Et si vous préférez que je vous montre comment ça marche avant de vous lancer, je peux vous réserver 20-30 min en visio quand ça vous arrange : \" + VISIO,\n    \"\",\n    \"Je serais curieux d'avoir votre retour.\",\n    \"\",\n    \"Kordialement,\",\n    \"\",\n    \"Lancelot Loubier\",\n    \"Fondateur | Kordia\",\n    \"contact@kordia.fr\",\n    \"kordia.fr\",\n    \"\",\n    \"—\",\n    \"Vous recevez ce message car vous gérez un hébergement touristique. Pour ne plus être contacté, répondez « STOP ».\",\n  ].join(\"\\n\");\n  out.push({ json: { email: d.email, nom: d.nom, departement: d.departement, subject, body } });\n}\nreturn out;\n"
+      },
+      "id": "n-prep",
+      "name": "1. Préparer les emails",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1040,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1 seule ligne : l'apercu des gites a contacter pour l'email de validation\nconst items = $input.all();\nconst apercu = items.map((i, n) => (n + 1) + \". \" + i.json.nom + \" — \" + i.json.email).join(\"\\n\");\nreturn [{ json: { nb: items.length, apercu } }];\n"
+      },
+      "id": "n-resume",
+      "name": "2. Aperçu pour validation",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1240,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "sendAndWait",
+        "sendTo": "lancelotautomotion@gmail.com",
+        "subject": "=Kordia — valider l'envoi du jour ({{ $json.nb }} gîtes)",
+        "message": "=Tu vas contacter {{ $json.nb }} gîtes aujourd'hui :\n\n{{ $json.apercu }}\n\nClique pour lancer l'envoi en goutte-à-goutte.",
+        "responseType": "approval",
+        "approvalOptions": {
+          "values": {
+            "approvalType": "single",
+            "buttonApprovalLabel": "Approuver l'envoi"
+          }
+        },
+        "options": {}
+      },
+      "id": "n-approve",
+      "name": "3. Demander ma validation",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1440,
+        300
+      ],
+      "webhookId": "kordia-approval"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Apres validation : on recharge la liste complete preparee plus tot\nreturn $('1. Préparer les emails').all();\n"
+      },
+      "id": "n-reexpand",
+      "name": "4. Recharger la liste",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1640,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "batchSize": 1,
+        "options": {}
+      },
+      "id": "n-loop",
+      "name": "Boucle d'envoi",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1840,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "fromEmail": "Lancelot Loubier <lancelot@hellokordia.fr>",
+        "toEmail": "={{ $json.email }}",
+        "subject": "={{ $json.subject }}",
+        "emailFormat": "text",
+        "text": "={{ $json.body }}",
+        "options": {
+          "appendAttribution": false,
+          "replyTo": "contact@kordia.fr"
+        }
+      },
+      "id": "n-send",
+      "name": "Envoyer l'email",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        2080,
+        420
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "COLLE_ID_DE_TON_GOOGLE_SHEET",
+          "mode": "list",
+          "cachedResultName": "Kordia - Prospection"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Leads",
+          "mode": "list",
+          "cachedResultName": "Leads"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "email": "={{ $json.email }}",
+            "statut": "contacté",
+            "date_contact": "={{ new Date().toISOString().slice(0,10) }}"
+          },
+          "matchingColumns": [
+            "email"
+          ]
+        },
+        "options": {}
+      },
+      "id": "n-mark",
+      "name": "Marquer contacté",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2300,
+        420
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 15,
+        "unit": "minutes"
+      },
+      "id": "n-wait",
+      "name": "Attendre 15 min",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2520,
+        420
+      ],
+      "webhookId": "kordia-wait"
+    },
+    {
+      "parameters": {},
+      "id": "n-done",
+      "name": "Envoi terminé",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        2080,
+        200
+      ]
+    }
+  ],
+  "connections": {
+    "9h chaque jour": {
+      "main": [
+        [
+          {
+            "node": "Lire les leads",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire les leads": {
+      "main": [
+        [
+          {
+            "node": "Pas encore contactés",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pas encore contactés": {
+      "main": [
+        [
+          {
+            "node": "Max 25 / jour",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Max 25 / jour": {
+      "main": [
+        [
+          {
+            "node": "1. Préparer les emails",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "1. Préparer les emails": {
+      "main": [
+        [
+          {
+            "node": "2. Aperçu pour validation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "2. Aperçu pour validation": {
+      "main": [
+        [
+          {
+            "node": "3. Demander ma validation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "3. Demander ma validation": {
+      "main": [
+        [
+          {
+            "node": "4. Recharger la liste",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "4. Recharger la liste": {
+      "main": [
+        [
+          {
+            "node": "Boucle d'envoi",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Boucle d'envoi": {
+      "main": [
+        [
+          {
+            "node": "Envoi terminé",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Envoyer l'email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envoyer l'email": {
+      "main": [
+        [
+          {
+            "node": "Marquer contacté",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Marquer contacté": {
+      "main": [
+        [
+          {
+            "node": "Attendre 15 min",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Attendre 15 min": {
+      "main": [
+        [
+          {
+            "node": "Boucle d'envoi",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/Paris"
+  }
+}
