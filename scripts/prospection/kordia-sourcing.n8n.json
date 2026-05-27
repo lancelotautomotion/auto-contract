@@ -1,130 +1,31 @@
 {
-  "name": "Kordia - Sourcing gîtes (formulaire)",
+  "name": "Kordia - Sourcing gîtes (auto 9h)",
   "nodes": [
     {
       "parameters": {
-        "formTitle": "Kordia — Prospection",
-        "formDescription": "Choisis le département à prospecter aujourd'hui.",
-        "formFields": {
-          "values": [
+        "rule": {
+          "interval": [
             {
-              "fieldLabel": "Departement",
-              "fieldType": "dropdown",
-              "fieldOptions": {
-                "values": [
-                  {
-                    "option": "Dordogne"
-                  },
-                  {
-                    "option": "Lot"
-                  },
-                  {
-                    "option": "Gard"
-                  },
-                  {
-                    "option": "Vaucluse"
-                  },
-                  {
-                    "option": "Var"
-                  },
-                  {
-                    "option": "Alpes-Maritimes"
-                  },
-                  {
-                    "option": "Hérault"
-                  },
-                  {
-                    "option": "Pyrénées-Orientales"
-                  },
-                  {
-                    "option": "Pyrénées-Atlantiques"
-                  },
-                  {
-                    "option": "Landes"
-                  },
-                  {
-                    "option": "Gironde"
-                  },
-                  {
-                    "option": "Charente-Maritime"
-                  },
-                  {
-                    "option": "Vendée"
-                  },
-                  {
-                    "option": "Morbihan"
-                  },
-                  {
-                    "option": "Finistère"
-                  },
-                  {
-                    "option": "Côtes-d'Armor"
-                  },
-                  {
-                    "option": "Calvados"
-                  },
-                  {
-                    "option": "Manche"
-                  },
-                  {
-                    "option": "Savoie"
-                  },
-                  {
-                    "option": "Haute-Savoie"
-                  },
-                  {
-                    "option": "Isère"
-                  },
-                  {
-                    "option": "Hautes-Alpes"
-                  },
-                  {
-                    "option": "Ardèche"
-                  },
-                  {
-                    "option": "Drôme"
-                  },
-                  {
-                    "option": "Lozère"
-                  },
-                  {
-                    "option": "Aveyron"
-                  },
-                  {
-                    "option": "Corse-du-Sud"
-                  },
-                  {
-                    "option": "Haute-Corse"
-                  },
-                  {
-                    "option": "Haute-Loire"
-                  },
-                  {
-                    "option": "Cantal"
-                  }
-                ]
-              },
-              "requiredField": true
+              "field": "cronExpression",
+              "expression": "0 9 * * *"
             }
           ]
-        },
-        "options": {}
+        }
       },
-      "id": "node-form",
-      "name": "Formulaire",
-      "type": "n8n-nodes-base.formTrigger",
-      "typeVersion": 2.2,
+      "id": "n-cron",
+      "name": "9h chaque jour",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
       "position": [
         240,
         300
-      ],
-      "webhookId": "kordia-prospection-form"
+      ]
     },
     {
       "parameters": {
-        "jsCode": "// >>> A MODIFIER : colle ta cle Google Places ici <<<\nconst apiKey = \"COLLE_TA_CLE_GOOGLE_ICI\";\n\n// Departement choisi dans le formulaire\nconst d = $('Formulaire').first().json.Departement;\n\nconst modeles = [\"gîte {d}\", \"location saisonnière {d}\", \"chambre d'hôtes {d}\"];\nconst out = [];\nfor (const m of modeles) {\n  out.push({ json: { query: m.replace(\"{d}\", d), departement: d, apiKey } });\n}\nreturn out;\n"
+        "jsCode": "// >>> A MODIFIER : colle ta cle Google Places ici <<<\nconst apiKey = \"COLLE_TA_CLE_GOOGLE_ICI\";\n\n// Departements a prospecter (rotation : 1 different chaque jour). Edite la liste librement.\nconst departements = [\"Dordogne\", \"Lot\", \"Gard\", \"Vaucluse\", \"Var\", \"Alpes-Maritimes\", \"Hérault\", \"Pyrénées-Orientales\", \"Pyrénées-Atlantiques\", \"Landes\", \"Gironde\", \"Charente-Maritime\", \"Vendée\", \"Morbihan\", \"Finistère\", \"Côtes-d'Armor\", \"Calvados\", \"Manche\", \"Savoie\", \"Haute-Savoie\", \"Isère\", \"Hautes-Alpes\", \"Ardèche\", \"Drôme\", \"Lozère\", \"Aveyron\", \"Corse-du-Sud\", \"Haute-Corse\", \"Haute-Loire\", \"Cantal\"];\n\nconst start = Date.UTC(new Date().getUTCFullYear(), 0, 0);\nconst dayOfYear = Math.floor((Date.now() - start) / 86400000);\nconst d = departements[dayOfYear % departements.length];\n\nconst modeles = [\"gîte {d}\", \"location saisonnière {d}\", \"chambre d'hôtes {d}\"];\nconst out = [];\nfor (const m of modeles) {\n  out.push({ json: { query: m.replace(\"{d}\", d), departement: d, apiKey } });\n}\nreturn out;\n"
       },
-      "id": "node-preparer",
+      "id": "n-prep",
       "name": "1. Préparer les recherches",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -159,7 +60,7 @@
         "jsonBody": "={{ JSON.stringify({ textQuery: $json.query, languageCode: 'fr', regionCode: 'FR' }) }}",
         "options": {}
       },
-      "id": "node-places",
+      "id": "n-places",
       "name": "2. Google Places",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
@@ -170,9 +71,9 @@
     },
     {
       "parameters": {
-        "jsCode": "// Aplatit les resultats Google, garde ceux avec un site, deduplique par domaine\nconst departement = $('Formulaire').first().json.Departement;\nconst seen = new Set();\nconst out = [];\nfor (const item of $input.all()) {\n  const places = item.json.places || [];\n  for (const p of places) {\n    const site = p.websiteUri;\n    if (!site) continue;\n    const domain = site.toLowerCase().replace(/^https?:\\/\\//, \"\").replace(/^www\\./, \"\").split(\"/\")[0];\n    if (!domain || seen.has(domain)) continue;\n    seen.add(domain);\n    out.push({ json: {\n      departement,\n      nom: (p.displayName && p.displayName.text) || \"\",\n      adresse: p.formattedAddress || \"\",\n      telephone: p.nationalPhoneNumber || \"\",\n      site,\n    }});\n  }\n}\nreturn out;\n"
+        "jsCode": "// Aplatit les resultats Google, garde ceux avec un site, deduplique par domaine\nconst departement = $('1. Préparer les recherches').first().json.departement;\nconst seen = new Set();\nconst out = [];\nfor (const item of $input.all()) {\n  const places = item.json.places || [];\n  for (const p of places) {\n    const site = p.websiteUri;\n    if (!site) continue;\n    const domain = site.toLowerCase().replace(/^https?:\\/\\//, \"\").replace(/^www\\./, \"\").split(\"/\")[0];\n    if (!domain || seen.has(domain)) continue;\n    seen.add(domain);\n    out.push({ json: {\n      departement,\n      nom: (p.displayName && p.displayName.text) || \"\",\n      adresse: p.formattedAddress || \"\",\n      telephone: p.nationalPhoneNumber || \"\",\n      site,\n    }});\n  }\n}\nreturn out;\n"
       },
-      "id": "node-lister",
+      "id": "n-lister",
       "name": "3. Lister les gîtes (dédup)",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -183,9 +84,9 @@
     },
     {
       "parameters": {
-        "jsCode": "// Visite chaque site et extrait le premier email de contact trouve\nconst EMAIL_RE = /[A-Za-z0-9._%+\\-]+@[A-Za-z0-9.\\-]+\\.[A-Za-z]{2,}/g;\nconst BLOCK = [\"example.com\", \"exemple\", \"domaine.com\", \"votre\", \"utilisateur\", \"monemail\", \"test@\", \"wixpress\", \"sentry\", \"godaddy\", \"jimdo\",\n  \"squarespace\", \".png\", \".jpg\", \".jpeg\", \".gif\", \".webp\", \".svg\", \"@2x\"];\nconst seenEmails = new Set();\nconst out = [];\nfor (const item of $input.all()) {\n  const d = item.json;\n  let html = \"\";\n  try {\n    const res = await this.helpers.httpRequest({\n      url: d.site,\n      method: \"GET\",\n      timeout: 12000,\n      headers: { \"User-Agent\": \"Mozilla/5.0 (KordiaProspection)\" },\n    });\n    html = typeof res === \"string\" ? res : JSON.stringify(res);\n  } catch (e) {\n    html = \"\";\n  }\n  const found = (html.match(EMAIL_RE) || [])\n    .map((e) => e.toLowerCase().replace(/^(%[0-9a-f]{2})+/i, \"\").replace(/\\.$/, \"\"))\n    .filter((e) => !BLOCK.some((b) => e.includes(b)));\n  const email = found[0] || \"\";\n  if (email && seenEmails.has(email)) continue; // anti-doublon email dans ce run\n  if (email) seenEmails.add(email);\n  out.push({ json: {\n    departement: d.departement,\n    nom: d.nom,\n    email,\n    telephone: d.telephone,\n    site: d.site,\n    adresse: d.adresse,\n    date_ajout: new Date().toISOString().slice(0, 10),\n  }});\n  await new Promise((r) => setTimeout(r, 800));\n}\nreturn out;\n"
+        "jsCode": "// Visite chaque site et extrait le premier email de contact trouve\nconst EMAIL_RE = /[A-Za-z0-9._%+\\-]+@[A-Za-z0-9.\\-]+\\.[A-Za-z]{2,}/g;\nconst BLOCK = [\"example.com\", \"exemple\", \"domaine.com\", \"votre\", \"utilisateur\", \"monemail\", \"test@\", \"wixpress\", \"sentry\", \"godaddy\", \"jimdo\",\n  \"squarespace\", \".png\", \".jpg\", \".jpeg\", \".gif\", \".webp\", \".svg\", \"@2x\"];\nconst seenEmails = new Set();\nconst out = [];\nfor (const item of $input.all()) {\n  const d = item.json;\n  let html = \"\";\n  try {\n    const res = await this.helpers.httpRequest({\n      url: d.site, method: \"GET\", timeout: 12000,\n      headers: { \"User-Agent\": \"Mozilla/5.0 (KordiaProspection)\" },\n    });\n    html = typeof res === \"string\" ? res : JSON.stringify(res);\n  } catch (e) { html = \"\"; }\n  const found = (html.match(EMAIL_RE) || [])\n    .map((e) => e.toLowerCase().replace(/^(%[0-9a-f]{2})+/i, \"\").replace(/\\.$/, \"\"))\n    .filter((e) => !BLOCK.some((b) => e.includes(b)));\n  const email = found[0] || \"\";\n  if (email && seenEmails.has(email)) continue;\n  if (email) seenEmails.add(email);\n  out.push({ json: {\n    departement: d.departement, nom: d.nom, email,\n    telephone: d.telephone, site: d.site, adresse: d.adresse,\n    date_ajout: new Date().toISOString().slice(0, 10),\n  }});\n  await new Promise((r) => setTimeout(r, 800));\n}\nreturn out;\n"
       },
-      "id": "node-visiter",
+      "id": "n-visiter",
       "name": "4. Visiter site + extraire email",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -215,7 +116,7 @@
         },
         "options": {}
       },
-      "id": "node-filter",
+      "id": "n-filter",
       "name": "5. Garder ceux avec email",
       "type": "n8n-nodes-base.filter",
       "typeVersion": 2,
@@ -256,7 +157,7 @@
         },
         "options": {}
       },
-      "id": "node-sheet-leads",
+      "id": "n-leads",
       "name": "6. Enregistrer (anti-doublon)",
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.5,
@@ -267,9 +168,9 @@
     },
     {
       "parameters": {
-        "jsCode": "// Resume du scrape : 1 ligne pour le Journal (compteur)\nconst items = $input.all();\nconst departement = $('Formulaire').first().json.Departement;\nreturn [{ json: {\n  departement,\n  date: new Date().toISOString().slice(0, 16).replace(\"T\", \" \"),\n  nb_leads: items.length,\n}}];\n"
+        "jsCode": "// Resume du scrape : 1 ligne pour le Journal (compteur)\nconst items = $input.all();\nconst departement = $('1. Préparer les recherches').first().json.departement;\nreturn [{ json: {\n  departement,\n  date: new Date().toISOString().slice(0, 16).replace(\"T\", \" \"),\n  nb_leads: items.length,\n}}];\n"
       },
-      "id": "node-resume",
+      "id": "n-resume",
       "name": "7. Résumé du scrape",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -303,7 +204,7 @@
         },
         "options": {}
       },
-      "id": "node-sheet-journal",
+      "id": "n-journal",
       "name": "8. Journal (compteur)",
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.5,
@@ -314,7 +215,7 @@
     }
   ],
   "connections": {
-    "Formulaire": {
+    "9h chaque jour": {
       "main": [
         [
           {

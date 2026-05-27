@@ -1,5 +1,5 @@
 {
-  "name": "Kordia - Envoi cold email",
+  "name": "Kordia - Envoi cold email (11h30 & 18h30)",
   "nodes": [
     {
       "parameters": {
@@ -7,13 +7,17 @@
           "interval": [
             {
               "field": "cronExpression",
-              "expression": "0 9 * * *"
+              "expression": "30 11 * * *"
+            },
+            {
+              "field": "cronExpression",
+              "expression": "30 18 * * *"
             }
           ]
         }
       },
       "id": "n-cron",
-      "name": "9h chaque jour",
+      "name": "11h30 et 18h30",
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
       "position": [
@@ -86,10 +90,10 @@
     },
     {
       "parameters": {
-        "maxItems": 25
+        "maxItems": 12
       },
       "id": "n-limit",
-      "name": "Max 25 / jour",
+      "name": "Max 12 / envoi",
       "type": "n8n-nodes-base.limit",
       "typeVersion": 1,
       "position": [
@@ -261,17 +265,6 @@
     }
   ],
   "connections": {
-    "9h chaque jour": {
-      "main": [
-        [
-          {
-            "node": "Lire les leads",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Lire les leads": {
       "main": [
         [
@@ -287,18 +280,7 @@
       "main": [
         [
           {
-            "node": "Max 25 / jour",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Max 25 / jour": {
-      "main": [
-        [
-          {
-            "node": "1. Préparer les emails",
+            "node": "Max 12 / envoi",
             "type": "main",
             "index": 0
           }
@@ -394,6 +376,28 @@
         [
           {
             "node": "Boucle d'envoi",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "11h30 et 18h30": {
+      "main": [
+        [
+          {
+            "node": "Lire les leads",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Max 12 / envoi": {
+      "main": [
+        [
+          {
+            "node": "1. Préparer les emails",
             "type": "main",
             "index": 0
           }
