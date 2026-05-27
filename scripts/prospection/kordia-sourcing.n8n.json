@@ -62,7 +62,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Aplatit les resultats Google, garde ceux avec un site, deduplique par domaine\nconst seen = new Set();\nconst out = [];\nfor (const item of $input.all()) {\n  const places = item.json.places || [];\n  for (const p of places) {\n    const site = p.websiteUri;\n    if (!site) continue;\n    let domain = \"\";\n    try { domain = new URL(site).hostname.replace(/^www\\./, \"\").toLowerCase(); }\n    catch (e) { continue; }\n    if (!domain || seen.has(domain)) continue;\n    seen.add(domain);\n    out.push({ json: {\n      nom: (p.displayName && p.displayName.text) || \"\",\n      adresse: p.formattedAddress || \"\",\n      telephone: p.nationalPhoneNumber || \"\",\n      site,\n    }});\n  }\n}\nreturn out;\n"
+        "jsCode": "// Aplatit les resultats Google, garde ceux avec un site, deduplique par domaine\nconst seen = new Set();\nconst out = [];\nfor (const item of $input.all()) {\n  const places = item.json.places || [];\n  for (const p of places) {\n    const site = p.websiteUri;\n    if (!site) continue;\n    const domain = site.toLowerCase().replace(/^https?:\\/\\//, \"\").replace(/^www\\./, \"\").split(\"/\")[0];\n    if (!domain || seen.has(domain)) continue;\n    seen.add(domain);\n    out.push({ json: {\n      nom: (p.displayName && p.displayName.text) || \"\",\n      adresse: p.formattedAddress || \"\",\n      telephone: p.nationalPhoneNumber || \"\",\n      site,\n    }});\n  }\n}\nreturn out;\n"
       },
       "id": "node-lister",
       "name": "3. Lister les gîtes (dédup)",
