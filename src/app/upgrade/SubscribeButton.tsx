@@ -35,7 +35,7 @@ export default function SubscribeButton({ disabled, plan = "essential" }: Props)
 
   const label = loading
     ? "Redirection vers le paiement…"
-    : "Souscrire — à partir de 9,99 € HT / mois";
+    : "Souscrire";
 
   return (
     <div>

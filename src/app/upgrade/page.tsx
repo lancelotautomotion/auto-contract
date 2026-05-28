@@ -139,14 +139,22 @@ export default async function UpgradePage({ searchParams }: { searchParams: Prom
                   <span style={{ fontSize: '13px', color: '#A3A3A0', paddingBottom: '6px' }}>HT / mois</span>
                 </div>
                 <p style={{ fontSize: '13px', color: '#71716E', margin: 0, lineHeight: 1.5 }}>
-                  1 hébergement à 9,99 € · puis 19,99 €/mois de 2 à 5 hébergements entiers.
+                  Selon votre nombre d&apos;hébergements&nbsp;:
                 </p>
-                {giteCount > 0 && (
-                  <div style={{ marginTop: '12px', padding: '10px 12px', background: 'rgba(127,119,221,.07)', border: '1px solid rgba(127,119,221,.2)', borderRadius: '9px' }}>
-                    <p style={{ fontSize: '12.5px', color: '#5B52B5', margin: 0, lineHeight: 1.5, fontWeight: 600 }}>
-                      Vous avez {billedQuantity} hébergement{billedQuantity > 1 ? 's' : ''} actif{billedQuantity > 1 ? 's' : ''} → facturation <strong>{monthlyPrice} HT/mois</strong>.
-                    </p>
+                <div style={{ marginTop: '10px', display: 'flex', gap: '8px' }}>
+                  <div style={{ flex: 1, padding: '10px', textAlign: 'center', background: billedQuantity <= 1 ? 'rgba(127,119,221,.1)' : '#F7F6F2', border: `1.5px solid ${billedQuantity <= 1 ? 'rgba(127,119,221,.4)' : '#ECEAE4'}`, borderRadius: '10px' }}>
+                    <div style={{ fontSize: '16px', fontWeight: 800, color: '#2C2C2A' }}>9,99 €</div>
+                    <div style={{ fontSize: '11px', color: '#71716E', marginTop: '2px' }}>1 hébergement</div>
                   </div>
+                  <div style={{ flex: 1, padding: '10px', textAlign: 'center', background: billedQuantity > 1 ? 'rgba(127,119,221,.1)' : '#F7F6F2', border: `1.5px solid ${billedQuantity > 1 ? 'rgba(127,119,221,.4)' : '#ECEAE4'}`, borderRadius: '10px' }}>
+                    <div style={{ fontSize: '16px', fontWeight: 800, color: '#2C2C2A' }}>19,99 €</div>
+                    <div style={{ fontSize: '11px', color: '#71716E', marginTop: '2px' }}>2 à 5 hébergements</div>
+                  </div>
+                </div>
+                {giteCount > 0 && (
+                  <p style={{ fontSize: '12.5px', color: '#5B52B5', margin: '10px 0 0', lineHeight: 1.5, fontWeight: 600, textAlign: 'center' }}>
+                    Votre cas&nbsp;: {billedQuantity} hébergement{billedQuantity > 1 ? 's' : ''} = <strong>{monthlyPrice}/mois</strong>
+                  </p>
                 )}
               </div>
               <hr className="upgrade-card-divider" />
