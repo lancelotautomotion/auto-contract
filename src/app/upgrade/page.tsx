@@ -132,7 +132,7 @@ export default async function UpgradePage({ searchParams }: { searchParams: Prom
             </div>
             <div style={{ padding: '24px 26px 24px', display: 'flex', flexDirection: 'column', flex: 1 }}>
               <div className="upgrade-card-top">
-                <p style={{ fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color: '#7F77DD', margin: '0 0 6px' }}>Essentiel</p>
+                <p style={{ fontSize: '15px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.06em', color: '#7F77DD', margin: '0 0 8px' }}>Essentiel</p>
                 <div style={{ display: 'flex', alignItems: 'flex-end', gap: '6px', marginBottom: '4px' }}>
                   <span style={{ fontSize: '13px', color: '#71716E', fontWeight: 600, paddingBottom: '8px' }}>dès</span>
                   <span style={{ fontSize: '30px', fontWeight: 800, color: '#2C2C2A', letterSpacing: '-0.04em', lineHeight: 1 }}>9,99 €</span>
@@ -181,7 +181,7 @@ export default async function UpgradePage({ searchParams }: { searchParams: Prom
             </div>
             <div style={{ padding: '24px 26px 24px', display: 'flex', flexDirection: 'column', flex: 1 }}>
               <div className="upgrade-card-top">
-                <p style={{ fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color: '#689D71', margin: '0 0 6px' }}>Maison d&apos;Hôtes</p>
+                <p style={{ fontSize: '15px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.06em', color: '#689D71', margin: '0 0 8px' }}>Maison d&apos;Hôtes</p>
                 <div style={{ display: 'flex', alignItems: 'flex-end', gap: '6px', marginBottom: '4px' }}>
                   <span style={{ fontSize: '30px', fontWeight: 800, color: '#2C2C2A', letterSpacing: '-0.04em', lineHeight: 1 }}>19,99 €</span>
                   <span style={{ fontSize: '13px', color: '#A3A3A0', paddingBottom: '6px' }}>HT / mois</span>
@@ -213,7 +213,7 @@ export default async function UpgradePage({ searchParams }: { searchParams: Prom
             </div>
             <div style={{ padding: '24px 26px 24px', display: 'flex', flexDirection: 'column', flex: 1 }}>
               <div className="upgrade-card-top">
-                <p style={{ fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color: '#689D71', margin: '0 0 6px' }}>Kordia Étape</p>
+                <p style={{ fontSize: '15px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.06em', color: '#689D71', margin: '0 0 8px' }}>Kordia Étape</p>
                 <div style={{ display: 'flex', alignItems: 'flex-end', gap: '6px', marginBottom: '4px' }}>
                   <span style={{ fontSize: '30px', fontWeight: 800, color: '#2C2C2A', letterSpacing: '-0.04em', lineHeight: 1 }}>24,99 €</span>
                   <span style={{ fontSize: '13px', color: '#A3A3A0', paddingBottom: '6px' }}>HT / mois</span>
