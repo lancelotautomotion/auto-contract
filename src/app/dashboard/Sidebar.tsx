@@ -6,7 +6,7 @@ import { useClerk } from "@clerk/nextjs";
 import type { TrialInfo } from "@/lib/trial";
 import GiteSelector from "@/components/GiteSelector";
 
-export default function Sidebar({ pendingCount = 0, trialInfo, mobileOpen, onMobileClose, gites = [], activeGiteId = '', isAdmin = false }: {
+export default function Sidebar({ pendingCount = 0, trialInfo, mobileOpen, onMobileClose, gites = [], activeGiteId = '', isAdmin = false, planActive = false }: {
   pendingCount?: number;
   trialInfo?: TrialInfo | null;
   mobileOpen?: boolean;
@@ -14,6 +14,7 @@ export default function Sidebar({ pendingCount = 0, trialInfo, mobileOpen, onMob
   gites?: Array<{ id: string; name: string }>;
   activeGiteId?: string;
   isAdmin?: boolean;
+  planActive?: boolean;
 }) {
   const pathname = usePathname();
   const { signOut } = useClerk();
@@ -42,7 +43,7 @@ export default function Sidebar({ pendingCount = 0, trialInfo, mobileOpen, onMob
       {/* Gite selector */}
       {gites.length > 0 && activeGiteId && (
         <div className="sb-gite-selector">
-          <GiteSelector gites={gites} activeGiteId={activeGiteId} isAdmin={isAdmin} />
+          <GiteSelector gites={gites} activeGiteId={activeGiteId} isAdmin={isAdmin} planActive={planActive} />
         </div>
       )}
 

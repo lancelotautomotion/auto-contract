@@ -10,6 +10,7 @@ interface Props {
   gites: Gite[];
   activeGiteId: string;
   isAdmin?: boolean;
+  planActive?: boolean;
 }
 
 function ChevronDown() {
@@ -28,7 +29,7 @@ function PlusIcon() {
   );
 }
 
-export default function GiteSelector({ gites, activeGiteId, isAdmin = false }: Props) {
+export default function GiteSelector({ gites, activeGiteId, isAdmin = false, planActive = false }: Props) {
   const router = useRouter();
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
@@ -136,6 +137,8 @@ export default function GiteSelector({ gites, activeGiteId, isAdmin = false }: P
       {/* Add Gite Modal */}
       {showAddModal && typeof window !== 'undefined' && createPortal(
         <AddGiteModal
+          currentCount={gites.length}
+          planActive={planActive}
           onClose={() => setShowAddModal(false)}
           onCreated={(newGiteId) => {
             setShowAddModal(false);
@@ -165,8 +168,10 @@ export default function GiteSelector({ gites, activeGiteId, isAdmin = false }: P
 /* ─── AddGiteModal ─────────────────────────────────────────────── */
 
 function AddGiteModal({
-  onClose, onCreated, onUpgradeRequired, onMaxReached,
+  currentCount, planActive, onClose, onCreated, onUpgradeRequired, onMaxReached,
 }: {
+  currentCount: number;
+  planActive: boolean;
   onClose: () => void;
   onCreated: (giteId: string) => void;
   onUpgradeRequired: () => void;
@@ -177,6 +182,10 @@ function AddGiteModal({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // Le passage de 1 → 2 hébergements fait basculer la facturation du palier
+  // 9,99 € au palier 19,99 €. Au-delà (2 → 5) le prix ne bouge plus.
+  const willChangePrice = currentCount === 1;
 
   useEffect(() => { setTimeout(() => inputRef.current?.focus(), 50); }, []);
 
@@ -222,9 +231,33 @@ function AddGiteModal({
         <h2 style={{ fontSize: '18px', fontWeight: 800, color: '#2C2C2A', letterSpacing: '-0.02em', marginBottom: '6px' }}>
           Ajouter un hébergement
         </h2>
-        <p style={{ fontSize: '13px', color: '#71716E', lineHeight: 1.6, marginBottom: '24px' }}>
+        <p style={{ fontSize: '13px', color: '#71716E', lineHeight: 1.6, marginBottom: willChangePrice ? '16px' : '24px' }}>
           Vous pouvez configurer les contrats, les options et la page de réservation après la création.
         </p>
+
+        {willChangePrice && (
+          <div style={{
+            padding: '14px 16px', marginBottom: '24px', borderRadius: '11px',
+            background: 'rgba(127,119,221,.08)', border: '1.5px solid rgba(127,119,221,.3)',
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
+              <svg width="16" height="16" fill="none" viewBox="0 0 16 16" style={{ flexShrink: 0 }}>
+                <circle cx="8" cy="8" r="6.5" stroke="#5B52B5" strokeWidth="1.3"/>
+                <path d="M8 7.5v3M8 5h.01" stroke="#5B52B5" strokeWidth="1.4" strokeLinecap="round"/>
+              </svg>
+              <span style={{ fontSize: '13px', fontWeight: 800, color: '#5B52B5' }}>
+                Votre tarif évolue
+              </span>
+            </div>
+            <p style={{ fontSize: '12.5px', color: '#5B52B5', lineHeight: 1.6, margin: 0 }}>
+              En ajoutant un 2<sup>e</sup> hébergement, votre abonnement passe de{' '}
+              <strong>9,99 €</strong> à <strong>19,99 € HT/mois</strong> (forfait 2 à 5 hébergements).
+              {planActive
+                ? ' Le montant sera ajusté au prorata et prélevé dès maintenant.'
+                : ' Ce tarif s’appliquera à votre abonnement à la fin de l’essai.'}
+            </p>
+          </div>
+        )}
 
         <form onSubmit={handleSubmit}>
           <div style={{ marginBottom: '16px' }}>
@@ -297,7 +330,7 @@ function AddGiteModal({
                 transition: 'opacity .2s',
               }}
             >
-              {loading ? 'Création…' : 'Créer'}
+              {loading ? 'Création…' : willChangePrice ? 'Confirmer et ajouter' : 'Créer'}
             </button>
           </div>
         </form>
