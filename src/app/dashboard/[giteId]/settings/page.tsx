@@ -12,7 +12,7 @@ export default async function SettingsPage({ params }: { params: Promise<{ giteI
   const dbUser = await prisma.user.findUnique({ where: { clerkId: userId } });
   if (!dbUser) redirect("/onboarding");
 
-  const gite = await prisma.gite.findFirst({ where: { id: giteId, userId: dbUser.id } });
+  const gite = await prisma.gite.findFirst({ where: { id: giteId, userId: dbUser.id, deletedAt: null } });
   if (!gite) redirect("/dashboard");
 
   return (

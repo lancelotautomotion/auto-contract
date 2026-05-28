@@ -12,11 +12,11 @@ export async function GET(req: NextRequest) {
 
   let giteWhere = {};
   if (giteId) {
-    const gite = await prisma.gite.findFirst({ where: { id: giteId, userId: ctx.userId } });
+    const gite = await prisma.gite.findFirst({ where: { id: giteId, userId: ctx.userId, deletedAt: null } });
     if (!gite) return NextResponse.json({ feeds: [] });
     giteWhere = { giteId };
   } else {
-    const gite = await prisma.gite.findFirst({ where: { userId: ctx.userId } });
+    const gite = await prisma.gite.findFirst({ where: { userId: ctx.userId, deletedAt: null } });
     if (!gite) return NextResponse.json({ feeds: [] });
     giteWhere = { giteId: gite.id };
   }
@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
   } else {
     const [ctx, err] = await requireAuth();
     if (err) return err;
-    const gite = await prisma.gite.findFirst({ where: { userId: ctx.userId } });
+    const gite = await prisma.gite.findFirst({ where: { userId: ctx.userId, deletedAt: null } });
     if (!gite) return NextResponse.json({ error: "Gîte introuvable" }, { status: 404 });
     resolvedGiteId = gite.id;
   }

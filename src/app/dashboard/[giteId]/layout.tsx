@@ -30,12 +30,12 @@ export default async function GiteLayout({
 
     // Security: verify the requested giteId belongs to this user
     const activeGite = await prisma.gite.findFirst({
-      where: { id: giteId, userId: dbUser.id },
+      where: { id: giteId, userId: dbUser.id, deletedAt: null },
     });
     if (!activeGite) redirect('/dashboard');
 
     gites = await prisma.gite.findMany({
-      where: { userId: dbUser.id },
+      where: { userId: dbUser.id, deletedAt: null },
       select: { id: true, name: true },
       orderBy: { createdAt: 'asc' },
     });

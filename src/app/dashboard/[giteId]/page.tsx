@@ -27,7 +27,7 @@ export default async function DashboardPage({ params }: { params: Promise<{ gite
   const dbUser = await prisma.user.findUnique({ where: { clerkId: userId } }).catch(() => null);
   if (!dbUser) redirect("/onboarding");
 
-  const gite = await prisma.gite.findFirst({ where: { id: giteId, userId: dbUser.id } }).catch(() => null);
+  const gite = await prisma.gite.findFirst({ where: { id: giteId, userId: dbUser.id, deletedAt: null } }).catch(() => null);
   if (!gite) redirect("/dashboard");
 
   const isMultiPlan = dbUser.planTier === 'multi';
@@ -39,7 +39,7 @@ export default async function DashboardPage({ params }: { params: Promise<{ gite
   try {
     // Fetch gîte list: all for multi plan, just current for essential
     const allUserGites = isMultiPlan
-      ? await prisma.gite.findMany({ where: { userId: dbUser.id }, orderBy: { createdAt: 'asc' } })
+      ? await prisma.gite.findMany({ where: { userId: dbUser.id, deletedAt: null }, orderBy: { createdAt: 'asc' } })
       : [gite];
 
     const allGiteIds = allUserGites.map(g => g.id);

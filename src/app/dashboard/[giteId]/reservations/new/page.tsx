@@ -14,7 +14,7 @@ export default async function NewReservationPage({ params }: { params: Promise<{
   if (!dbUser) redirect("/onboarding");
 
   const gite = await prisma.gite.findFirst({
-    where: { id: giteId, userId: dbUser.id },
+    where: { id: giteId, userId: dbUser.id, deletedAt: null },
     include: { options: { orderBy: { position: 'asc' } }, icalFeeds: true },
   });
   if (!gite) redirect("/dashboard");

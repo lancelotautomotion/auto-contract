@@ -23,7 +23,7 @@ export default async function ArchivesPage({
   if (!dbUser) redirect("/dashboard");
 
   // Verify ownership
-  const gite = await prisma.gite.findFirst({ where: { id: giteId, userId: dbUser.id }, select: { id: true } });
+  const gite = await prisma.gite.findFirst({ where: { id: giteId, userId: dbUser.id, deletedAt: null }, select: { id: true } });
   if (!gite) redirect("/dashboard");
 
   const searchFilter = search

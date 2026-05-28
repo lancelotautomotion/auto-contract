@@ -14,7 +14,7 @@ export default async function ReservationsPage({ params }: { params: Promise<{ g
   const dbUser = await prisma.user.findUnique({ where: { clerkId: userId } });
   if (!dbUser) redirect("/dashboard");
 
-  const gite = await prisma.gite.findFirst({ where: { id: giteId, userId: dbUser.id }, select: { slug: true } });
+  const gite = await prisma.gite.findFirst({ where: { id: giteId, userId: dbUser.id, deletedAt: null }, select: { slug: true } });
   if (!gite) redirect("/dashboard");
 
   const allReservations = await prisma.reservation.findMany({

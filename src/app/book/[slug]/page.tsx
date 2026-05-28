@@ -5,8 +5,8 @@ import BookingForm from "./BookingForm";
 export default async function BookingPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
 
-  const gite = await prisma.gite.findUnique({
-    where: { slug },
+  const gite = await prisma.gite.findFirst({
+    where: { slug, deletedAt: null },
     include: {
       options: { orderBy: { position: 'asc' } },
       icalFeeds: true,

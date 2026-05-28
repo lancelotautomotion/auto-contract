@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
 
   // La quantité de l'abonnement reflète le nombre d'hébergements (1 → 9,99 €,
   // 2 à 5 → 19,99 € via les paliers volume du prix Stripe).
-  const giteCount = await prisma.gite.count({ where: { userId: dbUser.id } });
+  const giteCount = await prisma.gite.count({ where: { userId: dbUser.id, deletedAt: null } });
   const quantity = clampGiteQuantity(giteCount);
 
   const clerkUser = await currentUser();

@@ -11,7 +11,7 @@ export default async function OnboardingPage() {
 
   const dbUser = await prisma.user.findUnique({ where: { clerkId: userId } }).catch(() => null);
   if (dbUser) {
-    const gite = await prisma.gite.findFirst({ where: { userId: dbUser.id } }).catch(() => null);
+    const gite = await prisma.gite.findFirst({ where: { userId: dbUser.id, deletedAt: null } }).catch(() => null);
     if (gite) redirect("/dashboard");
   }
 

@@ -17,8 +17,8 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ slu
     );
   }
 
-  const gite = await prisma.gite.findUnique({
-    where: { slug },
+  const gite = await prisma.gite.findFirst({
+    where: { slug, deletedAt: null },
     include: { options: true, user: true },
   });
 

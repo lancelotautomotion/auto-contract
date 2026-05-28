@@ -18,7 +18,7 @@ export async function PATCH(
   const body = await req.json();
 
   const gite = await prisma.gite.findFirst({
-    where: { userId: ctx.userId },
+    where: { userId: ctx.userId, deletedAt: null },
     include: { options: true },
   });
 
