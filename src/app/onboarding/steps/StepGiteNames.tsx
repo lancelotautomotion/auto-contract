@@ -9,6 +9,8 @@ const PLACEHOLDERS = [
   "Le Clos du Marida",
   "La Maison des Lavandes",
   "Le Chalet des Cimes",
+  "La Bastide des Oliviers",
+  "Le Refuge des Cimes",
 ];
 
 export default function StepGiteNames({ count, names, onChange, errors }: Props) {

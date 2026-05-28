@@ -15,11 +15,12 @@ import StepManager from "./steps/StepManager";
 import StepConfig from "./steps/StepConfig";
 import StepSuccess from "./steps/StepSuccess";
 
-type Plan = "essential" | "multi";
+type Plan = "essential";
 type StepId = "welcome" | "plan" | "gite-count" | "gite-names" | "property" | "contact" | "config" | "success";
 
-const ESSENTIAL_STEPS: StepId[] = ["welcome", "plan", "property", "contact", "config", "success"];
-const MULTI_STEPS: StepId[] = ["welcome", "plan", "gite-count", "gite-names", "contact", "config", "success"];
+// Essentiel couvre jusqu'à 5 hébergements : 1 gîte = parcours simple, 2 à 5 = parcours multi.
+const SINGLE_STEPS: StepId[] = ["welcome", "plan", "gite-count", "property", "contact", "config", "success"];
+const MULTI_GITE_STEPS: StepId[] = ["welcome", "plan", "gite-count", "gite-names", "contact", "config", "success"];
 
 const STEP_FIELDS: Partial<Record<StepId, (keyof OnboardingValues)[]>> = {
   property: ["giteName"],
@@ -44,12 +45,11 @@ export default function OnboardingContainer({ firstName, defaultEmail }: { first
   const [submitError, setSubmitError] = useState<string | null>(null);
 
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
-  const [committedPlan, setCommittedPlan] = useState<Plan | null>(null);
   const [giteCount, setGiteCount] = useState<number | null>(null);
-  const [giteNames, setGiteNames] = useState<string[]>(["", "", ""]);
+  const [giteNames, setGiteNames] = useState<string[]>(["", "", "", "", ""]);
   const [giteNameErrors, setGiteNameErrors] = useState<string[]>([]);
-  const [giteConfigs, setGiteConfigs] = useState<GiteConfig[]>([EMPTY_CONFIG, EMPTY_CONFIG, EMPTY_CONFIG]);
-  const [configErrors, setConfigErrors] = useState<GiteConfigErrors[]>([{}, {}, {}]);
+  const [giteConfigs, setGiteConfigs] = useState<GiteConfig[]>([EMPTY_CONFIG, EMPTY_CONFIG, EMPTY_CONFIG, EMPTY_CONFIG, EMPTY_CONFIG]);
+  const [configErrors, setConfigErrors] = useState<GiteConfigErrors[]>([{}, {}, {}, {}, {}]);
 
   const { register, trigger, getValues, formState: { errors } } = useForm<OnboardingValues>({
     defaultValues: {
@@ -61,10 +61,11 @@ export default function OnboardingContainer({ firstName, defaultEmail }: { first
     mode: "onTouched",
   });
 
-  const steps = committedPlan === "multi" ? MULTI_STEPS : ESSENTIAL_STEPS;
+  const isMultiGite = (giteCount ?? 1) > 1;
+  const steps = isMultiGite ? MULTI_GITE_STEPS : SINGLE_STEPS;
   const currentStep = steps[stepIndex];
 
-  const formSteps = steps.filter(s => s !== "welcome" && s !== "success");
+  const formSteps: StepId[] = steps.filter(s => s !== "welcome" && s !== "success");
   const dotIndex = formSteps.indexOf(currentStep);
 
   const advance = () => { setDirection(1); setStepIndex(i => i + 1); };
@@ -118,8 +119,6 @@ export default function OnboardingContainer({ firstName, defaultEmail }: { first
   const goNext = async () => {
     if (currentStep === "plan") {
       if (!selectedPlan) return;
-      setCommittedPlan(selectedPlan);
-      if (selectedPlan !== "multi") { setGiteCount(null); setGiteNames(["", "", ""]); }
       advance();
       return;
     }
@@ -137,7 +136,7 @@ export default function OnboardingContainer({ firstName, defaultEmail }: { first
     }
 
     if (currentStep === "config") {
-      if (committedPlan === "multi") {
+      if (isMultiGite) {
         if (!validateGiteConfigs()) return;
         const cguValid = await trigger(["cguAccepted"]);
         if (!cguValid) return;
@@ -164,7 +163,7 @@ export default function OnboardingContainer({ firstName, defaultEmail }: { first
     setSubmitting(true);
     setSubmitError(null);
 
-    const primaryName = committedPlan === "multi" ? (giteNames[0] || v.giteName) : v.giteName;
+    const primaryName = isMultiGite ? (giteNames[0] || v.giteName) : v.giteName;
 
     const slug = primaryName
       .toLowerCase()
@@ -173,7 +172,7 @@ export default function OnboardingContainer({ firstName, defaultEmail }: { first
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/^-+|-+$/g, "");
 
-    const primaryConfig = committedPlan === "multi" ? giteConfigs[0] : null;
+    const primaryConfig = isMultiGite ? giteConfigs[0] : null;
 
     try {
       const res = await fetch("/api/onboarding", {
@@ -190,8 +189,8 @@ export default function OnboardingContainer({ firstName, defaultEmail }: { first
           cleaningFee: primaryConfig ? Number(primaryConfig.cleaningFee) : Number(v.cleaningFee),
           touristTax: primaryConfig ? Number(primaryConfig.touristTax) : Number(v.touristTax),
           slug,
-          planTier: committedPlan ?? "essential",
-          extraGites: committedPlan === "multi" && giteCount
+          planTier: "essential",
+          extraGites: isMultiGite && giteCount
             ? giteNames.slice(1, giteCount).map((name, i) => ({
                 name: name.trim(),
                 capacity: Number(giteConfigs[i + 1]?.capacity || 0),
@@ -277,7 +276,7 @@ export default function OnboardingContainer({ firstName, defaultEmail }: { first
                 <StepConfig
                   register={register}
                   errors={errors}
-                  isMulti={committedPlan === "multi"}
+                  isMulti={isMultiGite}
                   giteNames={giteNames}
                   giteCount={giteCount ?? 1}
                   giteConfigs={giteConfigs}
@@ -287,8 +286,8 @@ export default function OnboardingContainer({ firstName, defaultEmail }: { first
               )}
               {currentStep === "success" && (
                 <StepSuccess
-                  giteName={committedPlan === "multi" ? giteNames[0] : getValues("giteName")}
-                  isMulti={committedPlan === "multi"}
+                  giteName={isMultiGite ? giteNames[0] : getValues("giteName")}
+                  isMulti={isMultiGite}
                   giteCount={giteCount ?? 1}
                   giteNames={giteNames}
                   onDashboard={() => router.push("/dashboard")}

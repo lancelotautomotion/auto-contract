@@ -1,6 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
-import { cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
 import { TRIAL_DAYS } from "@/lib/trial";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
@@ -30,14 +29,10 @@ export async function POST(req: NextRequest) {
 
     const body = await req.json();
 
-    const cookieStore = await cookies();
-    const planIntent = cookieStore.get("kordia_plan_intent")?.value;
-    // planTier from request body takes priority (explicit onboarding step)
-    const planTier: string =
-      body.planTier === "multi" ? "multi"
-      : body.planTier === "essential" ? "essential"
-      : planIntent === "multi" ? "multi"
-      : "essential";
+    // L'offre Essentiel couvre désormais jusqu'à 5 hébergements
+    // (1 = 9,99 € HT/mois, 2 à 5 = 19,99 € HT/mois). C'est le seul
+    // plan souscriptible à l'onboarding.
+    const planTier = "essential";
 
     let user = await prisma.user.findUnique({ where: { clerkId: userId } }).catch(() => null);
     if (!user) {
@@ -120,9 +115,7 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    const response = NextResponse.json(gite, { status: 200 });
-    response.cookies.delete("kordia_plan_intent");
-    return response;
+    return NextResponse.json(gite, { status: 200 });
   } catch (err) {
     console.error("[onboarding] POST error:", err);
     return NextResponse.json({ error: "Erreur serveur. Veuillez réessayer." }, { status: 500 });

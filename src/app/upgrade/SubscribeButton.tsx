@@ -4,7 +4,7 @@ import { useState } from "react";
 
 interface Props {
   disabled?: boolean;
-  plan?: "essential" | "multi";
+  plan?: "essential";
 }
 
 export default function SubscribeButton({ disabled, plan = "essential" }: Props) {
@@ -35,9 +35,7 @@ export default function SubscribeButton({ disabled, plan = "essential" }: Props)
 
   const label = loading
     ? "Redirection vers le paiement…"
-    : plan === "multi"
-      ? "Souscrire — 14,99 € HT / mois"
-      : "Souscrire — 9,99 € HT / mois";
+    : "Souscrire — à partir de 9,99 € HT / mois";
 
   return (
     <div>

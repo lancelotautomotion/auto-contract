@@ -32,22 +32,14 @@ export async function POST(req: NextRequest) {
   const { sessionClaims } = await auth();
   const isAdmin = (sessionClaims?.metadata as Record<string, unknown> | undefined)?.role === "admin";
 
-  if (!isAdmin) {
-    const isEssential = user.planTier === "essential";
-    const isMulti = user.planTier === "multi";
-
-    if (isEssential && giteCount >= 1) {
-      return NextResponse.json(
-        { error: "Plan Essentiel limité à 1 hébergement", code: "UPGRADE_REQUIRED" },
-        { status: 402 }
-      );
-    }
-    if (isMulti && giteCount >= 3) {
-      return NextResponse.json(
-        { error: "Plan Multi-Gîtes limité à 3 hébergements", code: "MAX_REACHED" },
-        { status: 402 }
-      );
-    }
+  // Le plan Essentiel couvre jusqu'à 5 hébergements entiers
+  // (9,99 €/mois pour 1, puis 19,99 €/mois de 2 à 5).
+  const MAX_GITES = 5;
+  if (!isAdmin && giteCount >= MAX_GITES) {
+    return NextResponse.json(
+      { error: `Plan Essentiel limité à ${MAX_GITES} hébergements`, code: "MAX_REACHED" },
+      { status: 402 }
+    );
   }
 
   const body = await req.json();

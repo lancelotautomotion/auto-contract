@@ -128,11 +128,12 @@ export default async function UpgradePage({ searchParams }: { searchParams: Prom
               <div className="upgrade-card-top">
                 <p style={{ fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color: '#7F77DD', margin: '0 0 6px' }}>Essentiel</p>
                 <div style={{ display: 'flex', alignItems: 'flex-end', gap: '6px', marginBottom: '4px' }}>
+                  <span style={{ fontSize: '13px', color: '#71716E', fontWeight: 600, paddingBottom: '8px' }}>dès</span>
                   <span style={{ fontSize: '30px', fontWeight: 800, color: '#2C2C2A', letterSpacing: '-0.04em', lineHeight: 1 }}>9,99 €</span>
                   <span style={{ fontSize: '13px', color: '#A3A3A0', paddingBottom: '6px' }}>HT / mois</span>
                 </div>
                 <p style={{ fontSize: '13px', color: '#71716E', margin: 0, lineHeight: 1.5 }}>
-                  Tout inclus. Sans engagement.
+                  1 hébergement à 9,99 € · puis 19,99 €/mois de 2 à 5 hébergements entiers.
                 </p>
               </div>
               <hr className="upgrade-card-divider" />
@@ -151,33 +152,35 @@ export default async function UpgradePage({ searchParams }: { searchParams: Prom
             </div>
           </div>
 
-          {/* Plan Multi-gîtes */}
-          <div style={{ backgroundColor: '#FFFFFF', borderRadius: '16px', border: '1.5px solid rgba(104,157,113,.4)', overflow: 'hidden', position: 'relative', display: 'flex', flexDirection: 'column' }}>
+          {/* Plan Maison d'Hôtes — Bientôt */}
+          <div style={{ backgroundColor: '#FFFFFF', borderRadius: '16px', border: '1.5px solid rgba(104,157,113,.3)', overflow: 'hidden', position: 'relative', display: 'flex', flexDirection: 'column', opacity: 0.85 }}>
             <div style={{ height: '4px', backgroundColor: '#689D71', flexShrink: 0 }}/>
+            <div style={{ position: 'absolute', top: '16px', right: '16px', background: '#689D71', color: '#fff', fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', padding: '3px 10px', borderRadius: '20px' }}>
+              Bientôt
+            </div>
             <div style={{ padding: '24px 26px 24px', display: 'flex', flexDirection: 'column', flex: 1 }}>
               <div className="upgrade-card-top">
-                <p style={{ fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color: '#689D71', margin: '0 0 6px' }}>Multi-gîtes</p>
+                <p style={{ fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color: '#689D71', margin: '0 0 6px' }}>Maison d&apos;Hôtes</p>
                 <div style={{ display: 'flex', alignItems: 'flex-end', gap: '6px', marginBottom: '4px' }}>
-                  <span style={{ fontSize: '30px', fontWeight: 800, color: '#2C2C2A', letterSpacing: '-0.04em', lineHeight: 1 }}>14,99 €</span>
+                  <span style={{ fontSize: '30px', fontWeight: 800, color: '#2C2C2A', letterSpacing: '-0.04em', lineHeight: 1 }}>19,99 €</span>
                   <span style={{ fontSize: '13px', color: '#A3A3A0', paddingBottom: '6px' }}>HT / mois</span>
                 </div>
                 <p style={{ fontSize: '13px', color: '#71716E', margin: 0, lineHeight: 1.5 }}>
-                  Jusqu&apos;à 3 hébergements. Tout inclus.
+                  Jusqu&apos;à 5 chambres sur un même site.
                 </p>
               </div>
               <hr className="upgrade-card-divider" />
               <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 16px', display: 'flex', flexDirection: 'column', gap: '8px', flex: 1 }}>
-                {["Jusqu'à 3 hébergements", 'Contrats illimités', "Tout ce qu'inclut Essentiel", 'Tableau de bord multi-gîtes', 'Support prioritaire'].map(f => (
-                  <li key={f} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', color: '#2C2C2A' }}>
-                    <span style={{ width: '18px', height: '18px', borderRadius: '5px', backgroundColor: 'rgba(104,157,113,.15)', color: '#689D71', fontSize: '10px', fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>✓</span>
+                {['Tout le plan Essentiel', 'Réservation par chambre', 'Gestion de la demi-pension'].map(f => (
+                  <li key={f} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', color: '#71716E' }}>
+                    <span style={{ width: '18px', height: '18px', borderRadius: '5px', backgroundColor: 'rgba(104,157,113,.1)', color: '#689D71', fontSize: '10px', fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>✓</span>
                     {f}
                   </li>
                 ))}
               </ul>
-              <p style={{ fontSize: '11px', color: '#A3A3A0', textAlign: 'center', margin: '0 0 10px', lineHeight: 1.5 }}>
-                Paiement sécurisé par Stripe.
-              </p>
-              <SubscribeButton disabled={isActive} plan="multi" />
+              <div style={{ padding: '11px 16px', background: '#EEF5EF', border: '1px solid rgba(104,157,113,.25)', borderRadius: '10px', textAlign: 'center', fontSize: '13px', fontWeight: 700, color: '#4A7353' }}>
+                Bientôt disponible
+              </div>
             </div>
           </div>
 
@@ -195,12 +198,12 @@ export default async function UpgradePage({ searchParams }: { searchParams: Prom
                   <span style={{ fontSize: '13px', color: '#A3A3A0', paddingBottom: '6px' }}>HT / mois</span>
                 </div>
                 <p style={{ fontSize: '13px', color: '#71716E', margin: 0, lineHeight: 1.5 }}>
-                  Dortoirs, chambres multiples &amp; demi-pension.
+                  Gîtes d&apos;étape, auberges &amp; dortoirs.
                 </p>
               </div>
               <hr className="upgrade-card-divider" />
               <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 16px', display: 'flex', flexDirection: 'column', gap: '8px', flex: 1 }}>
-                {['Chambres & dortoirs simultanés', 'Réservation par lit ou par chambre', 'Gestion demi-pension', 'Planification multi-espaces', "Tout ce qu'inclut Essentiel"].map(f => (
+                {["Tout le plan Maison d'Hôtes", 'Réservation par lit / dortoir', 'Planification multi-espaces'].map(f => (
                   <li key={f} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', color: '#71716E' }}>
                     <span style={{ width: '18px', height: '18px', borderRadius: '5px', backgroundColor: 'rgba(104,157,113,.1)', color: '#689D71', fontSize: '10px', fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>✓</span>
                     {f}

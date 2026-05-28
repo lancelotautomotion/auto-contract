@@ -1,12 +1,12 @@
-type Plan = "essential" | "multi";
+type Plan = "essential";
 
 interface Props {
   selected: Plan | null;
-  onSelect: (plan: Plan | "etape") => void;
+  onSelect: (plan: Plan | "maison" | "etape") => void;
 }
 
 const plans: {
-  id: Plan;
+  id: Plan | "maison" | "etape";
   name: string;
   price: string;
   period: string;
@@ -17,27 +17,27 @@ const plans: {
   {
     id: "essential",
     name: "Essentiel",
-    price: "9,99 €",
-    period: "/ mois · 1 hébergement",
-    features: ["Contrats illimités", "Signature eIDAS", "Relances automatiques", "Envoi email automatisé"],
+    price: "dès 9,99 €",
+    period: "/ mois · jusqu'à 5 hébergements",
+    features: ["Contrats automatiques illimités", "Signature conforme eIDAS", "Relances automatiques"],
     color: "#7F77DD",
     available: true,
   },
   {
-    id: "multi",
-    name: "Multi-gîtes",
-    price: "14,99 €",
-    period: "/ mois · jusqu'à 3 hébergements",
-    features: ["Tout le plan Essentiel", "Jusqu'à 3 hébergements", "Tableau de bord multi-gîtes", "Support prioritaire"],
+    id: "maison",
+    name: "Maison d'Hôtes",
+    price: "19,99 €",
+    period: "/ mois · jusqu'à 5 chambres (1 même site)",
+    features: ["Tout le plan Essentiel", "Réservation par chambre", "Gestion de la demi-pension"],
     color: "#689D71",
-    available: true,
+    available: false,
   },
   {
     id: "etape",
     name: "Kordia Étape",
     price: "24,99 €",
-    period: "/ mois · hébergement multi-espaces",
-    features: ["Chambres & dortoirs", "Réservation par lit/chambre", "Gestion demi-pension", "Planification multi-espaces"],
+    period: "/ mois · hébergements multi-espaces",
+    features: ["Tout le plan Maison d'Hôtes", "Réservation par lit / dortoir", "Planification multi-espaces"],
     color: "#A3A3A0",
     available: false,
   },
@@ -76,9 +76,7 @@ export default function StepPlan({ selected, onSelect }: Props) {
                 background: isSelected
                   ? plan.id === "essential"
                     ? "rgba(127,119,221,.06)"
-                    : plan.id === "multi"
-                    ? "rgba(104,157,113,.06)"
-                    : "#F7F4F0"
+                    : "rgba(104,157,113,.06)"
                   : "#fff",
                 cursor: plan.available ? "pointer" : "not-allowed",
                 opacity: plan.available ? 1 : 0.55,
@@ -134,8 +132,7 @@ export default function StepPlan({ selected, onSelect }: Props) {
           background: "rgba(127,119,221,.07)", border: "1px solid rgba(127,119,221,.2)",
           fontSize: "12px", color: "#5B52B5", lineHeight: 1.5,
         }}>
-          {selected === "essential" && "1 hébergement · contrats illimités · toutes les fonctionnalités incluses."}
-          {selected === "multi" && "Jusqu'à 3 hébergements gérés depuis un seul tableau de bord."}
+          {selected === "essential" && "Jusqu'à 5 hébergements entiers · 9,99 €/mois pour 1, puis 19,99 €/mois de 2 à 5. Contrats illimités, toutes les fonctionnalités incluses."}
         </div>
       )}
     </div>

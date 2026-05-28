@@ -7,7 +7,7 @@
 **What it does:** Kordia remplace le processus manuel (Word + impression + scan + email) par un flux entièrement automatisé : le gérant crée une réservation, le contrat se génère en 1 clic, est envoyé au locataire par email, et le locataire signe électroniquement en 30 secondes depuis son mobile, sans créer de compte.
 **Product category:** Logiciel de gestion de location saisonnière (SaaS gîtes / hébergements touristiques indépendants)
 **Product type:** SaaS B2B, self-serve
-**Business model:** Freemium avec essai 1 mois gratuit (sans CB), puis abonnement mensuel. 3 plans : Découverte (gratuit), Essentiel (9,99 €/mois), Multi-gîtes (15 €/mois).
+**Business model:** Essai 1 mois gratuit (sans CB), puis abonnement mensuel. Offre actuelle : Essentiel (dès 9,99 €/mois pour 1 hébergement, 19,99 €/mois de 2 à 5 hébergements entiers). Deux offres métier à venir : Maison d'Hôtes (19,99 €/mois, chambres d'hôtes) et Kordia Étape (24,99 €/mois, gîtes d'étape / auberges / dortoirs).
 
 ## Target Audience
 **Target companies:** Gérants indépendants de gîtes de location saisonnière, chambres d'hôtes, hébergements touristiques en France. Propriétaires uniques ou multi-gîtes (2-5 biens). Ne passent pas par les grandes plateformes (ou veulent s'en affranchir).

@@ -1,14 +1,8 @@
 "use client";
 
-import { useEffect } from "react";
-import { useSearchParams } from "next/navigation";
-
+// L'offre Essentiel couvre désormais jusqu'à 5 hébergements ; le plan
+// « multi » historique n'est plus souscriptible. Ce composant est conservé
+// comme no-op pour ne pas casser les imports existants.
 export default function PlanIntentSetter() {
-  const params = useSearchParams();
-  useEffect(() => {
-    if (params.get("plan") === "multi") {
-      document.cookie = "kordia_plan_intent=multi; path=/; max-age=3600; SameSite=Lax";
-    }
-  }, [params]);
   return null;
 }

@@ -2,6 +2,8 @@ const OPTIONS = [
   { value: 1, label: "1 hébergement", sub: "Pour commencer, je peux en ajouter d'autres plus tard" },
   { value: 2, label: "2 hébergements", sub: "Je gère deux biens distincts" },
   { value: 3, label: "3 hébergements", sub: "Je gère trois biens distincts" },
+  { value: 4, label: "4 hébergements", sub: "Je gère quatre biens distincts" },
+  { value: 5, label: "5 hébergements", sub: "Je gère cinq biens distincts" },
 ];
 
 interface Props {

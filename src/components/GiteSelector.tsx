@@ -68,9 +68,9 @@ export default function GiteSelector({ gites, activeGiteId, isAdmin = false }: P
       const count: number = (data.gites ?? []).length;
 
       // Optimistic guard based on current count
-      // The real check is server-side; this is just UX
-      if (count >= 1 && count < 3) {
-        // Could be on essential or multi — let the modal handle it
+      // The real check is server-side (Essentiel = jusqu'à 5 hébergements) ; this is just UX
+      if (count >= 1 && count < 5) {
+        // Encore de la place — laisser la modale gérer la création
       }
     } catch { /* fall through to show modal */ }
 
@@ -330,13 +330,13 @@ function UpgradeModal({ onClose }: { onClose: () => void }) {
           </svg>
         </div>
         <h2 style={{ fontSize: '20px', fontWeight: 800, color: '#2C2C2A', letterSpacing: '-0.02em', marginBottom: '10px' }}>
-          Passez au plan Multi-Gîtes
+          Gérez jusqu&apos;à 5 hébergements
         </h2>
         <p style={{ fontSize: '14px', color: '#71716E', lineHeight: 1.7, marginBottom: '8px' }}>
-          Votre plan <strong>Essentiel</strong> est limité à 1 hébergement.
+          Votre plan <strong>Essentiel</strong> couvre jusqu&apos;à 5 hébergements entiers.
         </p>
         <p style={{ fontSize: '14px', color: '#71716E', lineHeight: 1.7, marginBottom: '28px' }}>
-          Le plan <strong style={{ color: '#7F77DD' }}>Multi-Gîtes à 15&nbsp;€/mois</strong> vous permet de gérer jusqu&apos;à 3 hébergements indépendants depuis un seul compte.
+          La facturation passe à <strong style={{ color: '#7F77DD' }}>19,99&nbsp;€/mois</strong> dès le 2<sup>e</sup> hébergement (au lieu de 9,99&nbsp;€/mois pour 1 seul).
         </p>
         <div style={{ display: 'flex', gap: '10px' }}>
           <button
@@ -391,10 +391,10 @@ function MaxReachedModal({ onClose }: { onClose: () => void }) {
           </svg>
         </div>
         <h2 style={{ fontSize: '20px', fontWeight: 800, color: '#2C2C2A', letterSpacing: '-0.02em', marginBottom: '10px' }}>
-          Limite de 3 hébergements atteinte
+          Limite de 5 hébergements atteinte
         </h2>
         <p style={{ fontSize: '14px', color: '#71716E', lineHeight: 1.7, marginBottom: '28px' }}>
-          Vous gérez déjà 3 hébergements. Un plan <strong>Étape</strong> sur-mesure pour les gestionnaires de plus de 3 biens est en cours de développement. Contactez-nous pour en savoir plus.
+          Votre plan <strong>Essentiel</strong> couvre jusqu&apos;à 5 hébergements. Un plan <strong>Kordia Étape</strong> sur-mesure pour les gestionnaires de plus grands parcs est en cours de développement. Contactez-nous pour en savoir plus.
         </p>
         <div style={{ display: 'flex', gap: '10px' }}>
           <button

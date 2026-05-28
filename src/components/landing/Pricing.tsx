@@ -57,24 +57,25 @@ export default function Pricing() {
                 </svg>
               </div>
               <div className="pc-plan">Essentiel</div>
-              <div className="pc-price">9<span style={{ fontSize: '22px' }}>,99</span><sup>€</sup></div>
+              <div style={{ fontSize: '12px', fontWeight: 600, color: '#71716E', marginBottom: '6px' }}>Propriétaires de gîtes &amp; meublés</div>
+              <div className="pc-price"><span style={{ fontSize: '15px', fontWeight: 600, color: '#71716E', marginRight: '4px' }}>dès</span>9<span style={{ fontSize: '22px' }}>,99</span><sup>€</sup></div>
               <div className="pc-period">par mois · 1 hébergement</div>
+              <div style={{ fontSize: '12px', color: '#71716E', marginTop: '6px', lineHeight: 1.4 }}>puis 19,99 €/mois de 2 à 5 hébergements entiers</div>
             </div>
             <hr className="pc-div" />
             <ul className="pc-feat">
-              <li><CheckViolet />Contrats illimités</li>
+              <li><CheckViolet />Contrats automatiques illimités</li>
               <li><CheckViolet />Signature conforme eIDAS</li>
               <li><CheckViolet />Relances automatiques</li>
-              <li><CheckViolet />Personnalisation avancée</li>
-              <li><CheckViolet />Export comptable</li>
             </ul>
             <Link className="btn btn-violet" style={{ width: '100%' }} href="/sign-up">
               Essayer gratuitement 30 jours
             </Link>
           </div>
 
-          {/* Multi-gîtes */}
-          <div className="pc reveal reveal-d2">
+          {/* Maison d'Hôtes — en développement */}
+          <div className="pc reveal reveal-d2" style={{ opacity: 0.85 }}>
+            <div className="pc-badge-dev">Bientôt disponible</div>
             <div className="pc-header">
               <div className="pc-icon g">
                 <svg width="20" height="20" fill="none" viewBox="0 0 20 20">
@@ -84,20 +85,18 @@ export default function Pricing() {
                   <rect x="11" y="11" width="6" height="6" rx="1.5" stroke="#4A7353" strokeWidth="1.4"/>
                 </svg>
               </div>
-              <div className="pc-plan">Multi-gîtes</div>
-              <div className="pc-price">14<span style={{ fontSize: '22px' }}>,99</span><sup>€</sup></div>
-              <div className="pc-period">par mois · jusqu&apos;à 3 hébergements</div>
+              <div className="pc-plan">Maison d&apos;Hôtes</div>
+              <div style={{ fontSize: '12px', fontWeight: 600, color: '#71716E', marginBottom: '6px' }}>Propriétaires de chambres d&apos;hôtes</div>
+              <div className="pc-price">19<span style={{ fontSize: '22px' }}>,99</span><sup>€</sup></div>
+              <div className="pc-period">par mois · jusqu&apos;à 5 chambres (1 même site)</div>
             </div>
             <hr className="pc-div" />
             <ul className="pc-feat">
-              <li><CheckViolet />Tout le plan Essentiel</li>
-              <li><CheckViolet />Jusqu&apos;à 3 hébergements</li>
-              <li><CheckViolet />Tableau de bord multi-gîtes</li>
-              <li><CheckViolet />Support prioritaire</li>
+              <li><CheckGray />Tout le plan Essentiel</li>
+              <li><CheckGray />Réservation par chambre</li>
+              <li><CheckGray />Gestion de la demi-pension</li>
             </ul>
-            <Link className="btn btn-violet" style={{ width: '100%', background: '#689D71' }} href="/sign-up?plan=multi">
-              Essayer gratuitement 30 jours
-            </Link>
+            <span className="pc-dev-cta">Bientôt disponible</span>
           </div>
 
           {/* Kordia Étape — en développement */}
@@ -111,14 +110,14 @@ export default function Pricing() {
                 </svg>
               </div>
               <div className="pc-plan">Kordia Étape</div>
+              <div style={{ fontSize: '12px', fontWeight: 600, color: '#71716E', marginBottom: '6px' }}>Gîtes d&apos;étape, auberges, dortoirs</div>
               <div className="pc-price">24<span style={{ fontSize: '22px' }}>,99</span><sup>€</sup></div>
-              <div className="pc-period">par mois · hébergement multi-espaces</div>
+              <div className="pc-period">par mois · hébergements multi-espaces</div>
             </div>
             <hr className="pc-div" />
             <ul className="pc-feat">
-              <li><CheckGray />Chambres &amp; dortoirs simultanés</li>
-              <li><CheckGray />Réservation par lit ou par chambre</li>
-              <li><CheckGray />Gestion demi-pension</li>
+              <li><CheckGray />Tout le plan Maison d&apos;Hôtes</li>
+              <li><CheckGray />Réservation par lit / dortoir</li>
               <li><CheckGray />Planification multi-espaces</li>
             </ul>
             <span className="pc-dev-cta">Bientôt disponible</span>

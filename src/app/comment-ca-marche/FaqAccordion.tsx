@@ -22,7 +22,7 @@ const faqs = [
   },
   {
     q: "Combien coûte l'abonnement ?",
-    a: "L'offre Essentiel est à 9,99 € HT/mois pour un hébergement. L'offre Multi-hébergement (jusqu'à 3 gîtes) est à 15 € HT/mois. Tous les plans incluent contrats illimités, signature eIDAS, archivage et support. Essai gratuit 30 jours, sans carte bancaire, sans engagement.",
+    a: "L'offre Essentiel est à 9,99 € HT/mois pour un hébergement, puis 19,99 € HT/mois pour gérer jusqu'à 5 hébergements entiers. Elle inclut contrats illimités, signature eIDAS, relances automatiques, archivage et support. Les offres Maison d'Hôtes (19,99 € HT/mois, chambres d'hôtes) et Kordia Étape (24,99 € HT/mois, gîtes d'étape et dortoirs) arrivent prochainement. Essai gratuit 30 jours, sans carte bancaire, sans engagement.",
   },
   {
     q: "Est-ce que ça fonctionne pour les réservations directes ?",

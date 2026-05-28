@@ -3,7 +3,7 @@ import LegalSidebarClient from "../_components/LegalSidebarClient";
 
 export const metadata: Metadata = {
   title: "Conditions Générales de Vente — Kordia",
-  description: "CGV Kordia : abonnement 9,99 € HT/mois, essai 30 jours sans CB, résiliation à tout moment.",
+  description: "CGV Kordia : abonnement Essentiel dès 9,99 € HT/mois, essai 30 jours sans CB, résiliation à tout moment.",
 };
 
 export default function CGVPage() {
@@ -38,7 +38,7 @@ export default function CGVPage() {
         <div className="legal-content">
 
           <div className="legal-callout green" style={{ marginTop: 0 }}>
-            <strong>En résumé :</strong> abonnement mensuel à <strong>9,99 € HT/mois</strong>, avec <strong>30 jours d&apos;essai gratuit</strong> sans carte bancaire. Sans engagement, résiliable à tout moment.
+            <strong>En résumé :</strong> abonnement Essentiel mensuel <strong>dès 9,99 € HT/mois</strong> (1 hébergement), puis <strong>19,99 € HT/mois</strong> de 2 à 5 hébergements, avec <strong>30 jours d&apos;essai gratuit</strong> sans carte bancaire. Sans engagement, résiliable à tout moment.
           </div>
 
           <h2 id="art1"><span className="num">01.</span> Objet</h2>
@@ -58,7 +58,8 @@ export default function CGVPage() {
           — Les données sont conservées 30 jours après expiration de l&apos;essai sans souscription.</p>
 
           <h2 id="art4"><span className="num">04.</span> Tarif</h2>
-          <p>L&apos;abonnement Kordia est proposé au tarif de <strong>9,99 € HT / mois</strong> par compte.</p>
+          <p>L&apos;offre <strong>Essentiel</strong> est proposée au tarif de <strong>9,99 € HT / mois</strong> pour 1 hébergement, puis <strong>19,99 € HT / mois</strong> pour la gestion de 2 à 5 hébergements entiers depuis un même compte.</p>
+          <p>Les offres <strong>Maison d&apos;Hôtes</strong> (19,99 € HT / mois) et <strong>Kordia Étape</strong> (24,99 € HT / mois) seront proposées prochainement ; leurs tarifs sont donnés à titre indicatif et seront confirmés lors de leur mise en service.</p>
           <p>— Prix hors taxes. La TVA en vigueur est applicable à la facturation.<br/>
           — Facturation mensuelle à date anniversaire de souscription.<br/>
           — Sans engagement de durée minimale.<br/>
