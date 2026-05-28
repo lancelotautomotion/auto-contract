@@ -9,7 +9,7 @@ export async function GET(req: NextRequest) {
   if (!slug) return new NextResponse("Missing slug", { status: 400 });
 
   const gite = await prisma.gite.findFirst({
-    where: { slug },
+    where: { slug, deletedAt: null },
     select: { logoUrl: true },
   });
 

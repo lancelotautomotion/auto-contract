@@ -37,7 +37,7 @@ export async function requireGite(): Promise<[GiteCtx, null] | [null, AuthErr]> 
   const [ctx, err] = await requireAuth();
   if (err) return [null, err];
 
-  const gite = await prisma.gite.findFirst({ where: { userId: ctx.userId } });
+  const gite = await prisma.gite.findFirst({ where: { userId: ctx.userId, deletedAt: null } });
   if (!gite)
     return [null, NextResponse.json({ error: "Gîte introuvable" }, { status: 404 })];
 
@@ -76,7 +76,7 @@ export async function requireGiteById(giteId: string): Promise<[GiteCtx, null] |
   if (!giteId)
     return [null, NextResponse.json({ error: "giteId manquant" }, { status: 400 })];
 
-  const gite = await prisma.gite.findFirst({ where: { id: giteId, userId: ctx.userId } });
+  const gite = await prisma.gite.findFirst({ where: { id: giteId, userId: ctx.userId, deletedAt: null } });
   if (!gite)
     return [null, NextResponse.json({ error: "Gîte introuvable ou accès refusé" }, { status: 404 })];
 
@@ -99,7 +99,7 @@ export async function requireActivePlan(): Promise<[GiteCtx, null] | [null, Auth
       return [null, NextResponse.json({ error: "Essai expiré. Abonnez-vous pour continuer." }, { status: 403 })];
   }
 
-  const gite = await prisma.gite.findFirst({ where: { userId: user.id } });
+  const gite = await prisma.gite.findFirst({ where: { userId: user.id, deletedAt: null } });
   if (!gite)
     return [null, NextResponse.json({ error: "Gîte introuvable" }, { status: 404 })];
 

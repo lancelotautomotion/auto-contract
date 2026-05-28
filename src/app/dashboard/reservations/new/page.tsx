@@ -13,7 +13,7 @@ export default async function NewReservationPage() {
   if (!dbUser) redirect("/onboarding");
 
   const gite = await prisma.gite.findFirst({
-    where: { userId: dbUser.id },
+    where: { userId: dbUser.id, deletedAt: null },
     include: {
       options: { orderBy: { position: 'asc' } },
       icalFeeds: true,

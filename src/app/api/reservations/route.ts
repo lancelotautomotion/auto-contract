@@ -12,8 +12,8 @@ export async function POST(req: NextRequest) {
   const [ctx, giteErr] = await requireGiteById(body.giteId);
   if (giteErr) return giteErr;
 
-  const gite = await prisma.gite.findUnique({
-    where: { id: ctx.giteId },
+  const gite = await prisma.gite.findFirst({
+    where: { id: ctx.giteId, deletedAt: null },
     include: { options: true },
   });
   if (!gite) return NextResponse.json({ error: "Gîte introuvable" }, { status: 404 });

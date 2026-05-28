@@ -63,6 +63,7 @@ model Gite {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  deletedAt DateTime? // soft delete : le gîte ne compte plus mais ses archives sont conservées
 
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)

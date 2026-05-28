@@ -9,7 +9,7 @@ export async function GET() {
   if (err) return err;
 
   const gites = await prisma.gite.findMany({
-    where: { userId: ctx.userId },
+    where: { userId: ctx.userId, deletedAt: null },
     select: { id: true, name: true, slug: true, createdAt: true },
     orderBy: { createdAt: "asc" },
   });
@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
   });
   if (!user) return NextResponse.json({ error: "Utilisateur introuvable" }, { status: 404 });
 
-  const giteCount = await prisma.gite.count({ where: { userId: ctx.userId } });
+  const giteCount = await prisma.gite.count({ where: { userId: ctx.userId, deletedAt: null } });
 
   // Admin bypass: skip all plan guards
   const { sessionClaims } = await auth();

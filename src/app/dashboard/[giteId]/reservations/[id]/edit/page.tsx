@@ -20,7 +20,7 @@ export default async function EditReservationPage({ params }: { params: Promise<
   if (!reservation) notFound();
 
   const gite = await prisma.gite.findFirst({
-    where: { id: giteId, userId: dbUser.id },
+    where: { id: giteId, userId: dbUser.id, deletedAt: null },
     include: { options: { orderBy: { position: 'asc' } } },
   });
 

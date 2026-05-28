@@ -10,7 +10,7 @@ export default async function ArchivesRedirectPage() {
   if (!dbUser) redirect("/onboarding");
 
   const gite = await prisma.gite.findFirst({
-    where: { userId: dbUser.id },
+    where: { userId: dbUser.id, deletedAt: null },
     orderBy: { createdAt: "asc" },
     select: { id: true },
   });

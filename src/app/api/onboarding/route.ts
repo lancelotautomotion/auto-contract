@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    const existingGite = await prisma.gite.findFirst({ where: { userId: user.id } });
+    const existingGite = await prisma.gite.findFirst({ where: { userId: user.id, deletedAt: null } });
 
     const rawSlug = body.slug ? body.slug.toLowerCase().replace(/[^a-z0-9-]/g, '-') : undefined;
     const slug = rawSlug ? await uniqueSlug(rawSlug, existingGite?.id) : undefined;

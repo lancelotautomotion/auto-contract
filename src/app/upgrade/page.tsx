@@ -27,10 +27,16 @@ const essentialFeatures = [
 export default async function UpgradePage({ searchParams }: { searchParams: Promise<{ canceled?: string }> }) {
   const { userId: clerkId } = await auth();
   let trialInfo = null;
+  let giteCount = 0;
   if (clerkId) {
     const dbUser = await prisma.user.findUnique({ where: { clerkId } });
-    if (dbUser) trialInfo = getTrialInfo(dbUser);
+    if (dbUser) {
+      trialInfo = getTrialInfo(dbUser);
+      giteCount = await prisma.gite.count({ where: { userId: dbUser.id, deletedAt: null } });
+    }
   }
+  const billedQuantity = Math.min(Math.max(giteCount, 1), 5);
+  const monthlyPrice = billedQuantity <= 1 ? "9,99 €" : "19,99 €";
   const user = await currentUser();
   const initials = user
     ? `${user.firstName?.[0] ?? ''}${user.lastName?.[0] ?? ''}`.toUpperCase() || (user.emailAddresses[0]?.emailAddress?.[0]?.toUpperCase() ?? 'U')
@@ -135,6 +141,13 @@ export default async function UpgradePage({ searchParams }: { searchParams: Prom
                 <p style={{ fontSize: '13px', color: '#71716E', margin: 0, lineHeight: 1.5 }}>
                   1 hébergement à 9,99 € · puis 19,99 €/mois de 2 à 5 hébergements entiers.
                 </p>
+                {giteCount > 0 && (
+                  <div style={{ marginTop: '12px', padding: '10px 12px', background: 'rgba(127,119,221,.07)', border: '1px solid rgba(127,119,221,.2)', borderRadius: '9px' }}>
+                    <p style={{ fontSize: '12.5px', color: '#5B52B5', margin: 0, lineHeight: 1.5, fontWeight: 600 }}>
+                      Vous avez {billedQuantity} hébergement{billedQuantity > 1 ? 's' : ''} actif{billedQuantity > 1 ? 's' : ''} → facturation <strong>{monthlyPrice} HT/mois</strong>.
+                    </p>
+                  </div>
+                )}
               </div>
               <hr className="upgrade-card-divider" />
               <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 16px', display: 'flex', flexDirection: 'column', gap: '8px', flex: 1 }}>
