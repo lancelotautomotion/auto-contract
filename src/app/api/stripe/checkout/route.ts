@@ -1,22 +1,25 @@
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { STRIPE_PRICE_ID, STRIPE_PRICE_ID_MULTI, appUrl, stripe } from "@/lib/stripe";
+import { STRIPE_PRICE_ID, appUrl, clampGiteQuantity, stripe } from "@/lib/stripe";
 
 export async function POST(req: NextRequest) {
   const { userId: clerkId } = await auth();
   if (!clerkId) return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
 
-  const body = await req.json().catch(() => ({}));
-  const plan: "essential" | "multi" = body.plan === "multi" ? "multi" : "essential";
-
-  const priceId = plan === "multi" ? STRIPE_PRICE_ID_MULTI : STRIPE_PRICE_ID;
+  // Offre unique : Essentiel, facturée par paliers selon le nombre d'hébergements.
+  const priceId = STRIPE_PRICE_ID;
   if (!priceId) {
-    return NextResponse.json({ error: `Configuration Stripe manquante (${plan === "multi" ? "STRIPE_PRICE_ID_MULTI" : "STRIPE_PRICE_ID"}).` }, { status: 500 });
+    return NextResponse.json({ error: "Configuration Stripe manquante (STRIPE_PRICE_ID)." }, { status: 500 });
   }
 
   const dbUser = await prisma.user.findUnique({ where: { clerkId } });
   if (!dbUser) return NextResponse.json({ error: "Compte introuvable." }, { status: 404 });
+
+  // La quantité de l'abonnement reflète le nombre d'hébergements (1 → 9,99 €,
+  // 2 à 5 → 19,99 € via les paliers volume du prix Stripe).
+  const giteCount = await prisma.gite.count({ where: { userId: dbUser.id } });
+  const quantity = clampGiteQuantity(giteCount);
 
   const clerkUser = await currentUser();
   const customerEmail = dbUser.email || clerkUser?.emailAddresses[0]?.emailAddress;
@@ -24,7 +27,7 @@ export async function POST(req: NextRequest) {
   try {
     const session = await stripe.checkout.sessions.create({
       mode: "subscription",
-      line_items: [{ price: priceId, quantity: 1 }],
+      line_items: [{ price: priceId, quantity }],
       client_reference_id: dbUser.id,
       customer: dbUser.stripeCustomerId ?? undefined,
       customer_email: dbUser.stripeCustomerId ? undefined : customerEmail,

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/prisma";
 import { requireAuth } from "@/lib/auth";
+import { MAX_GITES, syncEssentialSubscriptionQuantity } from "@/lib/stripe";
 
 export async function GET() {
   const [ctx, err] = await requireAuth();
@@ -22,7 +23,7 @@ export async function POST(req: NextRequest) {
 
   const user = await prisma.user.findUnique({
     where: { id: ctx.userId },
-    select: { planStatus: true, planTier: true, trialEndsAt: true },
+    select: { planStatus: true, planTier: true, trialEndsAt: true, stripeSubscriptionId: true },
   });
   if (!user) return NextResponse.json({ error: "Utilisateur introuvable" }, { status: 404 });
 
@@ -34,7 +35,6 @@ export async function POST(req: NextRequest) {
 
   // Le plan Essentiel couvre jusqu'à 5 hébergements entiers
   // (9,99 €/mois pour 1, puis 19,99 €/mois de 2 à 5).
-  const MAX_GITES = 5;
   if (!isAdmin && giteCount >= MAX_GITES) {
     return NextResponse.json(
       { error: `Plan Essentiel limité à ${MAX_GITES} hébergements`, code: "MAX_REACHED" },
@@ -57,6 +57,12 @@ export async function POST(req: NextRequest) {
     },
     select: { id: true, name: true, slug: true },
   });
+
+  // Aligne la facturation Stripe sur le nouveau nombre d'hébergements
+  // (palier 19,99 € dès le 2e). Best-effort, n'empêche pas la création.
+  if (user.planStatus === "ACTIVE" && user.stripeSubscriptionId) {
+    await syncEssentialSubscriptionQuantity(user.stripeSubscriptionId, giteCount + 1);
+  }
 
   return NextResponse.json({ gite }, { status: 201 });
 }
