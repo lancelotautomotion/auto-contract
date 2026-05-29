@@ -88,7 +88,7 @@ export default function GuesthouseReservationForm({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-      if (res.ok) { router.push(`/dashboard/maisons-hotes/${guesthouseId}`); return; }
+      if (res.ok) { router.push(`/dashboard/maisons-hotes/${guesthouseId}/reservations`); return; }
       const data = await res.json().catch(() => ({}));
       setError(data.error ?? "Erreur lors de l'enregistrement.");
     } finally {

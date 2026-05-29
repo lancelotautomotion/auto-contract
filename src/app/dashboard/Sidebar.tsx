@@ -6,7 +6,7 @@ import { useClerk } from "@clerk/nextjs";
 import type { TrialInfo } from "@/lib/trial";
 import GiteSelector from "@/components/GiteSelector";
 
-export default function Sidebar({ pendingCount = 0, trialInfo, mobileOpen, onMobileClose, gites = [], activeGiteId = '', isAdmin = false, planActive = false, guesthouseMode = false }: {
+export default function Sidebar({ pendingCount = 0, trialInfo, mobileOpen, onMobileClose, gites = [], activeGiteId = '', isAdmin = false, planActive = false, guesthouseMode = false, activeGuesthouseId = '' }: {
   pendingCount?: number;
   trialInfo?: TrialInfo | null;
   mobileOpen?: boolean;
@@ -16,17 +16,18 @@ export default function Sidebar({ pendingCount = 0, trialInfo, mobileOpen, onMob
   isAdmin?: boolean;
   planActive?: boolean;
   guesthouseMode?: boolean;
+  activeGuesthouseId?: string;
 }) {
   const pathname = usePathname();
   const { signOut } = useClerk();
-  // Compte Maison d'hôtes : le tableau de bord EST l'unique établissement.
+  // Compte Maison d'hôtes : la base pointe sur l'unique établissement (id requis pour les sous-routes).
   const base = guesthouseMode
-    ? '/dashboard/maisons-hotes'
+    ? (activeGuesthouseId ? `/dashboard/maisons-hotes/${activeGuesthouseId}` : '/dashboard/maisons-hotes')
     : activeGiteId ? `/dashboard/${activeGiteId}` : '/dashboard';
 
   const active = (href: string) =>
     href === base
-      ? pathname === base || pathname === '/dashboard' || pathname.startsWith(base)
+      ? pathname === base || pathname === '/dashboard' || pathname === '/dashboard/maisons-hotes'
       : pathname.startsWith(href);
 
   return (
@@ -67,33 +68,40 @@ export default function Sidebar({ pendingCount = 0, trialInfo, mobileOpen, onMob
             Tableau de bord
           </Link>
 
-          {!guesthouseMode && (
-            <Link href={`${base}/reservations`} className={`sb-link${active(`${base}/reservations`) ? ' active' : ''}`}>
+          <Link href={`${base}/reservations`} className={`sb-link${active(`${base}/reservations`) ? ' active' : ''}`}>
+            <span className="sb-icon">
+              <svg width="18" height="18" fill="none" viewBox="0 0 18 18">
+                <rect x="2" y="3" width="14" height="12" rx="2" stroke="currentColor" strokeWidth="1.3"/>
+                <path d="M2 7h14" stroke="currentColor" strokeWidth="1.3"/>
+                <path d="M6 1v4M12 1v4" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
+              </svg>
+            </span>
+            {guesthouseMode ? 'Planning & Réservations' : 'Réservations'}
+            {pendingCount > 0 && (
+              <span className="sb-badge">{pendingCount}</span>
+            )}
+          </Link>
+
+          {guesthouseMode && (
+            <Link href={`${base}/restauration`} className={`sb-link${active(`${base}/restauration`) ? ' active' : ''}`}>
               <span className="sb-icon">
                 <svg width="18" height="18" fill="none" viewBox="0 0 18 18">
-                  <rect x="2" y="3" width="14" height="12" rx="2" stroke="currentColor" strokeWidth="1.3"/>
-                  <path d="M2 7h14" stroke="currentColor" strokeWidth="1.3"/>
-                  <path d="M6 1v4M12 1v4" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
+                  <path d="M5 2v6.5a2 2 0 01-2 2H3M3 2v8.5M9 2v6c0 1.1.9 2 2 2h.5v6M15 2L13.5 8c-.3 1.2.6 2.3 1.5 2.3h0V16" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
                 </svg>
               </span>
-              Réservations
-              {pendingCount > 0 && (
-                <span className="sb-badge">{pendingCount}</span>
-              )}
+              Restauration
             </Link>
           )}
 
-          {!guesthouseMode && (
-            <Link href={`${base}/etablissement`} className={`sb-link${active(`${base}/etablissement`) ? ' active' : ''}`}>
-              <span className="sb-icon">
-                <svg width="18" height="18" fill="none" viewBox="0 0 18 18">
-                  <path d="M3 14V8l6-5 6 5v6a1.5 1.5 0 01-1.5 1.5h-9A1.5 1.5 0 013 14z" stroke="currentColor" strokeWidth="1.3"/>
-                  <path d="M7 15.5v-4h4v4" stroke="currentColor" strokeWidth="1.3"/>
-                </svg>
-              </span>
-              Mon hébergement
-            </Link>
-          )}
+          <Link href={`${base}/${guesthouseMode ? 'hebergement' : 'etablissement'}`} className={`sb-link${active(`${base}/${guesthouseMode ? 'hebergement' : 'etablissement'}`) ? ' active' : ''}`}>
+            <span className="sb-icon">
+              <svg width="18" height="18" fill="none" viewBox="0 0 18 18">
+                <path d="M3 14V8l6-5 6 5v6a1.5 1.5 0 01-1.5 1.5h-9A1.5 1.5 0 013 14z" stroke="currentColor" strokeWidth="1.3"/>
+                <path d="M7 15.5v-4h4v4" stroke="currentColor" strokeWidth="1.3"/>
+              </svg>
+            </span>
+            Mon hébergement
+          </Link>
         </div>
 
         <div className="sb-section">

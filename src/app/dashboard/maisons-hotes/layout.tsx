@@ -15,11 +15,12 @@ export default async function MaisonsHotesLayout({ children }: { children: React
 
   let trialInfo = null;
   let planActive = false;
+  let activeGuesthouseId = "";
+  let pendingCount = 0;
 
   try {
     const dbUser = await prisma.user.findUnique({ where: { clerkId } });
     if (!dbUser) redirect("/onboarding");
-    // Offre réservée : un compte Essentiel (offerType "gite") n'y a pas accès.
     if (!isAdmin && dbUser.offerType !== "guesthouse") redirect("/dashboard");
     planActive = dbUser.planStatus === "ACTIVE";
     try {
@@ -27,12 +28,31 @@ export default async function MaisonsHotesLayout({ children }: { children: React
     } catch (trialErr) {
       if ((trialErr as { digest?: string })?.digest?.startsWith("NEXT_")) throw trialErr;
     }
+    const guesthouse = await prisma.guesthouse.findFirst({
+      where: { userId: dbUser.id, deletedAt: null },
+      orderBy: { createdAt: "asc" },
+      select: { id: true },
+    });
+    if (guesthouse) {
+      activeGuesthouseId = guesthouse.id;
+      pendingCount = await prisma.reservation.count({
+        where: { guesthouseId: guesthouse.id, status: "PENDING_REVIEW" },
+      });
+    }
   } catch (err) {
     if ((err as { digest?: string })?.digest?.startsWith("NEXT_")) throw err;
   }
 
   return (
-    <DashboardShell pendingCount={0} trialInfo={trialInfo} gites={[]} isAdmin={isAdmin} planActive={planActive} guesthouseMode={true}>
+    <DashboardShell
+      pendingCount={pendingCount}
+      trialInfo={trialInfo}
+      gites={[]}
+      isAdmin={isAdmin}
+      planActive={planActive}
+      guesthouseMode={true}
+      activeGuesthouseId={activeGuesthouseId}
+    >
       {trialInfo?.isTrial && !trialInfo.isExpired && trialInfo.daysLeft <= 15 && (
         <TrialBanner daysLeft={trialInfo.daysLeft} />
       )}

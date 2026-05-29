@@ -3,14 +3,18 @@ import { redirect, notFound } from "next/navigation";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import TopbarSignOut from "@/app/dashboard/TopbarSignOut";
-import { buildRoomAvailability } from "@/lib/availability";
-import RoomCalendar from "../RoomCalendar";
-import RoomsManager from "../RoomsManager";
-import MealsManager from "../MealsManager";
+import { nightsBetween } from "@/lib/billing";
 
 export const dynamic = "force-dynamic";
 
-export default async function GuesthouseDetailPage({ params }: { params: Promise<{ id: string }> }) {
+const SERVICE_LABEL: Record<string, string> = {
+  BREAKFAST: "Petit-déjeuner",
+  LUNCH: "Déjeuner",
+  DINNER: "Dîner / Table d'hôtes",
+  OTHER: "Autre",
+};
+
+export default async function GuesthouseDashboardPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const { userId } = await auth();
   if (!userId) redirect("/sign-in");
@@ -21,29 +25,59 @@ export default async function GuesthouseDetailPage({ params }: { params: Promise
   const guesthouse = await prisma.guesthouse.findFirst({
     where: { id, userId: dbUser.id, deletedAt: null },
     include: {
-      rooms: { orderBy: [{ position: "asc" }, { createdAt: "asc" }] },
-      meals: { orderBy: [{ position: "asc" }, { createdAt: "asc" }] },
-      reservations: { include: { reservationRooms: true }, orderBy: { checkIn: "asc" } },
+      rooms: true,
+      reservations: {
+        where: { status: { notIn: ["REFUSED", "CANCELLED"] } },
+        include: { reservationRooms: true, meals: true },
+        orderBy: { checkIn: "asc" },
+      },
     },
   });
   if (!guesthouse) notFound();
 
-  const availability = buildRoomAvailability(guesthouse.rooms, guesthouse.reservations);
-  const rooms = guesthouse.rooms.map((r) => ({
-    id: r.id, name: r.name, capacity: r.capacity, basePrice: r.basePrice, active: r.active,
-  }));
-  const meals = guesthouse.meals.map((m) => ({
-    id: m.id, name: m.name, description: m.description, price: m.price, service: m.service, active: m.active,
-  }));
-  const fmt = (d: Date) => new Date(d).toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "numeric" });
-  const activeReservations = guesthouse.reservations.filter((r) => r.status !== "REFUSED" && r.status !== "CANCELLED");
-  const hasRooms = rooms.length > 0;
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const yearStart = new Date(now.getFullYear(), 0, 1);
+
+  const reservationsThisYear = guesthouse.reservations.filter((r) => new Date(r.checkOut) >= yearStart);
+  const revenueYear = reservationsThisYear.reduce((s, r) => s + (r.rent ?? 0), 0);
+  const nightsYear = reservationsThisYear.reduce((s, r) => s + nightsBetween(r.checkIn, r.checkOut), 0);
+
+  const upcoming = guesthouse.reservations
+    .filter((r) => new Date(r.checkIn) >= today)
+    .slice(0, 5);
+
+  // Aujourd'hui en cuisine : pour chaque résa active aujourd'hui (today dans [checkIn, checkOut[),
+  // agréger les repas par service.
+  const todayResas = guesthouse.reservations.filter((r) => {
+    const ci = new Date(r.checkIn); ci.setHours(0, 0, 0, 0);
+    const co = new Date(r.checkOut); co.setHours(0, 0, 0, 0);
+    return today >= ci && today < co;
+  });
+  const kitchenToday = new Map<string, { service: string; count: number; labels: string[] }>();
+  for (const r of todayResas) {
+    for (const m of r.meals) {
+      const key = m.service;
+      const prev = kitchenToday.get(key) ?? { service: key, count: 0, labels: [] };
+      prev.count += m.quantity;
+      if (!prev.labels.includes(m.label)) prev.labels.push(m.label);
+      kitchenToday.set(key, prev);
+    }
+  }
+  const kitchenRows = Array.from(kitchenToday.values()).sort((a, b) => {
+    const order = ["BREAKFAST", "LUNCH", "DINNER", "OTHER"];
+    return order.indexOf(a.service) - order.indexOf(b.service);
+  });
+
+  const fmt = (d: Date) =>
+    new Date(d).toLocaleDateString("fr-FR", { day: "2-digit", month: "long", year: "numeric" });
+  const fmtMoney = (n: number) => `${n.toLocaleString("fr-FR")} €`;
 
   return (
     <>
       <div className="topbar">
         <div className="topbar-left">
-          <div className="topbar-breadcrumb">Kordia / <span>{guesthouse.name}</span></div>
+          <div className="topbar-breadcrumb">Kordia / <span>Tableau de bord</span></div>
         </div>
         <div className="topbar-right"><TopbarSignOut /></div>
       </div>
@@ -52,67 +86,92 @@ export default async function GuesthouseDetailPage({ params }: { params: Promise
         <div className="dash-header">
           <div>
             <div className="dash-greeting">{guesthouse.name}</div>
-            <div className="dash-date">{rooms.length} chambre{rooms.length > 1 ? "s" : ""}</div>
+            <div className="dash-date">
+              {guesthouse.rooms.length} chambre{guesthouse.rooms.length > 1 ? "s" : ""} · {now.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" })}
+            </div>
           </div>
-          <div className="header-actions">
-            {hasRooms && (
-              <Link href={`/dashboard/maisons-hotes/${id}/reservations/new`} className="btn btn-violet">
-                <svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M7 2v10M2 7h10" stroke="#fff" strokeWidth="1.5" strokeLinecap="round"/></svg>
-                Nouvelle réservation
-              </Link>
+        </div>
+
+        {/* WIDGETS STATS */}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "12px", marginBottom: "20px" }}>
+          <div className="form-card" style={{ padding: "16px" }}>
+            <div style={{ fontSize: "11px", fontWeight: 700, color: "var(--ink-lighter)", textTransform: "uppercase", letterSpacing: "0.5px" }}>Chiffre d&apos;affaires {now.getFullYear()}</div>
+            <div style={{ fontSize: "26px", fontWeight: 700, color: "#689D71", marginTop: "6px" }}>{fmtMoney(revenueYear)}</div>
+          </div>
+          <div className="form-card" style={{ padding: "16px" }}>
+            <div style={{ fontSize: "11px", fontWeight: 700, color: "var(--ink-lighter)", textTransform: "uppercase", letterSpacing: "0.5px" }}>Nuits occupées {now.getFullYear()}</div>
+            <div style={{ fontSize: "26px", fontWeight: 700, color: "#5B52B5", marginTop: "6px" }}>{nightsYear}</div>
+          </div>
+          <div className="form-card" style={{ padding: "16px" }}>
+            <div style={{ fontSize: "11px", fontWeight: 700, color: "var(--ink-lighter)", textTransform: "uppercase", letterSpacing: "0.5px" }}>Réservations actives</div>
+            <div style={{ fontSize: "26px", fontWeight: 700, color: "var(--ink)", marginTop: "6px" }}>{guesthouse.reservations.length}</div>
+          </div>
+        </div>
+
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }}>
+          {/* PROCHAINES ARRIVÉES */}
+          <div className="form-card">
+            <div className="form-card-title">
+              <svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M2 6h10M7 2v8M5 12h4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/></svg>
+              Prochaines arrivées
+            </div>
+            {upcoming.length === 0 ? (
+              <p style={{ fontSize: "13px", color: "var(--ink-lighter)", fontStyle: "italic" }}>Aucune arrivée prévue.</p>
+            ) : (
+              <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                {upcoming.map((r) => {
+                  const hasMeals = r.meals.length > 0;
+                  const hasAllergies = (r.dietaryNotes ?? "").trim().length > 0;
+                  return (
+                    <Link
+                      key={r.id}
+                      href={`/dashboard/maisons-hotes/${id}/reservations/${r.id}`}
+                      style={{ display: "flex", gap: "10px", padding: "10px 12px", border: "1px solid #EFEDE8", borderRadius: "10px", textDecoration: "none", color: "inherit", alignItems: "flex-start", flexWrap: "wrap" }}
+                    >
+                      <div style={{ flex: "1 1 200px", minWidth: 0 }}>
+                        <div style={{ fontSize: "13px", fontWeight: 700, color: "var(--ink)" }}>{r.clientFirstName} {r.clientLastName}</div>
+                        <div style={{ fontSize: "12px", color: "var(--ink-lighter)" }}>{fmt(r.checkIn)} → {fmt(r.checkOut)}</div>
+                        <div style={{ fontSize: "12px", color: "var(--ink-lighter)" }}>{r.reservationRooms.map((rr) => rr.roomName).join(", ") || "—"}</div>
+                      </div>
+                      <div style={{ display: "flex", gap: "4px", flexWrap: "wrap" }}>
+                        {hasMeals && (
+                          <span style={{ fontSize: "10px", fontWeight: 700, background: "#E6F0E8", color: "#3E7A48", padding: "2px 8px", borderRadius: "20px" }}>Repas</span>
+                        )}
+                        {hasAllergies && (
+                          <span style={{ fontSize: "10px", fontWeight: 700, background: "#FDECEC", color: "#B91C1C", padding: "2px 8px", borderRadius: "20px" }}>Allergies</span>
+                        )}
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
             )}
           </div>
-        </div>
 
-        {/* Gestion des chambres (CRUD + bouton Ajouter, plafonné à 5) */}
-        <div style={{ marginBottom: "20px" }}>
-          <RoomsManager guesthouseId={id} initialRooms={rooms} />
-        </div>
-
-        {/* Gestion des menus / formules de restauration */}
-        <div style={{ marginBottom: "20px" }}>
-          <MealsManager guesthouseId={id} initialMeals={meals} />
-        </div>
-
-        {/* Planning par chambre */}
-        <div className="form-card" style={{ marginBottom: "20px" }}>
-          <div className="form-card-title">Planning par chambre</div>
-          <RoomCalendar availability={availability} />
-        </div>
-
-        {/* Réservations */}
-        <div className="form-card">
-          <div className="form-card-title">Réservations ({activeReservations.length})</div>
-          {activeReservations.length === 0 ? (
-            <p style={{ fontSize: "13px", color: "var(--ink-lighter)", fontStyle: "italic" }}>Aucune réservation.</p>
-          ) : (
-            <div className="table-card" style={{ overflowX: "auto" }}>
-              <table className="resa-table" style={{ width: "100%", minWidth: "560px", borderCollapse: "collapse" }}>
-                <thead>
-                  <tr style={{ textAlign: "left", fontSize: "11px", color: "#A3A3A0", textTransform: "uppercase" }}>
-                    <th style={{ padding: "8px" }}>Client</th>
-                    <th style={{ padding: "8px" }}>Séjour</th>
-                    <th style={{ padding: "8px" }}>Chambre(s)</th>
-                    <th style={{ padding: "8px" }}>Montant</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {activeReservations.map((r) => (
-                    <tr key={r.id} style={{ borderTop: "1px solid #EFEDE8", fontSize: "13px", cursor: "pointer" }}>
-                      <td style={{ padding: 0, fontWeight: 600 }}>
-                        <Link href={`/dashboard/maisons-hotes/${id}/reservations/${r.id}`} style={{ display: "block", padding: "10px 8px", color: "#2C2C2A", textDecoration: "none" }}>
-                          {r.clientFirstName} {r.clientLastName}
-                        </Link>
-                      </td>
-                      <td style={{ padding: "10px 8px", color: "#71716E" }}>{fmt(r.checkIn)} → {fmt(r.checkOut)}</td>
-                      <td style={{ padding: "10px 8px", color: "#71716E" }}>{r.reservationRooms.map((rr) => rr.roomName).join(", ") || "—"}</td>
-                      <td style={{ padding: "10px 8px", fontWeight: 600 }}>{r.rent != null ? `${r.rent.toLocaleString("fr-FR")} €` : "—"}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+          {/* AUJOURD'HUI EN CUISINE */}
+          <div className="form-card">
+            <div className="form-card-title">
+              <svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M2 12h10M3.5 12V6.5a3.5 3.5 0 017 0V12" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/></svg>
+              Aujourd&apos;hui en cuisine
             </div>
-          )}
+            {kitchenRows.length === 0 ? (
+              <p style={{ fontSize: "13px", color: "var(--ink-lighter)", fontStyle: "italic" }}>Aucun repas à préparer aujourd&apos;hui.</p>
+            ) : (
+              <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                {kitchenRows.map((row) => (
+                  <div key={row.service} style={{ padding: "10px 12px", background: "#F8F6F1", borderRadius: "10px" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "4px" }}>
+                      <span style={{ fontSize: "12px", fontWeight: 700, color: "#5B52B5", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                        {SERVICE_LABEL[row.service] ?? row.service}
+                      </span>
+                      <span style={{ fontSize: "16px", fontWeight: 700, color: "var(--ink)" }}>{row.count}</span>
+                    </div>
+                    <div style={{ fontSize: "12px", color: "var(--ink-lighter)" }}>{row.labels.join(" · ")}</div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </>

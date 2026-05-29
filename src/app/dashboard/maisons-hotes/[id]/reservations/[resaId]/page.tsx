@@ -55,17 +55,17 @@ export default async function GuesthouseReservationDetailPage({
     <>
       <div className="topbar">
         <div className="topbar-left">
-          <div className="topbar-breadcrumb">Kordia / {reservation.guesthouse.name} / <span>{clientName}</span></div>
+          <div className="topbar-breadcrumb">Kordia / {reservation.guesthouse.name} / Planning & Réservations / <span>{clientName}</span></div>
         </div>
         <div className="topbar-right"><TopbarSignOut /></div>
       </div>
 
       <div className="content" style={{ maxWidth: "900px" }}>
-        <Link href={`/dashboard/maisons-hotes/${id}`} className="back-link">
+        <Link href={`/dashboard/maisons-hotes/${id}/reservations`} className="back-link">
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
             <path d="M10 12L6 8l4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
-          Retour à la maison d&apos;hôtes
+          Retour aux réservations
         </Link>
 
         <div className="detail-header">
