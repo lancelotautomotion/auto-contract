@@ -2,7 +2,7 @@ import { auth } from "@clerk/nextjs/server";
 import { redirect, notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import TopbarSignOut from "@/app/dashboard/TopbarSignOut";
-import GuesthouseSettingsTabs from "./GuesthouseSettingsTabs";
+import EtablissementForm from "@/app/dashboard/etablissement/EtablissementForm";
 
 export const dynamic = "force-dynamic";
 
@@ -16,48 +16,44 @@ export default async function GuesthouseHebergementPage({ params }: { params: Pr
 
   const guesthouse = await prisma.guesthouse.findFirst({
     where: { id, userId: dbUser.id, deletedAt: null },
-    include: { rooms: { orderBy: [{ position: "asc" }, { createdAt: "asc" }] } },
+    include: {
+      rooms: { orderBy: [{ position: "asc" }, { createdAt: "asc" }] },
+      documents: { orderBy: { createdAt: "asc" }, select: { id: true, label: true, fileName: true, mimeType: true, createdAt: true } },
+    },
   });
   if (!guesthouse) notFound();
-
-  const rooms = guesthouse.rooms.map((r) => ({
-    id: r.id, name: r.name, capacity: r.capacity, basePrice: r.basePrice, active: r.active,
-  }));
 
   return (
     <>
       <div className="topbar">
         <div className="topbar-left">
-          <div className="topbar-breadcrumb">Kordia / {guesthouse.name} / <span>Mon hébergement</span></div>
+          <div className="topbar-breadcrumb">Kordia / <span>Mon hébergement</span></div>
         </div>
         <div className="topbar-right"><TopbarSignOut /></div>
       </div>
 
-      <div className="content" style={{ maxWidth: "1200px", width: "100%" }}>
-        <div className="dash-header">
-          <div>
-            <div className="dash-greeting">Mon hébergement</div>
-            <div className="dash-date">Configurez votre établissement, vos chambres et votre contrat</div>
-          </div>
+      <div className="content">
+        <div className="page-title">
+          <h1>{guesthouse.name} <span className="v">.</span></h1>
+          <div className="sub">Gérez les informations de votre maison d&apos;hôtes</div>
         </div>
 
-        <GuesthouseSettingsTabs
-          initial={{
-            id: guesthouse.id,
-            name: guesthouse.name,
-            address: guesthouse.address ?? "",
-            city: guesthouse.city ?? "",
-            zipCode: guesthouse.zipCode ?? "",
-            email: guesthouse.email ?? "",
-            phone: guesthouse.phone ?? "",
-            capacity: guesthouse.capacity,
-            touristTax: guesthouse.touristTax,
-            contractTemplateGeneral: guesthouse.contractTemplateGeneral ?? "",
-            contractTemplateHouseRules: guesthouse.contractTemplateHouseRules ?? "",
-            logoUrl: guesthouse.logoUrl ?? "",
-          }}
-          rooms={rooms}
-        />
+        <EtablissementForm guesthouse={{
+          id: guesthouse.id,
+          name: guesthouse.name,
+          email: guesthouse.email ?? '',
+          phone: guesthouse.phone ?? '',
+          address: guesthouse.address ?? '',
+          city: guesthouse.city ?? '',
+          zipCode: guesthouse.zipCode ?? '',
+          capacity: guesthouse.capacity,
+          touristTax: guesthouse.touristTax,
+          contractTemplateGeneral: guesthouse.contractTemplateGeneral ?? '',
+          contractTemplateHouseRules: guesthouse.contractTemplateHouseRules ?? '',
+          logoUrl: guesthouse.logoUrl ?? '',
+          rooms: guesthouse.rooms.map(r => ({ id: r.id, name: r.name, capacity: r.capacity, basePrice: r.basePrice, active: r.active })),
+          documents: guesthouse.documents.map(d => ({ id: d.id, label: d.label, fileName: d.fileName, mimeType: d.mimeType, createdAt: d.createdAt.toISOString() })),
+        }} />
       </div>
     </>
   );

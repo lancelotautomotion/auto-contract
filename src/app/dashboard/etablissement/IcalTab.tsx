@@ -15,7 +15,8 @@ const PLATFORM_COLORS: Record<string, string> = {
   gites_de_france: "#5A8A3B", autre: "#7F77DD",
 };
 
-interface Feed { id: string; platform: string; label: string; url: string; syncedAt: string | null; }
+interface Feed { id: string; platform: string; label: string; url: string; syncedAt: string | null; roomId?: string | null; }
+interface RoomLite { id: string; name: string; }
 
 function platformLabel(p: string) { return PLATFORMS.find(x => x.value === p)?.label ?? p; }
 function fmtSync(iso: string | null) {
@@ -74,7 +75,12 @@ const s = {
   },
 };
 
-export default function IcalTab({ giteId }: { giteId?: string }) {
+export default function IcalTab({ giteId, guesthouseId, rooms = [] }: { giteId?: string; guesthouseId?: string; rooms?: RoomLite[] }) {
+  const mode = guesthouseId ? "guesthouse" : "gite";
+  const listEndpoint = mode === "guesthouse" ? `/api/guesthouse/${guesthouseId}/ical` : "/api/gite/ical";
+  const itemEndpointFor = (feedId: string) =>
+    mode === "guesthouse" ? `/api/guesthouse/${guesthouseId}/ical/${feedId}` : `/api/gite/ical/${feedId}`;
+
   const [feeds, setFeeds] = useState<Feed[]>([]);
   const [loading, setLoading] = useState(true);
   const [syncing, setSyncing] = useState<string | null>(null);
@@ -83,12 +89,13 @@ export default function IcalTab({ giteId }: { giteId?: string }) {
   const [platform, setPlatform] = useState('');
   const [customLabel, setCustomLabel] = useState('');
   const [url, setUrl] = useState('');
+  const [roomId, setRoomId] = useState('');
   const [adding, setAdding] = useState(false);
   const [addError, setAddError] = useState<string | null>(null);
 
   useEffect(() => {
-    const url = giteId ? `/api/gite/ical?giteId=${giteId}` : '/api/gite/ical';
-    fetch(url)
+    const u = mode === "guesthouse" ? listEndpoint : (giteId ? `${listEndpoint}?giteId=${giteId}` : listEndpoint);
+    fetch(u)
       .then(r => r.json())
       .then(d => { setFeeds(d.feeds ?? []); setLoading(false); })
       .catch(() => setLoading(false));
@@ -101,19 +108,23 @@ export default function IcalTab({ giteId }: { giteId?: string }) {
 
   async function handleAdd() {
     if (!platform || !url) return;
+    if (mode === "guesthouse" && !roomId) { setAddError("Sélectionnez une chambre."); return; }
     const label = platform === 'autre' ? customLabel || 'Autre' : (PLATFORMS.find(x => x.value === platform)?.label ?? platform);
     setAdding(true);
     setAddError(null);
     try {
-      const res = await fetch('/api/gite/ical', {
+      const payload = mode === "guesthouse"
+        ? { platform, label, url, roomId }
+        : { giteId, platform, label, url };
+      const res = await fetch(listEndpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ giteId, platform, label, url }),
+        body: JSON.stringify(payload),
       });
       const data = await res.json();
       if (!res.ok) { setAddError(data.error ?? "Erreur"); setAdding(false); return; }
       setFeeds(f => [...f, data.feed]);
-      setPlatform(''); setCustomLabel(''); setUrl('');
+      setPlatform(''); setCustomLabel(''); setUrl(''); setRoomId('');
       setShowForm(false);
     } catch {
       setAddError("Erreur réseau");
@@ -125,7 +136,7 @@ export default function IcalTab({ giteId }: { giteId?: string }) {
   async function handleSync(feedId: string) {
     setSyncing(feedId);
     try {
-      const res = await fetch(`/api/gite/ical/${feedId}`, { method: 'POST' });
+      const res = await fetch(itemEndpointFor(feedId), { method: 'POST' });
       const data = await res.json();
       if (res.ok) setFeeds(f => f.map(feed => feed.id === feedId ? { ...feed, syncedAt: data.syncedAt } : feed));
     } finally { setSyncing(null); }
@@ -135,10 +146,12 @@ export default function IcalTab({ giteId }: { giteId?: string }) {
     if (!confirm("Supprimer ce calendrier ?")) return;
     setDeleting(feedId);
     try {
-      await fetch(`/api/gite/ical/${feedId}`, { method: 'DELETE' });
+      await fetch(itemEndpointFor(feedId), { method: 'DELETE' });
       setFeeds(f => f.filter(feed => feed.id !== feedId));
     } finally { setDeleting(null); }
   }
+
+  const roomNameFor = (id?: string | null) => rooms.find(r => r.id === id)?.name ?? "";
 
   const selectedPlat = PLATFORMS.find(p => p.value === platform);
 
@@ -187,6 +200,9 @@ export default function IcalTab({ giteId }: { giteId?: string }) {
                   <div style={{ fontSize: '13px', fontWeight: 600, color: '#2C2C2A' }}>
                     {platformLabel(feed.platform)}
                     {feed.platform === 'autre' && <span style={{ fontWeight: 400, color: '#71716E', marginLeft: '6px' }}>— {feed.label}</span>}
+                    {mode === "guesthouse" && feed.roomId && (
+                      <span style={{ fontWeight: 500, color: '#5B52B5', marginLeft: '6px', fontSize: '11.5px' }}>· {roomNameFor(feed.roomId)}</span>
+                    )}
                   </div>
                   <div style={{ fontSize: '11px', color: '#A3A3A0', marginTop: '2px' }}>{fmtSync(feed.syncedAt)}</div>
                 </div>
@@ -219,6 +235,16 @@ export default function IcalTab({ giteId }: { giteId?: string }) {
         {showForm && (
           <div style={s.formBox}>
             <p style={{ fontSize: '13px', fontWeight: 700, color: '#2C2C2A', margin: '0 0 16px' }}>Nouveau calendrier iCal</p>
+
+            {mode === "guesthouse" && (
+              <div style={{ marginBottom: '14px' }}>
+                <label style={s.label}>Chambre concernée</label>
+                <select style={s.select} value={roomId} onChange={e => setRoomId(e.target.value)}>
+                  <option value="" disabled>Choisir une chambre…</option>
+                  {rooms.map(r => <option key={r.id} value={r.id}>{r.name}</option>)}
+                </select>
+              </div>
+            )}
 
             <div style={{ marginBottom: '14px' }}>
               <label style={s.label}>Plateforme</label>

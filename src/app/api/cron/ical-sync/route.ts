@@ -12,15 +12,31 @@ export async function GET(req: Request) {
     return new NextResponse("Unauthorized", { status: 401 });
   }
 
-  const feeds = await prisma.icalFeed.findMany();
+  const [giteFeeds, guesthouseFeeds] = await Promise.all([
+    prisma.icalFeed.findMany(),
+    prisma.guesthouseIcalFeed.findMany(),
+  ]);
   const results = { synced: 0, errors: 0 };
 
-  for (const feed of feeds) {
+  for (const feed of giteFeeds) {
     try {
       const events = await fetchAndParseIcal(feed.url);
       await prisma.icalFeed.update({
         where: { id: feed.id },
         data: { blockedDates: events, syncedAt: new Date() },
+      });
+      results.synced++;
+    } catch {
+      results.errors++;
+    }
+  }
+
+  for (const feed of guesthouseFeeds) {
+    try {
+      const events = await fetchAndParseIcal(feed.url);
+      await prisma.guesthouseIcalFeed.update({
+        where: { id: feed.id },
+        data: { blockedDates: events as never, syncedAt: new Date() },
       });
       results.synced++;
     } catch {

@@ -10,7 +10,11 @@ interface GiteDoc {
   createdAt: string;
 }
 
-export default function DocumentsTab({ giteId, initialDocs }: { giteId?: string; initialDocs: GiteDoc[] }) {
+export default function DocumentsTab({ giteId, guesthouseId, initialDocs }: { giteId?: string; guesthouseId?: string; initialDocs: GiteDoc[] }) {
+  const mode = guesthouseId ? "guesthouse" : "gite";
+  const listEndpoint = mode === "guesthouse" ? `/api/guesthouse/${guesthouseId}/documents` : "/api/etablissement/documents";
+  const delEndpointFor = (docId: string) =>
+    mode === "guesthouse" ? `/api/guesthouse/${guesthouseId}/documents/${docId}` : `/api/etablissement/documents/${docId}`;
   const [docs, setDocs] = useState<GiteDoc[]>(initialDocs);
   const [label, setLabel] = useState('');
   const [uploading, setUploading] = useState(false);
@@ -29,10 +33,13 @@ export default function DocumentsTab({ giteId, initialDocs }: { giteId?: string;
       const uploadRes = await fetch('/api/upload', { method: 'POST', body: fd });
       if (!uploadRes.ok) { setError("Erreur lors de l'upload"); return; }
       const { url: fileUrl } = await uploadRes.json();
-      const res = await fetch('/api/etablissement/documents', {
+      const payload = mode === "guesthouse"
+        ? { label: label.trim(), fileName: file.name, mimeType: file.type || 'application/octet-stream', fileUrl }
+        : { giteId, label: label.trim(), fileName: file.name, mimeType: file.type || 'application/octet-stream', fileUrl };
+      const res = await fetch(listEndpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ giteId, label: label.trim(), fileName: file.name, mimeType: file.type || 'application/octet-stream', fileUrl }),
+        body: JSON.stringify(payload),
       });
       if (!res.ok) { const data = await res.json(); setError(data.error ?? "Erreur lors de l'import"); return; }
       const doc = await res.json();
@@ -47,7 +54,7 @@ export default function DocumentsTab({ giteId, initialDocs }: { giteId?: string;
     if (!confirm('Supprimer ce document ?')) return;
     setDeletingId(id);
     try {
-      await fetch(`/api/etablissement/documents/${id}`, { method: 'DELETE' });
+      await fetch(delEndpointFor(id), { method: 'DELETE' });
       setDocs(d => d.filter(doc => doc.id !== id));
     } finally { setDeletingId(null); }
   };

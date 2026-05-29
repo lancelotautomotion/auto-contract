@@ -9,6 +9,7 @@ import {
 } from "@/lib/contractFormat";
 import DocumentsTab from "./DocumentsTab";
 import IcalTab from "./IcalTab";
+import RoomsManager from "@/app/dashboard/maisons-hotes/RoomsManager";
 
 const EXAMPLE_DATA: Record<string, string> = {
   prenom_client: 'Marie', nom_client: 'Dupont', email_client: 'marie.dupont@email.com',
@@ -124,8 +125,21 @@ interface GiteData {
   documents: GiteDoc[];
 }
 
-const TABS = ['Informations', 'Options', 'Contrat', 'Logo', 'Documents', 'iCal'] as const;
-type Tab = typeof TABS[number];
+interface GuesthouseRoomLite { id: string; name: string; capacity: number; basePrice: number; active: boolean; }
+interface GuesthouseData {
+  id: string; name: string; email: string; phone: string;
+  address: string; city: string; zipCode: string;
+  contractTemplateGeneral: string;
+  contractTemplateHouseRules: string;
+  logoUrl: string;
+  capacity: number; touristTax: number;
+  rooms: GuesthouseRoomLite[];
+  documents: GiteDoc[];
+}
+
+const TABS_GITE = ['Informations', 'Options', 'Contrat', 'Logo', 'Documents', 'iCal'] as const;
+const TABS_GUESTHOUSE = ['Informations', 'Chambres', 'Contrat', 'Logo', 'Documents', 'iCal'] as const;
+type Tab = (typeof TABS_GITE)[number] | (typeof TABS_GUESTHOUSE)[number];
 type EditorZone = 'general' | 'houseRules';
 
 const VARIABLES: Array<[string, string, 'client' | 'booking' | 'gite']> = [
@@ -262,7 +276,12 @@ function sanitizePastedText(text: string): string {
     .replace(/\n{3,}/g, '\n\n');                 // max 2 lignes vides consécutives
 }
 
-export default function EtablissementForm({ gite }: { gite: GiteData }) {
+export default function EtablissementForm({ gite, guesthouse }: { gite?: GiteData; guesthouse?: GuesthouseData }) {
+  const mode: 'gite' | 'guesthouse' = guesthouse ? 'guesthouse' : 'gite';
+  // Source d'information unifiée — toutes les UIs lisent depuis "src" sauf champs gite-spécifiques.
+  const src = (guesthouse ?? gite)!;
+  const TABS = mode === 'guesthouse' ? TABS_GUESTHOUSE : TABS_GITE;
+
   const [activeTab, setActiveTab] = useState<Tab>('Informations');
   const [activeEditorZone, setActiveEditorZone] = useState<EditorZone>('general');
   const [showMobilePreview, setShowMobilePreview] = useState(false);
@@ -271,22 +290,22 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
   const [origin, setOrigin] = useState('');
   const [copied, setCopied] = useState(false);
   const [form, setForm] = useState({
-    giteName: gite.name, email: gite.email, phone: gite.phone,
-    address: gite.address, city: gite.city, zipCode: gite.zipCode,
-    slug: gite.slug,
-    capacity: gite.capacity.toString(),
-    cleaningFee: gite.cleaningFee.toString(),
-    touristTax: gite.touristTax.toString(),
+    giteName: src.name, email: src.email, phone: src.phone,
+    address: src.address, city: src.city, zipCode: src.zipCode,
+    slug: gite?.slug ?? '',
+    capacity: src.capacity.toString(),
+    cleaningFee: (gite?.cleaningFee ?? 0).toString(),
+    touristTax: src.touristTax.toString(),
   });
-  const [savedSlug, setSavedSlug] = useState(gite.slug);
+  const [savedSlug, setSavedSlug] = useState(gite?.slug ?? '');
   const [contractTemplateGeneral, setContractTemplateGeneral] = useState(
-    gite.contractTemplateGeneral || DEFAULT_CONTRACT_TEMPLATE
+    src.contractTemplateGeneral || DEFAULT_CONTRACT_TEMPLATE
   );
   const [contractTemplateHouseRules, setContractTemplateHouseRules] = useState(
-    gite.contractTemplateHouseRules || ''
+    src.contractTemplateHouseRules || ''
   );
-  const [options, setOptions] = useState<GiteOption[]>(gite.options);
-  const [logoUrl, setLogoUrl] = useState(gite.logoUrl || '');
+  const [options, setOptions] = useState<GiteOption[]>(gite?.options ?? []);
+  const [logoUrl, setLogoUrl] = useState(src.logoUrl || '');
 
   useEffect(() => { setOrigin(window.location.origin); }, []);
   const [logoLoading, setLogoLoading] = useState(false);
@@ -523,11 +542,26 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
     e.preventDefault();
     setLoading(true); setSaved(false);
     try {
-      const res = await fetch('/api/etablissement', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ giteId: gite.id, ...form, contractTemplateGeneral, contractTemplateHouseRules, options, logoUrl }),
-      });
+      let res: Response;
+      if (mode === 'guesthouse') {
+        res = await fetch(`/api/guesthouse/${src.id}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: form.giteName,
+            email: form.email, phone: form.phone,
+            address: form.address, city: form.city, zipCode: form.zipCode,
+            capacity: form.capacity, touristTax: form.touristTax,
+            contractTemplateGeneral, contractTemplateHouseRules, logoUrl,
+          }),
+        });
+      } else {
+        res = await fetch('/api/etablissement', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ giteId: src.id, ...form, contractTemplateGeneral, contractTemplateHouseRules, options, logoUrl }),
+        });
+      }
       if (res.ok) { setSaved(true); setSavedSlug(form.slug); }
     } finally { setLoading(false); }
   };
@@ -579,7 +613,7 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
       {activeTab === 'Informations' && (
         <div style={{ maxWidth: '860px' }}>
 
-          <div className="booking-card">
+          {mode === 'gite' && <div className="booking-card">
             <div className="booking-card-header">
               <div className="booking-card-icon">
                 <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
@@ -643,15 +677,15 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
                 Définissez un identifiant ci-dessous pour générer votre lien de réservation.
               </div>
             )}
-          </div>
+          </div>}
 
           <div className="form-card">
             <div className="form-card-title">
               <svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M3 11V7l4-4 4 4v4a1 1 0 01-1 1H4a1 1 0 01-1-1z" stroke="currentColor" strokeWidth="1.2"/><path d="M6 12v-3h2v3" stroke="currentColor" strokeWidth="1.2"/></svg>
-              Votre gîte
+              {mode === 'guesthouse' ? "Votre maison d'hôtes" : "Votre gîte"}
             </div>
             <div className="form-group">
-              <label className="form-label">Nom du gîte <span className="req">*</span></label>
+              <label className="form-label">{mode === 'guesthouse' ? "Nom de l'établissement" : "Nom du gîte"} <span className="req">*</span></label>
               <input required className="form-input" type="text" value={form.giteName} onChange={e => handleGiteNameChange(e.target.value)} />
             </div>
             <div className="form-row">
@@ -664,21 +698,23 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
                 <input className="form-input" type="tel" value={form.phone} onChange={e => set('phone', e.target.value)} />
               </div>
             </div>
-            <div className="form-group">
-              <label className="form-label">Identifiant de votre page de réservation <span className="req">*</span></label>
-              <div className="form-prefix">
-                <span className="form-prefix-text">/book/</span>
-                <input
-                  required className="form-input" type="text"
-                  placeholder="mon-gite"
-                  value={form.slug}
-                  onChange={e => set('slug', e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '-'))}
-                />
+            {mode === 'gite' && (
+              <div className="form-group">
+                <label className="form-label">Identifiant de votre page de réservation <span className="req">*</span></label>
+                <div className="form-prefix">
+                  <span className="form-prefix-text">/book/</span>
+                  <input
+                    required className="form-input" type="text"
+                    placeholder="mon-gite"
+                    value={form.slug}
+                    onChange={e => set('slug', e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '-'))}
+                  />
+                </div>
+                <div className="form-hint">
+                  Cet identifiant unique apparaît dans l'URL partagée à vos clients. Choisissez quelque chose de court et mémorisable, ex. <em>les-3-epices</em>.
+                </div>
               </div>
-              <div className="form-hint">
-                Cet identifiant unique apparaît dans l'URL partagée à vos clients. Choisissez quelque chose de court et mémorisable, ex. <em>les-3-epices</em>.
-              </div>
-            </div>
+            )}
             <div className="form-group">
               <label className="form-label">Adresse</label>
               <input className="form-input" type="text" value={form.address} onChange={e => set('address', e.target.value)} />
@@ -700,28 +736,48 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
               <svg width="14" height="14" fill="none" viewBox="0 0 14 14"><circle cx="7" cy="7" r="5.5" stroke="currentColor" strokeWidth="1.2"/><path d="M7 4v3l2 1.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/></svg>
               Tarifs par défaut
             </div>
-            <div className="form-row-3">
-              <div className="form-group">
-                <label className="form-label">Capacité (personnes)</label>
-                <input className="form-input" type="number" value={form.capacity} onChange={e => set('capacity', e.target.value)} />
+            {mode === 'gite' ? (
+              <div className="form-row-3">
+                <div className="form-group">
+                  <label className="form-label">Capacité (personnes)</label>
+                  <input className="form-input" type="number" value={form.capacity} onChange={e => set('capacity', e.target.value)} />
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Frais de ménage (€)</label>
+                  <input className="form-input" type="number" step="0.01" value={form.cleaningFee} onChange={e => set('cleaningFee', e.target.value)} />
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Taxe de séjour (€/nuit/pers.)</label>
+                  <input className="form-input" type="number" step="0.01" value={form.touristTax} onChange={e => set('touristTax', e.target.value)} />
+                </div>
               </div>
-              <div className="form-group">
-                <label className="form-label">Frais de ménage (€)</label>
-                <input className="form-input" type="number" step="0.01" value={form.cleaningFee} onChange={e => set('cleaningFee', e.target.value)} />
+            ) : (
+              <div className="form-row">
+                <div className="form-group">
+                  <label className="form-label">Capacité max (personnes)</label>
+                  <input className="form-input" type="number" value={form.capacity} onChange={e => set('capacity', e.target.value)} />
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Taxe de séjour (€/adulte/nuit)</label>
+                  <input className="form-input" type="number" step="0.01" value={form.touristTax} onChange={e => set('touristTax', e.target.value)} />
+                </div>
               </div>
-              <div className="form-group">
-                <label className="form-label">Taxe de séjour (€/nuit/pers.)</label>
-                <input className="form-input" type="number" step="0.01" value={form.touristTax} onChange={e => set('touristTax', e.target.value)} />
-              </div>
-            </div>
+            )}
           </div>
 
           <SaveBar />
         </div>
       )}
 
+      {/* ═══ CHAMBRES (Maison d'hôtes) ═══ */}
+      {activeTab === 'Chambres' && mode === 'guesthouse' && guesthouse && (
+        <div style={{ maxWidth: '860px' }}>
+          <RoomsManager guesthouseId={guesthouse.id} initialRooms={guesthouse.rooms} />
+        </div>
+      )}
+
       {/* ═══ OPTIONS ═══ */}
-      {activeTab === 'Options' && (
+      {activeTab === 'Options' && mode === 'gite' && (
         <div style={{ maxWidth: '860px' }}>
           <div className="form-card">
             <div className="form-card-title">
@@ -959,7 +1015,7 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
           <div className="form-card">
             <div className="form-card-title">
               <svg width="14" height="14" fill="none" viewBox="0 0 14 14"><rect x="1.5" y="2" width="11" height="10" rx="1.5" stroke="currentColor" strokeWidth="1.2"/><circle cx="5" cy="6" r="1.5" stroke="currentColor" strokeWidth="1.2"/><path d="M1.5 10l3-3 2 2 2.5-3L11.5 10" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-              Logo du gîte
+              {mode === 'guesthouse' ? "Logo de l'établissement" : "Logo du gîte"}
             </div>
             <p style={{ fontSize: '13px', color: 'var(--ink-lighter)', marginBottom: '16px' }}>
               Votre logo sera affiché en haut de chaque contrat PDF généré. Formats acceptés : PNG, JPG, WEBP.
@@ -997,11 +1053,15 @@ export default function EtablissementForm({ gite }: { gite: GiteData }) {
 
       {/* ═══ DOCUMENTS ═══ */}
       {activeTab === 'Documents' && (
-        <DocumentsTab giteId={gite.id} initialDocs={gite.documents} />
+        mode === 'guesthouse'
+          ? <DocumentsTab guesthouseId={src.id} initialDocs={src.documents} />
+          : <DocumentsTab giteId={src.id} initialDocs={src.documents} />
       )}
 
       {activeTab === 'iCal' && (
-        <IcalTab giteId={gite.id} />
+        mode === 'guesthouse'
+          ? <IcalTab guesthouseId={src.id} rooms={guesthouse!.rooms} />
+          : <IcalTab giteId={src.id} />
       )}
 
     </form>

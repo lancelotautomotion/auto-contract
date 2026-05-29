@@ -28,10 +28,15 @@ export default async function GuesthouseReservationsPage({ params }: { params: P
   });
   if (!guesthouse) notFound();
 
+  const icalFeeds = await prisma.guesthouseIcalFeed.findMany({
+    where: { room: { guesthouseId: guesthouse.id } },
+    select: { platform: true, label: true, blockedDates: true, roomId: true },
+  });
+
   const activeReservations = guesthouse.reservations.filter((r) => r.status !== "REFUSED" && r.status !== "CANCELLED");
   const hasRooms = guesthouse.rooms.length > 0;
 
-  const multiRooms = buildGuesthouseCalendarData(guesthouse.rooms, guesthouse.reservations);
+  const multiRooms = buildGuesthouseCalendarData(guesthouse.rooms, guesthouse.reservations, icalFeeds);
 
   const fmt = (d: Date) =>
     new Date(d).toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "numeric" });
