@@ -83,6 +83,25 @@ export async function requireGiteById(giteId: string): Promise<[GiteCtx, null] |
   return [{ userId: ctx.userId, giteId: gite.id }, null];
 }
 
+export type GuesthouseCtx = AuthCtx & { guesthouseId: string };
+
+/**
+ * Vérifie qu'une maison d'hôtes existe et appartient à l'utilisateur authentifié.
+ */
+export async function requireGuesthouseById(guesthouseId: string): Promise<[GuesthouseCtx, null] | [null, AuthErr]> {
+  const [ctx, err] = await requireAuth();
+  if (err) return [null, err];
+
+  if (!guesthouseId)
+    return [null, NextResponse.json({ error: "guesthouseId manquant" }, { status: 400 })];
+
+  const guesthouse = await prisma.guesthouse.findFirst({ where: { id: guesthouseId, userId: ctx.userId, deletedAt: null } });
+  if (!guesthouse)
+    return [null, NextResponse.json({ error: "Maison d'hôtes introuvable ou accès refusé" }, { status: 404 })];
+
+  return [{ userId: ctx.userId, guesthouseId: guesthouse.id }, null];
+}
+
 export async function requireActivePlan(): Promise<[GiteCtx, null] | [null, AuthErr]> {
   const { userId: clerkId, sessionClaims } = await auth();
   if (!clerkId)

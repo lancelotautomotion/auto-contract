@@ -4,6 +4,7 @@ import { resend, getFromEmail } from "@/lib/resend";
 import { randomBytes } from "crypto";
 import { buildEmailHtml, recapCard, ctaButton, divider, infoBox, muted, signOff } from "@/lib/emailTemplate";
 import { requireActivePlan } from "@/lib/auth";
+import { resolveReservationProperty } from "@/lib/reservationProperty";
 
 export async function POST(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -12,10 +13,14 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
   if (err) return err;
 
   const reservation = await prisma.reservation.findFirst({
-    where: { id, gite: { userId: ctx.userId } },
-    include: { gite: { include: { documents: true } } },
+    where: { id, OR: [{ gite: { userId: ctx.userId } }, { guesthouse: { userId: ctx.userId } }] },
+    include: { gite: { include: { documents: true } }, guesthouse: true },
   });
   if (!reservation) return NextResponse.json({ error: "Réservation introuvable" }, { status: 404 });
+
+  const property = resolveReservationProperty(reservation);
+  if (!property) return NextResponse.json({ error: "Hébergement introuvable" }, { status: 404 });
+  const documents = reservation.gite?.documents ?? [];
 
   if (!process.env.RESEND_API_KEY)
     return NextResponse.json({ error: "RESEND_API_KEY non configurée" }, { status: 500 });
@@ -42,7 +47,7 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
   const depositFormatted = reservation.deposit != null
     ? `${reservation.deposit.toFixed(2).replace(".", ",")} €`
     : null;
-  const hasRib = reservation.gite.documents.some((d) => /rib/i.test(d.label));
+  const hasRib = documents.some((d) => /rib/i.test(d.label));
 
   const rightCol = [
     ...(rentFormatted ? [{ label: 'Montant total', value: rentFormatted }] : []),
@@ -50,7 +55,7 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
   ];
 
   const body = `
-    <p style="margin:0 0 20px;">Votre contrat de location pour votre séjour au <strong style="color:#2C2C2A;">${reservation.gite.name}</strong> est prêt à être signé.</p>
+    <p style="margin:0 0 20px;">Votre contrat de location pour votre séjour au <strong style="color:#2C2C2A;">${property.name}</strong> est prêt à être signé.</p>
     ${recapCard(
       [{ label: 'Arrivée', value: dateEntree }, { label: 'Départ', value: dateSortie }],
       rightCol.length > 0 ? rightCol : [{ label: 'Séjour', value: `${dateEntree} → ${dateSortie}` }]
@@ -63,16 +68,16 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
       : ''
     }
     ${muted("Ce lien est personnel et sécurisé. La signature est conforme au règlement eIDAS.")}
-    ${signOff(reservation.gite.name)}
+    ${signOff(property.name)}
   `;
 
-  const giteAddress = [reservation.gite.address, reservation.gite.zipCode, reservation.gite.city]
+  const giteAddress = [property.address, property.zipCode, property.city]
     .filter(Boolean).join(', ') || undefined;
 
   const html = buildEmailHtml({
-    giteName: reservation.gite.name,
+    giteName: property.name,
     giteAddress,
-    giteLogoUrl: reservation.gite.logoUrl,
+    giteLogoUrl: property.logoUrl,
     docLabel: 'Contrat de location',
     preheader: `Votre contrat pour le séjour du ${dateEntree} au ${dateSortie} est prêt à être signé.`,
     greeting: reservation.clientFirstName,
@@ -80,7 +85,7 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
   });
 
   const attachments = (await Promise.all(
-    reservation.gite.documents.map(async (doc) => {
+    documents.map(async (doc) => {
       try {
         const res = await fetch(doc.fileUrl);
         if (!res.ok) { console.error(`[send-email] fetch doc failed: ${doc.fileUrl} → ${res.status}`); return null; }
@@ -96,7 +101,7 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
   const { error } = await resend.emails.send({
     from: fromEmail,
     to: reservation.clientEmail,
-    subject: `Votre contrat de location à signer — ${reservation.gite.name}`,
+    subject: `Votre contrat de location à signer — ${property.name}`,
     html,
     attachments,
   });

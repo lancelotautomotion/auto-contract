@@ -109,8 +109,8 @@ export default async function CompleteReservationPage({ params }: { params: Prom
           giteId={giteId}
           defaultCheckIn={fmt(reservation.checkIn)}
           defaultCheckOut={fmt(reservation.checkOut)}
-          defaultCleaningFee={String(reservation.gite.cleaningFee ?? 0)}
-          defaultTouristTax={String(reservation.gite.touristTax ?? 0)}
+          defaultCleaningFee={String(reservation.gite?.cleaningFee ?? 0)}
+          defaultTouristTax={String(reservation.gite?.touristTax ?? 0)}
         />
       </div>
     </>

@@ -86,6 +86,16 @@ export default function Sidebar({ pendingCount = 0, trialInfo, mobileOpen, onMob
             </span>
             Mon hébergement
           </Link>
+
+          <Link href="/dashboard/maisons-hotes" className={`sb-link${active('/dashboard/maisons-hotes') ? ' active' : ''}`}>
+            <span className="sb-icon">
+              <svg width="18" height="18" fill="none" viewBox="0 0 18 18">
+                <path d="M2 15V7l7-5 7 5v8a1 1 0 01-1 1H3a1 1 0 01-1-1z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round"/>
+                <path d="M6 15v-3h2v3M10 15v-3h2v3M6 8.5h2M10 8.5h2" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
+              </svg>
+            </span>
+            Maisons d&apos;hôtes
+          </Link>
         </div>
 
         <div className="sb-section">

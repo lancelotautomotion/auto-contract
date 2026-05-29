@@ -78,6 +78,7 @@ export default async function AdminPage() {
           select: {
             checkIn: true, checkOut: true, deposit: true,
             gite: { select: { name: true } },
+            guesthouse: { select: { name: true } },
           },
         },
       },
@@ -437,7 +438,7 @@ export default async function AdminPage() {
                 <tbody>
                   {depositsPending.map((c, i) => (
                     <tr key={i}>
-                      <td style={{ fontWeight: 600, color: "var(--ink)" }}>{c.reservation.gite.name}</td>
+                      <td style={{ fontWeight: 600, color: "var(--ink)" }}>{c.reservation.gite?.name ?? c.reservation.guesthouse?.name ?? "—"}</td>
                       <td style={{ fontSize: 12, color: "var(--ink-soft)", whiteSpace: "nowrap" }}>
                         {fmtShort(c.reservation.checkIn)} → {fmtShort(c.reservation.checkOut)}
                       </td>

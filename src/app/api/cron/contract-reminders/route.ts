@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { resend, getFromEmail } from "@/lib/resend";
 import { buildEmailHtml, recapCard, ctaButton, divider, infoBox, muted, signOff } from "@/lib/emailTemplate";
+import { resolveReservationProperty } from "@/lib/reservationProperty";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -37,14 +38,16 @@ export async function GET(req: Request) {
     },
     include: {
       reservation: {
-        include: { gite: { include: { documents: true } } },
+        include: { gite: { include: { documents: true } }, guesthouse: true },
       },
     },
   });
 
   for (const contract of contracts) {
     const { reservation } = contract;
-    const { gite } = reservation;
+    const property = resolveReservationProperty(reservation);
+    if (!property) { results.skipped++; continue; }
+    const documents = reservation.gite?.documents ?? [];
 
     if (!contract.signatureToken) { results.skipped++; continue; }
 
@@ -59,7 +62,7 @@ export async function GET(req: Request) {
         ? `${reservation.rent.toFixed(2).replace(".", ",")} €` : null;
       const depositFormatted = reservation.deposit != null
         ? `${reservation.deposit.toFixed(2).replace(".", ",")} €` : null;
-      const hasRib = gite.documents.some((d) => /rib/i.test(d.label));
+      const hasRib = documents.some((d) => /rib/i.test(d.label));
 
       const rightCol = [
         ...(rentFormatted ? [{ label: "Montant total", value: rentFormatted }] : []),
@@ -68,7 +71,7 @@ export async function GET(req: Request) {
 
       const reminderNum = contract.reminderCount + 1;
       const body = `
-        <p style="margin:0 0 16px;">Nous vous contactons car votre contrat de location pour le <strong style="color:#2C2C2A;">${gite.name}</strong> est toujours en attente de signature.</p>
+        <p style="margin:0 0 16px;">Nous vous contactons car votre contrat de location pour le <strong style="color:#2C2C2A;">${property.name}</strong> est toujours en attente de signature.</p>
         ${recapCard(
           [{ label: "Arrivée", value: dateEntree }, { label: "Départ", value: dateSortie }],
           rightCol.length > 0 ? rightCol : [{ label: "Séjour", value: `${dateEntree} → ${dateSortie}` }]
@@ -81,15 +84,15 @@ export async function GET(req: Request) {
           : ""
         }
         ${muted("Ce lien est personnel et sécurisé. La signature est conforme au règlement eIDAS.")}
-        ${signOff(gite.name)}
+        ${signOff(property.name)}
       `;
 
-      const giteAddress = [gite.address, gite.zipCode, gite.city].filter(Boolean).join(", ") || undefined;
+      const giteAddress = [property.address, property.zipCode, property.city].filter(Boolean).join(", ") || undefined;
 
       const html = buildEmailHtml({
-        giteName: gite.name,
+        giteName: property.name,
         giteAddress,
-        giteLogoUrl: gite.logoUrl,
+        giteLogoUrl: property.logoUrl,
         docLabel: "Contrat de location",
         preheader: `Rappel : votre contrat pour le séjour du ${dateEntree} au ${dateSortie} attend votre signature.`,
         greeting: reservation.clientFirstName,
@@ -97,7 +100,7 @@ export async function GET(req: Request) {
       });
 
       const attachments = (await Promise.all(
-        gite.documents.map(async (doc) => {
+        documents.map(async (doc) => {
           try {
             const res = await fetch(doc.fileUrl);
             if (!res.ok) return null;
@@ -110,7 +113,7 @@ export async function GET(req: Request) {
       const { error } = await resend.emails.send({
         from: getFromEmail(),
         to: reservation.clientEmail,
-        subject: `Rappel${reminderNum > 1 ? ` (${reminderNum})` : ""} : votre contrat de location attend votre signature — ${gite.name}`,
+        subject: `Rappel${reminderNum > 1 ? ` (${reminderNum})` : ""} : votre contrat de location attend votre signature — ${property.name}`,
         html,
         attachments,
       });

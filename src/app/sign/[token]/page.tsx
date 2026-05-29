@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import { generateContractPdf, ContractData } from "@/lib/contractPdf";
-import { DEFAULT_CONTRACT_TEMPLATE, mergeTemplates } from "@/lib/defaultContractTemplate";
+import { generateContractPdf } from "@/lib/contractPdf";
+import { resolveReservationProperty, buildContractData } from "@/lib/reservationProperty";
 import SigningForm from "./SigningForm";
 import ContractPdfViewer from "./ContractPdfViewer";
 
@@ -12,7 +12,7 @@ export default async function SignPage({ params }: { params: Promise<{ token: st
     where: { signatureToken: token },
     include: {
       reservation: {
-        include: { gite: true, reservationOptions: true },
+        include: { gite: true, guesthouse: true, reservationOptions: true, meals: true },
       },
     },
   });
@@ -20,34 +20,12 @@ export default async function SignPage({ params }: { params: Promise<{ token: st
   if (!contract || !contract.reservation) notFound();
 
   const { reservation } = contract;
-  const fmtShort = (d: Date) => new Date(d).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  const property = resolveReservationProperty(reservation);
+  if (!property) notFound();
   const fmtLong  = (d: Date) => new Date(d).toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' });
 
   // Generate PDF server-side — avoids any client-side API route routing issues
-  const data: ContractData = {
-    template: mergeTemplates(reservation.gite.contractTemplateGeneral ?? DEFAULT_CONTRACT_TEMPLATE, reservation.gite.contractTemplateHouseRules),
-    nom_client: reservation.clientLastName,
-    prenom_client: reservation.clientFirstName,
-    email_client: reservation.clientEmail,
-    telephone_client: reservation.clientPhone,
-    adresse_client: reservation.clientAddress,
-    ville_client: reservation.clientCity,
-    code_postal_client: reservation.clientZipCode,
-    date_entree: fmtShort(reservation.checkIn),
-    date_sortie: fmtShort(reservation.checkOut),
-    loyer: reservation.rent ?? 0,
-    acompte: reservation.deposit ?? 0,
-    menage: reservation.cleaningFee ?? 0,
-    taxe_sejour: reservation.touristTax ?? 0,
-    options: reservation.reservationOptions.map(o => ({ label: o.label, price: o.price })),
-    nom_gite: reservation.gite.name,
-    adresse_gite: reservation.gite.address,
-    ville_gite: reservation.gite.city,
-    code_postal_gite: reservation.gite.zipCode,
-    email_gite: reservation.gite.email,
-    telephone_gite: reservation.gite.phone,
-    logoUrl: reservation.gite.logoUrl,
-  };
+  const data = buildContractData({ reservation, property });
   const pdfBuffer = await generateContractPdf(data);
   const pdfBase64 = pdfBuffer.toString('base64');
 
@@ -58,7 +36,7 @@ export default async function SignPage({ params }: { params: Promise<{ token: st
   return (
     <>
       <header className="sign-header">
-        <span className="sign-header-name">{reservation.gite.name}</span>
+        <span className="sign-header-name">{property.name}</span>
         <span className="sign-header-label">Contrat de location</span>
       </header>
 
@@ -110,7 +88,7 @@ export default async function SignPage({ params }: { params: Promise<{ token: st
                   {!rentFormatted && !depositFormatted && (
                     <>
                       <p className="sign-recap-key">Logement</p>
-                      <p className="sign-recap-val" style={{ marginBottom: 0 }}>{reservation.gite.name}</p>
+                      <p className="sign-recap-val" style={{ marginBottom: 0 }}>{property.name}</p>
                     </>
                   )}
                 </div>
@@ -135,7 +113,7 @@ export default async function SignPage({ params }: { params: Promise<{ token: st
 
         {/* Footer */}
         <div className="sign-footer">
-          <p>Signature conforme au règlement eIDAS · Envoyé par <strong>{reservation.gite.name}</strong></p>
+          <p>Signature conforme au règlement eIDAS · Envoyé par <strong>{property.name}</strong></p>
           <p className="sign-footer-brand">Kordia</p>
         </div>
       </main>

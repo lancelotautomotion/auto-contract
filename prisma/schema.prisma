@@ -34,7 +34,82 @@ model User {
   // Tier du plan souscrit — "essential" (1 gîte) ou "multi" (3 gîtes max)
   planTier  String @default("essential")
 
-  gites Gite[]
+  gites       Gite[]
+  guesthouses Guesthouse[]
+}
+
+// Maison d'hôtes — offre distincte du Gîte : location par chambre sur un même site.
+// Limites légales : max 5 chambres, max 15 personnes. Taxe de séjour au réel.
+model Guesthouse {
+  id        String  @id @default(cuid())
+  name      String
+  address   String?
+  city      String?
+  zipCode   String?
+  email     String?
+  phone     String?
+
+  // Plafond légal de personnes accueillies (max 15 pour une maison d'hôtes)
+  capacity   Int   @default(15)
+  // Taxe de séjour au réel : taux appliqué par adulte et par nuit
+  touristTax Float @default(1.00)
+
+  // Pipeline contrat partagé avec le Gîte
+  contractTemplateGeneral    String?
+  contractTemplateHouseRules String?
+  logoUrl                    String?
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  rooms        Room[]
+  reservations Reservation[]
+}
+
+// Une chambre appartient à une maison d'hôtes
+model Room {
+  id        String  @id @default(cuid())
+  name      String              // nom ou numéro de la chambre
+  capacity  Int     @default(2) // capacité max en personnes
+  basePrice Float   @default(0) // prix de base par nuit
+  active    Boolean @default(true)
+  position  Int     @default(0)
+
+  createdAt DateTime @default(now())
+
+  guesthouseId String
+  guesthouse   Guesthouse @relation(fields: [guesthouseId], references: [id], onDelete: Cascade)
+
+  reservationRooms ReservationRoom[]
+}
+
+// Jointure réservation <-> chambre(s) avec snapshot au moment de la résa
+model ReservationRoom {
+  id       String @id @default(cuid())
+  roomName String              // snapshot du nom de la chambre
+  price    Float  @default(0)  // snapshot du prix nuitée
+
+  reservationId String
+  reservation   Reservation @relation(fields: [reservationId], references: [id], onDelete: Cascade)
+
+  roomId String?
+  room   Room?  @relation(fields: [roomId], references: [id], onDelete: SetNull)
+}
+
+// Repas associés à une réservation (maison d'hôtes)
+model ReservationMeal {
+  id        String   @id @default(cuid())
+  mealType  MealType
+  label     String              // ex. "Demi-pension"
+  unitPrice Float    @default(0)
+  quantity  Int      @default(1) // nombre de repas / jours
+
+  reservationId String
+  reservation   Reservation @relation(fields: [reservationId], references: [id], onDelete: Cascade)
 }
 
 // Un gîte appartient à un gérant
@@ -122,6 +197,10 @@ model Reservation {
 
   // Composition du séjour
   guestCount Int?
+  // Nombre d'adultes — base de calcul de la taxe de séjour au réel (maison d'hôtes)
+  adultsCount Int?
+  // Notes alimentaires / allergies / régimes spécifiques des voyageurs
+  dietaryNotes String?
 
   // Tarifs (null si demande client en attente de validation)
   rent        Float?
@@ -134,11 +213,19 @@ model Reservation {
   refusalReason String?
   refusalNote   String?
 
-  giteId String
-  gite   Gite   @relation(fields: [giteId], references: [id], onDelete: Cascade)
+  // Une réservation est rattachée SOIT à un Gîte SOIT à une Maison d'hôtes
+  // (exactement un des deux — garanti côté API). giteId est nullable depuis
+  // l'introduction des maisons d'hôtes ; les résas Gîte existantes le conservent.
+  giteId String?
+  gite   Gite?  @relation(fields: [giteId], references: [id], onDelete: Cascade)
+
+  guesthouseId String?
+  guesthouse   Guesthouse? @relation(fields: [guesthouseId], references: [id], onDelete: Cascade)
 
   contract            Contract?
   reservationOptions  ReservationOption[]
+  reservationRooms    ReservationRoom[]
+  meals               ReservationMeal[]
 }
 
 // Options sélectionnées pour une réservation (snapshot au moment de la résa)
@@ -223,4 +310,10 @@ enum PlanStatus {
   TRIAL
   ACTIVE
   EXPIRED
+}
+
+enum MealType {
+  BREAKFAST    // Petit-déjeuner
+  HALF_BOARD   // Demi-pension
+  TABLE_HOTES  // Table d'hôtes
 }

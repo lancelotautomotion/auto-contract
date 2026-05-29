@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { buildEmailHtml, divider, muted, signOff } from "@/lib/emailTemplate";
 import { resend, getFromEmail } from "@/lib/resend";
 import { requireAuth } from "@/lib/auth";
+import { resolveReservationProperty } from "@/lib/reservationProperty";
 
 const REASON_LABELS: Record<string, string> = {
   dates_taken:    "les dates demandées sont malheureusement déjà réservées",
@@ -23,13 +24,16 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
 
   try {
     const reservation = await prisma.reservation.findFirst({
-      where: { id, gite: { userId: ctx.userId } },
-      include: { gite: true },
+      where: { id, OR: [{ gite: { userId: ctx.userId } }, { guesthouse: { userId: ctx.userId } }] },
+      include: { gite: true, guesthouse: true },
     });
 
     if (!reservation) return NextResponse.json({ error: "Réservation introuvable" }, { status: 404 });
     if (!['PENDING_REVIEW', 'NEW'].includes(reservation.status))
       return NextResponse.json({ error: "Cette réservation ne peut pas être refusée dans son état actuel" }, { status: 400 });
+
+    const property = resolveReservationProperty(reservation);
+    if (!property) return NextResponse.json({ error: "Hébergement introuvable" }, { status: 404 });
 
     await prisma.reservation.update({
       where: { id },
@@ -37,7 +41,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     });
 
     const fromEmail = getFromEmail();
-    const giteAddress = [reservation.gite.address, reservation.gite.zipCode, reservation.gite.city]
+    const giteAddress = [property.address, property.zipCode, property.city]
       .filter(Boolean).join(", ") || undefined;
 
     const fmt = (d: Date) => new Date(d).toLocaleDateString("fr-FR", { day: "2-digit", month: "long", year: "numeric" });
@@ -50,23 +54,23 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       : "";
 
     const body_html = `
-      <p style="margin:0 0 20px;">Nous vous remercions sincèrement de l'intérêt que vous portez à <strong style="color:#2C2C2A;">${reservation.gite.name}</strong> et de la confiance que vous nous témoignez.</p>
+      <p style="margin:0 0 20px;">Nous vous remercions sincèrement de l'intérêt que vous portez à <strong style="color:#2C2C2A;">${property.name}</strong> et de la confiance que vous nous témoignez.</p>
       <p style="margin:0 0 20px;">Après examen de votre demande de réservation du <strong style="color:#2C2C2A;">${dateEntree}</strong> au <strong style="color:#2C2C2A;">${dateSortie}</strong>, nous avons le regret de vous informer que nous ne sommes pas en mesure d'y donner suite, ${reasonLabel}.</p>
       ${noteHtml}
       <p style="margin:0 0 20px;">Nous espérons avoir l'occasion de vous accueillir lors d'une prochaine occasion et vous souhaitons de trouver rapidement un hébergement qui correspond à vos attentes.</p>
       ${divider()}
       ${muted("Ce message est envoyé automatiquement suite à l'examen de votre demande de réservation.")}
-      ${signOff(reservation.gite.name)}
+      ${signOff(property.name)}
     `;
 
     await resend.emails.send({
       from: fromEmail,
       to: reservation.clientEmail,
-      subject: `Suite à votre demande — ${reservation.gite.name}`,
+      subject: `Suite à votre demande — ${property.name}`,
       html: buildEmailHtml({
-        giteName: reservation.gite.name,
+        giteName: property.name,
         giteAddress,
-        giteLogoUrl: reservation.gite.logoUrl,
+        giteLogoUrl: property.logoUrl,
         docLabel: "Réponse à votre demande",
         preheader: `Réponse à votre demande de réservation du ${dateEntree} au ${dateSortie}.`,
         greeting: reservation.clientFirstName,

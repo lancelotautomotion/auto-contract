@@ -34,7 +34,7 @@ export default async function CompleteReservationPage({ params }: { params: Prom
   let icalConflicts: IcalConflict[] = [];
   let icalFeedsCount = 0;
   try {
-    const feeds = await prisma.icalFeed.findMany({ where: { giteId: reservation.giteId } });
+    const feeds = reservation.giteId ? await prisma.icalFeed.findMany({ where: { giteId: reservation.giteId } }) : [];
     icalFeedsCount = feeds.length;
     const checkInStr  = reservation.checkIn.toISOString().slice(0, 10);
     const checkOutStr = reservation.checkOut.toISOString().slice(0, 10);
@@ -196,8 +196,8 @@ export default async function CompleteReservationPage({ params }: { params: Prom
           id={id}
           defaultCheckIn={fmt(reservation.checkIn)}
           defaultCheckOut={fmt(reservation.checkOut)}
-          defaultCleaningFee={String(reservation.gite.cleaningFee ?? 0)}
-          defaultTouristTax={String(reservation.gite.touristTax ?? 0)}
+          defaultCleaningFee={String(reservation.gite?.cleaningFee ?? 0)}
+          defaultTouristTax={String(reservation.gite?.touristTax ?? 0)}
         />
 
       </div>
