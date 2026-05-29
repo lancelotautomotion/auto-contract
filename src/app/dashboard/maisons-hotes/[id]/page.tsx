@@ -80,8 +80,12 @@ export default async function GuesthouseDetailPage({ params }: { params: Promise
                 </thead>
                 <tbody>
                   {activeReservations.map((r) => (
-                    <tr key={r.id} style={{ borderTop: "1px solid #EFEDE8", fontSize: "13px" }}>
-                      <td style={{ padding: "10px 8px", fontWeight: 600 }}>{r.clientFirstName} {r.clientLastName}</td>
+                    <tr key={r.id} style={{ borderTop: "1px solid #EFEDE8", fontSize: "13px", cursor: "pointer" }}>
+                      <td style={{ padding: 0, fontWeight: 600 }}>
+                        <Link href={`/dashboard/maisons-hotes/${id}/reservations/${r.id}`} style={{ display: "block", padding: "10px 8px", color: "#2C2C2A", textDecoration: "none" }}>
+                          {r.clientFirstName} {r.clientLastName}
+                        </Link>
+                      </td>
                       <td style={{ padding: "10px 8px", color: "#71716E" }}>{fmt(r.checkIn)} → {fmt(r.checkOut)}</td>
                       <td style={{ padding: "10px 8px", color: "#71716E" }}>{r.reservationRooms.map((rr) => rr.roomName).join(", ") || "—"}</td>
                       <td style={{ padding: "10px 8px", fontWeight: 600 }}>{r.rent != null ? `${r.rent.toLocaleString("fr-FR")} €` : "—"}</td>
