@@ -71,7 +71,25 @@ model Guesthouse {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   rooms        Room[]
+  meals        GuesthouseMeal[]
   reservations Reservation[]
+}
+
+// Menu / formule de restauration configurable par le gérant d'une maison d'hôtes
+model GuesthouseMeal {
+  id          String      @id @default(cuid())
+  name        String                  // ex. "Petit-déjeuner continental", "Table d'hôtes"
+  description String?                 // composition / détail du menu (gérant ET client)
+  price       Float       @default(0)
+  service     MealService @default(DINNER) // moment de service (agrégation cuisine)
+  active      Boolean     @default(true)
+  position    Int         @default(0)
+  createdAt   DateTime    @default(now())
+
+  guesthouseId String
+  guesthouse   Guesthouse @relation(fields: [guesthouseId], references: [id], onDelete: Cascade)
+
+  reservationMeals ReservationMeal[]
 }
 
 // Une chambre appartient à une maison d'hôtes
@@ -104,16 +122,20 @@ model ReservationRoom {
   room   Room?  @relation(fields: [roomId], references: [id], onDelete: SetNull)
 }
 
-// Repas associés à une réservation (maison d'hôtes)
+// Repas associés à une réservation (maison d'hôtes) — snapshot au moment de la résa
 model ReservationMeal {
-  id        String   @id @default(cuid())
+  id        String       @id @default(cuid())
   mealType  MealType
-  label     String              // ex. "Demi-pension"
-  unitPrice Float    @default(0)
-  quantity  Int      @default(1) // nombre de repas / jours
+  service   MealService  @default(DINNER) // moment de service (agrégation cuisine)
+  label     String              // ex. "Demi-pension" (snapshot)
+  unitPrice Float        @default(0)
+  quantity  Int          @default(1) // nombre de repas / jours
 
   reservationId String
   reservation   Reservation @relation(fields: [reservationId], references: [id], onDelete: Cascade)
+
+  guesthouseMealId String?
+  guesthouseMeal   GuesthouseMeal? @relation(fields: [guesthouseMealId], references: [id], onDelete: SetNull)
 }
 
 // Un gîte appartient à un gérant
@@ -320,4 +342,11 @@ enum MealType {
   BREAKFAST    // Petit-déjeuner
   HALF_BOARD   // Demi-pension
   TABLE_HOTES  // Table d'hôtes
+}
+
+enum MealService {
+  BREAKFAST  // Petit-déjeuner
+  LUNCH      // Déjeuner
+  DINNER     // Dîner / table d'hôtes
+  OTHER      // Autre
 }

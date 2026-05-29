@@ -3,7 +3,9 @@ import { prisma } from "@/lib/prisma";
 import { requireActivePlan, requireGiteById, requireGuesthouseById } from "@/lib/auth";
 import { computeLodgingTotal, computeMealsTotal, computeTouristTax, nightsBetween } from "@/lib/billing";
 import { mealLabel } from "@/lib/reservationProperty";
-import type { MealType } from "@prisma/client";
+import type { MealType, MealService } from "@prisma/client";
+
+const VALID_SERVICES: MealService[] = ["BREAKFAST", "LUNCH", "DINNER", "OTHER"];
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
@@ -77,7 +79,14 @@ export async function POST(req: NextRequest) {
   return NextResponse.json(reservation, { status: 201 });
 }
 
-interface MealInput { mealType: MealType; unitPrice?: number; quantity?: number }
+interface MealInput {
+  mealType: MealType;
+  service?: MealService;
+  unitPrice?: number;
+  quantity?: number;
+  guesthouseMealId?: string;
+  label?: string;
+}
 
 async function createGuesthouseReservation(body: Record<string, unknown>, userId: string) {
   const [ctx, ghErr] = await requireGuesthouseById(String(body.guesthouseId ?? ""));
@@ -86,7 +95,7 @@ async function createGuesthouseReservation(body: Record<string, unknown>, userId
 
   const guesthouse = await prisma.guesthouse.findFirst({
     where: { id: ctx.guesthouseId, deletedAt: null },
-    include: { rooms: true },
+    include: { rooms: true, meals: true },
   });
   if (!guesthouse) return NextResponse.json({ error: "Maison d'hôtes introuvable" }, { status: 404 });
 
@@ -108,14 +117,24 @@ async function createGuesthouseReservation(body: Record<string, unknown>, userId
   // Ventilation : nuitées (chambres) et restauration (repas) séparées.
   const lodging = computeLodgingTotal(selectedRooms.map((r) => ({ price: r.basePrice })), nights);
   const mealsInput: MealInput[] = Array.isArray(body.meals) ? (body.meals as MealInput[]) : [];
+  const mealsById = new Map(guesthouse.meals.map((m) => [m.id, m]));
   const meals = mealsInput
     .filter((m) => m && m.mealType)
-    .map((m) => ({
-      mealType: m.mealType,
-      label: mealLabel(m.mealType),
-      unitPrice: Number(m.unitPrice) || 0,
-      quantity: Math.max(1, parseInt(String(m.quantity ?? 1)) || 1),
-    }));
+    .map((m) => {
+      const linked = m.guesthouseMealId ? mealsById.get(m.guesthouseMealId) : undefined;
+      const label = (m.label && String(m.label).trim()) || linked?.name || mealLabel(m.mealType);
+      const service: MealService = VALID_SERVICES.includes(m.service as MealService)
+        ? (m.service as MealService)
+        : linked?.service ?? "DINNER";
+      return {
+        mealType: m.mealType,
+        service,
+        label,
+        unitPrice: Number(m.unitPrice) || 0,
+        quantity: Math.max(1, parseInt(String(m.quantity ?? 1)) || 1),
+        guesthouseMealId: linked ? linked.id : null,
+      };
+    });
   const mealsTotal = computeMealsTotal(meals);
 
   const touristTaxRate = guesthouse.touristTax;

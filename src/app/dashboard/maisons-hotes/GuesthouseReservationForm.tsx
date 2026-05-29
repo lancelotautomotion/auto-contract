@@ -5,21 +5,16 @@ import { useRouter } from "next/navigation";
 import { computeLodgingTotal, computeMealsTotal, computeTouristTax, nightsBetween } from "@/lib/billing";
 
 interface Room { id: string; name: string; capacity: number; basePrice: number; active: boolean; }
-type MealType = "BREAKFAST" | "HALF_BOARD" | "TABLE_HOTES";
+type MealService = "BREAKFAST" | "LUNCH" | "DINNER" | "OTHER";
+interface MealOption { id: string; name: string; description: string | null; price: number; service: MealService; }
 
-const MEALS: { type: MealType; label: string }[] = [
-  { type: "BREAKFAST", label: "Petit-déjeuner" },
-  { type: "HALF_BOARD", label: "Demi-pension" },
-  { type: "TABLE_HOTES", label: "Table d'hôtes" },
-];
+interface MealLineState { enabled: boolean; unitPrice: string; quantity: string; }
 
-interface MealState { enabled: boolean; unitPrice: string; quantity: string; }
-
-const fmtMoney = (n: number) => `${n.toLocaleString("fr-FR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €`;
+const fmtMoney = (n: number) => `${n.toLocaleString("fr-FR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €`;
 
 export default function GuesthouseReservationForm({
-  guesthouseId, rooms, touristTaxRate,
-}: { guesthouseId: string; rooms: Room[]; touristTaxRate: number }) {
+  guesthouseId, rooms, meals: mealOptions = [], touristTaxRate,
+}: { guesthouseId: string; rooms: Room[]; meals?: MealOption[]; touristTaxRate: number }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -29,11 +24,15 @@ export default function GuesthouseReservationForm({
     checkIn: "", checkOut: "", adultsCount: "2", deposit: "", dietaryNotes: "", notes: "",
   });
   const [selectedRooms, setSelectedRooms] = useState<Set<string>>(new Set());
-  const [meals, setMeals] = useState<Record<MealType, MealState>>({
-    BREAKFAST: { enabled: false, unitPrice: "", quantity: "1" },
-    HALF_BOARD: { enabled: false, unitPrice: "", quantity: "1" },
-    TABLE_HOTES: { enabled: false, unitPrice: "", quantity: "1" },
-  });
+
+  const initialMealLines: Record<string, MealLineState> = useMemo(() => {
+    const acc: Record<string, MealLineState> = {};
+    for (const m of mealOptions) {
+      acc[m.id] = { enabled: false, unitPrice: String(m.price ?? 0), quantity: "1" };
+    }
+    return acc;
+  }, [mealOptions]);
+  const [mealLines, setMealLines] = useState<Record<string, MealLineState>>(initialMealLines);
 
   const set = (k: string, v: string) => setForm((f) => ({ ...f, [k]: v }));
   const toggleRoom = (id: string) => setSelectedRooms((prev) => {
@@ -41,15 +40,18 @@ export default function GuesthouseReservationForm({
     if (next.has(id)) next.delete(id); else next.add(id);
     return next;
   });
-  const setMeal = (type: MealType, patch: Partial<MealState>) =>
-    setMeals((m) => ({ ...m, [type]: { ...m[type], ...patch } }));
+  const setMealLine = (mealId: string, patch: Partial<MealLineState>) =>
+    setMealLines((m) => ({ ...m, [mealId]: { ...(m[mealId] ?? { enabled: false, unitPrice: "0", quantity: "1" }), ...patch } }));
 
   const nights = useMemo(() => (form.checkIn && form.checkOut ? nightsBetween(form.checkIn, form.checkOut) : 0), [form.checkIn, form.checkOut]);
   const chosenRooms = rooms.filter((r) => selectedRooms.has(r.id));
   const lodging = computeLodgingTotal(chosenRooms.map((r) => ({ price: r.basePrice })), nights);
-  const mealsList = MEALS
-    .filter((m) => meals[m.type].enabled)
-    .map((m) => ({ unitPrice: parseFloat(meals[m.type].unitPrice) || 0, quantity: parseInt(meals[m.type].quantity) || 0 }));
+  const mealsList = mealOptions
+    .filter((m) => mealLines[m.id]?.enabled)
+    .map((m) => ({
+      unitPrice: parseFloat(mealLines[m.id]?.unitPrice ?? "0") || 0,
+      quantity: parseInt(mealLines[m.id]?.quantity ?? "0") || 0,
+    }));
   const mealsTotal = computeMealsTotal(mealsList);
   const adults = parseInt(form.adultsCount) || 0;
   const touristTax = computeTouristTax(adults, nights, touristTaxRate);
@@ -57,6 +59,9 @@ export default function GuesthouseReservationForm({
 
   const selectedCapacity = chosenRooms.reduce((s, r) => s + r.capacity, 0);
   const overCapacity = adults > 0 && selectedCapacity > 0 && adults > selectedCapacity;
+
+  const serviceToLegacyType = (s: MealService) =>
+    s === "BREAKFAST" ? "BREAKFAST" : s === "DINNER" ? "TABLE_HOTES" : "HALF_BOARD";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -67,11 +72,16 @@ export default function GuesthouseReservationForm({
         guesthouseId,
         ...form,
         roomIds: Array.from(selectedRooms),
-        meals: MEALS.filter((m) => meals[m.type].enabled).map((m) => ({
-          mealType: m.type,
-          unitPrice: parseFloat(meals[m.type].unitPrice) || 0,
-          quantity: parseInt(meals[m.type].quantity) || 1,
-        })),
+        meals: mealOptions
+          .filter((m) => mealLines[m.id]?.enabled)
+          .map((m) => ({
+            guesthouseMealId: m.id,
+            mealType: serviceToLegacyType(m.service),
+            service: m.service,
+            label: m.name,
+            unitPrice: parseFloat(mealLines[m.id]?.unitPrice ?? "0") || 0,
+            quantity: parseInt(mealLines[m.id]?.quantity ?? "1") || 1,
+          })),
       };
       const res = await fetch("/api/reservations", {
         method: "POST",
@@ -176,19 +186,30 @@ export default function GuesthouseReservationForm({
             <div className="fs-title">Restauration / Options</div>
             <div className="fs-divider" />
             <div className="form-card">
-              {MEALS.map((m) => {
-                const state = meals[m.type];
-                return (
-                  <div key={m.type} style={{ display: "flex", gap: "8px", alignItems: "center", marginBottom: "10px", flexWrap: "wrap" }}>
-                    <label style={{ display: "flex", alignItems: "center", gap: "8px", flex: "1 1 160px", cursor: "pointer" }}>
-                      <input type="checkbox" checked={state.enabled} onChange={(e) => setMeal(m.type, { enabled: e.target.checked })} />
-                      <span style={{ fontSize: "14px", fontWeight: 600, color: "var(--ink)" }}>{m.label}</span>
-                    </label>
-                    <input type="number" min="0" step="0.01" className="form-input" style={{ flex: "0 1 120px" }} placeholder="Prix unitaire" value={state.unitPrice} disabled={!state.enabled} onChange={(e) => setMeal(m.type, { unitPrice: e.target.value })} />
-                    <input type="number" min="1" className="form-input" style={{ flex: "0 1 100px" }} placeholder="Nb repas/jours" value={state.quantity} disabled={!state.enabled} onChange={(e) => setMeal(m.type, { quantity: e.target.value })} />
-                  </div>
-                );
-              })}
+              {mealOptions.length === 0 ? (
+                <p style={{ fontSize: "13px", color: "var(--ink-lighter)", fontStyle: "italic", margin: 0 }}>
+                  Aucun menu configuré. Ajoutez vos formules depuis la fiche établissement.
+                </p>
+              ) : (
+                mealOptions.map((m) => {
+                  const state = mealLines[m.id] ?? { enabled: false, unitPrice: String(m.price), quantity: "1" };
+                  return (
+                    <div key={m.id} style={{ display: "flex", gap: "8px", alignItems: "flex-start", marginBottom: "12px", flexWrap: "wrap", paddingBottom: "12px", borderBottom: "1px solid #F4F2EE" }}>
+                      <label style={{ display: "flex", alignItems: "flex-start", gap: "8px", flex: "1 1 200px", cursor: "pointer", paddingTop: "10px" }}>
+                        <input type="checkbox" checked={state.enabled} onChange={(e) => setMealLine(m.id, { enabled: e.target.checked })} style={{ marginTop: "2px" }} />
+                        <span>
+                          <span style={{ fontSize: "14px", fontWeight: 600, color: "var(--ink)", display: "block" }}>{m.name}</span>
+                          {m.description && (
+                            <span style={{ fontSize: "12px", color: "var(--ink-lighter)", display: "block", marginTop: "2px", whiteSpace: "pre-wrap" }}>{m.description}</span>
+                          )}
+                        </span>
+                      </label>
+                      <input type="number" min="0" step="0.01" className="form-input" style={{ flex: "0 1 120px" }} placeholder="Prix unitaire" value={state.unitPrice} disabled={!state.enabled} onChange={(e) => setMealLine(m.id, { unitPrice: e.target.value })} />
+                      <input type="number" min="1" className="form-input" style={{ flex: "0 1 100px" }} placeholder="Nb / pers." value={state.quantity} disabled={!state.enabled} onChange={(e) => setMealLine(m.id, { quantity: e.target.value })} />
+                    </div>
+                  );
+                })
+              )}
             </div>
           </div>
 

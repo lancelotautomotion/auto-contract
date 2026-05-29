@@ -17,12 +17,18 @@ export default async function NewGuesthouseReservationPage({ params }: { params:
 
   const guesthouse = await prisma.guesthouse.findFirst({
     where: { id, userId: dbUser.id, deletedAt: null },
-    include: { rooms: { orderBy: [{ position: "asc" }, { createdAt: "asc" }] } },
+    include: {
+      rooms: { orderBy: [{ position: "asc" }, { createdAt: "asc" }] },
+      meals: { where: { active: true }, orderBy: [{ position: "asc" }, { createdAt: "asc" }] },
+    },
   });
   if (!guesthouse) notFound();
 
   const rooms = guesthouse.rooms.map((r) => ({
     id: r.id, name: r.name, capacity: r.capacity, basePrice: r.basePrice, active: r.active,
+  }));
+  const meals = guesthouse.meals.map((m) => ({
+    id: m.id, name: m.name, description: m.description, price: m.price, service: m.service,
   }));
 
   return (
@@ -45,7 +51,7 @@ export default async function NewGuesthouseReservationPage({ params }: { params:
           <div className="sub">Sélectionnez les chambres, la restauration et les informations du client</div>
         </div>
 
-        <GuesthouseReservationForm guesthouseId={id} rooms={rooms} touristTaxRate={guesthouse.touristTax} />
+        <GuesthouseReservationForm guesthouseId={id} rooms={rooms} meals={meals} touristTaxRate={guesthouse.touristTax} />
       </div>
     </>
   );

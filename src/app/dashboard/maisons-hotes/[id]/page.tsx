@@ -6,6 +6,7 @@ import TopbarSignOut from "@/app/dashboard/TopbarSignOut";
 import { buildRoomAvailability } from "@/lib/availability";
 import RoomCalendar from "../RoomCalendar";
 import RoomsManager from "../RoomsManager";
+import MealsManager from "../MealsManager";
 
 export const dynamic = "force-dynamic";
 
@@ -21,6 +22,7 @@ export default async function GuesthouseDetailPage({ params }: { params: Promise
     where: { id, userId: dbUser.id, deletedAt: null },
     include: {
       rooms: { orderBy: [{ position: "asc" }, { createdAt: "asc" }] },
+      meals: { orderBy: [{ position: "asc" }, { createdAt: "asc" }] },
       reservations: { include: { reservationRooms: true }, orderBy: { checkIn: "asc" } },
     },
   });
@@ -29,6 +31,9 @@ export default async function GuesthouseDetailPage({ params }: { params: Promise
   const availability = buildRoomAvailability(guesthouse.rooms, guesthouse.reservations);
   const rooms = guesthouse.rooms.map((r) => ({
     id: r.id, name: r.name, capacity: r.capacity, basePrice: r.basePrice, active: r.active,
+  }));
+  const meals = guesthouse.meals.map((m) => ({
+    id: m.id, name: m.name, description: m.description, price: m.price, service: m.service, active: m.active,
   }));
   const fmt = (d: Date) => new Date(d).toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "numeric" });
   const activeReservations = guesthouse.reservations.filter((r) => r.status !== "REFUSED" && r.status !== "CANCELLED");
@@ -62,6 +67,11 @@ export default async function GuesthouseDetailPage({ params }: { params: Promise
         {/* Gestion des chambres (CRUD + bouton Ajouter, plafonné à 5) */}
         <div style={{ marginBottom: "20px" }}>
           <RoomsManager guesthouseId={id} initialRooms={rooms} />
+        </div>
+
+        {/* Gestion des menus / formules de restauration */}
+        <div style={{ marginBottom: "20px" }}>
+          <MealsManager guesthouseId={id} initialMeals={meals} />
         </div>
 
         {/* Planning par chambre */}
