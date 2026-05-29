@@ -32,7 +32,7 @@ export default async function MaisonsHotesLayout({ children }: { children: React
   }
 
   return (
-    <DashboardShell pendingCount={0} trialInfo={trialInfo} gites={[]} isAdmin={isAdmin} planActive={planActive} showGuesthouse={true}>
+    <DashboardShell pendingCount={0} trialInfo={trialInfo} gites={[]} isAdmin={isAdmin} planActive={planActive} guesthouseMode={true}>
       {trialInfo?.isTrial && !trialInfo.isExpired && trialInfo.daysLeft <= 15 && (
         <TrialBanner daysLeft={trialInfo.daysLeft} />
       )}

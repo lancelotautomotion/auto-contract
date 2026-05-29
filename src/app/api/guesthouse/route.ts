@@ -20,6 +20,15 @@ export async function POST(req: NextRequest) {
   const [ctx, err] = await requireGuesthouseAccount();
   if (err) return err;
 
+  // Règle métier : un compte Maison d'hôtes possède un seul établissement.
+  const existing = await prisma.guesthouse.count({ where: { userId: ctx.userId, deletedAt: null } });
+  if (existing >= 1) {
+    return NextResponse.json(
+      { error: "Vous possédez déjà une maison d'hôtes.", code: "MAX_GUESTHOUSE" },
+      { status: 409 }
+    );
+  }
+
   const body = await req.json();
   const name = String(body.name ?? "").trim();
   if (!name) return NextResponse.json({ error: "Le nom est requis" }, { status: 400 });

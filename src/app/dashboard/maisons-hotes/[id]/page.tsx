@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import TopbarSignOut from "@/app/dashboard/TopbarSignOut";
 import { buildRoomAvailability } from "@/lib/availability";
 import RoomCalendar from "../RoomCalendar";
+import RoomsManager from "../RoomsManager";
 
 export const dynamic = "force-dynamic";
 
@@ -26,43 +27,50 @@ export default async function GuesthouseDetailPage({ params }: { params: Promise
   if (!guesthouse) notFound();
 
   const availability = buildRoomAvailability(guesthouse.rooms, guesthouse.reservations);
+  const rooms = guesthouse.rooms.map((r) => ({
+    id: r.id, name: r.name, capacity: r.capacity, basePrice: r.basePrice, active: r.active,
+  }));
   const fmt = (d: Date) => new Date(d).toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "numeric" });
   const activeReservations = guesthouse.reservations.filter((r) => r.status !== "REFUSED" && r.status !== "CANCELLED");
+  const hasRooms = rooms.length > 0;
 
   return (
     <>
       <div className="topbar">
         <div className="topbar-left">
-          <div className="topbar-breadcrumb">Kordia / Maisons d&apos;hôtes / <span>{guesthouse.name}</span></div>
+          <div className="topbar-breadcrumb">Kordia / <span>{guesthouse.name}</span></div>
         </div>
         <div className="topbar-right"><TopbarSignOut /></div>
       </div>
 
       <div className="content" style={{ maxWidth: "1200px", width: "100%" }}>
-        <Link href="/dashboard/maisons-hotes" className="back-link">
-          <svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M9 3L5 7l4 4" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/></svg>
-          Retour aux maisons d&apos;hôtes
-        </Link>
-
         <div className="dash-header">
           <div>
             <div className="dash-greeting">{guesthouse.name}</div>
-            <div className="dash-date">{guesthouse.rooms.length} chambre{guesthouse.rooms.length > 1 ? "s" : ""}</div>
+            <div className="dash-date">{rooms.length} chambre{rooms.length > 1 ? "s" : ""}</div>
           </div>
           <div className="header-actions">
-            <Link href={`/dashboard/maisons-hotes/${id}/chambres`} className="btn btn-outline">Gérer les chambres</Link>
-            <Link href={`/dashboard/maisons-hotes/${id}/reservations/new`} className="btn btn-violet">
-              <svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M7 2v10M2 7h10" stroke="#fff" strokeWidth="1.5" strokeLinecap="round"/></svg>
-              Nouvelle réservation
-            </Link>
+            {hasRooms && (
+              <Link href={`/dashboard/maisons-hotes/${id}/reservations/new`} className="btn btn-violet">
+                <svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M7 2v10M2 7h10" stroke="#fff" strokeWidth="1.5" strokeLinecap="round"/></svg>
+                Nouvelle réservation
+              </Link>
+            )}
           </div>
         </div>
 
+        {/* Gestion des chambres (CRUD + bouton Ajouter, plafonné à 5) */}
+        <div style={{ marginBottom: "20px" }}>
+          <RoomsManager guesthouseId={id} initialRooms={rooms} />
+        </div>
+
+        {/* Planning par chambre */}
         <div className="form-card" style={{ marginBottom: "20px" }}>
           <div className="form-card-title">Planning par chambre</div>
           <RoomCalendar availability={availability} />
         </div>
 
+        {/* Réservations */}
         <div className="form-card">
           <div className="form-card-title">Réservations ({activeReservations.length})</div>
           {activeReservations.length === 0 ? (
