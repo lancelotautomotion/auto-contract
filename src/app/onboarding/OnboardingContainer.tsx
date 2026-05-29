@@ -15,12 +15,14 @@ import StepManager from "./steps/StepManager";
 import StepConfig from "./steps/StepConfig";
 import StepSuccess from "./steps/StepSuccess";
 
-type Plan = "essential";
+type Plan = "essential" | "maison";
 type StepId = "welcome" | "plan" | "gite-count" | "gite-names" | "property" | "contact" | "config" | "success";
 
 // Essentiel couvre jusqu'à 5 hébergements : 1 gîte = parcours simple, 2 à 5 = parcours multi.
 const SINGLE_STEPS: StepId[] = ["welcome", "plan", "gite-count", "property", "contact", "config", "success"];
 const MULTI_GITE_STEPS: StepId[] = ["welcome", "plan", "gite-count", "gite-names", "contact", "config", "success"];
+// Maison d'hôtes : pas de choix de nombre de gîtes (un seul site, par chambre).
+const GUESTHOUSE_STEPS: StepId[] = ["welcome", "plan", "property", "contact", "config", "success"];
 
 const STEP_FIELDS: Partial<Record<StepId, (keyof OnboardingValues)[]>> = {
   property: ["giteName"],
@@ -61,8 +63,9 @@ export default function OnboardingContainer({ firstName, defaultEmail }: { first
     mode: "onTouched",
   });
 
-  const isMultiGite = (giteCount ?? 1) > 1;
-  const steps = isMultiGite ? MULTI_GITE_STEPS : SINGLE_STEPS;
+  const isGuesthouse = selectedPlan === "maison";
+  const isMultiGite = !isGuesthouse && (giteCount ?? 1) > 1;
+  const steps = isGuesthouse ? GUESTHOUSE_STEPS : isMultiGite ? MULTI_GITE_STEPS : SINGLE_STEPS;
   const currentStep = steps[stepIndex];
 
   const formSteps: StepId[] = steps.filter(s => s !== "welcome" && s !== "success");
@@ -136,7 +139,10 @@ export default function OnboardingContainer({ firstName, defaultEmail }: { first
     }
 
     if (currentStep === "config") {
-      if (isMultiGite) {
+      if (isGuesthouse) {
+        const valid = await trigger(["touristTax", "cguAccepted"]);
+        if (!valid) return;
+      } else if (isMultiGite) {
         if (!validateGiteConfigs()) return;
         const cguValid = await trigger(["cguAccepted"]);
         if (!cguValid) return;
@@ -162,6 +168,37 @@ export default function OnboardingContainer({ firstName, defaultEmail }: { first
     const v = getValues();
     setSubmitting(true);
     setSubmitError(null);
+
+    // ─── Parcours Maison d'hôtes ──────────────────────────────────────────
+    if (isGuesthouse) {
+      try {
+        const res = await fetch("/api/onboarding", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            offerType: "guesthouse",
+            giteName: v.giteName,
+            email: v.email,
+            phone: v.phone || "",
+            address: v.address || "",
+            city: v.city || "",
+            zipCode: v.zipCode || "",
+            touristTax: Number(v.touristTax),
+          }),
+        });
+        if (res.ok) {
+          advance();
+        } else {
+          const data = await res.json().catch(() => ({}));
+          setSubmitError(data.error ?? "Une erreur est survenue. Veuillez réessayer.");
+        }
+      } catch {
+        setSubmitError("Impossible de contacter le serveur. Vérifiez votre connexion.");
+      } finally {
+        setSubmitting(false);
+      }
+      return;
+    }
 
     const primaryName = isMultiGite ? (giteNames[0] || v.giteName) : v.giteName;
 
@@ -276,6 +313,7 @@ export default function OnboardingContainer({ firstName, defaultEmail }: { first
                 <StepConfig
                   register={register}
                   errors={errors}
+                  isGuesthouse={isGuesthouse}
                   isMulti={isMultiGite}
                   giteNames={giteNames}
                   giteCount={giteCount ?? 1}

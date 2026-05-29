@@ -11,8 +11,13 @@ export default async function OnboardingPage() {
 
   const dbUser = await prisma.user.findUnique({ where: { clerkId: userId } }).catch(() => null);
   if (dbUser) {
-    const gite = await prisma.gite.findFirst({ where: { userId: dbUser.id, deletedAt: null } }).catch(() => null);
-    if (gite) redirect("/dashboard");
+    if (dbUser.offerType === "guesthouse") {
+      const guesthouse = await prisma.guesthouse.findFirst({ where: { userId: dbUser.id, deletedAt: null } }).catch(() => null);
+      if (guesthouse) redirect("/dashboard");
+    } else {
+      const gite = await prisma.gite.findFirst({ where: { userId: dbUser.id, deletedAt: null } }).catch(() => null);
+      if (gite) redirect("/dashboard");
+    }
   }
 
   return (

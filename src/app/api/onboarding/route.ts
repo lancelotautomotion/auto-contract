@@ -49,6 +49,29 @@ export async function POST(req: NextRequest) {
       }
     }
 
+    // ─── Offre Maison d'hôtes ───────────────────────────────────────────────
+    if (body.offerType === "guesthouse") {
+      if (user.offerType !== "guesthouse") {
+        await prisma.user.update({ where: { id: user.id }, data: { offerType: "guesthouse" } });
+      }
+      const ghData = {
+        name: body.giteName || "Ma maison d'hôtes",
+        email: body.email || null,
+        phone: body.phone ?? "",
+        address: body.address ?? "",
+        city: body.city ?? "",
+        zipCode: body.zipCode ?? "",
+        touristTax: parseFloat(body.touristTax ?? "1") || 1,
+      };
+      let guesthouse = await prisma.guesthouse.findFirst({ where: { userId: user.id, deletedAt: null } });
+      if (guesthouse) {
+        guesthouse = await prisma.guesthouse.update({ where: { id: guesthouse.id }, data: ghData });
+      } else {
+        guesthouse = await prisma.guesthouse.create({ data: { userId: user.id, ...ghData } });
+      }
+      return NextResponse.json({ ...guesthouse, guesthouseId: guesthouse.id }, { status: 200 });
+    }
+
     const existingGite = await prisma.gite.findFirst({ where: { userId: user.id, deletedAt: null } });
 
     const rawSlug = body.slug ? body.slug.toLowerCase().replace(/[^a-z0-9-]/g, '-') : undefined;

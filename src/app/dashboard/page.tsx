@@ -9,6 +9,9 @@ export default async function DashboardIndexPage() {
   const dbUser = await prisma.user.findUnique({ where: { clerkId } }).catch(() => null);
   if (!dbUser) redirect('/onboarding');
 
+  // Compte Maison d'hôtes : pas de gîte, on dirige vers sa section dédiée.
+  if (dbUser.offerType === 'guesthouse') redirect('/dashboard/maisons-hotes');
+
   const gite = await prisma.gite.findFirst({
     where: { userId: dbUser.id, deletedAt: null },
     orderBy: { createdAt: 'asc' },

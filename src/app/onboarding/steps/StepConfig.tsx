@@ -7,6 +7,7 @@ export type GiteConfigErrors = { capacity?: string; cleaningFee?: string; touris
 interface Props {
   register: UseFormRegister<OnboardingValues>;
   errors: FieldErrors<OnboardingValues>;
+  isGuesthouse?: boolean;
   isMulti?: boolean;
   giteNames?: string[];
   giteCount?: number;
@@ -81,18 +82,37 @@ function GiteConfigBlock({
 
 export default function StepConfig({
   register, errors,
-  isMulti, giteNames, giteCount, giteConfigs, configErrors, onConfigChange,
+  isGuesthouse, isMulti, giteNames, giteCount, giteConfigs, configErrors, onConfigChange,
 }: Props) {
   return (
     <div className="ob-step">
       <p className="ob-section-title">Configuration de base</p>
       <p className="ob-step-intro">
-        {isMulti
+        {isGuesthouse
+          ? "Définissez la taxe de séjour appliquée par adulte et par nuit. Vous configurerez vos chambres ensuite depuis le tableau de bord."
+          : isMulti
           ? "Configurez chaque hébergement indépendamment. Vous pourrez ajuster ces valeurs sur chaque séjour."
           : "Ces valeurs s'appliquent par défaut à toutes vos réservations. Vous pourrez les ajuster sur chaque séjour."}
       </p>
 
-      {isMulti && giteConfigs && onConfigChange ? (
+      {isGuesthouse ? (
+        <div className="ob-field">
+          <label className="ob-label">Taxe de séjour (€/adulte/nuit)</label>
+          <input
+            className={`ob-input${errors.touristTax ? " ob-input--error" : ""}`}
+            type="number"
+            min="0"
+            step="0.01"
+            placeholder="1,00"
+            {...register("touristTax", {
+              valueAsNumber: true,
+              required: true,
+              min: { value: 0, message: "Valeur invalide" },
+            })}
+          />
+          {errors.touristTax && <span className="ob-field-error">{errors.touristTax.message}</span>}
+        </div>
+      ) : isMulti && giteConfigs && onConfigChange ? (
         Array.from({ length: giteCount ?? 1 }).map((_, i) => (
           <GiteConfigBlock
             key={i}

@@ -1,7 +1,7 @@
 type Plan = "essential";
 
 interface Props {
-  selected: Plan | null;
+  selected: string | null;
   onSelect: (plan: Plan | "maison" | "etape") => void;
 }
 
@@ -30,7 +30,7 @@ const plans: {
     period: "/ mois · jusqu'à 5 chambres (1 même site)",
     features: ["Tout le plan Essentiel", "Réservation par chambre", "Gestion de la demi-pension"],
     color: "#689D71",
-    available: false,
+    available: true,
   },
   {
     id: "etape",
@@ -133,6 +133,7 @@ export default function StepPlan({ selected, onSelect }: Props) {
           fontSize: "12px", color: "#5B52B5", lineHeight: 1.5,
         }}>
           {selected === "essential" && "Jusqu'à 5 hébergements entiers · 9,99 €/mois pour 1, puis 19,99 €/mois de 2 à 5. Contrats illimités, toutes les fonctionnalités incluses."}
+          {selected === "maison" && "Location par chambre (jusqu'à 5 chambres, 15 personnes) sur un même site. Gestion des repas et taxe de séjour au réel."}
         </div>
       )}
     </div>
