@@ -116,7 +116,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// 1 seule ligne : l'apercu des gites a contacter pour l'email de validation\nconst items = $input.all();\nconst apercu = items.map((i, n) => (n + 1) + \". \" + i.json.nom + \" — \" + i.json.email).join(\"\\n\");\nreturn [{ json: { nb: items.length, apercu } }];\n"
+        "jsCode": "// Construit un apercu HTML lisible pour l'email de validation\nconst items = $input.all();\nconst esc = (s) => String(s || \"\").replace(/&/g, \"&amp;\").replace(/</g, \"&lt;\").replace(/>/g, \"&gt;\");\n\nconst rows = items.map((it, n) => {\n  const nom = esc(it.json.nom);\n  const email = esc(it.json.email);\n  const dep = esc(it.json.departement);\n  return `<tr>\n    <td style=\"padding:10px 12px;border-bottom:1px solid #ECEBE7;color:#A3A3A0;font-size:13px;text-align:right;vertical-align:top;\">${n + 1}</td>\n    <td style=\"padding:10px 12px;border-bottom:1px solid #ECEBE7;color:#2C2C2A;font-size:14px;font-weight:600;vertical-align:top;\">${nom}<div style=\"color:#A3A3A0;font-weight:400;font-size:12px;margin-top:2px;\">${dep}</div></td>\n    <td style=\"padding:10px 12px;border-bottom:1px solid #ECEBE7;color:#7F77DD;font-size:13px;vertical-align:top;\">${email}</td>\n  </tr>`;\n}).join(\"\");\n\nconst apercu = `<div style=\"text-align:left;font-family:'Helvetica Neue',Arial,sans-serif;max-width:580px;margin:0 auto;\">\n  <p style=\"font-size:18px;color:#2C2C2A;margin:0 0 4px;font-weight:700;\">Prospection du jour</p>\n  <p style=\"font-size:14px;color:#71716E;margin:0 0 18px;\">Tu vas contacter <b style=\"color:#2C2C2A;\">${items.length} gîtes</b>. Vérifie la liste, puis valide.</p>\n  <table style=\"border-collapse:collapse;width:100%;background:#FFFFFF;border:1px solid #ECEBE7;border-radius:12px;overflow:hidden;\">\n    ${rows}\n  </table>\n  <p style=\"font-size:13px;color:#71716E;margin:18px 0 0;line-height:1.5;\">Clique sur <b style=\"color:#689D71;\">Approve</b> pour lancer l'envoi en goutte-à-goutte (15 min entre chaque).<br>Sinon, ignore cet email : rien ne partira.</p>\n</div>`;\n\nreturn [{ json: { nb: items.length, apercu } }];\n"
       },
       "id": "n-resume",
       "name": "2. Aperçu pour validation",
@@ -132,7 +132,7 @@
         "operation": "sendAndWait",
         "sendTo": "lancelotautomotion@gmail.com",
         "subject": "=Kordia — valider l'envoi du jour ({{ $json.nb }} gîtes)",
-        "message": "=Tu vas contacter {{ $json.nb }} gîtes aujourd'hui :\n\n{{ $json.apercu }}\n\nClique pour lancer l'envoi en goutte-à-goutte.",
+        "message": "={{ $json.apercu }}",
         "responseType": "approval",
         "approvalOptions": {
           "values": {
