@@ -86,6 +86,26 @@ export async function requireGiteById(giteId: string): Promise<[GiteCtx, null] |
 export type GuesthouseCtx = AuthCtx & { guesthouseId: string };
 
 /**
+ * Vérifie que le compte est sur l'offre "Maison d'hôtes" (ou admin).
+ * Un compte Essentiel (offerType "gite") ne peut pas accéder à cette offre.
+ */
+export async function requireGuesthouseAccount(): Promise<[AuthCtx, null] | [null, AuthErr]> {
+  const { userId: clerkId, sessionClaims } = await auth();
+  if (!clerkId)
+    return [null, NextResponse.json({ error: "Non autorisé" }, { status: 401 })];
+
+  const user = await prisma.user.findUnique({ where: { clerkId } });
+  if (!user)
+    return [null, NextResponse.json({ error: "Utilisateur introuvable" }, { status: 404 })];
+
+  const isAdmin = (sessionClaims?.metadata as Record<string, unknown> | undefined)?.role === "admin";
+  if (!isAdmin && user.offerType !== "guesthouse")
+    return [null, NextResponse.json({ error: "Offre Maison d'hôtes requise", code: "OFFER_REQUIRED" }, { status: 403 })];
+
+  return [{ userId: user.id }, null];
+}
+
+/**
  * Vérifie qu'une maison d'hôtes existe et appartient à l'utilisateur authentifié.
  */
 export async function requireGuesthouseById(guesthouseId: string): Promise<[GuesthouseCtx, null] | [null, AuthErr]> {

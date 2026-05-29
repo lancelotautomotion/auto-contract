@@ -19,6 +19,8 @@ export default async function MaisonsHotesLayout({ children }: { children: React
   try {
     const dbUser = await prisma.user.findUnique({ where: { clerkId } });
     if (!dbUser) redirect("/onboarding");
+    // Offre réservée : un compte Essentiel (offerType "gite") n'y a pas accès.
+    if (!isAdmin && dbUser.offerType !== "guesthouse") redirect("/dashboard");
     planActive = dbUser.planStatus === "ACTIVE";
     try {
       trialInfo = getTrialInfo(dbUser);
@@ -30,7 +32,7 @@ export default async function MaisonsHotesLayout({ children }: { children: React
   }
 
   return (
-    <DashboardShell pendingCount={0} trialInfo={trialInfo} gites={[]} isAdmin={isAdmin} planActive={planActive}>
+    <DashboardShell pendingCount={0} trialInfo={trialInfo} gites={[]} isAdmin={isAdmin} planActive={planActive} showGuesthouse={true}>
       {trialInfo?.isTrial && !trialInfo.isExpired && trialInfo.daysLeft <= 15 && (
         <TrialBanner daysLeft={trialInfo.daysLeft} />
       )}

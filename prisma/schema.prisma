@@ -34,6 +34,10 @@ model User {
   // Tier du plan souscrit — "essential" (1 gîte) ou "multi" (3 gîtes max)
   planTier  String @default("essential")
 
+  // Type d'offre du compte — "gite" (location entière) ou "guesthouse" (maison
+  // d'hôtes). Un compte est sur une seule offre, jamais les deux.
+  offerType String @default("gite")
+
   gites       Gite[]
   guesthouses Guesthouse[]
 }

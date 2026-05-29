@@ -24,11 +24,13 @@ export default async function GiteLayout({
   let trialInfo = null;
   let gites: Array<{ id: string; name: string }> = [];
   let planActive = false;
+  let showGuesthouse = false;
 
   try {
     const dbUser = await prisma.user.findUnique({ where: { clerkId } });
     if (!dbUser) redirect('/onboarding');
     planActive = dbUser.planStatus === 'ACTIVE';
+    showGuesthouse = isAdmin || dbUser.offerType === 'guesthouse';
 
     // Security: verify the requested giteId belongs to this user
     const activeGite = await prisma.gite.findFirst({
@@ -63,6 +65,7 @@ export default async function GiteLayout({
       activeGiteId={giteId}
       isAdmin={isAdmin}
       planActive={planActive}
+      showGuesthouse={showGuesthouse}
     >
       {trialInfo?.isTrial && !trialInfo.isExpired && trialInfo.daysLeft <= 15 && (
         <TrialBanner daysLeft={trialInfo.daysLeft} />

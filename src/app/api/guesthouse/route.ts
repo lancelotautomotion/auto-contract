@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { requireAuth } from "@/lib/auth";
+import { requireAuth, requireGuesthouseAccount } from "@/lib/auth";
 
 export async function GET() {
   const [ctx, err] = await requireAuth();
@@ -16,7 +16,8 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
-  const [ctx, err] = await requireAuth();
+  // Seuls les comptes sur l'offre Maison d'hôtes (ou admin) peuvent créer.
+  const [ctx, err] = await requireGuesthouseAccount();
   if (err) return err;
 
   const body = await req.json();

@@ -23,8 +23,11 @@ export default async function DashboardLayout({ children }: { children: React.Re
     const dbUser = await prisma.user.findUnique({ where: { clerkId } });
     if (!dbUser) redirect('/onboarding');
 
-    const gite = await prisma.gite.findFirst({ where: { userId: dbUser.id, deletedAt: null } });
-    if (!gite || !gite.name?.trim() || gite.name === 'Mon Gîte') redirect('/onboarding');
+    // Les comptes Maison d'hôtes n'ont pas de gîte : on ne force pas l'onboarding gîte.
+    if (dbUser.offerType !== 'guesthouse') {
+      const gite = await prisma.gite.findFirst({ where: { userId: dbUser.id, deletedAt: null } });
+      if (!gite || !gite.name?.trim() || gite.name === 'Mon Gîte') redirect('/onboarding');
+    }
   } catch (err) {
     if ((err as { digest?: string })?.digest?.startsWith('NEXT_')) throw err;
   }
