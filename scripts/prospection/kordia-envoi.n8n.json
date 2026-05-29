@@ -181,11 +181,12 @@
     },
     {
       "parameters": {
-        "fromEmail": "Lancelot Loubier <lancelot@hellokordia.fr>",
-        "toEmail": "={{ $json.email }}",
+        "resource": "message",
+        "operation": "send",
+        "sendTo": "={{ $json.email }}",
         "subject": "={{ $json.subject }}",
-        "emailFormat": "text",
-        "text": "={{ $json.body }}",
+        "emailType": "text",
+        "message": "={{ $json.body }}",
         "options": {
           "appendAttribution": false,
           "replyTo": "contact@kordia.fr"
@@ -193,12 +194,13 @@
       },
       "id": "n-send",
       "name": "Envoyer l'email",
-      "type": "n8n-nodes-base.emailSend",
+      "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.1,
       "position": [
         2080,
         420
-      ]
+      ],
+      "webhookId": "kordia-send-gmail"
     },
     {
       "parameters": {
