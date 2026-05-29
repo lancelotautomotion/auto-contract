@@ -3,8 +3,8 @@ import { redirect, notFound } from "next/navigation";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import TopbarSignOut from "@/app/dashboard/TopbarSignOut";
-import { buildRoomAvailability } from "@/lib/availability";
-import RoomCalendar from "../../RoomCalendar";
+import CalendarView from "@/app/dashboard/CalendarView";
+import { buildGuesthouseCalendarData } from "@/lib/guesthouseCalendarData";
 
 export const dynamic = "force-dynamic";
 
@@ -20,14 +20,18 @@ export default async function GuesthouseReservationsPage({ params }: { params: P
     where: { id, userId: dbUser.id, deletedAt: null },
     include: {
       rooms: { orderBy: [{ position: "asc" }, { createdAt: "asc" }] },
-      reservations: { include: { reservationRooms: true }, orderBy: { checkIn: "asc" } },
+      reservations: {
+        include: { reservationRooms: true, contract: { select: { status: true } } },
+        orderBy: { checkIn: "asc" },
+      },
     },
   });
   if (!guesthouse) notFound();
 
-  const availability = buildRoomAvailability(guesthouse.rooms, guesthouse.reservations);
   const activeReservations = guesthouse.reservations.filter((r) => r.status !== "REFUSED" && r.status !== "CANCELLED");
   const hasRooms = guesthouse.rooms.length > 0;
+
+  const multiRooms = buildGuesthouseCalendarData(guesthouse.rooms, guesthouse.reservations);
 
   const fmt = (d: Date) =>
     new Date(d).toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "numeric" });
@@ -45,7 +49,9 @@ export default async function GuesthouseReservationsPage({ params }: { params: P
         <div className="dash-header">
           <div>
             <div className="dash-greeting">Planning & Réservations</div>
-            <div className="dash-date">{activeReservations.length} réservation{activeReservations.length > 1 ? "s" : ""} active{activeReservations.length > 1 ? "s" : ""}</div>
+            <div className="dash-date">
+              {activeReservations.length} réservation{activeReservations.length > 1 ? "s" : ""} active{activeReservations.length > 1 ? "s" : ""}
+            </div>
           </div>
           <div className="header-actions">
             {hasRooms ? (
@@ -62,11 +68,18 @@ export default async function GuesthouseReservationsPage({ params }: { params: P
         </div>
 
         <div className="form-card" style={{ marginBottom: "20px" }}>
-          <div className="form-card-title">Planning par chambre</div>
+          <div className="form-card-title">Planning</div>
           {hasRooms ? (
-            <RoomCalendar availability={availability} />
+            <CalendarView
+              reservations={[]}
+              multiGites={multiRooms}
+              allLabel="Toute la maison"
+              reservationHref={(resaId) => `/dashboard/maisons-hotes/${id}/reservations/${resaId}`}
+            />
           ) : (
-            <p style={{ fontSize: "13px", color: "var(--ink-lighter)", fontStyle: "italic" }}>Aucune chambre configurée.</p>
+            <p style={{ fontSize: "13px", color: "var(--ink-lighter)", fontStyle: "italic" }}>
+              Aucune chambre configurée — ajoutez vos chambres depuis « Mon hébergement ».
+            </p>
           )}
         </div>
 

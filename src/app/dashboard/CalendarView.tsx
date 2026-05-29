@@ -238,6 +238,8 @@ export default function CalendarView({
   currentGiteId,
   activeView: controlledView,
   onActiveViewChange,
+  allLabel = 'Tous les hébergements',
+  reservationHref,
 }: {
   reservations: Reservation[];
   icalBlocked?: IcalBlock[];
@@ -245,6 +247,8 @@ export default function CalendarView({
   currentGiteId?: string;
   activeView?: string;
   onActiveViewChange?: (view: string) => void;
+  allLabel?: string;
+  reservationHref?: (reservationId: string, giteId: string) => string;
 }) {
   const today = new Date();
   const [baseMonth, setBaseMonth] = useState({ year: today.getFullYear(), month: today.getMonth() });
@@ -327,7 +331,7 @@ export default function CalendarView({
               cursor: 'pointer', fontFamily: 'inherit', transition: 'all .15s',
             }}
           >
-            Tous les hébergements
+            {allLabel}
           </button>
           {multiGites!.map(g => (
             <button
@@ -451,8 +455,12 @@ export default function CalendarView({
               >{day}</div>
             );
 
+            const giteId = activeGiteData?.id ?? currentGiteId ?? '';
+            const href = reservation
+              ? (reservationHref ? reservationHref(reservation.id, giteId) : `/dashboard/${giteId}/reservations/${reservation.id}`)
+              : '';
             return reservation ? (
-              <Link key={day} href={`/dashboard/${activeGiteData?.id ?? currentGiteId}/reservations/${reservation.id}`} style={{ textDecoration: 'none' }}>
+              <Link key={day} href={href} style={{ textDecoration: 'none' }}>
                 {cell}
               </Link>
             ) : (

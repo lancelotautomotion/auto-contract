@@ -73,6 +73,19 @@ model Guesthouse {
   rooms        Room[]
   meals        GuesthouseMeal[]
   reservations Reservation[]
+  documents    GuesthouseDocument[]
+}
+
+model GuesthouseDocument {
+  id        String   @id @default(cuid())
+  label     String
+  fileName  String
+  mimeType  String
+  fileUrl   String
+  createdAt DateTime @default(now())
+
+  guesthouseId String
+  guesthouse   Guesthouse @relation(fields: [guesthouseId], references: [id], onDelete: Cascade)
 }
 
 // Menu / formule de restauration configurable par le gérant d'une maison d'hôtes
@@ -107,6 +120,20 @@ model Room {
   guesthouse   Guesthouse @relation(fields: [guesthouseId], references: [id], onDelete: Cascade)
 
   reservationRooms ReservationRoom[]
+  icalFeeds        GuesthouseIcalFeed[]
+}
+
+model GuesthouseIcalFeed {
+  id           String    @id @default(cuid())
+  platform     String
+  label        String
+  url          String
+  syncedAt     DateTime?
+  blockedDates Json      @default("[]")
+  createdAt    DateTime  @default(now())
+
+  roomId String
+  room   Room   @relation(fields: [roomId], references: [id], onDelete: Cascade)
 }
 
 // Jointure réservation <-> chambre(s) avec snapshot au moment de la résa
