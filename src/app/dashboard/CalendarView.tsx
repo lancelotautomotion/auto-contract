@@ -239,7 +239,7 @@ export default function CalendarView({
   activeView: controlledView,
   onActiveViewChange,
   allLabel = 'Tous les hébergements',
-  reservationHref,
+  reservationHrefBase,
 }: {
   reservations: Reservation[];
   icalBlocked?: IcalBlock[];
@@ -248,7 +248,7 @@ export default function CalendarView({
   activeView?: string;
   onActiveViewChange?: (view: string) => void;
   allLabel?: string;
-  reservationHref?: (reservationId: string, giteId: string) => string;
+  reservationHrefBase?: string;
 }) {
   const today = new Date();
   const [baseMonth, setBaseMonth] = useState({ year: today.getFullYear(), month: today.getMonth() });
@@ -457,7 +457,7 @@ export default function CalendarView({
 
             const giteId = activeGiteData?.id ?? currentGiteId ?? '';
             const href = reservation
-              ? (reservationHref ? reservationHref(reservation.id, giteId) : `/dashboard/${giteId}/reservations/${reservation.id}`)
+              ? (reservationHrefBase ? `${reservationHrefBase}/${reservation.id}` : `/dashboard/${giteId}/reservations/${reservation.id}`)
               : '';
             return reservation ? (
               <Link key={day} href={href} style={{ textDecoration: 'none' }}>

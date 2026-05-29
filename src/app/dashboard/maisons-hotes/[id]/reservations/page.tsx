@@ -79,7 +79,7 @@ export default async function GuesthouseReservationsPage({ params }: { params: P
               reservations={[]}
               multiGites={multiRooms}
               allLabel="Toute la maison"
-              reservationHref={(resaId) => `/dashboard/maisons-hotes/${id}/reservations/${resaId}`}
+              reservationHrefBase={`/dashboard/maisons-hotes/${id}/reservations`}
             />
           ) : (
             <p style={{ fontSize: "13px", color: "var(--ink-lighter)", fontStyle: "italic" }}>

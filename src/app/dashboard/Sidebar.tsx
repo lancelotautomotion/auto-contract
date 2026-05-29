@@ -104,19 +104,21 @@ export default function Sidebar({ pendingCount = 0, trialInfo, mobileOpen, onMob
           </Link>
         </div>
 
-        <div className="sb-section">
-          <div className="sb-section-title">Gestion</div>
+        {!guesthouseMode && (
+          <div className="sb-section">
+            <div className="sb-section-title">Gestion</div>
 
-          <Link href={`${base}/archives`} className={`sb-link${active(`${base}/archives`) ? ' active' : ''}`}>
-            <span className="sb-icon">
-              <svg width="18" height="18" fill="none" viewBox="0 0 18 18">
-                <rect x="3" y="5" width="12" height="10" rx="1.5" stroke="currentColor" strokeWidth="1.3"/>
-                <path d="M3 8l6 3.5L15 8" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </span>
-            Archives
-          </Link>
-        </div>
+            <Link href={`${base}/archives`} className={`sb-link${active(`${base}/archives`) ? ' active' : ''}`}>
+              <span className="sb-icon">
+                <svg width="18" height="18" fill="none" viewBox="0 0 18 18">
+                  <rect x="3" y="5" width="12" height="10" rx="1.5" stroke="currentColor" strokeWidth="1.3"/>
+                  <path d="M3 8l6 3.5L15 8" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </span>
+              Archives
+            </Link>
+          </div>
+        )}
 
         <div className="sb-section">
           <div className="sb-section-title">Support</div>
@@ -190,15 +192,17 @@ export default function Sidebar({ pendingCount = 0, trialInfo, mobileOpen, onMob
       </nav>
 
       <div className="sb-bottom">
-        <Link href={`${base}/settings`} className={`sb-link${active(`${base}/settings`) ? ' active' : ''}`}>
-          <span className="sb-icon">
-            <svg width="18" height="18" fill="none" viewBox="0 0 18 18">
-              <circle cx="9" cy="9" r="3" stroke="currentColor" strokeWidth="1.3"/>
-              <path d="M9 2v2M9 14v2M2 9h2M14 9h2M4.2 4.2l1.4 1.4M12.4 12.4l1.4 1.4M4.2 13.8l1.4-1.4M12.4 5.6l1.4-1.4" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
-            </svg>
-          </span>
-          Paramètres
-        </Link>
+        {!guesthouseMode && (
+          <Link href={`${base}/settings`} className={`sb-link${active(`${base}/settings`) ? ' active' : ''}`}>
+            <span className="sb-icon">
+              <svg width="18" height="18" fill="none" viewBox="0 0 18 18">
+                <circle cx="9" cy="9" r="3" stroke="currentColor" strokeWidth="1.3"/>
+                <path d="M9 2v2M9 14v2M2 9h2M14 9h2M4.2 4.2l1.4 1.4M12.4 12.4l1.4 1.4M4.2 13.8l1.4-1.4M12.4 5.6l1.4-1.4" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
+              </svg>
+            </span>
+            Paramètres
+          </Link>
+        )}
         <button
           className="sb-link sb-signout-btn"
           onClick={() => signOut({ redirectUrl: '/' })}
