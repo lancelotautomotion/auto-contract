@@ -23,6 +23,16 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   if ("basePrice" in body) data.basePrice = parseFloat(body.basePrice) || 0;
   if ("active" in body) data.active = !!body.active;
   if ("position" in body) data.position = parseInt(body.position) || 0;
+  if ("specificClauses" in body) {
+    const v = body.specificClauses;
+    if (v === null || v === "") {
+      data.specificClauses = null;
+    } else {
+      const s = String(v);
+      if (s.length > 5000) return NextResponse.json({ error: "Texte trop long (max 5000 caractères)" }, { status: 400 });
+      data.specificClauses = s;
+    }
+  }
 
   // Slug : optionnel, unique par maison d'hôtes
   if ("slug" in body) {

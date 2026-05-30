@@ -9,6 +9,7 @@ interface Room {
   slug: string | null;
   capacity: number;
   basePrice: number;
+  specificClauses: string | null;
   active: boolean;
 }
 
@@ -366,11 +367,19 @@ function RoomCard({
   const [savingSlug, setSavingSlug] = useState(false);
   const savedSlug = useRef(room.slug ?? "");
 
+  // Clauses spécifiques (contrat)
+  const [clausesOpen, setClausesOpen] = useState(false);
+  const [clauses, setClauses] = useState(room.specificClauses ?? "");
+  const savedClauses = useRef(room.specificClauses ?? "");
+  const [savingClauses, setSavingClauses] = useState(false);
+  const [clausesMsg, setClausesMsg] = useState<{ kind: "ok" | "err"; text: string } | null>(null);
+
   // Sync si la prop change (ex. rechargement)
   useEffect(() => { setName(room.name); }, [room.name]);
   useEffect(() => { setCapacity(String(room.capacity)); }, [room.capacity]);
   useEffect(() => { setBasePrice(String(room.basePrice)); }, [room.basePrice]);
   useEffect(() => { setSlug(room.slug ?? ""); savedSlug.current = room.slug ?? ""; }, [room.slug]);
+  useEffect(() => { setClauses(room.specificClauses ?? ""); savedClauses.current = room.specificClauses ?? ""; }, [room.specificClauses]);
 
   // Vérif live du slug chambre
   useEffect(() => {
@@ -538,6 +547,70 @@ function RoomCard({
           Chambre inactive — non réservable, aucun lien public.
         </p>
       )}
+
+      {/* Clauses contractuelles spécifiques à cette chambre */}
+      <div style={{ marginTop: "12px", paddingTop: "10px", borderTop: "1px dashed #EFEDE8" }}>
+        <button
+          type="button"
+          onClick={() => setClausesOpen((o) => !o)}
+          style={{
+            display: "flex", alignItems: "center", gap: "6px",
+            background: "transparent", border: "none", padding: "2px 0",
+            cursor: "pointer", fontFamily: "inherit",
+            fontSize: "12px", fontWeight: 600, color: "var(--ink-lighter)",
+          }}
+          aria-expanded={clausesOpen}
+        >
+          <svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ transition: "transform .15s", transform: clausesOpen ? "rotate(0)" : "rotate(-90deg)" }}>
+            <path d="M3 4.5l3 3 3-3"/>
+          </svg>
+          Spécificités contractuelles
+          {savedClauses.current && (
+            <span style={{ fontSize: "10px", fontWeight: 700, color: "#9B3E5A", background: "#F8E0E7", padding: "2px 7px", borderRadius: "10px" }}>Définies</span>
+          )}
+        </button>
+        {clausesOpen && (
+          <div style={{ marginTop: "8px" }}>
+            <p style={{ fontSize: "11.5px", color: "var(--ink-lighter)", margin: "0 0 6px", lineHeight: 1.45 }}>
+              Texte libre injecté dans le contrat via la balise <code style={{ background: "#F5F4F0", padding: "1px 6px", borderRadius: "4px", fontSize: "11px", color: "#5B52B5" }}>{"{{specificites_chambre}}"}</code>. Laissez vide si aucune particularité.
+            </p>
+            <textarea
+              className="form-textarea"
+              style={{ minHeight: "80px", fontSize: "12.5px" }}
+              placeholder="Ex. Cette chambre dispose d'une terrasse privative — usage entre 8h et 22h pour respecter le voisinage."
+              value={clauses}
+              maxLength={5000}
+              onChange={(e) => { setClauses(e.target.value); setClausesMsg(null); }}
+            />
+            <div style={{ display: "flex", gap: "8px", alignItems: "center", marginTop: "8px" }}>
+              <button
+                type="button"
+                className="btn btn-green"
+                style={{ fontSize: "12px", padding: "6px 14px" }}
+                disabled={savingClauses || clauses === savedClauses.current}
+                onClick={async () => {
+                  setSavingClauses(true);
+                  setClausesMsg(null);
+                  const ok = await onUpdate({ specificClauses: clauses.trim() ? clauses : null } as Partial<Room>);
+                  if (ok) {
+                    savedClauses.current = clauses.trim() ? clauses : "";
+                    setClausesMsg({ kind: "ok", text: "Enregistré." });
+                  } else {
+                    setClausesMsg({ kind: "err", text: "Erreur." });
+                  }
+                  setSavingClauses(false);
+                }}
+              >
+                {savingClauses ? "Enregistrement…" : "Enregistrer"}
+              </button>
+              <span style={{ fontSize: "11px", color: "var(--ink-lighter)" }}>{clauses.length} / 5000</span>
+              {clausesMsg && (
+                <span style={{ fontSize: "11.5px", color: clausesMsg.kind === "ok" ? "#3E7A48" : "#b91c1c", fontWeight: 600 }}>{clausesMsg.text}</span>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

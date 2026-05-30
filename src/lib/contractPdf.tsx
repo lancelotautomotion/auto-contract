@@ -32,6 +32,11 @@ export interface ContractData {
   code_postal_gite?: string | null;
   email_gite: string | null;
   telephone_gite: string | null;
+  // Variables "chambre" — résolues quand la réservation porte sur une maison d'hôtes.
+  nom_chambre?: string | null;
+  capacite_chambre?: number | null;
+  prix_chambre_nuit?: number | null;
+  specificites_chambre?: string | null;
   logoUrl?: string | null;
 }
 
@@ -78,6 +83,10 @@ function buildVars(data: ContractData): Record<string, string> {
     code_postal_gite:    data.code_postal_gite ?? '',
     email_gite:          data.email_gite ?? '',
     telephone_gite:      data.telephone_gite ?? '',
+    nom_chambre:         data.nom_chambre ?? '',
+    capacite_chambre:    data.capacite_chambre != null ? String(data.capacite_chambre) : '',
+    prix_chambre_nuit:   data.prix_chambre_nuit != null ? data.prix_chambre_nuit.toFixed(2).replace('.', ',') : '',
+    specificites_chambre: (data.specificites_chambre ?? '').trim(),
     date_du_jour:        dateJour,
   };
 }

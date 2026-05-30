@@ -594,6 +594,8 @@
 .var-tag.gite:hover { background: #C8DEC9; }
 .var-tag.booking { background: var(--violet-light); color: var(--violet-dark); border-color: #D5D2F0; }
 .var-tag.booking:hover { background: #D5D2F0; }
+.var-tag.chambre { background: #F8E0E7; color: #9B3E5A; border-color: #F1C3D0; }
+.var-tag.chambre:hover { background: #F1C3D0; }
 .var-tag.var-tag-missing { outline: 1.5px solid #D97706; outline-offset: -1px; }
 
 /* Bannière d'alerte balises obligatoires */

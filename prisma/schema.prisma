@@ -119,6 +119,9 @@ model Room {
   slug      String?
   capacity  Int     @default(2) // capacité max en personnes
   basePrice Float   @default(0) // prix de base par nuit
+  // Clauses contractuelles spécifiques à CETTE chambre, injectées dans le PDF
+  // via la variable {{specificites_chambre}}. Optionnel, texte libre.
+  specificClauses String?
   active    Boolean @default(true)
   position  Int     @default(0)
 

@@ -12,7 +12,7 @@ export default async function SignPage({ params }: { params: Promise<{ token: st
     where: { signatureToken: token },
     include: {
       reservation: {
-        include: { gite: true, guesthouse: true, reservationOptions: true, meals: true },
+        include: { gite: true, guesthouse: true, reservationOptions: true, meals: true, reservationRooms: { include: { room: true } } },
       },
     },
   });

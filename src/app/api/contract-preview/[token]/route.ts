@@ -13,7 +13,7 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ tok
       where: { signatureToken: token },
       include: {
         reservation: {
-          include: { gite: true, guesthouse: true, reservationOptions: true, meals: true },
+          include: { gite: true, guesthouse: true, reservationOptions: true, meals: true, reservationRooms: { include: { room: true } } },
         },
       },
     });

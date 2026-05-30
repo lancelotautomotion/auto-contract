@@ -125,7 +125,7 @@ interface GiteData {
   documents: GiteDoc[];
 }
 
-interface GuesthouseRoomLite { id: string; name: string; slug: string | null; capacity: number; basePrice: number; active: boolean; }
+interface GuesthouseRoomLite { id: string; name: string; slug: string | null; capacity: number; basePrice: number; specificClauses: string | null; active: boolean; }
 interface GuesthouseData {
   slug: string | null;
   id: string; name: string; email: string; phone: string;
@@ -143,7 +143,9 @@ const TABS_GUESTHOUSE = ['Informations', 'Chambres', 'Contrat', 'Logo', 'Documen
 type Tab = (typeof TABS_GITE)[number] | (typeof TABS_GUESTHOUSE)[number];
 type EditorZone = 'general' | 'houseRules';
 
-const VARIABLES: Array<[string, string, 'client' | 'booking' | 'gite']> = [
+type VarCat = 'client' | 'booking' | 'gite' | 'chambre';
+
+const VARIABLES_BASE: Array<[string, string, VarCat]> = [
   ['{{prenom_client}}', 'Prénom client', 'client'],
   ['{{nom_client}}', 'Nom client', 'client'],
   ['{{email_client}}', 'Email client', 'client'],
@@ -168,14 +170,16 @@ const VARIABLES: Array<[string, string, 'client' | 'booking' | 'gite']> = [
   ['{{date_du_jour}}', 'Date du jour', 'gite'],
 ];
 
-const VAR_GROUPS: Array<{ cat: 'client' | 'booking' | 'gite'; label: string }> = [
-  { cat: 'client', label: 'Client' },
-  { cat: 'booking', label: 'Réservation' },
-  { cat: 'gite', label: 'Gîte' },
+// Variables additionnelles disponibles uniquement en mode maison d'hôtes (location à la chambre).
+const VARIABLES_GUESTHOUSE: Array<[string, string, VarCat]> = [
+  ['{{nom_chambre}}', 'Nom de la chambre', 'chambre'],
+  ['{{capacite_chambre}}', 'Capacité (pers.)', 'chambre'],
+  ['{{prix_chambre_nuit}}', 'Prix/nuit chambre €', 'chambre'],
+  ['{{specificites_chambre}}', 'Clauses spécifiques', 'chambre'],
 ];
 
-// Balises dont l'absence rend le contrat juridiquement incomplet
-const MANDATORY_TAGS: Array<{ key: string; label: string }> = [
+// Balises dont l'absence rend le contrat juridiquement incomplet (selon le mode)
+const MANDATORY_TAGS_GITE: Array<{ key: string; label: string }> = [
   { key: 'nom_client',    label: 'Nom client' },
   { key: 'prenom_client', label: 'Prénom client' },
   { key: 'date_entree',   label: 'Arrivée' },
@@ -184,19 +188,24 @@ const MANDATORY_TAGS: Array<{ key: string; label: string }> = [
   { key: 'acompte',       label: 'Acompte €' },
   { key: 'nom_gite',      label: 'Nom gîte' },
 ];
+const MANDATORY_TAGS_GUESTHOUSE: Array<{ key: string; label: string }> = [
+  ...MANDATORY_TAGS_GITE,
+  { key: 'nom_chambre',   label: 'Nom de la chambre' },
+];
 
 const VAR_LABELS: Record<string, string> = Object.fromEntries(
-  VARIABLES.map(([v, label]) => [v.slice(2, -2), label])
+  [...VARIABLES_BASE, ...VARIABLES_GUESTHOUSE].map(([v, label]) => [v.slice(2, -2), label])
 );
 
-const VAR_CATEGORY: Record<string, 'client' | 'booking' | 'gite'> = Object.fromEntries(
-  VARIABLES.map(([v, , cat]) => [v.slice(2, -2), cat])
+const VAR_CATEGORY: Record<string, VarCat> = Object.fromEntries(
+  [...VARIABLES_BASE, ...VARIABLES_GUESTHOUSE].map(([v, , cat]) => [v.slice(2, -2), cat])
 );
 
-const CHIP_COLORS = {
+const CHIP_COLORS: Record<VarCat, { bg: string; border: string; color: string }> = {
   client:  { bg: 'rgba(217,119,6,0.13)',   border: 'rgba(217,119,6,0.45)',   color: 'rgb(146,57,0)' },
   booking: { bg: 'rgba(127,119,221,0.13)', border: 'rgba(127,119,221,0.45)', color: '#5B52B5' },
   gite:    { bg: 'rgba(74,115,83,0.13)',   border: 'rgba(74,115,83,0.45)',   color: '#4A7353' },
+  chambre: { bg: 'rgba(196,93,122,0.13)',  border: 'rgba(196,93,122,0.45)',  color: '#9B3E5A' },
 };
 
 function makeChipHTML(varName: string): string {
@@ -282,6 +291,20 @@ export default function EtablissementForm({ gite, guesthouse }: { gite?: GiteDat
   // Source d'information unifiée — toutes les UIs lisent depuis "src" sauf champs gite-spécifiques.
   const src = (guesthouse ?? gite)!;
   const TABS = mode === 'guesthouse' ? TABS_GUESTHOUSE : TABS_GITE;
+  const activeVariables = mode === 'guesthouse' ? [...VARIABLES_BASE, ...VARIABLES_GUESTHOUSE] : VARIABLES_BASE;
+  const activeMandatoryTags = mode === 'guesthouse' ? MANDATORY_TAGS_GUESTHOUSE : MANDATORY_TAGS_GITE;
+  const activeVarGroups: Array<{ cat: VarCat; label: string }> = mode === 'guesthouse'
+    ? [
+        { cat: 'client', label: 'Client' },
+        { cat: 'booking', label: 'Réservation' },
+        { cat: 'chambre', label: 'Chambre' },
+        { cat: 'gite', label: 'Établissement' },
+      ]
+    : [
+        { cat: 'client', label: 'Client' },
+        { cat: 'booking', label: 'Réservation' },
+        { cat: 'gite', label: 'Gîte' },
+      ];
 
   const [activeTab, setActiveTab] = useState<Tab>('Informations');
   const [activeEditorZone, setActiveEditorZone] = useState<EditorZone>('general');
@@ -332,8 +355,8 @@ export default function EtablissementForm({ gite, guesthouse }: { gite?: GiteDat
 
   // Balises obligatoires manquantes dans les Conditions Générales
   const missingMandatoryTags = useMemo(() =>
-    MANDATORY_TAGS.filter(({ key }) => !templateHasVar(contractTemplateGeneral, key)),
-    [contractTemplateGeneral]
+    activeMandatoryTags.filter(({ key }) => !templateHasVar(contractTemplateGeneral, key)),
+    [contractTemplateGeneral, activeMandatoryTags]
   );
 
   const getActiveEditorRef = useCallback(() =>
@@ -846,13 +869,13 @@ export default function EtablissementForm({ gite, guesthouse }: { gite?: GiteDat
                   <span className="contract-zone-hint">→ zone active : <strong>{activeEditorZone === 'general' ? 'Conditions Générales' : 'Règlement Intérieur'}</strong></span>
                 </div>
                 <div className="variables-groups">
-                  {VAR_GROUPS.map(group => (
+                  {activeVarGroups.map(group => (
                     <div key={group.cat} className="variables-group">
                       <span className="variables-group-label">{group.label}</span>
                       <div className="variables-bar">
-                        {VARIABLES.filter(([, , cat]) => cat === group.cat).map(([v, label, cat]) => {
+                        {activeVariables.filter(([, , cat]) => cat === group.cat).map(([v, label, cat]) => {
                           const varName = v.slice(2, -2);
-                          const isMandatory = MANDATORY_TAGS.some(t => t.key === varName);
+                          const isMandatory = activeMandatoryTags.some(t => t.key === varName);
                           const isMissing = isMandatory && missingMandatoryTags.some(t => t.key === varName);
                           return (
                             <button

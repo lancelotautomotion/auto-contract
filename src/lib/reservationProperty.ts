@@ -103,10 +103,18 @@ export function buildContractData(opts: {
     touristTax: number | null;
     reservationOptions: { label: string; price: number }[];
     meals?: { mealType: MealType; label: string; unitPrice: number; quantity: number }[];
+    // Maison d'hôtes : snapshot + lien (optionnel) vers la chambre live pour ses clauses spécifiques.
+    reservationRooms?: {
+      roomName: string;
+      price: number;
+      room?: { capacity: number; basePrice: number; specificClauses: string | null } | null;
+    }[];
   };
   property: ReservationProperty;
 }): ContractData {
   const { reservation: r, property: p } = opts;
+  // Une réservation maison d'hôtes porte sur UNE chambre entière — on lit la 1re.
+  const primaryRoom = r.reservationRooms?.[0];
   const fmt = (d: Date) => new Date(d).toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "numeric" });
 
   const options = [
@@ -139,6 +147,10 @@ export function buildContractData(opts: {
     code_postal_gite: p.zipCode,
     email_gite: p.email,
     telephone_gite: p.phone,
+    nom_chambre: primaryRoom?.roomName ?? null,
+    capacite_chambre: primaryRoom?.room?.capacity ?? null,
+    prix_chambre_nuit: primaryRoom?.price ?? primaryRoom?.room?.basePrice ?? null,
+    specificites_chambre: primaryRoom?.room?.specificClauses ?? null,
     logoUrl: p.logoUrl,
   };
 }
