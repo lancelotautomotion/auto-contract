@@ -15,9 +15,9 @@ function serviceToMealType(s: MealService): MealType {
 }
 
 // Réservation publique d'une chambre entière de maison d'hôtes.
-// slug = guesthouseId, roomId = chambre.
-export async function POST(req: NextRequest, { params }: { params: Promise<{ slug: string; roomId: string }> }) {
-  const { slug, roomId } = await params;
+// slug = guesthouseSlug, roomSlug = identifiant URL de la chambre.
+export async function POST(req: NextRequest, { params }: { params: Promise<{ slug: string; roomSlug: string }> }) {
+  const { slug, roomSlug } = await params;
 
   const ip = getClientIp(req);
   const rl = checkRateLimit(`book:${ip}`, 10, 60_000);
@@ -29,8 +29,8 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ slu
   }
 
   const guesthouse = await prisma.guesthouse.findFirst({
-    where: { id: slug, deletedAt: null },
-    include: { rooms: { where: { id: roomId } }, meals: { where: { active: true } }, user: true },
+    where: { slug, deletedAt: null },
+    include: { rooms: { where: { slug: roomSlug } }, meals: { where: { active: true } }, user: true },
   });
   if (!guesthouse) return NextResponse.json({ error: "Maison d'hôtes introuvable" }, { status: 404 });
 

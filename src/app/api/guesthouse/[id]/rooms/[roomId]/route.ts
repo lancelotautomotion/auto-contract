@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireGuesthouseById } from "@/lib/auth";
 import { MAX_GUESTHOUSE_CAPACITY } from "@/lib/billing";
+import { isValidSlug, slugError } from "@/lib/slug";
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string; roomId: string }> }) {
   const { id, roomId } = await params;
@@ -23,7 +24,38 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   if ("active" in body) data.active = !!body.active;
   if ("position" in body) data.position = parseInt(body.position) || 0;
 
-  const updated = await prisma.room.update({ where: { id: roomId }, data });
+  // Slug : optionnel, unique par maison d'hôtes
+  if ("slug" in body) {
+    const raw = body.slug;
+    if (raw === null || raw === "") {
+      data.slug = null;
+    } else {
+      const s = String(raw).trim().toLowerCase();
+      const fmt = slugError(s);
+      if (fmt || !isValidSlug(s)) {
+        return NextResponse.json({ error: fmt ?? "Identifiant invalide." }, { status: 400 });
+      }
+      const colliding = await prisma.room.findFirst({
+        where: { guesthouseId: ctx.guesthouseId, slug: s, NOT: { id: roomId } },
+        select: { id: true },
+      });
+      if (colliding) {
+        return NextResponse.json({ error: "Cet identifiant est déjà pris dans cette maison d'hôtes." }, { status: 409 });
+      }
+      data.slug = s;
+    }
+  }
+
+  let updated;
+  try {
+    updated = await prisma.room.update({ where: { id: roomId }, data });
+  } catch (e) {
+    const code = (e as { code?: string })?.code;
+    if (code === "P2002") {
+      return NextResponse.json({ error: "Cet identifiant est déjà pris dans cette maison d'hôtes." }, { status: 409 });
+    }
+    throw e;
+  }
 
   // Alerte non bloquante sur le plafond légal de capacité.
   const rooms = await prisma.room.findMany({ where: { guesthouseId: ctx.guesthouseId } });

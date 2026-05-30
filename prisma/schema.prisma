@@ -47,6 +47,9 @@ model User {
 model Guesthouse {
   id        String  @id @default(cuid())
   name      String
+  // Slug public pour les URLs de réservation : kordia.fr/book/<slug>/<roomSlug>
+  // Unique globalement (vérifié aussi contre Gite.slug pour éviter les collisions).
+  slug      String? @unique
   address   String?
   city      String?
   zipCode   String?
@@ -112,6 +115,8 @@ model GuesthouseMeal {
 model Room {
   id        String  @id @default(cuid())
   name      String              // nom ou numéro de la chambre
+  // Slug unique au sein d'une maison d'hôtes : kordia.fr/book/<guesthouseSlug>/<slug>
+  slug      String?
   capacity  Int     @default(2) // capacité max en personnes
   basePrice Float   @default(0) // prix de base par nuit
   active    Boolean @default(true)
@@ -124,6 +129,8 @@ model Room {
 
   reservationRooms ReservationRoom[]
   icalFeeds        GuesthouseIcalFeed[]
+
+  @@unique([guesthouseId, slug])
 }
 
 model GuesthouseIcalFeed {

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireGuesthouseById } from "@/lib/auth";
+import { isValidSlug, slugError } from "@/lib/slug";
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -18,13 +19,43 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   if (typeof data.name === "string" && !data.name.trim())
     return NextResponse.json({ error: "Le nom est requis" }, { status: 400 });
 
-  const guesthouse = await prisma.guesthouse.update({
-    where: { id: ctx.guesthouseId },
-    data,
-    select: { id: true, name: true },
-  });
+  // Slug d'établissement : optionnel, mais s'il est fourni il doit être valide ET unique
+  // contre Gite.slug ET Guesthouse.slug (espace de nommage partagé sous /book/<slug>).
+  if ("slug" in body) {
+    const raw = body.slug;
+    if (raw === null || raw === "") {
+      data.slug = null;
+    } else {
+      const s = String(raw).trim().toLowerCase();
+      const fmt = slugError(s);
+      if (fmt || !isValidSlug(s)) {
+        return NextResponse.json({ error: fmt ?? "Identifiant invalide." }, { status: 400 });
+      }
+      const [collidingGite, collidingGh] = await Promise.all([
+        prisma.gite.findFirst({ where: { slug: s, deletedAt: null }, select: { id: true } }),
+        prisma.guesthouse.findFirst({ where: { slug: s, deletedAt: null, NOT: { id: ctx.guesthouseId } }, select: { id: true } }),
+      ]);
+      if (collidingGite || collidingGh) {
+        return NextResponse.json({ error: "Cet identifiant est déjà pris." }, { status: 409 });
+      }
+      data.slug = s;
+    }
+  }
 
-  return NextResponse.json({ guesthouse });
+  try {
+    const guesthouse = await prisma.guesthouse.update({
+      where: { id: ctx.guesthouseId },
+      data,
+      select: { id: true, name: true, slug: true },
+    });
+    return NextResponse.json({ guesthouse });
+  } catch (e) {
+    const code = (e as { code?: string })?.code;
+    if (code === "P2002") {
+      return NextResponse.json({ error: "Cet identifiant est déjà pris." }, { status: 409 });
+    }
+    throw e;
+  }
 }
 
 export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {

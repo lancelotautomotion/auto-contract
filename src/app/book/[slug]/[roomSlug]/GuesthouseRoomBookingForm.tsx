@@ -8,8 +8,8 @@ interface MealOption { id: string; name: string; description: string | null; pri
 interface IcalBlock { start: string; end: string; platform: string; label: string; }
 
 interface Props {
-  guesthouseId: string;
-  roomId: string;
+  guesthouseSlug: string;
+  roomSlug: string;
   guesthouseName: string;
   guesthouseCity?: string | null;
   guesthouseLogoUrl?: string | null;
@@ -32,7 +32,7 @@ function fmtDate(d: string) {
 const fmtMoney = (n: number) => `${n.toLocaleString("fr-FR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €`;
 
 export default function GuesthouseRoomBookingForm({
-  guesthouseId, roomId, guesthouseName, guesthouseCity, guesthouseLogoUrl,
+  guesthouseSlug, roomSlug, guesthouseName, guesthouseCity, guesthouseLogoUrl,
   roomName, roomCapacity, roomPrice, meals, icalBlocked = [],
 }: Props) {
   const [step, setStep] = useState<"form" | "success">("form");
@@ -81,7 +81,7 @@ export default function GuesthouseRoomBookingForm({
     setError("");
     setLoading(true);
     try {
-      const res = await fetch(`/api/book/${guesthouseId}/${roomId}`, {
+      const res = await fetch(`/api/book/${guesthouseSlug}/${roomSlug}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

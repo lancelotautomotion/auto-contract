@@ -125,8 +125,9 @@ interface GiteData {
   documents: GiteDoc[];
 }
 
-interface GuesthouseRoomLite { id: string; name: string; capacity: number; basePrice: number; active: boolean; }
+interface GuesthouseRoomLite { id: string; name: string; slug: string | null; capacity: number; basePrice: number; active: boolean; }
 interface GuesthouseData {
+  slug: string | null;
   id: string; name: string; email: string; phone: string;
   address: string; city: string; zipCode: string;
   contractTemplateGeneral: string;
@@ -772,7 +773,7 @@ export default function EtablissementForm({ gite, guesthouse }: { gite?: GiteDat
       {/* ═══ CHAMBRES (Maison d'hôtes) ═══ */}
       {activeTab === 'Chambres' && mode === 'guesthouse' && guesthouse && (
         <div style={{ maxWidth: '860px' }}>
-          <RoomsManager guesthouseId={guesthouse.id} initialRooms={guesthouse.rooms} />
+          <RoomsManager guesthouseId={guesthouse.id} guesthouseSlug={guesthouse.slug ?? null} initialRooms={guesthouse.rooms} />
         </div>
       )}
 

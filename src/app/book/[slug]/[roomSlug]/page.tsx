@@ -5,14 +5,14 @@ import GuesthouseRoomBookingForm from "./GuesthouseRoomBookingForm";
 export const dynamic = "force-dynamic";
 
 // Réservation publique d'UNE chambre entière d'une maison d'hôtes.
-// URL : /book/[guesthouseId]/[roomId]
-export default async function GuesthouseRoomBookingPage({ params }: { params: Promise<{ slug: string; roomId: string }> }) {
-  const { slug, roomId } = await params;
+// URL : /book/<guesthouseSlug>/<roomSlug>
+export default async function GuesthouseRoomBookingPage({ params }: { params: Promise<{ slug: string; roomSlug: string }> }) {
+  const { slug, roomSlug } = await params;
 
   const guesthouse = await prisma.guesthouse.findFirst({
-    where: { id: slug, deletedAt: null },
+    where: { slug, deletedAt: null },
     include: {
-      rooms: { where: { id: roomId } },
+      rooms: { where: { slug: roomSlug } },
       meals: { where: { active: true }, orderBy: [{ position: "asc" }, { createdAt: "asc" }] },
     },
   });
@@ -39,8 +39,8 @@ export default async function GuesthouseRoomBookingPage({ params }: { params: Pr
 
       <div className="book-main">
         <GuesthouseRoomBookingForm
-          guesthouseId={guesthouse.id}
-          roomId={room.id}
+          guesthouseSlug={guesthouse.slug ?? ""}
+          roomSlug={room.slug ?? ""}
           guesthouseName={guesthouse.name}
           guesthouseCity={guesthouse.city}
           guesthouseLogoUrl={guesthouse.logoUrl}
