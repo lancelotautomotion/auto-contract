@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import TopbarSignOut from "@/app/dashboard/TopbarSignOut";
 import CalendarView from "@/app/dashboard/CalendarView";
 import { buildGuesthouseCalendarData } from "@/lib/guesthouseCalendarData";
+import RoomBookingLinksBanner from "./RoomBookingLinksBanner";
 
 export const dynamic = "force-dynamic";
 
@@ -37,6 +38,19 @@ export default async function GuesthouseReservationsPage({ params }: { params: P
   const hasRooms = guesthouse.rooms.length > 0;
 
   const multiRooms = buildGuesthouseCalendarData(guesthouse.rooms, guesthouse.reservations, icalFeeds);
+
+  // Couleurs de chambre alignées sur celles du planning (même mapping via id).
+  const colorByRoomId = new Map(multiRooms.map((m) => [m.id, m.color]));
+  const bannerRooms = guesthouse.rooms
+    .filter((r) => r.active)
+    .map((r) => ({
+      id: r.id,
+      name: r.name,
+      slug: r.slug ?? null,
+      capacity: r.capacity,
+      basePrice: r.basePrice,
+      color: colorByRoomId.get(r.id) ?? "#7F77DD",
+    }));
 
   const fmt = (d: Date) =>
     new Date(d).toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "numeric" });
@@ -71,6 +85,14 @@ export default async function GuesthouseReservationsPage({ params }: { params: P
             )}
           </div>
         </div>
+
+        {hasRooms && (
+          <RoomBookingLinksBanner
+            guesthouseId={id}
+            guesthouseSlug={guesthouse.slug ?? null}
+            rooms={bannerRooms}
+          />
+        )}
 
         <div className="form-card" style={{ marginBottom: "20px" }}>
           <div className="form-card-title">Planning</div>
