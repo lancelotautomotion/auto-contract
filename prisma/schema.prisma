@@ -57,6 +57,8 @@ model Guesthouse {
   capacity   Int   @default(15)
   // Taxe de séjour au réel : taux appliqué par adulte et par nuit
   touristTax Float @default(1.00)
+  // Nombre max de couverts servis à la table d'hôtes par soir (0 = pas de limite)
+  tableDhotesCapacity Int @default(0)
 
   // Pipeline contrat partagé avec le Gîte
   contractTemplateGeneral    String?
@@ -95,6 +97,7 @@ model GuesthouseMeal {
   description String?                 // composition / détail du menu (gérant ET client)
   price       Float       @default(0)
   service     MealService @default(DINNER) // moment de service (agrégation cuisine)
+  tags        String[]    @default([])      // ex. ["VEGETARIAN", "LOCAL"]
   active      Boolean     @default(true)
   position    Int         @default(0)
   createdAt   DateTime    @default(now())

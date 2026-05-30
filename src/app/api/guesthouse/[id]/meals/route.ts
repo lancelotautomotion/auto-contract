@@ -31,6 +31,9 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   const service: MealService = VALID_SERVICES.includes(rawService) ? rawService : "DINNER";
   const price = parseFloat(body.price) || 0;
   const description = body.description ? String(body.description).trim() : null;
+  const tags = Array.isArray(body.tags)
+    ? body.tags.filter((t: unknown): t is string => typeof t === "string").map((t: string) => t.trim()).filter(Boolean)
+    : [];
 
   const existingCount = await prisma.guesthouseMeal.count({ where: { guesthouseId: ctx.guesthouseId } });
 
@@ -41,6 +44,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       description,
       price,
       service,
+      tags,
       active: body.active === false ? false : true,
       position: existingCount,
     },

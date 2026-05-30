@@ -1,3 +1,5 @@
+import DailyForecastCard, { type DailyForecast } from "./DailyForecastCard";
+
 interface MealEntry {
   service: string;
   label: string;
@@ -7,18 +9,18 @@ interface MealEntry {
 interface ReservationLike {
   checkIn: Date | string;
   checkOut: Date | string;
+  clientFirstName: string;
+  clientLastName: string;
+  dietaryNotes: string | null;
   meals: MealEntry[];
 }
 
-const SERVICE_LABEL: Record<string, string> = {
-  BREAKFAST: "Petit-déj",
-  LUNCH: "Déjeuner",
-  DINNER: "Dîner",
-  OTHER: "Autre",
-};
-const SERVICE_ORDER = ["BREAKFAST", "LUNCH", "DINNER", "OTHER"];
-
 const dayKey = (d: Date) => d.toISOString().slice(0, 10);
+
+function truncate(s: string, max = 80) {
+  const clean = s.replace(/\s+/g, " ").trim();
+  return clean.length > max ? clean.slice(0, max - 1) + "…" : clean;
+}
 
 export default function WeeklyMealsForecast({ reservations }: { reservations: ReservationLike[] }) {
   const today = new Date();
@@ -31,85 +33,48 @@ export default function WeeklyMealsForecast({ reservations }: { reservations: Re
     days.push(d);
   }
 
-  // Map<dayKey, Map<service, { count, labels: Set<string> }>>
-  const grid = new Map<string, Map<string, { count: number; labels: Set<string> }>>();
-  for (const d of days) grid.set(dayKey(d), new Map());
+  // Map<dayKey, DailyForecast>
+  const grid = new Map<string, DailyForecast>();
+  for (const d of days) grid.set(dayKey(d), { date: d, services: new Map(), alerts: [] });
 
   for (const r of reservations) {
     const ci = new Date(r.checkIn); ci.setHours(0, 0, 0, 0);
     const co = new Date(r.checkOut); co.setHours(0, 0, 0, 0);
+    const note = (r.dietaryNotes ?? "").trim();
+    const clientName = `${r.clientFirstName} ${r.clientLastName}`.trim();
+
     for (const d of days) {
       if (d >= ci && d < co) {
-        const dayMap = grid.get(dayKey(d))!;
+        const slot = grid.get(dayKey(d))!;
         for (const m of r.meals) {
-          const prev = dayMap.get(m.service) ?? { count: 0, labels: new Set<string>() };
+          const prev = slot.services.get(m.service) ?? { count: 0, labels: new Set<string>() };
           prev.count += m.quantity;
           prev.labels.add(m.label);
-          dayMap.set(m.service, prev);
+          slot.services.set(m.service, prev);
+        }
+        // Une alerte n'est pertinente que si le client est servi ce jour-là (a au moins un repas)
+        if (note && r.meals.length > 0) {
+          if (!slot.alerts.some((a) => a.client === clientName)) {
+            slot.alerts.push({ client: clientName, note: truncate(note) });
+          }
         }
       }
     }
   }
 
-  const usedServices = new Set<string>();
-  for (const dayMap of grid.values()) {
-    for (const service of dayMap.keys()) usedServices.add(service);
-  }
-  const services = SERVICE_ORDER.filter((s) => usedServices.has(s));
-
-  const dayFmt = (d: Date) =>
-    d.toLocaleDateString("fr-FR", { weekday: "short", day: "2-digit", month: "2-digit" });
-
-  if (services.length === 0) {
-    return (
-      <p style={{ fontSize: "13px", color: "var(--ink-lighter)", fontStyle: "italic", margin: 0 }}>
-        Aucun repas prévu sur les 7 prochains jours.
-      </p>
-    );
-  }
+  const ordered: DailyForecast[] = days.map((d) => grid.get(dayKey(d))!);
 
   return (
-    <div style={{ overflowX: "auto" }}>
-      <table style={{ width: "100%", minWidth: "640px", borderCollapse: "separate", borderSpacing: 0, fontSize: "12.5px" }}>
-        <thead>
-          <tr>
-            <th style={{ padding: "10px 12px", textAlign: "left", fontSize: "11px", color: "#A3A3A0", textTransform: "uppercase", letterSpacing: "0.5px" }}>Jour</th>
-            {services.map((s) => (
-              <th key={s} style={{ padding: "10px 12px", textAlign: "center", fontSize: "11px", color: "#5B52B5", textTransform: "uppercase", letterSpacing: "0.5px" }}>
-                {SERVICE_LABEL[s] ?? s}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {days.map((d, idx) => {
-            const dayMap = grid.get(dayKey(d))!;
-            const isToday = idx === 0;
-            return (
-              <tr key={dayKey(d)} style={{ background: isToday ? "#F8F6F1" : "transparent" }}>
-                <td style={{ padding: "10px 12px", fontWeight: isToday ? 700 : 600, color: "var(--ink)", borderTop: "1px solid #EFEDE8" }}>
-                  {dayFmt(d)} {isToday && <span style={{ fontSize: "10px", fontWeight: 700, color: "#689D71", marginLeft: "4px" }}>· Aujourd&apos;hui</span>}
-                </td>
-                {services.map((s) => {
-                  const entry = dayMap.get(s);
-                  return (
-                    <td key={s} style={{ padding: "10px 12px", textAlign: "center", borderTop: "1px solid #EFEDE8" }}>
-                      {entry ? (
-                        <div>
-                          <div style={{ fontSize: "16px", fontWeight: 700, color: "var(--ink)" }}>{entry.count}</div>
-                          <div style={{ fontSize: "11px", color: "var(--ink-lighter)" }}>{Array.from(entry.labels).join(" · ")}</div>
-                        </div>
-                      ) : (
-                        <span style={{ color: "#D1D0CC" }}>—</span>
-                      )}
-                    </td>
-                  );
-                })}
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))",
+        gap: "12px",
+      }}
+    >
+      {ordered.map((day) => (
+        <DailyForecastCard key={dayKey(day.date)} day={day} today={today} />
+      ))}
     </div>
   );
 }

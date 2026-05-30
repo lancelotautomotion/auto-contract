@@ -29,6 +29,11 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   }
   if ("active" in body) data.active = !!body.active;
   if ("position" in body) data.position = parseInt(body.position) || 0;
+  if ("tags" in body) {
+    data.tags = Array.isArray(body.tags)
+      ? body.tags.filter((t: unknown): t is string => typeof t === "string").map((t: string) => t.trim()).filter(Boolean)
+      : [];
+  }
 
   const updated = await prisma.guesthouseMeal.update({ where: { id: mealId }, data });
   return NextResponse.json({ meal: updated });

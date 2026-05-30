@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import MealFormModal, { TAG_OPTIONS, type MealDraft, type MealService, type MealTag } from "./[id]/restauration/MealFormModal";
 
-export type MealService = "BREAKFAST" | "LUNCH" | "DINNER" | "OTHER";
+export type { MealService } from "./[id]/restauration/MealFormModal";
 
 export interface GuesthouseMeal {
   id: string;
@@ -10,18 +11,72 @@ export interface GuesthouseMeal {
   description: string | null;
   price: number;
   service: MealService;
+  tags: MealTag[];
   active: boolean;
 }
 
-const SERVICE_OPTIONS: { value: MealService; label: string }[] = [
-  { value: "BREAKFAST", label: "Petit-déjeuner" },
-  { value: "LUNCH", label: "Déjeuner" },
-  { value: "DINNER", label: "Dîner / Table d'hôtes" },
-  { value: "OTHER", label: "Autre" },
+// Ordre d'affichage des sections par moment de service
+const SERVICE_SECTIONS: { value: MealService; label: string; icon: React.ReactNode }[] = [
+  {
+    value: "BREAKFAST",
+    label: "Petits-déjeuners",
+    icon: (
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="4"/>
+        <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
+      </svg>
+    ),
+  },
+  {
+    value: "LUNCH",
+    label: "Déjeuners",
+    icon: (
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="9"/>
+        <path d="M12 7v5l3 2"/>
+      </svg>
+    ),
+  },
+  {
+    value: "DINNER",
+    label: "Dîners / Table d'hôtes",
+    icon: (
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M3 11h18"/>
+        <path d="M5 11a7 7 0 0114 0"/>
+        <path d="M4 15h16"/>
+        <path d="M2 19h20"/>
+      </svg>
+    ),
+  },
+  {
+    value: "OTHER",
+    label: "Autres formules",
+    icon: (
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="9"/>
+        <path d="M12 8v8M8 12h8"/>
+      </svg>
+    ),
+  },
 ];
 
-const serviceLabel = (s: MealService) =>
-  SERVICE_OPTIONS.find((o) => o.value === s)?.label ?? s;
+const TAG_MAP = Object.fromEntries(TAG_OPTIONS.map((t) => [t.value, t]));
+
+function MealTagBadge({ tag }: { tag: MealTag }) {
+  const cfg = TAG_MAP[tag];
+  if (!cfg) return null;
+  return (
+    <span style={{
+      display: "inline-flex", alignItems: "center",
+      fontSize: "10.5px", fontWeight: 700,
+      padding: "2px 8px", borderRadius: "20px",
+      background: cfg.bg, color: cfg.color,
+    }}>
+      {cfg.label}
+    </span>
+  );
+}
 
 export default function MealsManager({
   guesthouseId,
@@ -31,46 +86,58 @@ export default function MealsManager({
   initialMeals: GuesthouseMeal[];
 }) {
   const [meals, setMeals] = useState<GuesthouseMeal[]>(initialMeals);
-  const [draft, setDraft] = useState({
-    name: "",
-    description: "",
-    price: "",
-    service: "DINNER" as MealService,
-  });
-  const [loading, setLoading] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [editing, setEditing] = useState<GuesthouseMeal | null>(null);
+  const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
-  const [editing, setEditing] = useState<string | null>(null);
 
-  const addMeal = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!draft.name.trim()) {
-      setError("Le nom du menu est requis.");
-      return;
+  const grouped = useMemo(() => {
+    const map = new Map<MealService, GuesthouseMeal[]>();
+    for (const s of SERVICE_SECTIONS) map.set(s.value, []);
+    for (const m of meals) {
+      const bucket = map.get(m.service) ?? [];
+      bucket.push(m);
+      map.set(m.service, bucket);
     }
-    setLoading(true);
+    return map;
+  }, [meals]);
+
+  const openNew = () => { setEditing(null); setModalOpen(true); };
+  const openEdit = (m: GuesthouseMeal) => { setEditing(m); setModalOpen(true); };
+
+  const handleSubmit = async (draft: MealDraft) => {
+    setSaving(true);
     setError("");
     try {
-      const res = await fetch(`/api/guesthouse/${guesthouseId}/meals`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: draft.name.trim(),
-          description: draft.description.trim() || null,
-          price: draft.price,
-          service: draft.service,
-        }),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        setError(data.error ?? "Erreur lors de l'ajout.");
-        return;
+      const payload = {
+        name: draft.name.trim(),
+        description: draft.description.trim() || null,
+        price: draft.price,
+        service: draft.service,
+        tags: draft.tags,
+      };
+      if (draft.id) {
+        const res = await fetch(`/api/guesthouse/${guesthouseId}/meals/${draft.id}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        const data = await res.json();
+        if (!res.ok) { setError(data.error ?? "Erreur lors de la mise à jour."); return; }
+        setMeals((ms) => ms.map((m) => (m.id === draft.id ? data.meal : m)));
+      } else {
+        const res = await fetch(`/api/guesthouse/${guesthouseId}/meals`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        const data = await res.json();
+        if (!res.ok) { setError(data.error ?? "Erreur lors de la création."); return; }
+        setMeals((ms) => [...ms, data.meal]);
       }
-      setMeals((ms) => [...ms, data.meal]);
-      setDraft({ name: "", description: "", price: "", service: "DINNER" });
-    } catch {
-      setError("Impossible de contacter le serveur.");
+      setModalOpen(false);
     } finally {
-      setLoading(false);
+      setSaving(false);
     }
   };
 
@@ -83,210 +150,145 @@ export default function MealsManager({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(patch),
       });
-      const data = await res.json();
-      if (!res.ok) {
-        setMeals(prev);
-        setError(data.error ?? "Erreur.");
-      }
-    } catch {
-      setMeals(prev);
-      setError("Impossible de contacter le serveur.");
-    }
+      if (!res.ok) setMeals(prev);
+    } catch { setMeals(prev); }
   };
 
   const removeMeal = async (id: string) => {
-    if (!confirm("Supprimer ce menu ?")) return;
+    if (!confirm("Supprimer cette formule ?")) return;
     const prev = meals;
     setMeals((ms) => ms.filter((m) => m.id !== id));
     try {
       const res = await fetch(`/api/guesthouse/${guesthouseId}/meals/${id}`, { method: "DELETE" });
       if (!res.ok) setMeals(prev);
-    } catch {
-      setMeals(prev);
-    }
+    } catch { setMeals(prev); }
   };
 
-  return (
-    <div className="form-card" style={{ maxWidth: "860px" }}>
-      <div className="form-card-title">
-        <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
-          <path d="M2 12h10M3.5 12V6.5a3.5 3.5 0 017 0V12M5.5 2.5v2M7 2v2.5M8.5 2.5v2" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
-        </svg>
-        Restauration ({meals.length} menu{meals.length > 1 ? "s" : ""})
-      </div>
-      <p style={{ fontSize: "13px", color: "var(--ink-lighter)", marginBottom: "16px" }}>
-        Configurez vos formules (petit-déjeuner, table d&apos;hôtes, etc.). Elles seront proposées dans le formulaire de réservation et apparaîtront sur le contrat.
-      </p>
+  const draftFromMeal = (m: GuesthouseMeal | null): MealDraft | null =>
+    m ? {
+      id: m.id,
+      name: m.name,
+      description: m.description ?? "",
+      price: String(m.price),
+      service: m.service,
+      tags: m.tags ?? [],
+    } : null;
 
-      {meals.length === 0 && (
-        <p style={{ fontSize: "13px", color: "var(--ink-lighter)", fontStyle: "italic", padding: "12px 0" }}>
-          Aucun menu configuré.
-        </p>
+  return (
+    <div className="form-card">
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "12px", marginBottom: "8px" }}>
+        <div>
+          <div className="form-card-title" style={{ marginBottom: "4px" }}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M3 11h18M5 11a7 7 0 0114 0M4 15h16M2 19h20"/>
+            </svg>
+            Mes formules ({meals.length})
+          </div>
+          <p style={{ fontSize: "13px", color: "var(--ink-lighter)", margin: 0 }}>
+            Configurez vos formules. Elles seront proposées dans le formulaire de réservation et apparaîtront sur le contrat.
+          </p>
+        </div>
+        <button type="button" className="btn btn-green" onClick={openNew}>
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#fff" strokeWidth="1.6" strokeLinecap="round">
+            <path d="M7 2v10M2 7h10"/>
+          </svg>
+          Nouvelle formule
+        </button>
+      </div>
+
+      {meals.length === 0 ? (
+        <div style={{
+          marginTop: "16px", padding: "32px 16px",
+          background: "#F8F6F1", borderRadius: "12px",
+          textAlign: "center", fontSize: "13px", color: "var(--ink-lighter)",
+        }}>
+          Aucune formule pour le moment. Cliquez sur <strong>Nouvelle formule</strong> pour démarrer.
+        </div>
+      ) : (
+        <div style={{ marginTop: "16px", display: "flex", flexDirection: "column", gap: "20px" }}>
+          {SERVICE_SECTIONS.map((s) => {
+            const items = grouped.get(s.value) ?? [];
+            if (items.length === 0) return null;
+            return (
+              <section key={s.value}>
+                <div style={{
+                  display: "flex", alignItems: "center", gap: "8px",
+                  fontSize: "11px", fontWeight: 700, color: "#5B52B5",
+                  textTransform: "uppercase", letterSpacing: "0.08em",
+                  marginBottom: "10px",
+                }}>
+                  <span style={{ color: "#5B52B5" }}>{s.icon}</span>
+                  {s.label} <span style={{ color: "#A3A3A0", fontWeight: 600 }}>· {items.length}</span>
+                </div>
+
+                <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                  {items.map((meal) => (
+                    <div
+                      key={meal.id}
+                      style={{
+                        border: "1px solid #EFEDE8",
+                        borderRadius: "12px",
+                        padding: "14px 16px",
+                        background: meal.active ? "#FFFFFF" : "#FAF9F6",
+                        display: "flex", gap: "12px",
+                        alignItems: "flex-start", flexWrap: "wrap",
+                      }}
+                    >
+                      <div style={{ flex: "1 1 240px", minWidth: 0 }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
+                          <span style={{ fontSize: "14px", fontWeight: 700, color: "var(--ink)" }}>{meal.name}</span>
+                          {(meal.tags ?? []).map((t) => <MealTagBadge key={t} tag={t} />)}
+                          {!meal.active && (
+                            <span style={{ fontSize: "10.5px", fontWeight: 700, color: "#71716E", background: "#EFEDE8", padding: "2px 8px", borderRadius: "20px" }}>
+                              Inactif
+                            </span>
+                          )}
+                        </div>
+                        {meal.description && (
+                          <p style={{ fontSize: "12.5px", color: "var(--ink-lighter)", margin: "6px 0 0", whiteSpace: "pre-wrap" }}>
+                            {meal.description}
+                          </p>
+                        )}
+                      </div>
+                      <div style={{ fontSize: "14px", fontWeight: 700, color: "#689D71", flexShrink: 0, alignSelf: "center" }}>
+                        {meal.price.toLocaleString("fr-FR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €
+                      </div>
+                      <div style={{ display: "flex", gap: "6px", flexShrink: 0, alignSelf: "center" }}>
+                        <button type="button" className="btn btn-outline" style={{ fontSize: "12px", padding: "6px 12px" }} onClick={() => openEdit(meal)}>
+                          Modifier
+                        </button>
+                        <button
+                          type="button"
+                          className={`btn ${meal.active ? "btn-outline" : "btn-violet"}`}
+                          style={{ fontSize: "12px", padding: "6px 12px" }}
+                          onClick={() => updateMeal(meal.id, { active: !meal.active })}
+                        >
+                          {meal.active ? "Actif" : "Inactif"}
+                        </button>
+                        <button type="button" className="option-del" onClick={() => removeMeal(meal.id)} title="Supprimer" aria-label="Supprimer">
+                          <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
+                            <path d="M2.5 3.5h9M5 3.5V2.5a1 1 0 011-1h2a1 1 0 011 1v1M3.5 3.5l.5 8.5a1 1 0 001 1h4a1 1 0 001-1l.5-8.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            );
+          })}
+        </div>
       )}
 
-      {meals.map((meal) => {
-        const isEditing = editing === meal.id;
-        return (
-          <div
-            key={meal.id}
-            style={{
-              border: "1px solid #EFEDE8",
-              borderRadius: "10px",
-              padding: "12px",
-              marginBottom: "10px",
-              background: meal.active ? "#FFFFFF" : "#FAF9F6",
-            }}
-          >
-            {!isEditing ? (
-              <div style={{ display: "flex", gap: "12px", alignItems: "flex-start", flexWrap: "wrap" }}>
-                <div style={{ flex: "1 1 240px", minWidth: 0 }}>
-                  <div style={{ display: "flex", gap: "8px", alignItems: "center", flexWrap: "wrap" }}>
-                    <span style={{ fontSize: "14px", fontWeight: 700, color: "var(--ink)" }}>{meal.name}</span>
-                    <span style={{ fontSize: "11px", fontWeight: 600, color: "#5B52B5", background: "#EFEDFC", padding: "2px 8px", borderRadius: "20px" }}>
-                      {serviceLabel(meal.service)}
-                    </span>
-                    {!meal.active && (
-                      <span style={{ fontSize: "11px", fontWeight: 600, color: "#71716E", background: "#EFEDE8", padding: "2px 8px", borderRadius: "20px" }}>
-                        Inactif
-                      </span>
-                    )}
-                  </div>
-                  {meal.description && (
-                    <p style={{ fontSize: "12.5px", color: "var(--ink-lighter)", margin: "6px 0 0", whiteSpace: "pre-wrap" }}>
-                      {meal.description}
-                    </p>
-                  )}
-                </div>
-                <div style={{ fontSize: "14px", fontWeight: 700, color: "#689D71", flexShrink: 0 }}>
-                  {meal.price.toLocaleString("fr-FR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €
-                </div>
-                <div style={{ display: "flex", gap: "6px", flexShrink: 0 }}>
-                  <button type="button" className="btn btn-outline" style={{ fontSize: "12px", padding: "6px 12px" }} onClick={() => setEditing(meal.id)}>
-                    Modifier
-                  </button>
-                  <button
-                    type="button"
-                    className={`btn ${meal.active ? "btn-outline" : "btn-violet"}`}
-                    style={{ fontSize: "12px", padding: "6px 12px" }}
-                    onClick={() => updateMeal(meal.id, { active: !meal.active })}
-                  >
-                    {meal.active ? "Actif" : "Inactif"}
-                  </button>
-                  <button type="button" className="option-del" onClick={() => removeMeal(meal.id)} title="Supprimer" aria-label="Supprimer">
-                    <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
-                      <path d="M2.5 3.5h9M5 3.5V2.5a1 1 0 011-1h2a1 1 0 011 1v1M3.5 3.5l.5 8.5a1 1 0 001 1h4a1 1 0 001-1l.5-8.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <MealEditRow
-                meal={meal}
-                onCancel={() => setEditing(null)}
-                onSave={async (patch) => {
-                  await updateMeal(meal.id, patch);
-                  setEditing(null);
-                }}
-              />
-            )}
-          </div>
-        );
-      })}
-
-      <form onSubmit={addMeal} style={{ borderTop: "1px solid #EFEDE8", paddingTop: "16px", marginTop: "8px" }}>
-        <div style={{ fontSize: "13px", fontWeight: 600, color: "var(--ink)", marginBottom: "10px" }}>Ajouter un menu</div>
-        <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", marginBottom: "8px" }}>
-          <input
-            type="text"
-            className="form-input"
-            style={{ flex: "2 1 200px" }}
-            placeholder="Nom (ex. Petit-déj continental)"
-            value={draft.name}
-            onChange={(e) => { setDraft((d) => ({ ...d, name: e.target.value })); setError(""); }}
-          />
-          <select
-            className="form-input"
-            style={{ flex: "1 1 140px" }}
-            value={draft.service}
-            onChange={(e) => setDraft((d) => ({ ...d, service: e.target.value as MealService }))}
-          >
-            {SERVICE_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-          </select>
-          <input
-            type="number"
-            min="0"
-            step="0.01"
-            className="form-input"
-            style={{ flex: "0 1 110px" }}
-            placeholder="Prix (€)"
-            value={draft.price}
-            onChange={(e) => setDraft((d) => ({ ...d, price: e.target.value }))}
-          />
-        </div>
-        <textarea
-          className="form-textarea"
-          placeholder="Description / composition du menu (visible par le client)"
-          style={{ marginBottom: "8px", minHeight: "60px" }}
-          value={draft.description}
-          onChange={(e) => setDraft((d) => ({ ...d, description: e.target.value }))}
-        />
-        <button type="submit" className="btn btn-green" disabled={loading}>
-          {loading ? "Ajout…" : "Ajouter le menu"}
-        </button>
-      </form>
-
       {error && <p style={{ fontSize: "12px", color: "#b91c1c", marginTop: "10px" }}>{error}</p>}
-    </div>
-  );
-}
 
-function MealEditRow({
-  meal,
-  onCancel,
-  onSave,
-}: {
-  meal: GuesthouseMeal;
-  onCancel: () => void;
-  onSave: (patch: Partial<GuesthouseMeal>) => void | Promise<void>;
-}) {
-  const [name, setName] = useState(meal.name);
-  const [description, setDescription] = useState(meal.description ?? "");
-  const [price, setPrice] = useState(String(meal.price));
-  const [service, setService] = useState<MealService>(meal.service);
-  return (
-    <div>
-      <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", marginBottom: "8px" }}>
-        <input type="text" className="form-input" style={{ flex: "2 1 200px" }} value={name} onChange={(e) => setName(e.target.value)} />
-        <select className="form-input" style={{ flex: "1 1 140px" }} value={service} onChange={(e) => setService(e.target.value as MealService)}>
-          {SERVICE_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-        </select>
-        <input type="number" min="0" step="0.01" className="form-input" style={{ flex: "0 1 110px" }} value={price} onChange={(e) => setPrice(e.target.value)} />
-      </div>
-      <textarea
-        className="form-textarea"
-        placeholder="Description / composition"
-        style={{ marginBottom: "8px", minHeight: "60px" }}
-        value={description}
-        onChange={(e) => setDescription(e.target.value)}
+      <MealFormModal
+        open={modalOpen}
+        initial={draftFromMeal(editing)}
+        onClose={() => setModalOpen(false)}
+        onSubmit={handleSubmit}
+        saving={saving}
       />
-      <div style={{ display: "flex", gap: "8px" }}>
-        <button
-          type="button"
-          className="btn btn-green"
-          style={{ fontSize: "12px", padding: "6px 12px" }}
-          onClick={() => onSave({
-            name: name.trim(),
-            description: description.trim() || null,
-            price: parseFloat(price) || 0,
-            service,
-          })}
-        >
-          Enregistrer
-        </button>
-        <button type="button" className="btn btn-outline" style={{ fontSize: "12px", padding: "6px 12px" }} onClick={onCancel}>
-          Annuler
-        </button>
-      </div>
     </div>
   );
 }
