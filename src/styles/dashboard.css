@@ -681,7 +681,7 @@
 .editor-sticky-header {
   position: sticky; top: 0; z-index: 10;
   background: var(--line-light);
-  padding-top: 2px;
+  padding-top: 20px;
   padding-bottom: 2px;
 }
 
