@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import TopbarSignOut from "@/app/dashboard/TopbarSignOut";
 import { nightsBetween } from "@/lib/billing";
 import MonthSelector from "./MonthSelector";
+import { BarChart2, Euro, CreditCard, CalendarDays, Utensils, ArrowDownUp, Home } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -185,7 +186,7 @@ export default async function GuesthouseDashboardPage({
               <div className="sc-top">
                 <span className="sc-label">Taux d&apos;occupation</span>
                 <span className={`sc-icon ${occupancyRate >= 70 ? "g" : occupancyRate >= 40 ? "a" : "i"}`}>
-                  <svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M2 11a5 5 0 0110 0" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/><path d="M7 6V3" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/></svg>
+                  <BarChart2 size={14} strokeWidth={1.4} />
                 </span>
               </div>
               <div className="sc-num" style={{ color: occupancyRate >= 70 ? "var(--green)" : occupancyRate >= 40 ? "var(--amber)" : "var(--ink)" }}>
@@ -205,7 +206,7 @@ export default async function GuesthouseDashboardPage({
               <div className="sc-top">
                 <span className="sc-label">Chiffre d&apos;affaires</span>
                 <span className="sc-icon g">
-                  <svg width="14" height="14" fill="none" viewBox="0 0 14 14"><circle cx="7" cy="7" r="5" stroke="currentColor" strokeWidth="1.2"/><path d="M7 4v6M5 5.5h3a1.5 1.5 0 010 3H5.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/></svg>
+                  <Euro size={14} strokeWidth={1.4} />
                 </span>
               </div>
               <div className="sc-num" style={{ color: "var(--green)", fontSize: revenueMonth >= 10000 ? "24px" : "32px" }}>{fmtMoney(revenueMonth)}</div>
@@ -217,7 +218,7 @@ export default async function GuesthouseDashboardPage({
               <div className="sc-top">
                 <span className="sc-label">RevPAR</span>
                 <span className="sc-icon v">
-                  <svg width="14" height="14" fill="none" viewBox="0 0 14 14"><rect x="1.5" y="3.5" width="11" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.2"/><path d="M5 7h4M7 5.5V8.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/></svg>
+                  <CreditCard size={14} strokeWidth={1.4} />
                 </span>
               </div>
               <div className="sc-num" style={{ color: "var(--violet)" }}>{fmtMoney(revpar)}</div>
@@ -233,7 +234,7 @@ export default async function GuesthouseDashboardPage({
               <div className="sc-top">
                 <span className="sc-label">Durée moy.</span>
                 <span className="sc-icon v">
-                  <svg width="14" height="14" fill="none" viewBox="0 0 14 14"><rect x="1" y="2.5" width="12" height="9" rx="1.5" stroke="currentColor" strokeWidth="1.2"/><path d="M1 6h12M4.5 1v3M9.5 1v3" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/></svg>
+                  <CalendarDays size={14} strokeWidth={1.4} />
                 </span>
               </div>
               <div className="sc-num" style={{ color: "var(--violet)" }}>{avgStay > 0 ? avgStay : "—"}<span style={{ fontSize: "14px", fontWeight: 500, color: "var(--ink-soft)" }}>{avgStay > 0 ? " n." : ""}</span></div>
@@ -245,7 +246,7 @@ export default async function GuesthouseDashboardPage({
               <div className="sc-top">
                 <span className="sc-label">Repas servis</span>
                 <span className="sc-icon g">
-                  <svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M2 12h10M3.5 12V6.5a3.5 3.5 0 017 0V12" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/></svg>
+                  <Utensils size={14} strokeWidth={1.4} />
                 </span>
               </div>
               <div className="sc-num" style={{ color: "var(--green)" }}>{mealsMonth}</div>
@@ -255,7 +256,7 @@ export default async function GuesthouseDashboardPage({
             {/* Prochaines arrivées */}
             <div className="form-card" style={{ gridColumn: "span 2" }}>
               <div className="form-card-title">
-                <svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M2 6h10M7 2v8M5 12h4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/></svg>
+                <ArrowDownUp size={14} strokeWidth={1.4} />
                 Prochaines arrivées
               </div>
               {upcoming.length === 0 ? (
@@ -292,7 +293,7 @@ export default async function GuesthouseDashboardPage({
         {/* AUJOURD'HUI EN CUISINE */}
         <div className="form-card">
           <div className="form-card-title">
-            <svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M2 12h10M3.5 12V6.5a3.5 3.5 0 017 0V12" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/></svg>
+            <Home size={14} strokeWidth={1.4} />
             Aujourd&apos;hui en cuisine
           </div>
           {kitchenRows.length === 0 ? (

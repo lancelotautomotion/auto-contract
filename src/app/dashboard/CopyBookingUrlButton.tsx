@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { Info, Check, Copy } from "lucide-react";
 
 export default function CopyBookingUrlButton({ slug }: { slug: string | null }) {
   const [copied, setCopied] = useState(false);
@@ -13,9 +14,7 @@ export default function CopyBookingUrlButton({ slug }: { slug: string | null }) 
         className="btn btn-outline-green"
         title="Configurer votre page de réservation publique"
       >
-        <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
-          <path d="M7 2C4.24 2 2 4.24 2 7s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zm.5 7.5h-1v-4h1v4zm0-5h-1V3.5h1V4.5z" fill="#689D71"/>
-        </svg>
+        <Info size={14} strokeWidth={1.4} />
         Configurer le lien public
       </Link>
     );
@@ -38,17 +37,12 @@ export default function CopyBookingUrlButton({ slug }: { slug: string | null }) 
     >
       {copied ? (
         <>
-          <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
-            <path d="M2.5 7l3 3 6-6" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
+          <Check size={14} strokeWidth={1.5} />
           Lien copié !
         </>
       ) : (
         <>
-          <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
-            <path d="M8.5 1.5h-5A1.5 1.5 0 002 3v7" stroke="#fff" strokeWidth="1.2" strokeLinecap="round"/>
-            <rect x="4.5" y="4" width="7.5" height="8.5" rx="1.5" stroke="#fff" strokeWidth="1.2"/>
-          </svg>
+          <Copy size={14} strokeWidth={1.4} />
           Lien de réservation
         </>
       )}

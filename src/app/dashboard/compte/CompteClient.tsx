@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useClerk } from "@clerk/nextjs";
+import { User, CreditCard, FileText, CheckCircle, LogIn, ArrowRight } from "lucide-react";
 
 type PlanStatus = 'TRIAL' | 'ACTIVE' | 'EXPIRED';
 
@@ -57,10 +58,7 @@ export default function CompteClient({ fullName, email, initials, planStatus, da
       {/* PROFIL */}
       <div className="form-section" style={{ marginBottom: 0 }}>
         <div className="fs-title">
-          <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
-            <circle cx="7" cy="5" r="3" stroke="currentColor" strokeWidth="1.2"/>
-            <path d="M2 13c0-2.8 2.2-5 5-5s5 2.2 5 5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
-          </svg>
+          <User size={14} strokeWidth={1.4} />
           Profil
         </div>
         <div className="fs-divider" />
@@ -83,11 +81,7 @@ export default function CompteClient({ fullName, email, initials, planStatus, da
       {/* ABONNEMENT */}
       <div className="form-section" style={{ marginBottom: 0 }}>
         <div className="fs-title">
-          <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
-            <rect x="1.5" y="3.5" width="11" height="7.5" rx="1.5" stroke="currentColor" strokeWidth="1.2"/>
-            <path d="M1.5 6.5h11" stroke="currentColor" strokeWidth="1.2"/>
-            <path d="M3.5 9h2" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
-          </svg>
+          <CreditCard size={14} strokeWidth={1.4} />
           Abonnement & Facturation
         </div>
         <div className="fs-divider" />
@@ -154,9 +148,7 @@ export default function CompteClient({ fullName, email, initials, planStatus, da
                 >
                   {portalLoading ? 'Ouverture…' : 'Gérer mon abonnement'}
                   {!portalLoading && (
-                    <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
-                      <path d="M3 7h8m-3-3l3 3-3 3" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
+                    <ArrowRight size={14} strokeWidth={1.4} />
                   )}
                 </button>
                 {planStatus !== 'ACTIVE' && (
@@ -168,9 +160,7 @@ export default function CompteClient({ fullName, email, initials, planStatus, da
             ) : (
               <Link href="/upgrade" className="btn btn-violet" style={{ fontSize: '13px', padding: '11px 22px', borderRadius: '10px' }}>
                 Souscrire au plan Essentiel
-                <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
-                  <path d="M3 7h8m-3-3l3 3-3 3" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
+                <ArrowRight size={14} strokeWidth={1.4} />
               </Link>
             )}
           </div>
@@ -182,24 +172,15 @@ export default function CompteClient({ fullName, email, initials, planStatus, da
           {hasStripeCustomer && (
             <div style={{ marginTop: '20px', paddingTop: '18px', borderTop: '1px solid var(--line)', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '14px' }}>
               <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
-                <svg width="16" height="16" fill="none" viewBox="0 0 16 16" style={{ color: 'var(--violet)', flexShrink: 0, marginTop: '1px' }}>
-                  <rect x="2" y="3" width="12" height="10" rx="1.5" stroke="currentColor" strokeWidth="1.3"/>
-                  <path d="M2 6h12" stroke="currentColor" strokeWidth="1.3"/>
-                </svg>
+                <CreditCard size={16} strokeWidth={1.4} style={{ color: 'var(--violet)', flexShrink: 0, marginTop: '1px' }} />
                 <span style={{ fontSize: '12px', color: 'var(--ink-soft)', lineHeight: 1.4 }}>Changer de carte bancaire</span>
               </div>
               <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
-                <svg width="16" height="16" fill="none" viewBox="0 0 16 16" style={{ color: 'var(--violet)', flexShrink: 0, marginTop: '1px' }}>
-                  <path d="M4 2h5l3 3v9a1 1 0 01-1 1H4a1 1 0 01-1-1V3a1 1 0 011-1z" stroke="currentColor" strokeWidth="1.3"/>
-                  <path d="M9 2v3h3" stroke="currentColor" strokeWidth="1.3"/>
-                </svg>
+                <FileText size={16} strokeWidth={1.4} style={{ color: 'var(--violet)', flexShrink: 0, marginTop: '1px' }} />
                 <span style={{ fontSize: '12px', color: 'var(--ink-soft)', lineHeight: 1.4 }}>Télécharger les factures</span>
               </div>
               <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
-                <svg width="16" height="16" fill="none" viewBox="0 0 16 16" style={{ color: 'var(--violet)', flexShrink: 0, marginTop: '1px' }}>
-                  <circle cx="8" cy="8" r="6" stroke="currentColor" strokeWidth="1.3"/>
-                  <path d="M5 8l2 2 4-4" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
+                <CheckCircle size={16} strokeWidth={1.4} style={{ color: 'var(--violet)', flexShrink: 0, marginTop: '1px' }} />
                 <span style={{ fontSize: '12px', color: 'var(--ink-soft)', lineHeight: 1.4 }}>Annuler ou mettre à jour</span>
               </div>
             </div>
@@ -210,10 +191,7 @@ export default function CompteClient({ fullName, email, initials, planStatus, da
       {/* SESSION */}
       <div className="form-section" style={{ marginBottom: 0 }}>
         <div className="fs-title">
-          <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
-            <path d="M5.5 2H3a1 1 0 00-1 1v8a1 1 0 001 1h2.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
-            <path d="M8 4.5L11 7m0 0L8 9.5M11 7H5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
+          <LogIn size={14} strokeWidth={1.4} />
           Session
         </div>
         <div className="fs-divider" />

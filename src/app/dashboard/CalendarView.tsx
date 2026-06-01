@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { CalendarDays } from "lucide-react";
 import Link from "next/link";
 
 interface Reservation {
@@ -149,11 +150,7 @@ function IcalTooltip({ block: b, rect }: { block: IcalBlock; rect: DOMRect }) {
       <div style={{ position: 'absolute', bottom: '-6px', left: '50%', transform: 'translateX(-50%)', width: '10px', height: '10px', background: '#fff', border: '1px solid #E8E6E1', borderTop: 'none', borderLeft: 'none', rotate: '45deg' }} />
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
         <div style={{ width: '28px', height: '28px', borderRadius: '7px', background: platformColor, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-          <svg width="12" height="12" fill="none" viewBox="0 0 12 12">
-            <rect x="1" y="1.5" width="10" height="9" rx="1.5" stroke="#fff" strokeWidth="1.1"/>
-            <path d="M1 4.5h10" stroke="#fff" strokeWidth="1.1"/>
-            <path d="M3.5 1v1.5M8.5 1v1.5" stroke="#fff" strokeWidth="1.1" strokeLinecap="round"/>
-          </svg>
+          <CalendarDays size={12} strokeWidth={1.4} color="#fff" />
         </div>
         <div>
           <div style={{ fontSize: '12px', fontWeight: 700, color: '#2C2C2A' }}>{platformName}</div>

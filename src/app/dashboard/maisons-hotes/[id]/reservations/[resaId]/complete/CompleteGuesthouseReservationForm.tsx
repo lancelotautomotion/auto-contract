@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Check, CalendarDays, Euro, FileText, ArrowRight } from "lucide-react";
 
 interface Props {
   id: string;
@@ -53,9 +54,7 @@ export default function CompleteGuesthouseReservationForm({
     <div className="validate-card">
       <div className="vc-header">
         <div className="vc-title">
-          <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
-            <path d="M3 7l3 3 5-5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
+          <Check size={14} strokeWidth={1.4} />
           Compléter et valider la réservation
         </div>
       </div>
@@ -64,10 +63,7 @@ export default function CompleteGuesthouseReservationForm({
 
           {/* Dates */}
           <div className="req-fs-label">
-            <svg width="12" height="12" fill="none" viewBox="0 0 12 12">
-              <rect x="1" y="2.5" width="10" height="7.5" rx="1.5" stroke="currentColor" strokeWidth="1.1"/>
-              <path d="M1 5h10" stroke="currentColor" strokeWidth="1.1"/>
-            </svg>
+            <CalendarDays size={12} strokeWidth={1.4} />
             Confirmer les dates
           </div>
           <div className="form-row" style={{ marginBottom: "0" }}>
@@ -84,10 +80,7 @@ export default function CompleteGuesthouseReservationForm({
           {/* Tarifs */}
           <div className="req-fs-divider" />
           <div className="req-fs-label">
-            <svg width="12" height="12" fill="none" viewBox="0 0 12 12">
-              <circle cx="6" cy="6" r="4.5" stroke="currentColor" strokeWidth="1.1"/>
-              <path d="M6 3v6M4 5h3.5a1.5 1.5 0 010 2.5H4.5" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round"/>
-            </svg>
+            <Euro size={12} strokeWidth={1.4} />
             Tarifs
           </div>
           <div className="form-row" style={{ marginBottom: "14px" }}>
@@ -114,10 +107,7 @@ export default function CompleteGuesthouseReservationForm({
           {/* Notes */}
           <div className="req-fs-divider" />
           <div className="req-fs-label">
-            <svg width="12" height="12" fill="none" viewBox="0 0 12 12">
-              <rect x="1.5" y="1.5" width="9" height="9" rx="1.5" stroke="currentColor" strokeWidth="1.1"/>
-              <path d="M4 4.5h4M4 7h3" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round"/>
-            </svg>
+            <FileText size={12} strokeWidth={1.4} />
             Notes internes
           </div>
           <textarea
@@ -132,9 +122,7 @@ export default function CompleteGuesthouseReservationForm({
             <button type="submit" className="btn btn-green btn-lg" disabled={loading}>
               {loading ? "Validation..." : "Valider la réservation"}
               {!loading && (
-                <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
-                  <path d="M3 7h8M8 4l3 3-3 3" stroke="#fff" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
+                <ArrowRight size={14} strokeWidth={1.4} color="#fff" />
               )}
             </button>
             <button

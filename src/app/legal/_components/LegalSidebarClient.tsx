@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { ChevronDown } from "lucide-react";
 
 interface SidebarLink {
   href: string;
@@ -42,9 +43,7 @@ export default function LegalSidebarClient({ links }: { links: SidebarLink[] }) 
         aria-expanded={open}
       >
         <span>{activeLabel}</span>
-        <svg className="chevron" width="14" height="14" fill="none" viewBox="0 0 14 14">
-          <path d="M4 5.5l3 3 3-3" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
+        <ChevronDown className="chevron" size={14} strokeWidth={1.6} />
       </button>
       <ul>
         {links.map(link => (

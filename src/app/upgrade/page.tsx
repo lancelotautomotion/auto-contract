@@ -6,6 +6,7 @@ import Image from "next/image";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import SubscribeButton from "./SubscribeButton";
 import "@/styles/upgrade.css";
+import { ChevronLeft, Info } from "lucide-react";
 
 const font = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -254,9 +255,7 @@ export default async function UpgradePage({ searchParams }: { searchParams: Prom
               transition: 'background .15s',
             }}
           >
-            <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
-              <path d="M9 11L5 7l4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
+            <ChevronLeft size={14} strokeWidth={1.5} />
             Retour au tableau de bord
           </a>
         </div>

@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import ArchiveDownloadButton from "@/app/dashboard/archives/ArchiveDownloadButton";
 import { buildSignedContractFilename } from "@/lib/contractPdf";
+import { Archive, Euro, TrendingUp, Download } from "lucide-react";
 
 export default async function ArchivesPage({
   params,
@@ -63,14 +64,14 @@ export default async function ArchivesPage({
         </div>
 
         <div className="stats-row-3">
-          <div className="stat-card green"><div className="sc-top"><div className="sc-label">Contrats archivés</div><div className="sc-icon g"><svg width="16" height="16" fill="none" viewBox="0 0 16 16"><rect x="3" y="5" width="10" height="8" rx="1.5" stroke="#4A7353" strokeWidth="1.2"/><path d="M3 7.5l5 3 5-3" stroke="#4A7353" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/></svg></div></div><div className="sc-num">{archives.length}</div></div>
-          <div className="stat-card violet"><div className="sc-top"><div className="sc-label">Loyer total</div><div className="sc-icon v"><svg width="16" height="16" fill="none" viewBox="0 0 16 16"><circle cx="8" cy="8" r="5.5" stroke="#5B52B5" strokeWidth="1.2"/><path d="M8 4.5v7M5.5 6.5h4a1.5 1.5 0 010 3H6" stroke="#5B52B5" strokeWidth="1.2" strokeLinecap="round"/></svg></div></div><div className="sc-num">{fmtPrice(totalLoyer)}</div></div>
-          <div className="stat-card amber"><div className="sc-top"><div className="sc-label">Acomptes encaissés</div><div className="sc-icon a"><svg width="16" height="16" fill="none" viewBox="0 0 16 16"><path d="M2 12l4-4 3 3 5-6" stroke="#8C6A00" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/></svg></div></div><div className="sc-num">{fmtPrice(totalAcompte)}</div></div>
+          <div className="stat-card green"><div className="sc-top"><div className="sc-label">Contrats archivés</div><div className="sc-icon g"><Archive size={16} strokeWidth={1.4} color="#4A7353" /></div></div><div className="sc-num">{archives.length}</div></div>
+          <div className="stat-card violet"><div className="sc-top"><div className="sc-label">Loyer total</div><div className="sc-icon v"><Euro size={16} strokeWidth={1.4} color="#5B52B5" /></div></div><div className="sc-num">{fmtPrice(totalLoyer)}</div></div>
+          <div className="stat-card amber"><div className="sc-top"><div className="sc-label">Acomptes encaissés</div><div className="sc-icon a"><TrendingUp size={16} strokeWidth={1.4} color="#8C6A00" /></div></div><div className="sc-num">{fmtPrice(totalAcompte)}</div></div>
         </div>
 
         <div className="card">
           <div className="card-header">
-            <div className="card-title"><svg width="16" height="16" fill="none" viewBox="0 0 16 16"><rect x="3" y="5" width="10" height="8" rx="1.5" stroke="#7F77DD" strokeWidth="1.2"/><path d="M3 7.5l5 3 5-3" stroke="#7F77DD" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/></svg> Archives</div>
+            <div className="card-title"><Archive size={16} strokeWidth={1.4} color="#7F77DD" /> Archives</div>
           </div>
 
           <div className="toolbar">
@@ -118,7 +119,7 @@ export default async function ArchivesPage({
             <div className="table-footer-info">{archives.length} contrat{archives.length > 1 ? 's' : ''} sur {allSigned.length}</div>
             {archives.length > 0 && (
               <a href={`/api/archives/export-csv?giteId=${giteId}&year=${year}&search=${search}`} className="export-btn">
-                <svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M7 2v7m0 0L4.5 6.5M7 9l2.5-2.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/><path d="M2 10v1.5a1 1 0 001 1h8a1 1 0 001-1V10" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/></svg>
+                <Download size={14} strokeWidth={1.4} />
                 Exporter en CSV
               </a>
             )}

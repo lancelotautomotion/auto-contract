@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { ArrowRight } from "lucide-react";
 
 export default function OnboardingForm({ defaultEmail }: { defaultEmail: string }) {
   const router = useRouter();
@@ -113,9 +114,7 @@ export default function OnboardingForm({ defaultEmail }: { defaultEmail: string 
         ) : (
           <>
             Accéder au tableau de bord
-            <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
-              <path d="M3 8h10m-4-4l4 4-4 4" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
+            <ArrowRight size={16} strokeWidth={1.5} color="#fff" />
           </>
         )}
       </button>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { Lock, ArrowRight, Menu } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import Sidebar from "./Sidebar";
 import type { TrialInfo } from "@/lib/trial";
@@ -19,12 +20,7 @@ interface Props {
 }
 
 function LockIcon() {
-  return (
-    <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
-      <rect x="2.5" y="6" width="9" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.3"/>
-      <path d="M4.5 6V4.5a2.5 2.5 0 015 0V6" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
-    </svg>
-  );
+  return <Lock size={14} strokeWidth={1.4} />;
 }
 
 export default function DashboardShell({ children, pendingCount, trialInfo, fontClass, gites, activeGiteId, isAdmin, planActive, guesthouseMode, activeGuesthouseId }: Props) {
@@ -62,9 +58,7 @@ export default function DashboardShell({ children, pendingCount, trialInfo, font
             onClick={() => setOpen(true)}
             aria-label="Ouvrir le menu"
           >
-            <svg width="18" height="18" fill="none" viewBox="0 0 18 18">
-              <path d="M2.5 5h13M2.5 9h13M2.5 13h13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-            </svg>
+            <Menu size={18} strokeWidth={1.5} />
           </button>
           <img
             src="/logotype_KORDIA.svg"
@@ -90,9 +84,7 @@ export default function DashboardShell({ children, pendingCount, trialInfo, font
                 onClick={() => router.push('/upgrade')}
               >
                 Voir les offres
-                <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
-                  <path d="M2.5 7h9m-4-3.5L11 7l-3.5 3.5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
+                <ArrowRight size={14} strokeWidth={1.4} />
               </button>
             </div>
 

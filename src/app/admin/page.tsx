@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import AdminUsersManager from "./AdminUsersManager";
+import { Clock, CheckCircle, RefreshCw, ArrowRight } from "lucide-react";
 
 export default async function AdminPage() {
   const now = new Date();
@@ -302,10 +303,7 @@ export default async function AdminPage() {
 
         <div className="admin-stat-card">
           <div className="asc-icon asc-icon-violet">
-            <svg width="18" height="18" fill="none" viewBox="0 0 18 18">
-              <circle cx="9" cy="9" r="7" stroke="currentColor" strokeWidth="1.4"/>
-              <path d="M9 5.5v4l2.5 1.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
-            </svg>
+            <Clock size={18} strokeWidth={1.4} />
           </div>
           <div className="asc-value">{fmtDuration(avgTtvHours)}</div>
           <div className="asc-label">Time-to-value</div>
@@ -314,10 +312,7 @@ export default async function AdminPage() {
 
         <div className="admin-stat-card">
           <div className="asc-icon asc-icon-green">
-            <svg width="18" height="18" fill="none" viewBox="0 0 18 18">
-              <circle cx="9" cy="9" r="7" stroke="currentColor" strokeWidth="1.4"/>
-              <path d="M6 9l2 2 4-4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
+            <CheckCircle size={18} strokeWidth={1.4} />
           </div>
           <div className="asc-value">{activeUsers7}<span className="asc-unit"> / {totalUsers}</span></div>
           <div className="asc-label">Utilisateurs actifs 7j</div>
@@ -326,10 +321,7 @@ export default async function AdminPage() {
 
         <div className="admin-stat-card">
           <div className={`asc-icon ${churnWeekly > 3 ? "asc-icon-red" : "asc-icon-amber"}`}>
-            <svg width="18" height="18" fill="none" viewBox="0 0 18 18">
-              <path d="M9 3v6l3 3" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
-              <path d="M5.5 14.5A7 7 0 1 0 3 9" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
-            </svg>
+            <RefreshCw size={18} strokeWidth={1.4} />
           </div>
           <div className={`asc-value ${churnWeekly > 3 ? "asc-value-red" : ""}`}>{churnWeekly}</div>
           <div className="asc-label">Churn cette semaine</div>
@@ -338,9 +330,7 @@ export default async function AdminPage() {
 
         <div className="admin-stat-card">
           <div className="asc-icon asc-icon-violet">
-            <svg width="18" height="18" fill="none" viewBox="0 0 18 18">
-              <path d="M3 9h12M9 3l6 6-6 6" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
+            <ArrowRight size={18} strokeWidth={1.4} />
           </div>
           <div className="asc-value">{fmtDuration(avgSigDelayHours)}</div>
           <div className="asc-label">Délai moyen de signature</div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { X, Check } from "lucide-react";
 
 export type MealService = "BREAKFAST" | "LUNCH" | "DINNER" | "OTHER";
 export type MealTag = "VEGETARIAN" | "VEGAN" | "GLUTEN_FREE" | "LOCAL";
@@ -98,9 +99,7 @@ export default function MealFormModal({
             type="button" onClick={onClose} aria-label="Fermer"
             style={{ background: "transparent", border: "none", cursor: "pointer", padding: "4px", color: "#71716E" }}
           >
-            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round">
-              <path d="M4 4l10 10M14 4L4 14"/>
-            </svg>
+            <X size={18} strokeWidth={1.6} />
           </button>
         </div>
 
@@ -174,9 +173,7 @@ export default function MealFormModal({
                       display: "inline-flex", alignItems: "center", justifyContent: "center",
                     }}>
                       {on && (
-                        <svg width="8" height="8" viewBox="0 0 8 8" fill="none" stroke="#FFF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M1.5 4l1.5 1.5L6.5 2"/>
-                        </svg>
+                        <Check size={8} strokeWidth={1.5} color="#FFF" />
                       )}
                     </span>
                     {t.label}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Check, ArrowRight } from "lucide-react";
 
 export default function SigningForm({ token, clientName }: { token: string; clientName: string }) {
   const [name, setName] = useState('');
@@ -33,9 +34,7 @@ export default function SigningForm({ token, clientName }: { token: string; clie
         <div className="sign-card-bar g"/>
         <div className="sign-success-inner">
           <div className="sign-success-icon">
-            <svg width="28" height="28" fill="none" viewBox="0 0 28 28">
-              <path d="M7 14l5 5L21 9" stroke="#4A7353" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
+            <Check size={28} strokeWidth={2.5} color="#4A7353" />
           </div>
           <h2>Contrat signé<span className="g">.</span></h2>
           <p>
@@ -103,9 +102,7 @@ export default function SigningForm({ token, clientName }: { token: string; clie
           ) : (
             <>
               Signer le contrat
-              <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
-                <path d="M3 8h10m-4-4l4 4-4 4" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
+              <ArrowRight size={16} strokeWidth={1.5} color="#fff" />
             </>
           )}
         </button>

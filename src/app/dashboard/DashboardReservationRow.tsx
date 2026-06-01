@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { X } from "lucide-react";
 
 interface Props {
   id: string;
@@ -66,9 +67,7 @@ export default function DashboardReservationRow({
           disabled={deleting}
           title="Supprimer"
         >
-          <svg width="12" height="12" fill="none" viewBox="0 0 12 12">
-            <path d="M3 3l6 6M9 3l-6 6" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
-          </svg>
+          <X size={12} strokeWidth={1.4} />
         </button>
       </td>
     </tr>

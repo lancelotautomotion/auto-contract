@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Settings } from "lucide-react";
 
 export default function TableDhotesCapacitySettings({
   guesthouseId,
@@ -39,10 +40,7 @@ export default function TableDhotesCapacitySettings({
   return (
     <div className="form-card">
       <div className="form-card-title">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
-          <circle cx="12" cy="12" r="3"/>
-          <path d="M19.4 15a1.7 1.7 0 00.4 1.8l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.7 1.7 0 00-1.82-.39 1.7 1.7 0 00-1.03 1.55V21a2 2 0 11-4 0v-.09a1.7 1.7 0 00-1.1-1.55 1.7 1.7 0 00-1.82.39l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.7 1.7 0 00.39-1.82 1.7 1.7 0 00-1.55-1.03H3a2 2 0 110-4h.09a1.7 1.7 0 001.55-1.1 1.7 1.7 0 00-.39-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.7 1.7 0 001.82.39H9a1.7 1.7 0 001.03-1.55V3a2 2 0 114 0v.09a1.7 1.7 0 001.03 1.55 1.7 1.7 0 001.82-.39l.06-.06a2 2 0 112.83 2.83l-.06.06a1.7 1.7 0 00-.39 1.82V9a1.7 1.7 0 001.55 1.03H21a2 2 0 110 4h-.09a1.7 1.7 0 00-1.55 1.03z"/>
-        </svg>
+        <Settings size={14} strokeWidth={1.7} />
         Paramètres
       </div>
       <div style={{ display: "flex", gap: "16px", alignItems: "flex-end", flexWrap: "wrap" }}>

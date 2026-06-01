@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { ArrowUpDown, List, LayoutGrid, Eye, X } from "lucide-react";
 
 type Reservation = {
   id: string;
@@ -150,24 +151,15 @@ export default function ReservationsTable({ reservations, giteId }: Props) {
           />
           <div className="t-spacer" />
           <button className="t-sort">
-            <svg width="12" height="12" fill="none" viewBox="0 0 12 12">
-              <path d="M2 3h8M3 6h6M4 9h4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
-            </svg>
+            <ArrowUpDown size={12} strokeWidth={1.4} />
             Trier par date
           </button>
           <div className="t-view">
             <button className="t-view-btn active" title="Liste">
-              <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
-                <path d="M2 3.5h10M2 7h10M2 10.5h10" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
-              </svg>
+              <List size={14} strokeWidth={1.4} />
             </button>
             <button className="t-view-btn" title="Grille">
-              <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
-                <rect x="2" y="2" width="4" height="4" rx="1" stroke="currentColor" strokeWidth="1.1"/>
-                <rect x="8" y="2" width="4" height="4" rx="1" stroke="currentColor" strokeWidth="1.1"/>
-                <rect x="2" y="8" width="4" height="4" rx="1" stroke="currentColor" strokeWidth="1.1"/>
-                <rect x="8" y="8" width="4" height="4" rx="1" stroke="currentColor" strokeWidth="1.1"/>
-              </svg>
+              <LayoutGrid size={14} strokeWidth={1.4} />
             </button>
           </div>
         </div>
@@ -216,16 +208,11 @@ export default function ReservationsTable({ reservations, giteId }: Props) {
                     <td>
                       <div className="row-actions" onClick={e => e.stopPropagation()}>
                         <Link href={detailHref} className="row-btn" title="Voir">
-                          <svg width="12" height="12" fill="none" viewBox="0 0 12 12">
-                            <path d="M1 6s2-4 5-4 5 4 5 4-2 4-5 4S1 6 1 6z" stroke="currentColor" strokeWidth="1.1"/>
-                            <circle cx="6" cy="6" r="1.5" stroke="currentColor" strokeWidth="1.1"/>
-                          </svg>
+                          <Eye size={12} strokeWidth={1.4} />
                         </Link>
                         {r.status !== 'REFUSED' && (
                           <button className="row-btn del" title="Supprimer" onClick={e => handleDelete(e, r.id)}>
-                            <svg width="10" height="10" fill="none" viewBox="0 0 10 10">
-                              <path d="M2 2l6 6M8 2l-6 6" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
-                            </svg>
+                            <X size={10} strokeWidth={1.4} />
                           </button>
                         )}
                       </div>

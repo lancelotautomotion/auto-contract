@@ -6,6 +6,7 @@ import Nav from '@/components/landing/Nav';
 import Footer from '@/components/landing/Footer';
 import ScrollToTop from '@/components/landing/ScrollToTop';
 import ContactForm from './ContactForm';
+import { Mail, Clock, ArrowRight, FileText } from 'lucide-react';
 
 export const metadata: Metadata = {
   title: 'Contact — Kordia',
@@ -42,27 +43,19 @@ export default function ContactPage() {
             <aside className="ct-info">
               <div className="ct-card">
                 <div className="ct-ico violet">
-                  <svg width="20" height="20" fill="none" viewBox="0 0 20 20">
-                    <rect x="2.5" y="4.5" width="15" height="11" rx="2" stroke="currentColor" strokeWidth="1.4" />
-                    <path d="M2.5 5.5l7.5 6 7.5-6" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
+                  <Mail size={20} strokeWidth={1.4} />
                 </div>
                 <div className="ct-card-title">Email</div>
                 <div className="ct-card-desc">Le canal préféré. On lit chaque message et on répond personnellement.</div>
                 <a className="ct-card-link" href="mailto:contact@kordia.fr">
                   contact@kordia.fr
-                  <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
-                    <path d="M3 7h8m-3-3l3 3-3 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
+                  <ArrowRight size={14} strokeWidth={1.5} />
                 </a>
               </div>
 
               <div className="ct-card">
                 <div className="ct-ico green">
-                  <svg width="20" height="20" fill="none" viewBox="0 0 20 20">
-                    <circle cx="10" cy="10" r="7.5" stroke="currentColor" strokeWidth="1.4" />
-                    <path d="M10 5.5v4.5l3 2" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
-                  </svg>
+                  <Clock size={20} strokeWidth={1.4} />
                 </div>
                 <div className="ct-card-title">Réponse rapide</div>
                 <div className="ct-card-desc">En moyenne moins de 4h sur les jours ouvrés. Pas de chatbot, un humain.</div>
@@ -70,11 +63,7 @@ export default function ContactPage() {
 
               <div className="ct-card">
                 <div className="ct-ico violet">
-                  <svg width="20" height="20" fill="none" viewBox="0 0 20 20">
-                    <rect x="3" y="2" width="14" height="16" rx="2" stroke="currentColor" strokeWidth="1.4" />
-                    <path d="M7 7h6M7 10h6M7 13h4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
-                    <path d="M13 15l2 2 3-3" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
+                  <FileText size={20} strokeWidth={1.4} />
                 </div>
                 <div className="ct-card-title">Démo personnalisée</div>
                 <div className="ct-card-desc">Envie de voir Kordia en action&nbsp;? Réservez 15 min en visio, on vous montre tout.</div>
@@ -85,18 +74,13 @@ export default function ContactPage() {
                   rel="noopener noreferrer"
                 >
                   Réserver un créneau
-                  <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
-                    <path d="M3 7h8m-3-3l3 3-3 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
+                  <ArrowRight size={14} strokeWidth={1.5} />
                 </a>
               </div>
 
               <div className="ct-hours">
                 <div className="ct-hours-title">
-                  <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
-                    <circle cx="8" cy="8" r="6" stroke="currentColor" strokeWidth="1.3" />
-                    <path d="M8 5v3l2 1.5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
-                  </svg>
+                  <Clock size={16} strokeWidth={1.3} />
                   Horaires de support
                 </div>
                 <div className="ct-hours-row"><span>Lundi – Vendredi</span><strong>9h – 18h</strong></div>

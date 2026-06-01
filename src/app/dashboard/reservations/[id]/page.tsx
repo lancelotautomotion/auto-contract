@@ -2,6 +2,7 @@ import { auth } from "@clerk/nextjs/server";
 import { redirect, notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import ContractActions from "./ContractActions";
+import { ChevronLeft, X, AlertTriangle, CheckCircle, CalendarDays, User, Euro, List, FileText } from "lucide-react";
 
 const REFUSAL_LABELS: Record<string, string> = {
   dates_taken:    "Dates déjà réservées",
@@ -84,9 +85,7 @@ export default async function ReservationDetailPage({ params }: { params: Promis
 
         {/* Back link */}
         <Link href="/dashboard/reservations" className="back-link">
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-            <path d="M10 12L6 8l4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
+          <ChevronLeft size={16} strokeWidth={1.5} />
           Retour aux réservations
         </Link>
 
@@ -111,10 +110,7 @@ export default async function ReservationDetailPage({ params }: { params: Promis
         {isRefused ? (
           <div style={{ display: 'flex', alignItems: 'stretch', gap: '12px', marginBottom: '20px' }}>
             <div className="refused-banner" style={{ flex: 1, margin: 0 }}>
-              <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
-                <circle cx="8" cy="8" r="6" stroke="currentColor" strokeWidth="1.3"/>
-                <path d="M5 5l6 6M11 5l-6 6" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
-              </svg>
+              <X size={16} strokeWidth={1.4} />
               <span>
                 Cette réservation a été refusée.
                 {reservation.refusalReason && (
@@ -137,11 +133,7 @@ export default async function ReservationDetailPage({ params }: { params: Promis
                 background: '#FEF3CD', border: '1px solid #F5C842',
                 borderRadius: '10px', padding: '14px 16px',
               }}>
-                <svg width="18" height="18" fill="none" viewBox="0 0 18 18" style={{ flexShrink: 0, color: '#B7791F' }}>
-                  <path d="M9 2L1.5 15h15L9 2z" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round"/>
-                  <path d="M9 7v4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
-                  <circle cx="9" cy="12.5" r="0.8" fill="currentColor"/>
-                </svg>
+                <AlertTriangle size={18} strokeWidth={1.4} style={{ flexShrink: 0, color: '#B7791F' }} />
                 <div>
                   <div style={{ fontSize: '13px', fontWeight: 700, color: '#7B4F0A', marginBottom: '4px' }}>
                     Conflit détecté sur une autre plateforme
@@ -166,10 +158,7 @@ export default async function ReservationDetailPage({ params }: { params: Promis
                 background: '#F0FDF4', border: '1px solid #86EFAC',
                 borderRadius: '10px', padding: '14px 16px',
               }}>
-                <svg width="18" height="18" fill="none" viewBox="0 0 18 18" style={{ flexShrink: 0, color: '#16A34A' }}>
-                  <circle cx="9" cy="9" r="7" stroke="currentColor" strokeWidth="1.4"/>
-                  <path d="M5.5 9l2.5 2.5 4.5-4.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
+                <CheckCircle size={18} strokeWidth={1.4} style={{ flexShrink: 0, color: '#16A34A' }} />
                 <div style={{ fontSize: '13px', fontWeight: 600, color: '#166534' }}>
                   {icalFeeds.length > 0
                     ? 'Dates disponibles — aucun conflit détecté sur vos calendriers connectés'
@@ -193,11 +182,7 @@ export default async function ReservationDetailPage({ params }: { params: Promis
           {/* Séjour */}
           <div className="detail-block">
             <div className="db-title">
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                <rect x="1" y="2.5" width="12" height="10" rx="2" stroke="currentColor" strokeWidth="1.3"/>
-                <path d="M1 5.5h12" stroke="currentColor" strokeWidth="1.3"/>
-                <path d="M4.5 1v3M9.5 1v3" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
-              </svg>
+              <CalendarDays size={14} strokeWidth={1.4} />
               Séjour
             </div>
             <div className="db-row">
@@ -219,10 +204,7 @@ export default async function ReservationDetailPage({ params }: { params: Promis
           {/* Client */}
           <div className="detail-block">
             <div className="db-title">
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                <circle cx="7" cy="4.5" r="2.5" stroke="currentColor" strokeWidth="1.3"/>
-                <path d="M1.5 12.5c0-2.485 2.462-4.5 5.5-4.5s5.5 2.015 5.5 4.5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
-              </svg>
+              <User size={14} strokeWidth={1.4} />
               Client
             </div>
             <div className="db-row">
@@ -242,10 +224,7 @@ export default async function ReservationDetailPage({ params }: { params: Promis
           {/* Tarifs */}
           <div className="detail-block">
             <div className="db-title">
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                <circle cx="7" cy="7" r="5.5" stroke="currentColor" strokeWidth="1.3"/>
-                <path d="M7 4v6M5 8.5c0 .83.672 1.5 2 1.5s2-.67 2-1.5S8.328 7 7 7s-2-.67-2-1.5S5.672 4 7 4s2 .67 2 1.5" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round"/>
-              </svg>
+              <Euro size={14} strokeWidth={1.4} />
               Tarifs
             </div>
             <div className="db-row">
@@ -271,9 +250,7 @@ export default async function ReservationDetailPage({ params }: { params: Promis
           {/* Options */}
           <div className="detail-block">
             <div className="db-title">
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                <path d="M2 4h10M2 7h7M2 10h5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
-              </svg>
+              <List size={14} strokeWidth={1.4} />
               Options
             </div>
             {reservation.reservationOptions.length === 0 ? (
@@ -311,10 +288,7 @@ export default async function ReservationDetailPage({ params }: { params: Promis
         {/* Notes card */}
         <div className="notes-card">
           <div className="notes-title">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <path d="M3 2h10a1 1 0 011 1v10a1 1 0 01-1 1H3a1 1 0 01-1-1V3a1 1 0 011-1z" stroke="currentColor" strokeWidth="1.3"/>
-              <path d="M5 6h6M5 9h4" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
-            </svg>
+            <FileText size={16} strokeWidth={1.4} />
             Notes
           </div>
           {reservation.notes

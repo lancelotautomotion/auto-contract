@@ -1,3 +1,5 @@
+import { ArrowRight } from "lucide-react";
+
 export default function StepWelcome({
   firstName,
   onStart,
@@ -27,15 +29,7 @@ export default function StepWelcome({
 
       <button type="button" className="ob-submit" onClick={onStart}>
         C&apos;est parti !
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-          <path
-            d="M3 8h10m-4-4l4 4-4 4"
-            stroke="#fff"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
+        <ArrowRight size={16} strokeWidth={1.5} color="#fff" />
       </button>
     </div>
   );

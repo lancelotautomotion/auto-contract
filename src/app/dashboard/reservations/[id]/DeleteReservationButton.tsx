@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { Trash2 } from "lucide-react";
 
 export default function DeleteReservationButton({ reservationId, clientName, redirectAfter }: { reservationId: string; clientName: string; redirectAfter?: string }) {
   const router = useRouter();
@@ -33,9 +34,7 @@ export default function DeleteReservationButton({ reservationId, clientName, red
         disabled={loading}
         className="btn btn-danger-outline"
       >
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-          <path d="M2 3.5h10M5.5 3.5V2.5h3v1M6 6v4M8 6v4M3 3.5l.5 7.5a1 1 0 001 1h5a1 1 0 001-1l.5-7.5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
-        </svg>
+        <Trash2 size={14} strokeWidth={1.4} />
         {loading ? 'Suppression...' : 'Supprimer'}
       </button>
     </>

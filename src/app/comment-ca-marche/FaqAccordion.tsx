@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { ChevronDown } from "lucide-react";
 
 const ink = '#1A1A18';
 const inkSoft = '#71716E';
@@ -70,9 +71,7 @@ export default function FaqAccordion() {
                 transition: 'transform 0.3s ease',
                 transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
               }}>
-                <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
-                  <path d="M4 5.5l3 3 3-3" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
+                <ChevronDown size={14} strokeWidth={1.6} />
               </span>
             </button>
 

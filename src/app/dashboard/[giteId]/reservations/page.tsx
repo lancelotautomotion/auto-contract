@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import ReservationsTable from "@/app/dashboard/reservations/ReservationsTable";
 import CopyBookingUrlButton from "@/app/dashboard/CopyBookingUrlButton";
+import { Plus, Info, CalendarDays, FileText, Check, Clock } from "lucide-react";
 
 export default async function ReservationsPage({ params }: { params: Promise<{ giteId: string }> }) {
   const { giteId } = await params;
@@ -53,9 +54,7 @@ export default async function ReservationsPage({ params }: { params: Promise<{ g
           <div className="header-actions">
             <CopyBookingUrlButton slug={gite.slug ?? null} />
             <Link href={`/dashboard/${giteId}/reservations/new`} className="btn btn-violet">
-              <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
-                <path d="M7 2v10M2 7h10" stroke="#fff" strokeWidth="1.5" strokeLinecap="round"/>
-              </svg>
+              <Plus size={14} strokeWidth={1.5} color="#fff" />
               Nouvelle réservation
             </Link>
           </div>
@@ -65,7 +64,7 @@ export default async function ReservationsPage({ params }: { params: Promise<{ g
           <div className="pending-banner">
             <div className="pb-header">
               <div className="pb-icon">
-                <svg width="18" height="18" fill="none" viewBox="0 0 18 18"><circle cx="9" cy="9" r="7" stroke="currentColor" strokeWidth="1.4"/><path d="M9 6v4M9 12v.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/></svg>
+                <Info size={18} strokeWidth={1.4} />
               </div>
               <div>
                 <div className="pb-title">{pendingReservations.length} nouvelle{pendingReservations.length > 1 ? 's' : ''} demande{pendingReservations.length > 1 ? 's' : ''} à valider</div>
@@ -87,10 +86,10 @@ export default async function ReservationsPage({ params }: { params: Promise<{ g
         )}
 
         <div className="stats-row">
-          <div className="stat-card green"><div className="sc-top"><div className="sc-label">Réservations</div><div className="sc-icon g"><svg width="14" height="14" fill="none" viewBox="0 0 14 14"><rect x="1.5" y="3" width="11" height="9" rx="1.5" stroke="#4A7353" strokeWidth="1.2"/><path d="M1.5 6h11" stroke="#4A7353" strokeWidth="1.2"/></svg></div></div><div className="sc-num">{activeReservations.length}</div></div>
-          <div className="stat-card violet"><div className="sc-top"><div className="sc-label">Contrats générés</div><div className="sc-icon v"><svg width="14" height="14" fill="none" viewBox="0 0 14 14"><rect x="2.5" y="1.5" width="9" height="11" rx="1.5" stroke="#5B52B5" strokeWidth="1.2"/><path d="M5 5h4M5 7.5h3" stroke="#5B52B5" strokeWidth="1.2" strokeLinecap="round"/></svg></div></div><div className="sc-num">{contractsGenerated}</div></div>
-          <div className="stat-card green"><div className="sc-top"><div className="sc-label">Contrats signés</div><div className="sc-icon g"><svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M3 7l3 3 5-5" stroke="#4A7353" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/></svg></div></div><div className="sc-num">{contractsSigned}</div></div>
-          <div className="stat-card amber"><div className="sc-top"><div className="sc-label">En attente</div><div className="sc-icon a"><svg width="14" height="14" fill="none" viewBox="0 0 14 14"><circle cx="7" cy="7" r="5" stroke="#8C6A00" strokeWidth="1.2"/><path d="M7 4.5v2.5l2 1.5" stroke="#8C6A00" strokeWidth="1.2" strokeLinecap="round"/></svg></div></div><div className="sc-num">{pendingReservations.length}</div></div>
+          <div className="stat-card green"><div className="sc-top"><div className="sc-label">Réservations</div><div className="sc-icon g"><CalendarDays size={14} strokeWidth={1.4} color="#4A7353" /></div></div><div className="sc-num">{activeReservations.length}</div></div>
+          <div className="stat-card violet"><div className="sc-top"><div className="sc-label">Contrats générés</div><div className="sc-icon v"><FileText size={14} strokeWidth={1.4} color="#5B52B5" /></div></div><div className="sc-num">{contractsGenerated}</div></div>
+          <div className="stat-card green"><div className="sc-top"><div className="sc-label">Contrats signés</div><div className="sc-icon g"><Check size={14} strokeWidth={1.4} color="#4A7353" /></div></div><div className="sc-num">{contractsSigned}</div></div>
+          <div className="stat-card amber"><div className="sc-top"><div className="sc-label">En attente</div><div className="sc-icon a"><Clock size={14} strokeWidth={1.4} color="#8C6A00" /></div></div><div className="sc-num">{pendingReservations.length}</div></div>
         </div>
 
         <ReservationsTable reservations={reservationsForClient} giteId={giteId} />

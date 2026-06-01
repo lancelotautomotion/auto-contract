@@ -1,17 +1,16 @@
 import Link from 'next/link';
+import { Check, HelpCircle, Zap, LayoutGrid, Flag } from 'lucide-react';
 
 const CheckViolet = () => (
-  <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
-    <circle cx="8" cy="8" r="6" fill="#EFEEF9" />
-    <path d="M5 8l2.5 2.5L11 6" stroke="#5B52B5" strokeWidth="1.2" strokeLinecap="round" />
-  </svg>
+  <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '16px', height: '16px', borderRadius: '50%', background: '#EFEEF9', flexShrink: 0 }}>
+    <Check size={10} strokeWidth={1.6} color="#5B52B5" />
+  </span>
 );
 
 const CheckGray = () => (
-  <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
-    <circle cx="8" cy="8" r="6" fill="#F0F0EE" />
-    <path d="M5 8l2.5 2.5L11 6" stroke="#A3A3A0" strokeWidth="1.2" strokeLinecap="round" />
-  </svg>
+  <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '16px', height: '16px', borderRadius: '50%', background: '#F0F0EE', flexShrink: 0 }}>
+    <Check size={10} strokeWidth={1.6} color="#A3A3A0" />
+  </span>
 );
 
 const faq = [
@@ -51,10 +50,7 @@ export default function Pricing() {
             <div className="pc-badge">Le plus choisi</div>
             <div className="pc-header">
               <div className="pc-icon v">
-                {/* Éclair — productivité, puissance */}
-                <svg width="20" height="20" fill="none" viewBox="0 0 20 20">
-                  <path d="M11.5 3L5 11h6l-2.5 6L17 9h-6l.5-6z" stroke="#5B52B5" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
+                <Zap size={20} strokeWidth={1.4} color="#5B52B5" />
               </div>
               <div className="pc-plan">Essentiel</div>
               <div style={{ fontSize: '12px', fontWeight: 600, color: '#71716E', marginBottom: '6px' }}>Propriétaires de gîtes &amp; meublés</div>
@@ -78,12 +74,7 @@ export default function Pricing() {
             <div className="pc-badge-dev">Bientôt disponible</div>
             <div className="pc-header">
               <div className="pc-icon g">
-                <svg width="20" height="20" fill="none" viewBox="0 0 20 20">
-                  <rect x="3" y="3" width="6" height="6" rx="1.5" stroke="#4A7353" strokeWidth="1.4"/>
-                  <rect x="11" y="3" width="6" height="6" rx="1.5" stroke="#4A7353" strokeWidth="1.4"/>
-                  <rect x="3" y="11" width="6" height="6" rx="1.5" stroke="#4A7353" strokeWidth="1.4"/>
-                  <rect x="11" y="11" width="6" height="6" rx="1.5" stroke="#4A7353" strokeWidth="1.4"/>
-                </svg>
+                <LayoutGrid size={20} strokeWidth={1.4} color="#4A7353" />
               </div>
               <div className="pc-plan">Maison d&apos;Hôtes</div>
               <div style={{ fontSize: '12px', fontWeight: 600, color: '#71716E', marginBottom: '6px' }}>Propriétaires de chambres d&apos;hôtes</div>
@@ -104,10 +95,7 @@ export default function Pricing() {
             <div className="pc-badge-dev">Bientôt disponible</div>
             <div className="pc-header">
               <div className="pc-icon g">
-                <svg width="20" height="20" fill="none" viewBox="0 0 20 20">
-                  <path d="M4 17V5" stroke="#4A7353" strokeWidth="1.4" strokeLinecap="round"/>
-                  <path d="M4 6l8-3v5l-8 3V6z" stroke="#4A7353" strokeWidth="1.4" strokeLinejoin="round"/>
-                </svg>
+                <Flag size={20} strokeWidth={1.4} color="#4A7353" />
               </div>
               <div className="pc-plan">Kordia Étape</div>
               <div style={{ fontSize: '12px', fontWeight: 600, color: '#71716E', marginBottom: '6px' }}>Gîtes d&apos;étape, auberges, dortoirs</div>
@@ -132,11 +120,7 @@ export default function Pricing() {
             {faq.map((item, i) => (
               <div key={i} className="pfaq-item">
                 <div className="pfaq-q">
-                  <svg width="14" height="14" fill="none" viewBox="0 0 14 14" style={{ flexShrink: 0, marginTop: '2px' }}>
-                    <circle cx="7" cy="7" r="5.5" stroke="#7F77DD" strokeWidth="1.2"/>
-                    <path d="M5.5 5.5c0-1 .7-1.5 1.5-1.5s1.5.7 1.5 1.5c0 .8-.7 1.2-1.5 1.5v.5" stroke="#7F77DD" strokeWidth="1.2" strokeLinecap="round"/>
-                    <circle cx="7" cy="10" r=".6" fill="#7F77DD"/>
-                  </svg>
+                  <HelpCircle size={14} strokeWidth={1.4} color="#7F77DD" style={{ flexShrink: 0, marginTop: '2px' }} />
                   {item.q}
                 </div>
                 <div className="pfaq-a">{item.a}</div>

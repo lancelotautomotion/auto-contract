@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import TopbarSignOut from "@/app/dashboard/TopbarSignOut";
 import ContractActions from "@/app/dashboard/reservations/[id]/ContractActions";
 import { computeTouristTax, nightsBetween } from "@/lib/billing";
+import { ChevronLeft, Info, AlertTriangle } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -62,9 +63,7 @@ export default async function GuesthouseReservationDetailPage({
 
       <div className="content" style={{ maxWidth: "900px" }}>
         <Link href={`/dashboard/maisons-hotes/${id}/reservations`} className="back-link">
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-            <path d="M10 12L6 8l4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
+          <ChevronLeft size={16} strokeWidth={1.5} />
           Retour aux réservations
         </Link>
 
@@ -90,11 +89,7 @@ export default async function GuesthouseReservationDetailPage({
             padding: "14px 16px", marginBottom: "20px",
           }}>
             <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-              <svg width="18" height="18" fill="none" viewBox="0 0 18 18" style={{ flexShrink: 0, color: "#B7791F" }}>
-                <circle cx="9" cy="9" r="7" stroke="currentColor" strokeWidth="1.4"/>
-                <path d="M9 5v4.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
-                <circle cx="9" cy="12.5" r="0.8" fill="currentColor"/>
-              </svg>
+              <Info size={18} strokeWidth={1.4} style={{ flexShrink: 0, color: "#B7791F" }} />
               <div style={{ fontSize: "13px", fontWeight: 600, color: "#7B4F0A" }}>
                 Cette demande est en attente de traitement.
               </div>
@@ -112,11 +107,7 @@ export default async function GuesthouseReservationDetailPage({
         {/* Allergies — badge rouge visible */}
         {reservation.dietaryNotes?.trim() && (
           <div style={{ display: "flex", alignItems: "flex-start", gap: "12px", background: "#FDECEC", border: "1px solid #F5B5B5", borderRadius: "10px", padding: "14px 16px", marginBottom: "20px" }}>
-            <svg width="18" height="18" fill="none" viewBox="0 0 18 18" style={{ flexShrink: 0, color: "#B91C1C", marginTop: "1px" }}>
-              <path d="M9 2L1.5 15h15L9 2z" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round"/>
-              <path d="M9 7v4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
-              <circle cx="9" cy="12.5" r="0.8" fill="currentColor"/>
-            </svg>
+            <AlertTriangle size={18} strokeWidth={1.4} style={{ flexShrink: 0, color: "#B91C1C", marginTop: "1px" }} />
             <div>
               <div style={{ fontSize: "13px", fontWeight: 700, color: "#B91C1C", marginBottom: "4px" }}>Allergies / Régimes spécifiques</div>
               <div style={{ fontSize: "13px", color: "#7F1D1D", lineHeight: 1.5 }}>{reservation.dietaryNotes}</div>

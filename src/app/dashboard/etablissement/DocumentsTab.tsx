@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
+import { FileText, Archive, Plus } from "lucide-react";
 
 interface GiteDoc {
   id: string;
@@ -60,10 +61,7 @@ export default function DocumentsTab({ giteId, guesthouseId, initialDocs }: { gi
   };
 
   const DocIcon = () => (
-    <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
-      <rect x="3" y="2" width="10" height="12" rx="1.5" stroke="#4A7353" strokeWidth="1.2"/>
-      <path d="M6 6h4M6 9h3" stroke="#4A7353" strokeWidth="1.2" strokeLinecap="round"/>
-    </svg>
+    <FileText size={16} strokeWidth={1.4} color="#4A7353" />
   );
 
   return (
@@ -71,7 +69,7 @@ export default function DocumentsTab({ giteId, guesthouseId, initialDocs }: { gi
       {/* Existing documents */}
       <div className="form-card">
         <div className="form-card-title">
-          <svg width="14" height="14" fill="none" viewBox="0 0 14 14"><rect x="3" y="5" width="8" height="7" rx="1" stroke="currentColor" strokeWidth="1.2"/><path d="M3 7l4 2.5L11 7" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+          <Archive size={14} strokeWidth={1.4} />
           Documents joints automatiquement
         </div>
         <p style={{ fontSize: '13px', color: 'var(--ink-lighter)', marginBottom: '16px', lineHeight: 1.6 }}>
@@ -102,7 +100,7 @@ export default function DocumentsTab({ giteId, guesthouseId, initialDocs }: { gi
       {/* Add document */}
       <div className="form-card">
         <div className="form-card-title">
-          <svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M7 1v10M1 6h10" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/></svg>
+          <Plus size={14} strokeWidth={1.4} />
           Ajouter un document
         </div>
         <div className="form-group">
@@ -140,7 +138,7 @@ export default function DocumentsTab({ giteId, guesthouseId, initialDocs }: { gi
           onClick={() => { if (!label.trim()) { setError("Donnez un nom au document avant de l'importer."); return; } fileInputRef.current?.click(); }}
         >
           Ajouter le document
-          <svg width="12" height="12" fill="none" viewBox="0 0 12 12"><path d="M6 1v10M1 6h10" stroke="#fff" strokeWidth="1.3" strokeLinecap="round"/></svg>
+          <Plus size={12} strokeWidth={1.4} color="#fff" />
         </button>
       </div>
     </div>

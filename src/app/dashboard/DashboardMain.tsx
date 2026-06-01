@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import { CalendarDays, Clock } from "lucide-react";
 import Link from "next/link";
 import CalendarView, { type GiteCalendarData } from "./CalendarView";
 
@@ -82,11 +83,7 @@ export default function DashboardMain({ multiGites, currentGiteId }: Props) {
       <div className="card">
         <div className="card-header">
           <div className="card-title">
-            <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
-              <rect x="2" y="3" width="12" height="10" rx="1.5" stroke="#7F77DD" strokeWidth="1.2"/>
-              <path d="M2 6.5h12" stroke="#7F77DD" strokeWidth="1.2"/>
-              <path d="M5.5 1.5v3M10.5 1.5v3" stroke="#7F77DD" strokeWidth="1.2" strokeLinecap="round"/>
-            </svg>
+            <CalendarDays size={16} strokeWidth={1.4} color="#7F77DD" />
             Planning
           </div>
           <div className="card-legend">
@@ -117,10 +114,7 @@ export default function DashboardMain({ multiGites, currentGiteId }: Props) {
       <div className="card">
         <div className="card-header">
           <div className="card-title">
-            <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
-              <circle cx="8" cy="8" r="5.5" stroke="#7F77DD" strokeWidth="1.2"/>
-              <path d="M8 5v3l2 1.5" stroke="#7F77DD" strokeWidth="1.2" strokeLinecap="round"/>
-            </svg>
+            <Clock size={16} strokeWidth={1.4} color="#7F77DD" />
             Prochaines arrivées
           </div>
           {showMultiToggle && (

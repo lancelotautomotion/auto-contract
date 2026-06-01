@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { X, XCircle } from "lucide-react";
 
 const REASONS = [
   { value: "dates_taken",  label: "Dates déjà réservées" },
@@ -45,10 +46,7 @@ export default function RefuseReservationButton({ reservationId, clientName, red
   return (
     <>
       <button className="btn btn-danger-outline" onClick={() => setOpen(true)}>
-        <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
-          <circle cx="7" cy="7" r="5.5" stroke="currentColor" strokeWidth="1.3"/>
-          <path d="M4.5 4.5l5 5M9.5 4.5l-5 5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
-        </svg>
+        <XCircle size={14} strokeWidth={1.4} />
         Refuser
       </button>
 
@@ -58,9 +56,7 @@ export default function RefuseReservationButton({ reservationId, clientName, red
             <div className="modal-header">
               <div className="modal-title">Refuser la réservation</div>
               <button className="modal-close" onClick={() => !loading && setOpen(false)} aria-label="Fermer">
-                <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
-                  <path d="M2 2l10 10M12 2L2 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-                </svg>
+                <X size={14} strokeWidth={1.5} />
               </button>
             </div>
 

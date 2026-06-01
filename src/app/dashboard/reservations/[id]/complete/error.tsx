@@ -1,14 +1,13 @@
 "use client";
 
 import Link from "next/link";
+import { ChevronLeft } from "lucide-react";
 
 export default function CompleteError() {
   return (
     <div className="content" style={{ maxWidth: '820px' }}>
       <Link href="/dashboard/reservations" className="back-link">
-        <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
-          <path d="M9 3L5 7l4 4" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
-        </svg>
+        <ChevronLeft size={14} strokeWidth={1.4} />
         Retour aux réservations
       </Link>
       <div style={{

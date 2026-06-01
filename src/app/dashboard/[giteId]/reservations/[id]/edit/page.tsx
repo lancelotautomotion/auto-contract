@@ -4,6 +4,7 @@ import { redirect, notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import EditReservationForm from "@/app/dashboard/reservations/[id]/edit/EditReservationForm";
+import { ChevronLeft } from "lucide-react";
 
 export default async function EditReservationPage({ params }: { params: Promise<{ giteId: string; id: string }> }) {
   const { giteId, id } = await params;
@@ -35,9 +36,7 @@ export default async function EditReservationPage({ params }: { params: Promise<
 
       <div className="content" style={{ maxWidth: '1100px', width: '100%' }}>
         <Link href={`/dashboard/${giteId}/reservations/${id}`} className="back-link">
-          <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
-            <path d="M9 3L5 7l4 4" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
+          <ChevronLeft size={14} strokeWidth={1.4} />
           Retour à la réservation
         </Link>
 

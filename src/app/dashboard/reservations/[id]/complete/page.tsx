@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import CompleteReservationForm from "./CompleteReservationForm";
 import RefuseReservationButton from "../RefuseReservationButton";
+import { ChevronLeft, Clock, AlertTriangle, CheckCircle, User, Check } from "lucide-react";
 
 export const dynamic = 'force-dynamic';
 
@@ -66,9 +67,7 @@ export default async function CompleteReservationPage({ params }: { params: Prom
       <div className="content" style={{ maxWidth: '820px' }}>
 
         <Link href="/dashboard/reservations" className="back-link">
-          <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
-            <path d="M9 3L5 7l4 4" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
+          <ChevronLeft size={14} strokeWidth={1.4} />
           Retour aux réservations
         </Link>
 
@@ -76,10 +75,7 @@ export default async function CompleteReservationPage({ params }: { params: Prom
         <div className="req-header">
           <div className="rh-left">
             <div className="rh-tag">
-              <svg width="12" height="12" fill="none" viewBox="0 0 12 12">
-                <circle cx="6" cy="6" r="3" stroke="currentColor" strokeWidth="1.2"/>
-                <path d="M6 4v2l1.5 1" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
-              </svg>
+              <Clock size={12} strokeWidth={1.4} />
               Nouvelle demande client
             </div>
             <h1>{reservation.clientFirstName} <span className="v">{reservation.clientLastName}</span></h1>
@@ -104,11 +100,7 @@ export default async function CompleteReservationPage({ params }: { params: Prom
             background: '#FEF3CD', border: '1px solid #F5C842',
             borderRadius: '10px', padding: '14px 16px', marginBottom: '20px',
           }}>
-            <svg width="18" height="18" fill="none" viewBox="0 0 18 18" style={{ flexShrink: 0, color: '#B7791F' }}>
-              <path d="M9 2L1.5 15h15L9 2z" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round"/>
-              <path d="M9 7v4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
-              <circle cx="9" cy="12.5" r="0.8" fill="currentColor"/>
-            </svg>
+            <AlertTriangle size={18} strokeWidth={1.4} style={{ flexShrink: 0, color: '#B7791F' }} />
             <div>
               <div style={{ fontSize: '13px', fontWeight: 700, color: '#7B4F0A', marginBottom: '4px' }}>
                 Conflit détecté sur une autre plateforme
@@ -129,10 +121,7 @@ export default async function CompleteReservationPage({ params }: { params: Prom
             background: '#F0FDF4', border: '1px solid #86EFAC',
             borderRadius: '10px', padding: '14px 16px', marginBottom: '20px',
           }}>
-            <svg width="18" height="18" fill="none" viewBox="0 0 18 18" style={{ flexShrink: 0, color: '#16A34A' }}>
-              <circle cx="9" cy="9" r="7" stroke="currentColor" strokeWidth="1.4"/>
-              <path d="M5.5 9l2.5 2.5 4.5-4.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
+            <CheckCircle size={18} strokeWidth={1.4} style={{ flexShrink: 0, color: '#16A34A' }} />
             <div style={{ fontSize: '13px', fontWeight: 600, color: '#166534' }}>
               Dates disponibles — aucun conflit détecté sur vos calendriers connectés
             </div>
@@ -143,10 +132,7 @@ export default async function CompleteReservationPage({ params }: { params: Prom
         <div className="req-info-card">
           <div className="cc-header">
             <span className="req-info-title">
-              <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
-                <circle cx="7" cy="5" r="3" stroke="currentColor" strokeWidth="1.2"/>
-                <path d="M2 13c0-2.8 2.2-5 5-5s5 2.2 5 5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
-              </svg>
+              <User size={14} strokeWidth={1.4} />
               Informations transmises par le client
             </span>
           </div>
@@ -172,9 +158,7 @@ export default async function CompleteReservationPage({ params }: { params: Prom
                 <div className="req-opt-pills">
                   {reservation.reservationOptions.map(o => (
                     <span key={o.id} className="req-opt-pill">
-                      <svg width="12" height="12" fill="none" viewBox="0 0 12 12">
-                        <path d="M3 6l2 2 4-4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
-                      </svg>
+                      <Check size={12} strokeWidth={1.4} />
                       {o.label}{o.price > 0 ? ` — ${o.price} €` : ''}
                     </span>
                   ))}

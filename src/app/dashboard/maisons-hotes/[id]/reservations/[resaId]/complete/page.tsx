@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import CompleteGuesthouseReservationForm from "./CompleteGuesthouseReservationForm";
 import RefuseReservationButton from "@/app/dashboard/reservations/[id]/RefuseReservationButton";
+import { ChevronLeft, Clock, User, Home } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -63,9 +64,7 @@ export default async function CompleteGuesthouseReservationPage({
       <div className="content" style={{ maxWidth: "820px" }}>
 
         <Link href={`/dashboard/maisons-hotes/${id}/reservations`} className="back-link">
-          <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
-            <path d="M9 3L5 7l4 4" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
+          <ChevronLeft size={14} strokeWidth={1.4} />
           Retour aux réservations
         </Link>
 
@@ -73,10 +72,7 @@ export default async function CompleteGuesthouseReservationPage({
         <div className="req-header">
           <div className="rh-left">
             <div className="rh-tag">
-              <svg width="12" height="12" fill="none" viewBox="0 0 12 12">
-                <circle cx="6" cy="6" r="3" stroke="currentColor" strokeWidth="1.2"/>
-                <path d="M6 4v2l1.5 1" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
-              </svg>
+              <Clock size={12} strokeWidth={1.4} />
               Nouvelle demande client
             </div>
             <h1>{reservation.clientFirstName} <span className="v">{reservation.clientLastName}</span></h1>
@@ -98,10 +94,7 @@ export default async function CompleteGuesthouseReservationPage({
         <div className="req-info-card">
           <div className="cc-header">
             <span className="req-info-title">
-              <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
-                <circle cx="7" cy="5" r="3" stroke="currentColor" strokeWidth="1.2"/>
-                <path d="M2 13c0-2.8 2.2-5 5-5s5 2.2 5 5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
-              </svg>
+              <User size={14} strokeWidth={1.4} />
               Informations transmises par le client
             </span>
           </div>
@@ -127,9 +120,7 @@ export default async function CompleteGuesthouseReservationPage({
                 <div className="req-opt-pills">
                   {reservation.reservationRooms.map((r) => (
                     <span key={r.id} className="req-opt-pill">
-                      <svg width="12" height="12" fill="none" viewBox="0 0 12 12">
-                        <path d="M1.5 9V5.5L6 2l4.5 3.5V9a1 1 0 01-1 1H2.5a1 1 0 01-1-1z" stroke="currentColor" strokeWidth="1.1" strokeLinejoin="round"/>
-                      </svg>
+                      <Home size={12} strokeWidth={1.4} />
                       {r.roomName}{r.price > 0 ? ` — ${r.price} €/nuit` : ""}
                     </span>
                   ))}

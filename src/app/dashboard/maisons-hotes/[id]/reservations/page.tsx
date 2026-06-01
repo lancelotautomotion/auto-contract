@@ -6,6 +6,7 @@ import TopbarSignOut from "@/app/dashboard/TopbarSignOut";
 import CalendarView from "@/app/dashboard/CalendarView";
 import { buildGuesthouseCalendarData } from "@/lib/guesthouseCalendarData";
 import RoomBookingLinksBanner from "./RoomBookingLinksBanner";
+import { Plus, Info } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -79,7 +80,7 @@ export default async function GuesthouseReservationsPage({ params }: { params: P
           <div className="header-actions">
             {hasRooms ? (
               <Link href={`/dashboard/maisons-hotes/${id}/reservations/new`} className="btn btn-violet">
-                <svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M7 2v10M2 7h10" stroke="#fff" strokeWidth="1.5" strokeLinecap="round"/></svg>
+                <Plus size={14} strokeWidth={1.5} color="#fff" />
                 Nouvelle réservation
               </Link>
             ) : (
@@ -104,11 +105,7 @@ export default async function GuesthouseReservationsPage({ params }: { params: P
             padding: "16px 20px", marginBottom: "20px",
           }}>
             <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "12px" }}>
-              <svg width="16" height="16" fill="none" viewBox="0 0 16 16" style={{ flexShrink: 0, color: "#B7791F" }}>
-                <circle cx="8" cy="8" r="6.5" stroke="currentColor" strokeWidth="1.3"/>
-                <path d="M8 5v3.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
-                <circle cx="8" cy="10.5" r="0.75" fill="currentColor"/>
-              </svg>
+              <Info size={16} strokeWidth={1.4} style={{ flexShrink: 0, color: "#B7791F" }} />
               <div style={{ fontSize: "13px", fontWeight: 700, color: "#7B4F0A" }}>
                 {pendingReservations.length} demande{pendingReservations.length > 1 ? "s" : ""} en attente de traitement
               </div>

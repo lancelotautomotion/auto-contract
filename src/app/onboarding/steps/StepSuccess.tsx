@@ -1,3 +1,5 @@
+import { Check, ArrowRight } from "lucide-react";
+
 export default function StepSuccess({
   giteName,
   giteCount,
@@ -16,15 +18,7 @@ export default function StepSuccess({
   return (
     <div className="ob-success">
       <div className="ob-success-icon">
-        <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-          <path
-            d="M6 14l6 6L22 8"
-            stroke="#689D71"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
+        <Check size={28} strokeWidth={2.5} color="#689D71" />
       </div>
 
       <h2 className="ob-success-title">Votre espace est prêt&nbsp;!</h2>
@@ -83,15 +77,7 @@ export default function StepSuccess({
 
       <button type="button" className="ob-submit" onClick={onDashboard} style={{ marginTop: isMulti ? "16px" : undefined }}>
         Accéder au tableau de bord
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-          <path
-            d="M3 8h10m-4-4l4 4-4 4"
-            stroke="#fff"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
+        <ArrowRight size={16} strokeWidth={1.5} color="#fff" />
       </button>
     </div>
   );

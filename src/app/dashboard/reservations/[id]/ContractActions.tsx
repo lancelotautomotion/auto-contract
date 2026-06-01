@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { Check, Clock, Clock3, FileText, Download, Mail, ChevronRight, Circle } from "lucide-react";
 
 interface Props {
   reservationId: string;
@@ -22,26 +23,20 @@ function TlDot({ state }: { state: 'done' | 'current' | 'pending' }) {
   if (state === 'done') {
     return (
       <div className="tl-dot done">
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-          <path d="M4 7l2.5 2.5L10 5" stroke="#4A7353" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-        </svg>
+        <Check size={14} strokeWidth={1.5} color="#4A7353" />
       </div>
     );
   }
   if (state === 'current') {
     return (
       <div className="tl-dot current">
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-          <path d="M7 4v3l2 1.5" stroke="#5B52B5" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
-        </svg>
+        <Clock3 size={14} strokeWidth={1.4} color="#5B52B5" />
       </div>
     );
   }
   return (
     <div className="tl-dot pending">
-      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-        <circle cx="7" cy="7" r="2" fill="#D4D4D0"/>
-      </svg>
+      <Circle size={14} fill="#D4D4D0" stroke="none" />
     </div>
   );
 }
@@ -215,10 +210,7 @@ export default function ContractActions({
       <div className="timeline-card">
         <div className="tc-header">
           <div className="tc-title">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <circle cx="8" cy="8" r="6.5" stroke="currentColor" strokeWidth="1.3"/>
-              <path d="M8 5v3l2 1.5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
+            <Clock size={16} strokeWidth={1.4} />
             Suivi du contrat
           </div>
         </div>
@@ -248,10 +240,7 @@ export default function ContractActions({
           {reminderCount > 0 && !isSigned && (
             <div className="tl-item current">
               <div className="tl-dot current">
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                  <path d="M7 2v4l2.5 2" stroke="#5B52B5" strokeWidth="1.3" strokeLinecap="round"/>
-                  <circle cx="7" cy="7" r="5.5" stroke="#5B52B5" strokeWidth="1.3"/>
-                </svg>
+                <Clock size={14} strokeWidth={1.4} color="#5B52B5" />
               </div>
               <div className="tl-content">
                 <div className="tl-label">
@@ -294,11 +283,7 @@ export default function ContractActions({
       <div className="contract-card">
         <div className="cc-header">
           <div className="cc-title">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <path d="M4 2h6l4 4v8a1 1 0 01-1 1H4a1 1 0 01-1-1V3a1 1 0 011-1z" stroke="currentColor" strokeWidth="1.3"/>
-              <path d="M9 2v4h4" stroke="currentColor" strokeWidth="1.3"/>
-              <path d="M5 8h6M5 11h4" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
-            </svg>
+            <FileText size={16} strokeWidth={1.4} />
             Contrat
           </div>
         </div>
@@ -313,19 +298,13 @@ export default function ContractActions({
                 disabled={loading !== null}
               >
                 <div className="cc-btn-icon">
-                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                    <path d="M5 3h7l5 5v9a1 1 0 01-1 1H5a1 1 0 01-1-1V4a1 1 0 011-1z" stroke="#4A7353" strokeWidth="1.4"/>
-                    <path d="M12 3v5h5" stroke="#4A7353" strokeWidth="1.4"/>
-                    <path d="M10 10v5M7.5 12.5L10 15l2.5-2.5" stroke="#4A7353" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
+                  <Download size={20} strokeWidth={1.4} color="#4A7353" />
                 </div>
                 <div className="cc-btn-text">
                   <span className="cc-btn-label">{loading === 'generate' ? 'Téléchargement...' : 'Télécharger le contrat signé'}</span>
                   <span className="cc-btn-desc">PDF officiel avec la preuve de signature électronique</span>
                 </div>
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0, color: '#4A7353', opacity: 0.5 }}>
-                  <path d="M6 3l5 5-5 5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
+                <ChevronRight size={16} strokeWidth={1.4} style={{ flexShrink: 0, color: '#4A7353', opacity: 0.5 }} />
               </button>
             </>
           ) : (
@@ -337,19 +316,13 @@ export default function ContractActions({
                 disabled={loading !== null}
               >
                 <div className="cc-btn-icon">
-                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                    <path d="M5 3h7l5 5v9a1 1 0 01-1 1H5a1 1 0 01-1-1V4a1 1 0 011-1z" stroke="#4A7353" strokeWidth="1.4"/>
-                    <path d="M12 3v5h5" stroke="#4A7353" strokeWidth="1.4"/>
-                    <path d="M10 10v5M7.5 12.5L10 15l2.5-2.5" stroke="#4A7353" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
+                  <Download size={20} strokeWidth={1.4} color="#4A7353" />
                 </div>
                 <div className="cc-btn-text">
                   <span className="cc-btn-label">{loading === 'generate' ? 'Génération...' : 'Télécharger l\'aperçu du contrat avant envoi'}</span>
                   <span className="cc-btn-desc">Vérifiez le rendu du contrat avant de l&apos;envoyer au locataire</span>
                 </div>
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0, color: '#4A7353', opacity: 0.5 }}>
-                  <path d="M6 3l5 5-5 5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
+                <ChevronRight size={16} strokeWidth={1.4} style={{ flexShrink: 0, color: '#4A7353', opacity: 0.5 }} />
               </button>
               {/* Second: send for signature */}
               <button
@@ -359,10 +332,7 @@ export default function ContractActions({
                 style={{ marginTop: '10px' }}
               >
                 <div className="cc-btn-icon">
-                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                    <path d="M3 4h14a1 1 0 011 1v10a1 1 0 01-1 1H3a1 1 0 01-1-1V5a1 1 0 011-1z" stroke="#5B52B5" strokeWidth="1.4"/>
-                    <path d="M2 5l8 6 8-6" stroke="#5B52B5" strokeWidth="1.4" strokeLinecap="round"/>
-                  </svg>
+                  <Mail size={20} strokeWidth={1.4} color="#5B52B5" />
                 </div>
                 <div className="cc-btn-text">
                   <span className="cc-btn-label">
@@ -372,9 +342,7 @@ export default function ContractActions({
                     {mailStatus === 'SENT' ? 'Un lien a déjà été envoyé — vous pouvez le renvoyer' : 'Le locataire reçoit un email avec le lien pour signer en ligne'}
                   </span>
                 </div>
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0, color: '#5B52B5', opacity: 0.5 }}>
-                  <path d="M6 3l5 5-5 5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
+                <ChevronRight size={16} strokeWidth={1.4} style={{ flexShrink: 0, color: '#5B52B5', opacity: 0.5 }} />
               </button>
             </>
           )}

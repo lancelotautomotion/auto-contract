@@ -3,6 +3,7 @@
 import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { User, CalendarDays, Euro, CheckCircle, FileText, Check, AlertTriangle, ArrowRight } from "lucide-react";
 
 interface GiteOption { id: string; label: string; price: number; }
 interface IcalBlock { start: string; end: string; platform: string; label: string; }
@@ -75,10 +76,7 @@ export default function NewReservationForm({ giteId, defaultCleaningFee, default
       {/* CLIENT */}
       <div className="form-section">
         <div className="fs-title">
-          <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
-            <circle cx="7" cy="5" r="3" stroke="currentColor" strokeWidth="1.2"/>
-            <path d="M2 13c0-2.8 2.2-5 5-5s5 2.2 5 5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
-          </svg>
+          <User size={14} strokeWidth={1.4} />
           Informations client
         </div>
         <div className="fs-divider" />
@@ -123,11 +121,7 @@ export default function NewReservationForm({ giteId, defaultCleaningFee, default
       {/* DATES */}
       <div className="form-section">
         <div className="fs-title">
-          <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
-            <rect x="1.5" y="3" width="11" height="9" rx="1.5" stroke="currentColor" strokeWidth="1.2"/>
-            <path d="M1.5 6h11" stroke="currentColor" strokeWidth="1.2"/>
-            <path d="M4.5 1.5v3M9.5 1.5v3" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
-          </svg>
+          <CalendarDays size={14} strokeWidth={1.4} />
           Dates du séjour
         </div>
         <div className="fs-divider" />
@@ -145,11 +139,7 @@ export default function NewReservationForm({ giteId, defaultCleaningFee, default
         </div>
         {icalConflicts.length > 0 && (
           <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', background: '#FEF3CD', border: '1px solid #F5C842', borderRadius: '10px', padding: '14px 16px', marginTop: '10px' }}>
-            <svg width="18" height="18" fill="none" viewBox="0 0 18 18" style={{ flexShrink: 0, color: '#B7791F', marginTop: '1px' }}>
-              <path d="M9 2L1.5 15h15L9 2z" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round"/>
-              <path d="M9 7v4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
-              <circle cx="9" cy="12.5" r="0.8" fill="currentColor"/>
-            </svg>
+            <AlertTriangle size={18} strokeWidth={1.4} style={{ flexShrink: 0, color: '#B7791F', marginTop: '1px' }} />
             <div>
               <div style={{ fontSize: '13px', fontWeight: 700, color: '#7B4F0A', marginBottom: '4px' }}>Conflit détecté sur une autre plateforme</div>
               <div style={{ fontSize: '12px', color: '#92610E', lineHeight: 1.5 }}>
@@ -168,10 +158,7 @@ export default function NewReservationForm({ giteId, defaultCleaningFee, default
       {/* TARIFS */}
       <div className="form-section">
         <div className="fs-title">
-          <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
-            <circle cx="7" cy="7" r="5.5" stroke="currentColor" strokeWidth="1.2"/>
-            <path d="M7 3.5v7M5 5.5h3.5a1.5 1.5 0 010 3H5.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
-          </svg>
+          <Euro size={14} strokeWidth={1.4} />
           Tarifs
         </div>
         <div className="fs-divider" />
@@ -202,10 +189,7 @@ export default function NewReservationForm({ giteId, defaultCleaningFee, default
       {/* OPTIONS */}
       <div className="form-section">
         <div className="fs-title">
-          <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
-            <rect x="1.5" y="3" width="11" height="8" rx="1.5" stroke="currentColor" strokeWidth="1.2"/>
-            <path d="M5 7l1.5 1.5L10 5.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
+          <CheckCircle size={14} strokeWidth={1.4} />
           Options
         </div>
         <div className="fs-divider" />
@@ -217,9 +201,7 @@ export default function NewReservationForm({ giteId, defaultCleaningFee, default
                 <div key={opt.id} className={`option-check${checked ? ' checked' : ''}`} onClick={() => toggleOption(opt.id)} role="checkbox" aria-checked={checked}>
                   <div className="oc-box">
                     {checked && (
-                      <svg width="12" height="12" fill="none" viewBox="0 0 12 12">
-                        <path d="M2.5 6l2.5 2.5L9.5 4" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                      </svg>
+                      <Check size={12} strokeWidth={1.5} color="#fff" />
                     )}
                   </div>
                   <span className="oc-name">{opt.label}</span>
@@ -246,10 +228,7 @@ export default function NewReservationForm({ giteId, defaultCleaningFee, default
       {/* NOTES */}
       <div className="form-section">
         <div className="fs-title">
-          <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
-            <rect x="2" y="2" width="10" height="10" rx="1.5" stroke="currentColor" strokeWidth="1.2"/>
-            <path d="M5 5h4M5 7.5h3" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
-          </svg>
+          <FileText size={14} strokeWidth={1.4} />
           Notes internes
         </div>
         <div className="fs-divider" />
@@ -269,9 +248,7 @@ export default function NewReservationForm({ giteId, defaultCleaningFee, default
       <div className="summary-card">
         <div className="summary-top">
           <div className="summary-title">
-            <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
-              <path d="M4 8l3 3 5-5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
+            <Check size={16} strokeWidth={1.5} />
             Récapitulatif
           </div>
         </div>
@@ -301,9 +278,7 @@ export default function NewReservationForm({ giteId, defaultCleaningFee, default
         >
           {loading ? 'Enregistrement...' : 'Enregistrer la réservation'}
           {!loading && (
-            <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
-              <path d="M3 8h10m-4-4l4 4-4 4" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
+            <ArrowRight size={16} strokeWidth={1.5} />
           )}
         </button>
       </div>

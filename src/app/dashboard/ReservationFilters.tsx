@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
+import { ArrowUpDown } from "lucide-react";
 import { useCallback, useRef, useState } from "react";
 
 const STATUTS = [
@@ -67,9 +68,7 @@ export default function ReservationFilters({ currentStatus, currentSort, current
 
       <div style={{ position: 'relative' }}>
         <button className="resa-sort" onClick={() => setSortOpen(o => !o)} title={currentSortLabel}>
-          <svg width="12" height="12" fill="none" viewBox="0 0 12 12">
-            <path d="M2 3h8M3 6h6M4 9h4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
-          </svg>
+          <ArrowUpDown size={12} strokeWidth={1.4} />
           {currentSort === 'asc' ? 'Proche' : currentSort === 'desc' ? 'Lointain' : 'Récent'}
         </button>
 

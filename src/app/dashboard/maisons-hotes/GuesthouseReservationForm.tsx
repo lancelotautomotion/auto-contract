@@ -3,6 +3,7 @@
 import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { computeLodgingTotal, computeMealsTotal, computeTouristTax, nightsBetween } from "@/lib/billing";
+import { Check, AlertTriangle } from "lucide-react";
 
 interface Room { id: string; name: string; capacity: number; basePrice: number; active: boolean; }
 type MealService = "BREAKFAST" | "LUNCH" | "DINNER" | "OTHER";
@@ -162,7 +163,7 @@ export default function GuesthouseReservationForm({
                   <div key={room.id} className={`option-check${checked ? " checked" : ""}`} onClick={() => toggleRoom(room.id)} role="checkbox" aria-checked={checked}>
                     <div className="oc-box">
                       {checked && (
-                        <svg width="12" height="12" fill="none" viewBox="0 0 12 12"><path d="M2.5 6l2.5 2.5L9.5 4" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                        <Check size={12} strokeWidth={1.5} color="#fff" />
                       )}
                     </div>
                     <span className="oc-name">{room.name} <span style={{ color: "var(--ink-lighter)", fontWeight: 400 }}>· {room.capacity} pers.</span></span>
@@ -223,7 +224,7 @@ export default function GuesthouseReservationForm({
               </div>
               {form.dietaryNotes.trim() && (
                 <div style={{ display: "inline-flex", alignItems: "center", gap: "6px", marginTop: "8px", background: "#FDECEC", border: "1px solid #F5B5B5", color: "#B91C1C", fontSize: "12px", fontWeight: 700, borderRadius: "20px", padding: "4px 12px" }}>
-                  <svg width="12" height="12" fill="none" viewBox="0 0 12 12"><path d="M6 1.5L11 10H1L6 1.5z" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round"/><path d="M6 5v2.2" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/><circle cx="6" cy="8.6" r="0.6" fill="currentColor"/></svg>
+                  <AlertTriangle size={12} strokeWidth={1.4} />
                   Allergies / régime signalé
                 </div>
               )}

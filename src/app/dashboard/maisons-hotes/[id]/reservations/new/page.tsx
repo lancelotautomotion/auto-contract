@@ -4,6 +4,7 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import TopbarSignOut from "@/app/dashboard/TopbarSignOut";
 import GuesthouseReservationForm from "../../../GuesthouseReservationForm";
+import { ChevronLeft } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -42,7 +43,7 @@ export default async function NewGuesthouseReservationPage({ params }: { params:
 
       <div className="content" style={{ maxWidth: "1100px", width: "100%" }}>
         <Link href={`/dashboard/maisons-hotes/${id}/reservations`} className="back-link">
-          <svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M9 3L5 7l4 4" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/></svg>
+          <ChevronLeft size={14} strokeWidth={1.4} />
           Retour
         </Link>
 

@@ -1,3 +1,5 @@
+import { Check } from "lucide-react";
+
 type Plan = "essential";
 
 interface Props {
@@ -116,10 +118,9 @@ export default function StepPlan({ selected, onSelect }: Props) {
 
               {/* Check */}
               {isSelected && (
-                <svg width="18" height="18" fill="none" viewBox="0 0 18 18" style={{ flexShrink: 0 }}>
-                  <circle cx="9" cy="9" r="9" fill={plan.color} />
-                  <path d="M5.5 9l2.5 2.5 4.5-4.5" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
+                <div style={{ flexShrink: 0, width: "18px", height: "18px", borderRadius: "50%", background: plan.color, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <Check size={12} strokeWidth={2} color="#fff" />
+                </div>
               )}
             </button>
           );

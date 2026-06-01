@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
 import { useTheme } from "@/providers/ThemeProvider";
+import { Bell, Check, Moon, User, AlertTriangle, ChevronRight } from "lucide-react";
 
 interface Props {
   giteId?: string;
@@ -83,10 +84,7 @@ export default function SettingsForm({ giteId, notificationEmail, notifNewReserv
       {/* NOTIFICATIONS */}
       <div className="form-section" style={{ marginBottom: 0 }}>
         <div className="fs-title">
-          <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
-            <path d="M3.5 5.5a3.5 3.5 0 117 0v2.2l1 1.3H2.5l1-1.3V5.5z" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round"/>
-            <path d="M5.5 11.5a1.5 1.5 0 003 0" stroke="currentColor" strokeWidth="1.2"/>
-          </svg>
+          <Bell size={14} strokeWidth={1.4} />
           Notifications
         </div>
         <div className="fs-divider" />
@@ -163,16 +161,12 @@ export default function SettingsForm({ giteId, notificationEmail, notifNewReserv
               >
                 {loading ? 'Enregistrement…' : 'Sauvegarder'}
                 {!loading && (
-                  <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
-                    <path d="M3 7l3 3 5-6" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
+                  <Check size={14} strokeWidth={1.5} color="#fff" />
                 )}
               </button>
               {saved && (
                 <span style={{ fontSize: '12px', color: 'var(--green-dark)', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                  <svg width="12" height="12" fill="none" viewBox="0 0 12 12">
-                    <path d="M3 6l2 2 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
+                  <Check size={12} strokeWidth={1.5} />
                   Sauvegardé
                 </span>
               )}
@@ -184,9 +178,7 @@ export default function SettingsForm({ giteId, notificationEmail, notifNewReserv
       {/* APPARENCE */}
       <div className="form-section" style={{ marginBottom: 0 }}>
         <div className="fs-title">
-          <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
-            <path d="M11 7.5a4.5 4.5 0 01-5.5-5.5A5 5 0 107 12.5c0 0 .7-.04 1.4-.19" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
+          <Moon size={14} strokeWidth={1.4} />
           Apparence
         </div>
         <div className="fs-divider" />
@@ -231,10 +223,7 @@ export default function SettingsForm({ giteId, notificationEmail, notifNewReserv
       {/* COMPTE LINK */}
       <div className="form-section" style={{ marginBottom: 0 }}>
         <div className="fs-title">
-          <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
-            <circle cx="7" cy="5" r="3" stroke="currentColor" strokeWidth="1.2"/>
-            <path d="M2 13c0-2.8 2.2-5 5-5s5 2.2 5 5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
-          </svg>
+          <User size={14} strokeWidth={1.4} />
           Compte & Facturation
         </div>
         <div className="fs-divider" />
@@ -251,19 +240,14 @@ export default function SettingsForm({ giteId, notificationEmail, notifNewReserv
             <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--ink)', marginBottom: '2px' }}>Gérer votre compte et votre abonnement</div>
             <div style={{ fontSize: '12px', color: 'var(--ink-soft)' }}>Profil, plan, portail de facturation Stripe</div>
           </div>
-          <svg width="16" height="16" fill="none" viewBox="0 0 16 16" style={{ color: 'var(--violet)', flexShrink: 0 }}>
-            <path d="M6 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
+          <ChevronRight size={16} strokeWidth={1.5} style={{ color: 'var(--violet)', flexShrink: 0 }} />
         </Link>
       </div>
 
       {/* ZONE DE DANGER */}
       <div className="form-section" style={{ marginBottom: 0 }}>
         <div className="fs-title" style={{ color: '#b91c1c' }}>
-          <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
-            <path d="M7 1.5L1.5 11.5h11L7 1.5z" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round"/>
-            <path d="M7 5.5v3M7 10h.01" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
-          </svg>
+          <AlertTriangle size={14} strokeWidth={1.4} />
           Zone de danger
         </div>
         <div className="fs-divider" style={{ background: '#FCA5A5' }} />
@@ -310,10 +294,7 @@ export default function SettingsForm({ giteId, notificationEmail, notifNewReserv
           fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
         }}>
           <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: '#FEF2F2', border: '1px solid #FCA5A5', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px' }}>
-            <svg width="22" height="22" fill="none" viewBox="0 0 22 22">
-              <path d="M11 2.5L2.5 18.5h17L11 2.5z" stroke="#b91c1c" strokeWidth="1.5" strokeLinejoin="round"/>
-              <path d="M11 8.5v5M11 15.5h.01" stroke="#b91c1c" strokeWidth="1.8" strokeLinecap="round"/>
-            </svg>
+            <AlertTriangle size={22} strokeWidth={1.5} color="#b91c1c" />
           </div>
 
           <h2 style={{ fontSize: '18px', fontWeight: 800, color: '#2C2C2A', letterSpacing: '-0.02em', marginBottom: '8px', fontFamily: 'inherit' }}>

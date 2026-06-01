@@ -6,6 +6,7 @@ import Link from "next/link";
 import { type GiteCalendarData } from "@/app/dashboard/CalendarView";
 import CopyBookingUrlButton from "@/app/dashboard/CopyBookingUrlButton";
 import DashboardMain from "@/app/dashboard/DashboardMain";
+import { Plus, Info, CalendarDays, FileText, Check, Clock } from "lucide-react";
 
 const GITE_COLORS = ['#7F77DD', '#689D71', '#E08B4A'];
 
@@ -98,9 +99,7 @@ export default async function DashboardPage({ params }: { params: Promise<{ gite
           <div className="header-actions">
             <CopyBookingUrlButton slug={gite.slug ?? null} />
             <Link href={`/dashboard/${giteId}/reservations/new`} className="btn btn-violet">
-              <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
-                <path d="M7 2v10M2 7h10" stroke="#fff" strokeWidth="1.5" strokeLinecap="round"/>
-              </svg>
+              <Plus size={14} strokeWidth={1.5} color="#fff" />
               Nouvelle réservation
             </Link>
           </div>
@@ -110,10 +109,7 @@ export default async function DashboardPage({ params }: { params: Promise<{ gite
           <div className="pending-banner">
             <div className="pb-header">
               <div className="pb-icon">
-                <svg width="18" height="18" fill="none" viewBox="0 0 18 18">
-                  <circle cx="9" cy="9" r="7" stroke="currentColor" strokeWidth="1.4"/>
-                  <path d="M9 6v4M9 12v.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
-                </svg>
+                <Info size={18} strokeWidth={1.4} />
               </div>
               <div>
                 <div className="pb-title">{pendingReservations.length} nouvelle{pendingReservations.length > 1 ? 's' : ''} demande{pendingReservations.length > 1 ? 's' : ''} à valider</div>
@@ -135,10 +131,10 @@ export default async function DashboardPage({ params }: { params: Promise<{ gite
         )}
 
         <div className="stats-row">
-          <div className="stat-card green"><div className="sc-top"><div className="sc-label">Réservations</div><div className="sc-icon g"><svg width="16" height="16" fill="none" viewBox="0 0 16 16"><rect x="2" y="3" width="12" height="10" rx="1.5" stroke="#4A7353" strokeWidth="1.2"/><path d="M2 6.5h12" stroke="#4A7353" strokeWidth="1.2"/></svg></div></div><div className="sc-num">{reservations.length}</div></div>
-          <div className="stat-card violet"><div className="sc-top"><div className="sc-label">Contrats générés</div><div className="sc-icon v"><svg width="16" height="16" fill="none" viewBox="0 0 16 16"><rect x="3" y="2" width="10" height="12" rx="1.5" stroke="#5B52B5" strokeWidth="1.2"/><path d="M6 6h4M6 9h3" stroke="#5B52B5" strokeWidth="1.2" strokeLinecap="round"/></svg></div></div><div className="sc-num">{contractsGenerated}</div></div>
-          <div className="stat-card green"><div className="sc-top"><div className="sc-label">Contrats signés</div><div className="sc-icon g"><svg width="16" height="16" fill="none" viewBox="0 0 16 16"><path d="M4 8l3 3 5-5" stroke="#4A7353" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/></svg></div></div><div className="sc-num">{contractsSigned}</div></div>
-          <div className="stat-card amber"><div className="sc-top"><div className="sc-label">En attente</div><div className="sc-icon a"><svg width="16" height="16" fill="none" viewBox="0 0 16 16"><circle cx="8" cy="8" r="5" stroke="#8C6A00" strokeWidth="1.2"/><path d="M8 5v3l2 1.5" stroke="#8C6A00" strokeWidth="1.2" strokeLinecap="round"/></svg></div></div><div className="sc-num">{pendingReservations.length}</div>{pendingReservations.length === 0 && <div className="sc-change up">Tout est à jour</div>}</div>
+          <div className="stat-card green"><div className="sc-top"><div className="sc-label">Réservations</div><div className="sc-icon g"><CalendarDays size={16} strokeWidth={1.4} color="#4A7353" /></div></div><div className="sc-num">{reservations.length}</div></div>
+          <div className="stat-card violet"><div className="sc-top"><div className="sc-label">Contrats générés</div><div className="sc-icon v"><FileText size={16} strokeWidth={1.4} color="#5B52B5" /></div></div><div className="sc-num">{contractsGenerated}</div></div>
+          <div className="stat-card green"><div className="sc-top"><div className="sc-label">Contrats signés</div><div className="sc-icon g"><Check size={16} strokeWidth={1.4} color="#4A7353" /></div></div><div className="sc-num">{contractsSigned}</div></div>
+          <div className="stat-card amber"><div className="sc-top"><div className="sc-label">En attente</div><div className="sc-icon a"><Clock size={16} strokeWidth={1.4} color="#8C6A00" /></div></div><div className="sc-num">{pendingReservations.length}</div>{pendingReservations.length === 0 && <div className="sc-change up">Tout est à jour</div>}</div>
         </div>
 
         <DashboardMain multiGites={multiGites ?? []} currentGiteId={giteId} />

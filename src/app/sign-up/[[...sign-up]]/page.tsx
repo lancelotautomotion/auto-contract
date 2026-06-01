@@ -1,6 +1,7 @@
 import { SignUp } from '@clerk/nextjs';
 import Link from 'next/link';
 import { Suspense } from 'react';
+import { ChevronLeft, Plus, FileCheck, CalendarDays, Clock } from 'lucide-react';
 
 import { Plus_Jakarta_Sans } from 'next/font/google';
 import '@/styles/pages.css';
@@ -57,9 +58,7 @@ export default function SignUpPage() {
           <div className="orb orb-2" />
           <div className="orb orb-3" />
           <Link href="/" className="auth-back">
-            <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
-              <path d="M9 11L5 7l4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
+            <ChevronLeft size={14} strokeWidth={1.5} />
             Retour à l&apos;accueil
           </Link>
           <div className="ab-content">
@@ -69,10 +68,10 @@ export default function SignUpPage() {
             <div className="ab-headline">Gérez votre gîte<br /><span className="g">sans la paperasse.</span></div>
             <div className="ab-desc">Contrats auto-générés, signature en ligne, suivi centralisé. Tout ce qu&apos;il faut pour louer l&apos;esprit libre.</div>
             <div className="ab-pills">
-              <div className="ab-pill"><div className="ab-pill-icon g"><svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M4 7h6M7 4v6" stroke="#689D71" strokeWidth="1.3" strokeLinecap="round"/></svg></div>Contrat généré en 3 minutes</div>
-              <div className="ab-pill"><div className="ab-pill-icon v"><svg width="14" height="14" fill="none" viewBox="0 0 14 14"><rect x="2.5" y="2" width="9" height="10" rx="1.5" stroke="#7F77DD" strokeWidth="1.2"/><path d="M5 6l1.5 1.5L10 4.5" stroke="#7F77DD" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/></svg></div>Signature électronique eIDAS</div>
-              <div className="ab-pill"><div className="ab-pill-icon g"><svg width="14" height="14" fill="none" viewBox="0 0 14 14"><rect x="1.5" y="3" width="11" height="9" rx="1.5" stroke="#689D71" strokeWidth="1.2"/><path d="M1.5 6h11" stroke="#689D71" strokeWidth="1.2"/></svg></div>Calendrier et suivi en temps réel</div>
-              <div className="ab-pill"><div className="ab-pill-icon v"><svg width="14" height="14" fill="none" viewBox="0 0 14 14"><circle cx="7" cy="7" r="5" stroke="#7F77DD" strokeWidth="1.2"/><path d="M7 4.5v2.5l2 1.5" stroke="#7F77DD" strokeWidth="1.2" strokeLinecap="round"/></svg></div>Essai gratuit 1 mois, sans CB</div>
+              <div className="ab-pill"><div className="ab-pill-icon g"><Plus size={14} strokeWidth={1.4} color="#689D71" /></div>Contrat généré en 3 minutes</div>
+              <div className="ab-pill"><div className="ab-pill-icon v"><FileCheck size={14} strokeWidth={1.4} color="#7F77DD" /></div>Signature électronique eIDAS</div>
+              <div className="ab-pill"><div className="ab-pill-icon g"><CalendarDays size={14} strokeWidth={1.4} color="#689D71" /></div>Calendrier et suivi en temps réel</div>
+              <div className="ab-pill"><div className="ab-pill-icon v"><Clock size={14} strokeWidth={1.4} color="#7F77DD" /></div>Essai gratuit 1 mois, sans CB</div>
             </div>
           </div>
           <div className="ab-footer">© 2026 Kordia · Fait avec soin en France</div>
@@ -81,9 +80,7 @@ export default function SignUpPage() {
         <div className="auth-form-panel">
           <div className="auth-form-inner">
             <Link href="/" className="auth-back-mobile">
-              <svg width="13" height="13" fill="none" viewBox="0 0 13 13">
-                <path d="M8.5 10L4.5 6.5l4-3.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
+              <ChevronLeft size={13} strokeWidth={1.5} />
               Retour à l&apos;accueil
             </Link>
             <img src="/logotype_KORDIA.svg" alt="Kordia" className="auth-form-logo" style={{ height: 36, width: 'auto', display: 'block' }} />

@@ -6,6 +6,7 @@ import Footer from "@/components/landing/Footer";
 import ScrollToTop from "@/components/landing/ScrollToTop";
 import FaqAccordion from "./FaqAccordion";
 import StepVisual from "./StepVisual";
+import { Check, ArrowRight } from "lucide-react";
 
 const steps = [
   {
@@ -117,9 +118,7 @@ export default function CommentCaMarche() {
                 <div className="ccm-flow-line" />
                 <div className="ccm-flow-item done">
                   <div className="ccm-flow-dot">
-                    <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
-                      <path d="M4 8l2.5 2.5L12 5.5" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
+                    <Check size={16} strokeWidth={1.8} color="#fff" />
                   </div>
                   <div className="ccm-flow-body">
                     <div className="ccm-flow-title">Contrat signé</div>
@@ -146,10 +145,9 @@ export default function CommentCaMarche() {
                   <ul className="ccm-step-points">
                     {step.points.map(pt => (
                       <li key={pt}>
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                          <circle cx="8" cy="8" r="8" fill="#EFEEF9" />
-                          <path d="M5 8l2.5 2.5L11 5.5" stroke="#7F77DD" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                        </svg>
+                        <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '16px', height: '16px', borderRadius: '50%', background: '#EFEEF9', flexShrink: 0 }}>
+                          <Check size={10} strokeWidth={1.6} color="#7F77DD" />
+                        </span>
                         <span>{pt}</span>
                       </li>
                     ))}
@@ -190,9 +188,7 @@ export default function CommentCaMarche() {
             <p>Configuration en 5 minutes. 30 jours d&apos;essai gratuits. Aucune carte bancaire requise.</p>
             <Link href="/sign-up" className="btn btn-violet btn-lg">
               Créer mon compte gratuitement
-              <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
-                <path d="M3 8h10m-4-4l4 4-4 4" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
+              <ArrowRight size={16} strokeWidth={1.5} color="#fff" />
             </Link>
           </div>
         </section>

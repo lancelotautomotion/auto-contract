@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { Sun, Clock, Utensils, Plus as PlusCircle, Trash2 } from "lucide-react";
 import MealFormModal, { TAG_OPTIONS, type MealDraft, type MealService, type MealTag } from "./[id]/restauration/MealFormModal";
 
 export type { MealService } from "./[id]/restauration/MealFormModal";
@@ -20,44 +21,22 @@ const SERVICE_SECTIONS: { value: MealService; label: string; icon: React.ReactNo
   {
     value: "BREAKFAST",
     label: "Petits-déjeuners",
-    icon: (
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
-        <circle cx="12" cy="12" r="4"/>
-        <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
-      </svg>
-    ),
+    icon: <Sun size={16} strokeWidth={1.7} />,
   },
   {
     value: "LUNCH",
     label: "Déjeuners",
-    icon: (
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
-        <circle cx="12" cy="12" r="9"/>
-        <path d="M12 7v5l3 2"/>
-      </svg>
-    ),
+    icon: <Clock size={16} strokeWidth={1.7} />,
   },
   {
     value: "DINNER",
     label: "Dîners / Table d'hôtes",
-    icon: (
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M3 11h18"/>
-        <path d="M5 11a7 7 0 0114 0"/>
-        <path d="M4 15h16"/>
-        <path d="M2 19h20"/>
-      </svg>
-    ),
+    icon: <Utensils size={16} strokeWidth={1.7} />,
   },
   {
     value: "OTHER",
     label: "Autres formules",
-    icon: (
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
-        <circle cx="12" cy="12" r="9"/>
-        <path d="M12 8v8M8 12h8"/>
-      </svg>
-    ),
+    icon: <PlusCircle size={16} strokeWidth={1.7} />,
   },
 ];
 
@@ -179,9 +158,7 @@ export default function MealsManager({
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "12px", marginBottom: "8px" }}>
         <div>
           <div className="form-card-title" style={{ marginBottom: "4px" }}>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M3 11h18M5 11a7 7 0 0114 0M4 15h16M2 19h20"/>
-            </svg>
+            <Utensils size={14} strokeWidth={1.7} />
             Mes formules ({meals.length})
           </div>
           <p style={{ fontSize: "13px", color: "var(--ink-lighter)", margin: 0 }}>
@@ -189,9 +166,7 @@ export default function MealsManager({
           </p>
         </div>
         <button type="button" className="btn btn-green" onClick={openNew}>
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#fff" strokeWidth="1.6" strokeLinecap="round">
-            <path d="M7 2v10M2 7h10"/>
-          </svg>
+          <PlusCircle size={14} strokeWidth={1.6} color="#fff" />
           Nouvelle formule
         </button>
       </div>
@@ -266,9 +241,7 @@ export default function MealsManager({
                           {meal.active ? "Actif" : "Inactif"}
                         </button>
                         <button type="button" className="option-del" onClick={() => removeMeal(meal.id)} title="Supprimer" aria-label="Supprimer">
-                          <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
-                            <path d="M2.5 3.5h9M5 3.5V2.5a1 1 0 011-1h2a1 1 0 011 1v1M3.5 3.5l.5 8.5a1 1 0 001 1h4a1 1 0 001-1l.5-8.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
-                          </svg>
+                          <Trash2 size={14} strokeWidth={1.4} />
                         </button>
                       </div>
                     </div>

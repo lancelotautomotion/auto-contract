@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react";
 import Image from "next/image";
+import { Check, CalendarDays, User, CheckSquare, MessageSquare, Moon, AlertTriangle, Info, ArrowRight, Shield, Lock, Clock } from "lucide-react";
 
 interface GiteOption { id: string; label: string; price: number; }
 interface IcalBlock { start: string; end: string; platform: string; label: string; }
@@ -89,18 +90,13 @@ export default function BookingForm({ giteSlug, giteName, giteCity, giteLogoUrl,
     return (
       <div className="book-success">
         <div className="book-success-check">
-          <svg width="32" height="32" fill="none" viewBox="0 0 32 32">
-            <path d="M8 16l5.5 5.5L24 10" stroke="#4A7353" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
+          <Check size={32} strokeWidth={2.5} color="#4A7353" />
         </div>
         <h2>Demande <span className="g">envoyée !</span></h2>
         <p className="book-success-lead">Votre demande a bien été reçue par le gérant de <strong>{giteName}</strong>.</p>
         {form.checkIn && form.checkOut && nights > 0 && (
           <div className="book-success-dates">
-            <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
-              <rect x="1.5" y="3" width="11" height="9" rx="1.5" stroke="#7F77DD" strokeWidth="1.2"/>
-              <path d="M1.5 6h11" stroke="#7F77DD" strokeWidth="1.2"/>
-            </svg>
+            <CalendarDays size={14} strokeWidth={1.4} color="#7F77DD" />
             {fmtDate(form.checkIn)} → {fmtDate(form.checkOut)}
             <span className="book-success-nights">· {nights} nuit{nights > 1 ? 's' : ''}</span>
           </div>
@@ -162,10 +158,7 @@ export default function BookingForm({ giteSlug, giteName, giteCity, giteLogoUrl,
           {/* Informations personnelles */}
           <div className="book-fs">
             <div className="book-fs-title">
-              <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
-                <circle cx="7" cy="5" r="3" stroke="currentColor" strokeWidth="1.2"/>
-                <path d="M2 13c0-2.8 2.2-5 5-5s5 2.2 5 5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
-              </svg>
+              <User size={14} strokeWidth={1.4} />
               Vos informations
             </div>
             <div className="book-fs-divider"/>
@@ -210,11 +203,7 @@ export default function BookingForm({ giteSlug, giteName, giteCity, giteLogoUrl,
           {/* Dates */}
           <div className="book-fs">
             <div className="book-fs-title">
-              <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
-                <rect x="1.5" y="3" width="11" height="9" rx="1.5" stroke="currentColor" strokeWidth="1.2"/>
-                <path d="M1.5 6h11" stroke="currentColor" strokeWidth="1.2"/>
-                <path d="M4.5 1.5v3M9.5 1.5v3" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
-              </svg>
+              <CalendarDays size={14} strokeWidth={1.4} />
               Dates souhaitées
             </div>
             <div className="book-fs-divider"/>
@@ -242,19 +231,13 @@ export default function BookingForm({ giteSlug, giteName, giteCity, giteLogoUrl,
               </div>
               {nights > 0 && (
                 <div className="book-nights-badge">
-                  <svg width="12" height="12" fill="none" viewBox="0 0 12 12">
-                    <path d="M9.5 7A5 5 0 0 1 5 1.5 4 4 0 1 0 9.5 7z" stroke="#7F77DD" strokeWidth="1.1"/>
-                  </svg>
+                  <Moon size={12} strokeWidth={1.4} color="#7F77DD" />
                   {nights} nuit{nights > 1 ? 's' : ''}
                 </div>
               )}
               {icalConflicts.length > 0 && (
                 <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', background: '#FEF3CD', border: '1px solid #F5C842', borderRadius: '10px', padding: '12px 14px', marginTop: '10px' }}>
-                  <svg width="16" height="16" fill="none" viewBox="0 0 16 16" style={{ flexShrink: 0, color: '#B7791F', marginTop: '1px' }}>
-                    <path d="M8 1.5L1 13.5h14L8 1.5z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round"/>
-                    <path d="M8 6.5v3.5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
-                    <circle cx="8" cy="11.5" r="0.7" fill="currentColor"/>
-                  </svg>
+                  <AlertTriangle size={16} strokeWidth={1.4} style={{ flexShrink: 0, color: '#B7791F', marginTop: '1px' }} />
                   <div>
                     <div style={{ fontSize: '12px', fontWeight: 700, color: '#7B4F0A', marginBottom: '2px' }}>Ces dates sont peut-être déjà prises</div>
                     <div style={{ fontSize: '11.5px', color: '#92610E', lineHeight: 1.5 }}>
@@ -279,10 +262,7 @@ export default function BookingForm({ giteSlug, giteName, giteCity, giteLogoUrl,
           {options.length > 0 && (
             <div className="book-fs">
               <div className="book-fs-title">
-                <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
-                  <rect x="1.5" y="3" width="11" height="8" rx="1.5" stroke="currentColor" strokeWidth="1.2"/>
-                  <path d="M5 7l1.5 1.5L10 5.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
+                <CheckSquare size={14} strokeWidth={1.4} />
                 Options souhaitées
               </div>
               <div className="book-fs-divider"/>
@@ -301,9 +281,7 @@ export default function BookingForm({ giteSlug, giteName, giteCity, giteLogoUrl,
                     >
                       <div className="book-opt-box">
                         {checked && (
-                          <svg width="10" height="10" fill="none" viewBox="0 0 10 10">
-                            <path d="M2 5l2 2 4-4" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                          </svg>
+                          <Check size={10} strokeWidth={1.5} color="#fff" />
                         )}
                       </div>
                       <span className="book-opt-name">{opt.label}</span>
@@ -320,9 +298,7 @@ export default function BookingForm({ giteSlug, giteName, giteCity, giteLogoUrl,
           {/* Message */}
           <div className="book-fs">
             <div className="book-fs-title">
-              <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
-                <path d="M7 1.5c-3 0-5.5 2-5.5 4.5 0 1.5.9 2.8 2.3 3.6L3 13l2.5-1.3c.5.1 1 .2 1.5.2 3 0 5.5-2 5.5-4.5S10 1.5 7 1.5z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
+              <MessageSquare size={14} strokeWidth={1.4} />
               Message (optionnel)
             </div>
             <div className="book-fs-divider"/>
@@ -377,9 +353,7 @@ export default function BookingForm({ giteSlug, giteName, giteCity, giteLogoUrl,
             </div>
             {nights > 0 && (
               <div className="book-recap-nights">
-                <svg width="12" height="12" fill="none" viewBox="0 0 12 12">
-                  <path d="M9.5 7A5 5 0 0 1 5 1.5 4 4 0 1 0 9.5 7z" stroke="#7F77DD" strokeWidth="1.1"/>
-                </svg>
+                <Moon size={12} strokeWidth={1.4} color="#7F77DD" />
                 {nights} nuit{nights > 1 ? 's' : ''}
               </div>
             )}
@@ -399,33 +373,21 @@ export default function BookingForm({ giteSlug, giteName, giteCity, giteLogoUrl,
 
             <div className="book-recap-sep"/>
             <div className="book-recap-notice">
-              <svg width="13" height="13" fill="none" viewBox="0 0 13 13">
-                <circle cx="6.5" cy="6.5" r="5" stroke="#7F77DD" strokeWidth="1.1"/>
-                <path d="M6.5 5.5v4" stroke="#7F77DD" strokeWidth="1.1" strokeLinecap="round"/>
-                <circle cx="6.5" cy="4" r=".65" fill="#7F77DD"/>
-              </svg>
+              <Info size={13} strokeWidth={1.4} color="#7F77DD" />
               Les tarifs sont confirmés par le gérant.
             </div>
 
             <div className="book-recap-trust">
               <div className="book-trust-item">
-                <svg width="11" height="11" fill="none" viewBox="0 0 11 11">
-                  <path d="M5.5 1L2 3v3c0 2.5 1.5 4 3.5 5 2-1 3.5-2.5 3.5-5V3L5.5 1z" stroke="#A3A3A0" strokeWidth="1"/>
-                </svg>
+                <Shield size={11} strokeWidth={1.4} color="#A3A3A0" />
                 Données sécurisées
               </div>
               <div className="book-trust-item">
-                <svg width="11" height="11" fill="none" viewBox="0 0 11 11">
-                  <rect x="1" y="1.5" width="9" height="8" rx="1.2" stroke="#A3A3A0" strokeWidth="1"/>
-                  <path d="M3.5 5.5l1.5 1.5L8 4.5" stroke="#A3A3A0" strokeWidth="1" strokeLinecap="round"/>
-                </svg>
+                <Check size={11} strokeWidth={1.4} color="#A3A3A0" />
                 Signature eIDAS
               </div>
               <div className="book-trust-item">
-                <svg width="11" height="11" fill="none" viewBox="0 0 11 11">
-                  <circle cx="5.5" cy="5.5" r="4" stroke="#A3A3A0" strokeWidth="1"/>
-                  <path d="M5.5 3v2.5l1.5 1" stroke="#A3A3A0" strokeWidth="1" strokeLinecap="round"/>
-                </svg>
+                <Clock size={11} strokeWidth={1.4} color="#A3A3A0" />
                 Réponse sous 24h
               </div>
             </div>
@@ -449,17 +411,12 @@ export default function BookingForm({ giteSlug, giteName, giteCity, giteLogoUrl,
             ) : (
               <>
                 Envoyer ma demande
-                <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
-                  <path d="M3 8h10m-4-4l4 4-4 4" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
+                <ArrowRight size={16} strokeWidth={1.5} color="#fff" />
               </>
             )}
           </button>
           <div className="book-submit-note">
-            <svg width="13" height="13" fill="none" viewBox="0 0 13 13">
-              <path d="M6.5 1.5L2 4v3.5c0 3 2 5 4.5 6 2.5-1 4.5-3 4.5-6V4L6.5 1.5z" stroke="#A3A3A0" strokeWidth="1" strokeLinecap="round"/>
-              <path d="M4.5 6.5l1.5 1.5L9 5" stroke="#A3A3A0" strokeWidth="1" strokeLinecap="round"/>
-            </svg>
+            <Lock size={13} strokeWidth={1.4} color="#A3A3A0" />
             Aucun paiement requis à cette étape.
           </div>
         </div>

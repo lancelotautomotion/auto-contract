@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { isValidSlug, slugError, suggestSlug } from "@/lib/slug";
+import { Home, Plus, AlertTriangle, Check, X, Trash2, ExternalLink, Copy, ChevronDown } from "lucide-react";
 
 interface Room {
   id: string;
@@ -188,16 +189,12 @@ export default function RoomsManager({
     <div className="form-card" style={{ maxWidth: "880px" }}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "12px", marginBottom: "6px" }}>
         <div className="form-card-title" style={{ marginBottom: 0 }}>
-          <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
-            <path d="M2 12V6.5L7 2l5 4.5V12a1 1 0 01-1 1H3a1 1 0 01-1-1z" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round"/>
-          </svg>
+          <Home size={14} strokeWidth={1.4} />
           Chambres ({rooms.length}/{MAX_ROOMS})
         </div>
         {!maxReached && (
           <button type="button" className="btn btn-green" onClick={() => { setShowAdd((s) => !s); setError(""); }}>
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#fff" strokeWidth="1.6" strokeLinecap="round">
-              <path d="M7 2v10M2 7h10"/>
-            </svg>
+            <Plus size={14} strokeWidth={1.6} color="#fff" />
             Nouvelle chambre
           </button>
         )}
@@ -208,11 +205,7 @@ export default function RoomsManager({
 
       {capacityExceeded && (
         <div style={{ display: "flex", gap: "10px", background: "#FEF3CD", border: "1px solid #F5C842", borderRadius: "10px", padding: "12px 14px", marginBottom: "14px", fontSize: "12.5px", color: "#7B4F0A" }}>
-          <svg width="16" height="16" fill="none" viewBox="0 0 16 16" style={{ flexShrink: 0, color: "#B7791F", marginTop: "1px" }}>
-            <path d="M8 1.5L14.5 13H1.5L8 1.5z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round"/>
-            <path d="M8 6v3.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
-            <circle cx="8" cy="11.5" r="0.75" fill="currentColor"/>
-          </svg>
+          <AlertTriangle size={16} strokeWidth={1.4} style={{ flexShrink: 0, color: "#B7791F", marginTop: "1px" }} />
           <span>La capacité totale ({totalCapacity} pers.) dépasse le plafond légal de {MAX_CAPACITY} personnes pour une maison d&apos;hôtes.</span>
         </div>
       )}
@@ -334,14 +327,14 @@ function SlugStateBadge({ state, reason }: { state: AvailState; reason: string }
   if (state === "available") {
     return (
       <span style={{ display: "inline-flex", alignItems: "center", gap: "4px", fontSize: "11.5px", fontWeight: 700, color: "#3E7A48" }}>
-        <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M2.5 7l3 3 6-6"/></svg>
+        <Check size={13} strokeWidth={1.6} />
         Disponible
       </span>
     );
   }
   return (
     <span style={{ display: "inline-flex", alignItems: "center", gap: "4px", fontSize: "11.5px", fontWeight: 700, color: "#b91c1c" }} title={reason}>
-      <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"><path d="M2.5 2.5l9 9M11.5 2.5l-9 9"/></svg>
+      <X size={13} strokeWidth={1.6} />
       {state === "invalid" ? "Invalide" : "Indisponible"}
     </span>
   );
@@ -471,9 +464,7 @@ function RoomCard({
           {room.active ? "Active" : "Inactive"}
         </button>
         <button type="button" className="option-del" onClick={onRemove} title="Supprimer" aria-label="Supprimer">
-          <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
-            <path d="M2.5 3.5h9M5 3.5V2.5a1 1 0 011-1h2a1 1 0 011 1v1M3.5 3.5l.5 8.5a1 1 0 001 1h4a1 1 0 001-1l.5-8.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
+          <Trash2 size={14} strokeWidth={1.4} />
         </button>
       </div>
 
@@ -525,10 +516,7 @@ function RoomCard({
                   background: "#F5F4F0", border: "1px solid #EFEDE8", borderRadius: "8px",
                   padding: "8px 10px", fontSize: "12.5px", color: "#5B52B5",
                 }}>
-                  <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.2" style={{ flexShrink: 0 }}>
-                    <rect x="1" y="1" width="12" height="12" rx="2.5"/>
-                    <path d="M4.5 7.5l3-3m0 0H5.5m2 0V6.5" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
+                  <ExternalLink size={13} strokeWidth={1.4} style={{ flexShrink: 0 }} />
                   <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{fullUrl}</span>
                 </div>
                 <button
@@ -539,12 +527,12 @@ function RoomCard({
                 >
                   {copied ? (
                     <>
-                      <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M2.5 7l3 3 6-6"/></svg>
+                      <Check size={13} strokeWidth={1.5} color="#fff" />
                       Copié !
                     </>
                   ) : (
                     <>
-                      <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.3"><rect x="1.5" y="4.5" width="8" height="8" rx="1.5"/><path d="M4.5 4.5V3A1.5 1.5 0 016 1.5h6A1.5 1.5 0 0113.5 3v6A1.5 1.5 0 0112 10.5h-1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                      <Copy size={13} strokeWidth={1.4} />
                       Copier
                     </>
                   )}
@@ -575,9 +563,7 @@ function RoomCard({
           }}
           aria-expanded={clausesOpen}
         >
-          <svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ transition: "transform .15s", transform: clausesOpen ? "rotate(0)" : "rotate(-90deg)" }}>
-            <path d="M3 4.5l3 3 3-3"/>
-          </svg>
+          <ChevronDown size={11} strokeWidth={1.5} style={{ transition: "transform .15s", transform: clausesOpen ? "rotate(0)" : "rotate(-90deg)" }} />
           Spécificités contractuelles
           {savedClauses.current && (
             <span style={{ fontSize: "10px", fontWeight: 700, color: "#9B3E5A", background: "#F8E0E7", padding: "2px 7px", borderRadius: "10px" }}>Définies</span>

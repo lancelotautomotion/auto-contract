@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { createPortal } from "react-dom";
+import { ChevronDown, Plus, Home, Check, Info, AlertTriangle, Star } from "lucide-react";
 
 interface Gite { id: string; name: string; }
 
@@ -11,22 +12,6 @@ interface Props {
   activeGiteId: string;
   isAdmin?: boolean;
   planActive?: boolean;
-}
-
-function ChevronDown() {
-  return (
-    <svg width="12" height="12" fill="none" viewBox="0 0 12 12">
-      <path d="M3 4.5l3 3 3-3" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
-    </svg>
-  );
-}
-
-function PlusIcon() {
-  return (
-    <svg width="13" height="13" fill="none" viewBox="0 0 13 13">
-      <path d="M6.5 2v9M2 6.5h9" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
-    </svg>
-  );
 }
 
 export default function GiteSelector({ gites, activeGiteId, isAdmin = false, planActive = false }: Props) {
@@ -89,14 +74,11 @@ export default function GiteSelector({ gites, activeGiteId, isAdmin = false, pla
           title={gites.length <= 1 ? "Ajouter un hébergement" : "Changer d'hébergement"}
         >
           <span className="gs-house-icon">
-            <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
-              <path d="M2 12V6.5L7 2l5 4.5V12a1 1 0 01-1 1H3a1 1 0 01-1-1z" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round"/>
-              <path d="M5 13V9h4v4" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round"/>
-            </svg>
+            <Home size={14} strokeWidth={1.4} />
           </span>
           <span className="gs-name">{activeGite?.name ?? '…'}</span>
           {gites.length > 1 && (
-            <span className="gs-chevron"><ChevronDown /></span>
+            <span className="gs-chevron"><ChevronDown size={12} strokeWidth={1.3} /></span>
           )}
         </button>
 
@@ -113,15 +95,13 @@ export default function GiteSelector({ gites, activeGiteId, isAdmin = false, pla
                 <span className="gs-opt-dot" />
                 <span className="gs-opt-name">{g.name}</span>
                 {g.id === activeGiteId && (
-                  <svg width="12" height="12" fill="none" viewBox="0 0 12 12" style={{ marginLeft: 'auto', color: 'var(--violet)', flexShrink: 0 }}>
-                    <path d="M2.5 6l2.5 2.5 4.5-4.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
+                  <Check size={12} strokeWidth={1.4} style={{ marginLeft: 'auto', color: 'var(--violet)', flexShrink: 0 }} />
                 )}
               </button>
             ))}
             <div className="gs-separator" />
             <button className="gs-add-btn" onClick={handleAddClick}>
-              <PlusIcon />
+              <Plus size={13} strokeWidth={1.4} />
               Ajouter un hébergement
             </button>
           </div>
@@ -129,7 +109,7 @@ export default function GiteSelector({ gites, activeGiteId, isAdmin = false, pla
 
         {gites.length <= 1 && (
           <button className="gs-add-inline" onClick={handleAddClick} title="Ajouter un hébergement">
-            <PlusIcon />
+            <Plus size={13} strokeWidth={1.4} />
           </button>
         )}
       </div>
@@ -241,10 +221,7 @@ function AddGiteModal({
             background: 'rgba(127,119,221,.08)', border: '1.5px solid rgba(127,119,221,.3)',
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
-              <svg width="16" height="16" fill="none" viewBox="0 0 16 16" style={{ flexShrink: 0 }}>
-                <circle cx="8" cy="8" r="6.5" stroke="#5B52B5" strokeWidth="1.3"/>
-                <path d="M8 7.5v3M8 5h.01" stroke="#5B52B5" strokeWidth="1.4" strokeLinecap="round"/>
-              </svg>
+              <Info size={16} strokeWidth={1.4} color="#5B52B5" style={{ flexShrink: 0 }} />
               <span style={{ fontSize: '13px', fontWeight: 800, color: '#5B52B5' }}>
                 Votre tarif évolue
               </span>
@@ -358,9 +335,7 @@ function UpgradeModal({ onClose }: { onClose: () => void }) {
         textAlign: 'center',
       }}>
         <div style={{ width: '56px', height: '56px', borderRadius: '16px', background: '#F0EFFC', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
-          <svg width="28" height="28" fill="none" viewBox="0 0 28 28">
-            <path d="M14 4l2.5 7.5H24l-6.5 4.5 2.5 7.5L14 19l-6 4.5 2.5-7.5L4 11.5h7.5L14 4z" stroke="#7F77DD" strokeWidth="1.6" strokeLinejoin="round"/>
-          </svg>
+          <Star size={28} strokeWidth={1.6} color="#7F77DD" />
         </div>
         <h2 style={{ fontSize: '20px', fontWeight: 800, color: '#2C2C2A', letterSpacing: '-0.02em', marginBottom: '10px' }}>
           Gérez jusqu&apos;à 5 hébergements
@@ -418,10 +393,7 @@ function MaxReachedModal({ onClose }: { onClose: () => void }) {
         textAlign: 'center',
       }}>
         <div style={{ width: '56px', height: '56px', borderRadius: '16px', background: '#F0FDF4', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
-          <svg width="28" height="28" fill="none" viewBox="0 0 28 28">
-            <path d="M14 3.5L3.5 22.5h21L14 3.5z" stroke="#689D71" strokeWidth="1.6" strokeLinejoin="round"/>
-            <path d="M14 11v6M14 19.5h.01" stroke="#689D71" strokeWidth="1.8" strokeLinecap="round"/>
-          </svg>
+          <AlertTriangle size={28} strokeWidth={1.6} color="#689D71" />
         </div>
         <h2 style={{ fontSize: '20px', fontWeight: 800, color: '#2C2C2A', letterSpacing: '-0.02em', marginBottom: '10px' }}>
           Limite de 5 hébergements atteinte

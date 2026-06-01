@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { Trash2, AlertTriangle } from "lucide-react";
 
 export interface AdminUser {
   id: string;
@@ -125,9 +126,7 @@ export default function AdminUsersManager({ initialUsers }: { initialUsers: Admi
                 <td className="at-date">{fmtDate(u.createdAt)}</td>
                 <td>
                   <button className="mgmt-delete-btn" onClick={() => openModal(u)}>
-                    <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
-                      <path d="M2 4h10M5 4V2.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 .5.5V4M5.5 6.5v4M8.5 6.5v4M3 4l.7 7a1 1 0 0 0 1 .9h4.6a1 1 0 0 0 1-.9L11 4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
+                    <Trash2 size={14} strokeWidth={1.4} />
                     Supprimer
                   </button>
                 </td>
@@ -142,10 +141,7 @@ export default function AdminUsersManager({ initialUsers }: { initialUsers: Admi
         <div className="mgmt-overlay" onClick={closeModal}>
           <div className="mgmt-modal" onClick={e => e.stopPropagation()}>
             <div className="mgmt-modal-icon">
-              <svg width="24" height="24" fill="none" viewBox="0 0 24 24">
-                <path d="M12 9v4M12 17h.01" stroke="#DC2626" strokeWidth="2" strokeLinecap="round"/>
-                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" stroke="#DC2626" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
+              <AlertTriangle size={24} strokeWidth={2} color="#DC2626" />
             </div>
             <h2 className="mgmt-modal-title">Supprimer ce compte</h2>
             <p className="mgmt-modal-desc">

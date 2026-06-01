@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { Check, AlertCircle, Send, Lock } from "lucide-react";
 
 type FormState = {
   prenom: string;
@@ -74,9 +75,7 @@ export default function ContactForm() {
       <div className="ct-form-wrap">
         <div className="ct-success">
           <div className="ct-success-icon">
-            <svg width="28" height="28" fill="none" viewBox="0 0 28 28">
-              <path d="M6 14l5 5L22 9" stroke="#fff" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
+            <Check size={28} strokeWidth={2.2} color="#fff" />
           </div>
           <h3>Message envoyé&nbsp;!</h3>
           <p>
@@ -176,11 +175,7 @@ export default function ContactForm() {
 
         {error && (
           <div className="ct-error">
-            <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
-              <circle cx="8" cy="8" r="6.5" stroke="currentColor" strokeWidth="1.4" />
-              <path d="M8 5v3.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
-              <circle cx="8" cy="11" r="0.9" fill="currentColor" />
-            </svg>
+            <AlertCircle size={16} strokeWidth={1.4} />
             <span>{error}</span>
           </div>
         )}
@@ -188,17 +183,12 @@ export default function ContactForm() {
         <button type="submit" className="btn btn-violet btn-lg ct-submit" disabled={loading}>
           {loading ? "Envoi en cours…" : "Envoyer le message"}
           {!loading && (
-            <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
-              <path d="M2 8l12-5-4 13-3-6-5-2z" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
+            <Send size={16} strokeWidth={1.5} color="#fff" />
           )}
         </button>
 
         <div className="ct-note">
-          <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
-            <rect x="2.5" y="5" width="9" height="7" rx="1.2" stroke="currentColor" strokeWidth="1.2" />
-            <path d="M4 5V3.5a3 3 0 016 0V5" stroke="currentColor" strokeWidth="1.2" />
-          </svg>
+          <Lock size={14} strokeWidth={1.2} />
           Vos données ne sont jamais partagées avec des tiers.
         </div>
       </form>

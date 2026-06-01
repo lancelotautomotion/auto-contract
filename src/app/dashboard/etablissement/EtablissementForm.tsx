@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useCallback, useEffect, useMemo } from "react";
+import { CheckCircle, Home, Clock, Link as LinkIcon, Check, Copy, ExternalLink, AlertTriangle, AlertCircle, FileText, Image, Eye, ArrowRight, Plus, Trash2, X, Upload } from "lucide-react";
 import { DEFAULT_CONTRACT_TEMPLATE, DEFAULT_GUESTHOUSE_CONTRACT_TEMPLATE, mergeTemplates } from "@/lib/defaultContractTemplate";
 import {
   parseStored, serializeLines, classifyLine, splitRunsAtPipe,
@@ -616,7 +617,7 @@ export default function EtablissementForm({ gite, guesthouse }: { gite?: GiteDat
       {extra}
       <button type="submit" disabled={loading} className="btn btn-violet btn-lg">
         {loading ? 'Enregistrement...' : 'Sauvegarder'}
-        {!loading && <svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M3 7h8m-3-3l3 3-3 3" stroke="#fff" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/></svg>}
+        {!loading && <ArrowRight size={14} strokeWidth={1.4} />}
       </button>
       {saved && <span style={{ fontSize: '12px', color: 'var(--green)', fontWeight: 600 }}>✓ Sauvegardé</span>}
     </div>
@@ -641,10 +642,7 @@ export default function EtablissementForm({ gite, guesthouse }: { gite?: GiteDat
           {mode === 'gite' && <div className="booking-card">
             <div className="booking-card-header">
               <div className="booking-card-icon">
-                <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
-                  <path d="M8 1.5A6.5 6.5 0 1 0 14.5 8 6.507 6.507 0 0 0 8 1.5z" stroke="#7F77DD" strokeWidth="1.3"/>
-                  <path d="M5.5 8.5l2 2 3.5-4" stroke="#7F77DD" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
+                <CheckCircle size={16} strokeWidth={1.4} color="#7F77DD" />
               </div>
               <div>
                 <div className="booking-card-title">Formulaire de réservation client</div>
@@ -657,48 +655,45 @@ export default function EtablissementForm({ gite, guesthouse }: { gite?: GiteDat
             {bookingUrl ? (
               <div className="booking-card-link">
                 <div className="booking-card-url">
-                  <svg width="12" height="12" fill="none" viewBox="0 0 12 12" style={{ flexShrink: 0, color: '#7F77DD' }}>
-                    <path d="M4.5 7.5l3-3m0 0H5.5m2 0V6.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
-                    <rect x="1" y="1" width="10" height="10" rx="2" stroke="currentColor" strokeWidth="1.1"/>
-                  </svg>
+                  <LinkIcon size={12} strokeWidth={1.4} style={{ flexShrink: 0, color: '#7F77DD' }} />
                   <span>{bookingUrl}</span>
                 </div>
                 <div className="booking-card-actions">
                   <button type="button" className="lb-btn ghost" onClick={handleCopy} disabled={slugPendingSave || !savedSlug}>
                     {copied ? (
                       <>
-                        <svg width="12" height="12" fill="none" viewBox="0 0 12 12"><path d="M2 6l3 3 5-5" stroke="#689D71" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                        <Check size={12} strokeWidth={1.4} color="#689D71" />
                         Copié !
                       </>
                     ) : (
                       <>
-                        <svg width="12" height="12" fill="none" viewBox="0 0 12 12"><rect x="1" y="4" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.1"/><path d="M4 4V2.5A1.5 1.5 0 015.5 1h5A1.5 1.5 0 0112 2.5v5A1.5 1.5 0 0110.5 9H9" stroke="currentColor" strokeWidth="1.1"/></svg>
+                        <Copy size={12} strokeWidth={1.4} />
                         Copier le lien
                       </>
                     )}
                   </button>
                   {slugPendingSave || !savedSlug ? (
                     <span className="lb-btn primary" style={{ opacity: 0.5, cursor: 'not-allowed' }} aria-disabled="true">
-                      <svg width="12" height="12" fill="none" viewBox="0 0 12 12"><path d="M4 8L8 4m0 0H5m3 0v3" stroke="#fff" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                      <ExternalLink size={12} strokeWidth={1.4} color="#fff" />
                       Voir la page
                     </span>
                   ) : (
                     <a href={`/book/${savedSlug}`} target="_blank" rel="noreferrer" className="lb-btn primary">
-                      <svg width="12" height="12" fill="none" viewBox="0 0 12 12"><path d="M4 8L8 4m0 0H5m3 0v3" stroke="#fff" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                      <ExternalLink size={12} strokeWidth={1.4} color="#fff" />
                       Voir la page
                     </a>
                   )}
                 </div>
                 {slugPendingSave && (
                   <div className="booking-card-pending">
-                    <svg width="12" height="12" fill="none" viewBox="0 0 12 12"><circle cx="6" cy="6" r="5" stroke="#D97706" strokeWidth="1.2"/><path d="M6 3.5V6l1.5 1" stroke="#D97706" strokeWidth="1.2" strokeLinecap="round"/></svg>
+                    <Clock size={12} strokeWidth={1.4} color="#D97706" />
                     Sauvegardez pour activer ce nouveau lien.
                   </div>
                 )}
               </div>
             ) : (
               <div className="booking-card-empty">
-                <svg width="14" height="14" fill="none" viewBox="0 0 14 14"><circle cx="7" cy="7" r="5.5" stroke="#A3A3A0" strokeWidth="1.2"/><path d="M7 5v2.5l1.5 1" stroke="#A3A3A0" strokeWidth="1.2" strokeLinecap="round"/></svg>
+                <Clock size={14} strokeWidth={1.4} color="#A3A3A0" />
                 Définissez un identifiant ci-dessous pour générer votre lien de réservation.
               </div>
             )}
@@ -706,7 +701,7 @@ export default function EtablissementForm({ gite, guesthouse }: { gite?: GiteDat
 
           <div className="form-card">
             <div className="form-card-title">
-              <svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M3 11V7l4-4 4 4v4a1 1 0 01-1 1H4a1 1 0 01-1-1z" stroke="currentColor" strokeWidth="1.2"/><path d="M6 12v-3h2v3" stroke="currentColor" strokeWidth="1.2"/></svg>
+              <Home size={14} strokeWidth={1.4} />
               {mode === 'guesthouse' ? "Votre maison d'hôtes" : "Votre gîte"}
             </div>
             <div className="form-group">
@@ -758,7 +753,7 @@ export default function EtablissementForm({ gite, guesthouse }: { gite?: GiteDat
 
           <div className="form-card">
             <div className="form-card-title">
-              <svg width="14" height="14" fill="none" viewBox="0 0 14 14"><circle cx="7" cy="7" r="5.5" stroke="currentColor" strokeWidth="1.2"/><path d="M7 4v3l2 1.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/></svg>
+              <Clock size={14} strokeWidth={1.4} />
               Tarifs par défaut
             </div>
             {mode === 'gite' ? (
@@ -806,7 +801,7 @@ export default function EtablissementForm({ gite, guesthouse }: { gite?: GiteDat
         <div style={{ maxWidth: '860px' }}>
           <div className="form-card">
             <div className="form-card-title">
-              <svg width="14" height="14" fill="none" viewBox="0 0 14 14"><rect x="1.5" y="3" width="11" height="8" rx="1.5" stroke="currentColor" strokeWidth="1.2"/><path d="M5 7l1.5 1.5L10 5.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+              <CheckCircle size={14} strokeWidth={1.4} />
               Options proposées aux clients
             </div>
             <p style={{ fontSize: '13px', color: 'var(--ink-lighter)', marginBottom: '16px' }}>Ces options seront disponibles sur votre page de réservation client.</p>
@@ -819,14 +814,12 @@ export default function EtablissementForm({ gite, guesthouse }: { gite?: GiteDat
                 <input type="number" className="option-price" min="0" step="0.01" placeholder="Gratuit" value={opt.price === 0 ? '' : String(opt.price)} onChange={e => updateOption(i, 'price', e.target.value)} />
                 <span className="option-unit">€</span>
                 <button type="button" className="option-del" onClick={() => removeOption(i)} title="Supprimer" aria-label="Supprimer">
-                  <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
-                    <path d="M2.5 3.5h9M5 3.5V2.5a1 1 0 011-1h2a1 1 0 011 1v1M3.5 3.5l.5 8.5a1 1 0 001 1h4a1 1 0 001-1l.5-8.5M5.5 6v4M8.5 6v4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
+                  <Trash2 size={14} strokeWidth={1.4} />
                 </button>
               </div>
             ))}
             <button type="button" className="add-btn" onClick={addOption}>
-              <svg width="12" height="12" fill="none" viewBox="0 0 12 12"><path d="M6 1v10M1 6h10" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/></svg>
+              <Plus size={12} strokeWidth={1.4} />
               Ajouter une option
             </button>
           </div>
@@ -845,11 +838,7 @@ export default function EtablissementForm({ gite, guesthouse }: { gite?: GiteDat
               {/* Alerte balises obligatoires manquantes */}
               {missingMandatoryTags.length > 0 && (
                 <div className="contract-alert">
-                  <svg width="16" height="16" fill="none" viewBox="0 0 16 16" style={{ flexShrink: 0 }}>
-                    <path d="M8 1.5L14.5 13H1.5L8 1.5z" stroke="#B45309" strokeWidth="1.3" strokeLinejoin="round"/>
-                    <path d="M8 6v3.5" stroke="#B45309" strokeWidth="1.4" strokeLinecap="round"/>
-                    <circle cx="8" cy="11.5" r="0.75" fill="#B45309"/>
-                  </svg>
+                  <AlertTriangle size={16} strokeWidth={1.4} color="#B45309" style={{ flexShrink: 0 }} />
                   <div>
                     <strong>Balises obligatoires manquantes dans les Conditions Générales&nbsp;:</strong>
                     <span className="contract-alert-tags">
@@ -865,7 +854,7 @@ export default function EtablissementForm({ gite, guesthouse }: { gite?: GiteDat
                 {/* Variables panel */}
                 <div className="form-card variables-panel">
                   <div className="form-card-title">
-                    <svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M4 2h6a1 1 0 011 1v8a1 1 0 01-1 1H4a1 1 0 01-1-1V3a1 1 0 011-1z" stroke="currentColor" strokeWidth="1.2"/><path d="M5 5h4M5 7h3M5 9h2" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/></svg>
+                    <FileText size={14} strokeWidth={1.4} />
                     Balises dynamiques
                     <span className="contract-zone-hint">→ zone active : <strong>{activeEditorZone === 'general' ? 'Conditions Générales' : 'Règlement Intérieur'}</strong></span>
                   </div>
@@ -888,9 +877,7 @@ export default function EtablissementForm({ gite, guesthouse }: { gite?: GiteDat
                                 onClick={() => insertVariable(varName)}
                               >
                                 {isMissing && (
-                                  <svg width="9" height="9" fill="none" viewBox="0 0 9 9" style={{ marginRight: '3px', flexShrink: 0 }}>
-                                    <path d="M4.5 1L8 7.5H1L4.5 1z" stroke="currentColor" strokeWidth="1.1" strokeLinejoin="round"/>
-                                  </svg>
+                                                  <AlertTriangle size={9} strokeWidth={1.4} style={{ marginRight: '3px', flexShrink: 0 }} />
                                 )}
                                 {label}
                               </button>
@@ -910,7 +897,7 @@ export default function EtablissementForm({ gite, guesthouse }: { gite?: GiteDat
 
                 {/* CTA Aperçu — dans la colonne gauche */}
                 <button type="button" className="contract-preview-btn" onClick={() => setShowMobilePreview(true)}>
-                  <svg width="15" height="15" fill="none" viewBox="0 0 15 15"><path d="M1 7.5S3.5 3 7.5 3s6.5 4.5 6.5 4.5-2.5 4.5-6.5 4.5S1 7.5 1 7.5z" stroke="currentColor" strokeWidth="1.2"/><circle cx="7.5" cy="7.5" r="2" stroke="currentColor" strokeWidth="1.2"/></svg>
+                  <Eye size={15} strokeWidth={1.4} />
                   Aperçu du contrat
                 </button>
 
@@ -918,7 +905,7 @@ export default function EtablissementForm({ gite, guesthouse }: { gite?: GiteDat
                 <div className="contract-actions">
                   <button type="submit" disabled={loading} className="btn btn-violet contract-action-btn">
                     {loading ? 'Enregistrement...' : 'Sauvegarder'}
-                    {!loading && <svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M3 7h8M8 4l3 3-3 3" stroke="#fff" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/></svg>}
+                    {!loading && <ArrowRight size={14} strokeWidth={1.4} />}
                   </button>
                   {saved && <span style={{ fontSize: '12px', color: 'var(--green)', fontWeight: 600 }}>✓ Sauvegardé</span>}
                 </div>
@@ -1022,7 +1009,7 @@ export default function EtablissementForm({ gite, guesthouse }: { gite?: GiteDat
                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                     <span className="cp-sub">données d&apos;exemple — les deux zones fusionnées</span>
                     <button type="button" className="mobile-preview-close" onClick={() => setShowMobilePreview(false)} aria-label="Fermer l'aperçu">
-                      <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><path d="M3 3l10 10M13 3L3 13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>
+                      <X size={16} strokeWidth={1.5} />
                     </button>
                   </div>
                 </div>
@@ -1040,7 +1027,7 @@ export default function EtablissementForm({ gite, guesthouse }: { gite?: GiteDat
         <div style={{ maxWidth: '860px' }}>
           <div className="form-card">
             <div className="form-card-title">
-              <svg width="14" height="14" fill="none" viewBox="0 0 14 14"><rect x="1.5" y="2" width="11" height="10" rx="1.5" stroke="currentColor" strokeWidth="1.2"/><circle cx="5" cy="6" r="1.5" stroke="currentColor" strokeWidth="1.2"/><path d="M1.5 10l3-3 2 2 2.5-3L11.5 10" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+              <Image size={14} strokeWidth={1.4} />
               {mode === 'guesthouse' ? "Logo de l'établissement" : "Logo du gîte"}
             </div>
             <p style={{ fontSize: '13px', color: 'var(--ink-lighter)', marginBottom: '16px' }}>
@@ -1065,7 +1052,7 @@ export default function EtablissementForm({ gite, guesthouse }: { gite?: GiteDat
             ) : (
               <div className="upload-zone" onClick={() => fileInputRef.current?.click()}>
                 <div className="upload-zone-icon">
-                  <svg width="24" height="24" fill="none" viewBox="0 0 24 24"><path d="M12 16V8m0 0l-3 3m3-3l3 3" stroke="#A3A3A0" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/><path d="M20 16v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2" stroke="#A3A3A0" strokeWidth="1.5" strokeLinecap="round"/></svg>
+                  <Upload size={24} strokeWidth={1.5} color="#A3A3A0" />
                 </div>
                 <div className="upload-zone-text">{logoLoading ? 'Chargement...' : 'Cliquez ou glissez votre logo ici'}</div>
                 <div className="upload-zone-hint">PNG, JPG ou WEBP — 2 Mo max</div>

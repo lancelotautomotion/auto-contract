@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { CalendarDays, RefreshCw, Trash2 } from "lucide-react";
 
 const PLATFORMS: { value: string; label: string; hint: string }[] = [
   { value: "airbnb",          label: "Airbnb",            hint: "Calendrier → Exporter → Copier le lien iCal" },
@@ -159,11 +160,7 @@ export default function IcalTab({ giteId, guesthouseId, rooms = [] }: { giteId?:
     <div style={{ maxWidth: '640px' }}>
       <div style={s.card}>
         <div style={s.title}>
-          <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
-            <rect x="1" y="2" width="12" height="10" rx="1.5" stroke="currentColor" strokeWidth="1.3"/>
-            <path d="M1 5h12" stroke="currentColor" strokeWidth="1.3"/>
-            <path d="M4 1v2M10 1v2" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
-          </svg>
+          <CalendarDays size={14} strokeWidth={1.4} />
           Synchronisation iCal
         </div>
 
@@ -190,11 +187,7 @@ export default function IcalTab({ giteId, guesthouseId, rooms = [] }: { giteId?:
                   background: PLATFORM_COLORS[feed.platform] ?? '#7F77DD',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                 }}>
-                  <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
-                    <rect x="1" y="2" width="12" height="10" rx="1.5" stroke="#fff" strokeWidth="1.2"/>
-                    <path d="M1 5h12" stroke="#fff" strokeWidth="1.2"/>
-                    <path d="M4 1v2M10 1v2" stroke="#fff" strokeWidth="1.2" strokeLinecap="round"/>
-                  </svg>
+                  <CalendarDays size={14} strokeWidth={1.4} color="#fff" />
                 </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ fontSize: '13px', fontWeight: 600, color: '#2C2C2A' }}>
@@ -208,17 +201,12 @@ export default function IcalTab({ giteId, guesthouseId, rooms = [] }: { giteId?:
                 </div>
                 <button type="button" onClick={() => handleSync(feed.id)} disabled={syncing === feed.id}
                   style={{ background: '#fff', border: '1px solid #D9D7D0', borderRadius: '7px', padding: '5px 10px', cursor: 'pointer', fontSize: '11px', color: '#71716E', display: 'flex', alignItems: 'center', gap: '4px', fontFamily: 'inherit' }}>
-                  <svg width="12" height="12" fill="none" viewBox="0 0 12 12" style={{ animation: syncing === feed.id ? 'ical-spin 1s linear infinite' : 'none' }}>
-                    <path d="M10.5 6A4.5 4.5 0 1 1 6 1.5c1.5 0 2.8.72 3.65 1.85" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
-                    <path d="M9.5 1.5v2h-2" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
+                  <RefreshCw size={12} strokeWidth={1.4} style={{ animation: syncing === feed.id ? 'ical-spin 1s linear infinite' : 'none' }} />
                   {syncing === feed.id ? 'Sync…' : 'Sync'}
                 </button>
                 <button type="button" onClick={() => handleDelete(feed.id)} disabled={deleting === feed.id}
                   style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#A3A3A0', padding: '4px', lineHeight: 1 }}>
-                  <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
-                    <path d="M2 3.5h10M5.5 3.5V2.5h3v1M5 3.5l.5 8M9 3.5l-.5 8" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
+                  <Trash2 size={14} strokeWidth={1.4} />
                 </button>
               </div>
             ))}

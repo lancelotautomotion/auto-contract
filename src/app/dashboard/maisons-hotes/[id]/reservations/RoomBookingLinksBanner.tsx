@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { Link2, ChevronDown, AlertTriangle, Check, Copy, ExternalLink } from "lucide-react";
 
 interface RoomLink {
   id: string;
@@ -78,11 +79,7 @@ export default function RoomBookingLinksBanner({ guesthouseId, guesthouseSlug, r
             width: "28px", height: "28px", borderRadius: "8px",
             background: "#EFEDFC", color: "#5B52B5", flexShrink: 0,
           }}>
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M5.5 8.5L4 10a2.5 2.5 0 11-3.5-3.5L2 5"/>
-              <path d="M8.5 5.5L10 4a2.5 2.5 0 113.5 3.5L12 9"/>
-              <path d="M5 9l4-4"/>
-            </svg>
+            <Link2 size={14} strokeWidth={1.4} />
           </span>
           <div>
             <div style={{ fontSize: "13px", fontWeight: 700, color: "var(--ink)" }}>
@@ -93,13 +90,7 @@ export default function RoomBookingLinksBanner({ guesthouseId, guesthouseSlug, r
             </div>
           </div>
         </div>
-        <svg
-          width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"
-          strokeLinecap="round" strokeLinejoin="round"
-          style={{ color: "var(--ink-lighter)", transition: "transform .15s", transform: collapsed ? "rotate(-90deg)" : "rotate(0)" }}
-        >
-          <path d="M4 6l4 4 4-4"/>
-        </svg>
+        <ChevronDown size={16} strokeWidth={1.5} style={{ color: "var(--ink-lighter)", transition: "transform .15s", transform: collapsed ? "rotate(-90deg)" : "rotate(0)" }} />
       </button>
 
       {!collapsed && (
@@ -111,11 +102,7 @@ export default function RoomBookingLinksBanner({ guesthouseId, guesthouseSlug, r
               borderRadius: "10px", padding: "10px 12px", marginBottom: "10px",
               display: "flex", gap: "10px", alignItems: "flex-start",
             }}>
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#B7791F" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginTop: "1px" }}>
-                <path d="M7 1.5L13 12.5H1L7 1.5z"/>
-                <path d="M7 6v3.5"/>
-                <circle cx="7" cy="11" r="0.5" fill="#B7791F"/>
-              </svg>
+              <AlertTriangle size={14} strokeWidth={1.5} style={{ flexShrink: 0, marginTop: "1px", color: "#B7791F" }} />
               <div>
                 Définissez le préfixe d&apos;URL de votre établissement pour activer les liens de réservation.{" "}
                 <Link href={`/dashboard/maisons-hotes/${guesthouseId}/hebergement`} style={{ color: "#5B52B5", fontWeight: 700, textDecoration: "none" }}>
@@ -175,12 +162,12 @@ export default function RoomBookingLinksBanner({ guesthouseId, guesthouseSlug, r
                       >
                         {copied ? (
                           <>
-                            <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="#fff" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M2.5 7l3 3 6-6"/></svg>
+                            <Check size={13} strokeWidth={1.6} color="#fff" />
                             Copié !
                           </>
                         ) : (
                           <>
-                            <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="#fff" strokeWidth="1.4"><rect x="1.5" y="4.5" width="8" height="8" rx="1.5"/><path d="M4.5 4.5V3A1.5 1.5 0 016 1.5h6A1.5 1.5 0 0113.5 3v6A1.5 1.5 0 0112 10.5h-1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                            <Copy size={13} strokeWidth={1.4} color="#fff" />
                             Copier
                           </>
                         )}
@@ -191,11 +178,7 @@ export default function RoomBookingLinksBanner({ guesthouseId, guesthouseSlug, r
                         style={{ fontSize: "12px", padding: "7px 12px", flexShrink: 0 }}
                         title="Ouvrir dans un nouvel onglet"
                       >
-                        <svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M6 3H3.5A1.5 1.5 0 002 4.5v6A1.5 1.5 0 003.5 12h6A1.5 1.5 0 0011 10.5V8"/>
-                          <path d="M8.5 2H12v3.5"/>
-                          <path d="M6 8l6-6"/>
-                        </svg>
+                        <ExternalLink size={12} strokeWidth={1.4} />
                         Ouvrir
                       </a>
                     </>

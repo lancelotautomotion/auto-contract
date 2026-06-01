@@ -2,6 +2,7 @@
 
 import * as Sentry from "@sentry/nextjs";
 import { useEffect } from "react";
+import { AlertCircle } from "lucide-react";
 
 export default function GlobalError({
   error,
@@ -19,10 +20,7 @@ export default function GlobalError({
       <body style={{ margin: 0, fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif", background: "#F3F2EE", display: "flex", alignItems: "center", justifyContent: "center", minHeight: "100vh" }}>
         <div style={{ background: "#fff", border: "1px solid #E8E6E1", borderRadius: "16px", padding: "40px 48px", maxWidth: "420px", width: "100%", textAlign: "center" }}>
           <div style={{ width: "48px", height: "48px", borderRadius: "12px", background: "#FEE2E2", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 20px" }}>
-            <svg width="22" height="22" fill="none" viewBox="0 0 22 22">
-              <circle cx="11" cy="11" r="8.5" stroke="#EF4444" strokeWidth="1.4"/>
-              <path d="M11 7v5M11 14.5v.5" stroke="#EF4444" strokeWidth="1.6" strokeLinecap="round"/>
-            </svg>
+            <AlertCircle size={22} strokeWidth={1.5} color="#EF4444" />
           </div>
           <div style={{ fontSize: "17px", fontWeight: "700", color: "#2C2C2A", marginBottom: "8px" }}>
             Une erreur est survenue

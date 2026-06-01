@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { Menu, X } from "lucide-react";
 
 export default function Nav() {
   const [open, setOpen] = useState(false);
@@ -47,9 +48,7 @@ export default function Nav() {
             aria-expanded={open}
             onClick={() => setOpen(true)}
           >
-            <svg width="20" height="20" fill="none" viewBox="0 0 20 20">
-              <path d="M4 6h12M4 10h12M4 14h12" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" />
-            </svg>
+            <Menu size={20} strokeWidth={1.8} color="#fff" />
           </button>
         </div>
       </nav>
@@ -75,9 +74,7 @@ export default function Nav() {
             aria-label="Fermer le menu"
             onClick={close}
           >
-            <svg width="18" height="18" fill="none" viewBox="0 0 18 18">
-              <path d="M4 4l10 10M14 4L4 14" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-            </svg>
+            <X size={18} strokeWidth={1.6} />
           </button>
         </div>
 

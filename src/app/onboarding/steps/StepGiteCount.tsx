@@ -1,3 +1,5 @@
+import { Check } from "lucide-react";
+
 const OPTIONS = [
   { value: 1, label: "1 hébergement", sub: "Pour commencer, je peux en ajouter d'autres plus tard" },
   { value: 2, label: "2 hébergements", sub: "Je gère deux biens distincts" },
@@ -53,10 +55,9 @@ export default function StepGiteCount({ selected, onSelect }: Props) {
                 <div style={{ fontSize: "12px", color: "#71716E" }}>{opt.sub}</div>
               </div>
               {isSelected && (
-                <svg width="18" height="18" fill="none" viewBox="0 0 18 18" style={{ flexShrink: 0 }}>
-                  <circle cx="9" cy="9" r="9" fill="#689D71" />
-                  <path d="M5.5 9l2.5 2.5 4.5-4.5" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
+                <div style={{ flexShrink: 0, width: "18px", height: "18px", borderRadius: "50%", background: "#689D71", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <Check size={12} strokeWidth={2} color="#fff" />
+                </div>
               )}
             </button>
           );
