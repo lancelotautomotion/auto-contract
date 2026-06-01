@@ -122,6 +122,29 @@ export async function requireGuesthouseById(guesthouseId: string): Promise<[Gues
   return [{ userId: ctx.userId, guesthouseId: guesthouse.id }, null];
 }
 
+/**
+ * Vérifie que le compte a un plan actif (essai ou abonné), sans exiger de Gîte.
+ * À utiliser dans les routes qui supportent à la fois Gîte et Maison d'hôtes.
+ */
+export async function requireActivePlanAny(): Promise<[AuthCtx, null] | [null, AuthErr]> {
+  const { userId: clerkId, sessionClaims } = await auth();
+  if (!clerkId)
+    return [null, NextResponse.json({ error: "Non autorisé" }, { status: 401 })];
+
+  const user = await prisma.user.findUnique({ where: { clerkId } });
+  if (!user)
+    return [null, NextResponse.json({ error: "Utilisateur introuvable" }, { status: 404 })];
+
+  const roleFromClaims = (sessionClaims?.metadata as Record<string, unknown> | undefined)?.role;
+  if (roleFromClaims !== "admin") {
+    const trialInfo = getTrialInfo(user);
+    if (trialInfo.isExpired)
+      return [null, NextResponse.json({ error: "Essai expiré. Abonnez-vous pour continuer." }, { status: 403 })];
+  }
+
+  return [{ userId: user.id }, null];
+}
+
 export async function requireActivePlan(): Promise<[GiteCtx, null] | [null, AuthErr]> {
   const { userId: clerkId, sessionClaims } = await auth();
   if (!clerkId)

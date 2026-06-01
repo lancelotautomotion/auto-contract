@@ -21,6 +21,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   }
   if ("capacity" in body) data.capacity = parseInt(body.capacity) || 0;
   if ("basePrice" in body) data.basePrice = parseFloat(body.basePrice) || 0;
+  if ("cleaningFee" in body) data.cleaningFee = parseFloat(body.cleaningFee) || 0;
   if ("active" in body) data.active = !!body.active;
   if ("position" in body) data.position = parseInt(body.position) || 0;
   if ("specificClauses" in body) {

@@ -118,7 +118,8 @@ model Room {
   // Slug unique au sein d'une maison d'hôtes : kordia.fr/book/<guesthouseSlug>/<slug>
   slug      String?
   capacity  Int     @default(2) // capacité max en personnes
-  basePrice Float   @default(0) // prix de base par nuit
+  basePrice   Float   @default(0) // prix de base par nuit
+  cleaningFee Float   @default(0) // frais de ménage par séjour
   // Clauses contractuelles spécifiques à CETTE chambre, injectées dans le PDF
   // via la variable {{specificites_chambre}}. Optionnel, texte libre.
   specificClauses String?

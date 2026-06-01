@@ -38,6 +38,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
 
   const capacity = parseInt(body.capacity) || 2;
   const basePrice = parseFloat(body.basePrice) || 0;
+  const cleaningFee = parseFloat(body.cleaningFee) || 0;
 
   // Slug : explicite, ou auto-suggéré depuis le nom. Vide accepté (chambre non réservable en ligne).
   let slug: string | null = null;
@@ -74,6 +75,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
         name,
         capacity,
         basePrice,
+        cleaningFee,
         slug,
         active: body.active === false ? false : true,
         position: existing.length,

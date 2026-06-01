@@ -34,7 +34,8 @@ export default async function GuesthouseReservationsPage({ params }: { params: P
     select: { platform: true, label: true, blockedDates: true, roomId: true },
   });
 
-  const activeReservations = guesthouse.reservations.filter((r) => r.status !== "REFUSED" && r.status !== "CANCELLED");
+  const pendingReservations = guesthouse.reservations.filter((r) => r.status === "PENDING_REVIEW");
+  const activeReservations = guesthouse.reservations.filter((r) => r.status !== "REFUSED" && r.status !== "CANCELLED" && r.status !== "PENDING_REVIEW");
   const hasRooms = guesthouse.rooms.length > 0;
 
   const multiRooms = buildGuesthouseCalendarData(guesthouse.rooms, guesthouse.reservations, icalFeeds);
@@ -70,6 +71,9 @@ export default async function GuesthouseReservationsPage({ params }: { params: P
             <div className="dash-greeting">Planning & Réservations</div>
             <div className="dash-date">
               {activeReservations.length} réservation{activeReservations.length > 1 ? "s" : ""} active{activeReservations.length > 1 ? "s" : ""}
+              {pendingReservations.length > 0 && (
+                <> · <span style={{ color: "#B7791F", fontWeight: 700 }}>{pendingReservations.length} en attente</span></>
+              )}
             </div>
           </div>
           <div className="header-actions">
@@ -92,6 +96,51 @@ export default async function GuesthouseReservationsPage({ params }: { params: P
             guesthouseSlug={guesthouse.slug ?? null}
             rooms={bannerRooms}
           />
+        )}
+
+        {pendingReservations.length > 0 && (
+          <div style={{
+            background: "#FEF3CD", border: "1px solid #F5C842", borderRadius: "12px",
+            padding: "16px 20px", marginBottom: "20px",
+          }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "12px" }}>
+              <svg width="16" height="16" fill="none" viewBox="0 0 16 16" style={{ flexShrink: 0, color: "#B7791F" }}>
+                <circle cx="8" cy="8" r="6.5" stroke="currentColor" strokeWidth="1.3"/>
+                <path d="M8 5v3.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
+                <circle cx="8" cy="10.5" r="0.75" fill="currentColor"/>
+              </svg>
+              <div style={{ fontSize: "13px", fontWeight: 700, color: "#7B4F0A" }}>
+                {pendingReservations.length} demande{pendingReservations.length > 1 ? "s" : ""} en attente de traitement
+              </div>
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+              {pendingReservations.map((r) => (
+                <div key={r.id} style={{
+                  display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "8px",
+                  background: "#FFFBEF", border: "1px solid #F5C842", borderRadius: "8px", padding: "10px 14px",
+                }}>
+                  <div>
+                    <div style={{ fontSize: "13px", fontWeight: 600, color: "#2C2C2A" }}>
+                      {r.clientFirstName} {r.clientLastName}
+                    </div>
+                    <div style={{ fontSize: "12px", color: "#71716E", marginTop: "2px" }}>
+                      {fmt(r.checkIn)} → {fmt(r.checkOut)}
+                      {r.reservationRooms.length > 0 && (
+                        <> · {r.reservationRooms.map((rr) => rr.roomName).join(", ")}</>
+                      )}
+                    </div>
+                  </div>
+                  <Link
+                    href={`/dashboard/maisons-hotes/${id}/reservations/${r.id}/complete`}
+                    className="btn btn-violet"
+                    style={{ fontSize: "12px", padding: "7px 14px" }}
+                  >
+                    Traiter la demande →
+                  </Link>
+                </div>
+              ))}
+            </div>
+          </div>
         )}
 
         <div className="form-card" style={{ marginBottom: "20px" }}>
