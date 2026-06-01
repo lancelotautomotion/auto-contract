@@ -902,11 +902,17 @@ export default function EtablissementForm({ gite, guesthouse }: { gite?: GiteDat
                   </div>
                 </div>
 
-                {/* Info box — sous les balises */}
+                {/* Info box — centrée entre balises et actions */}
                 <div className="info-box" style={{ marginBottom: 0 }}>
                   <strong>Comment fonctionnent les balises ?</strong><br />
                   Les balises ci-dessus sont des variables qui seront remplacées par les données réelles de chaque réservation au moment de la génération du PDF. Cliquez sur une balise ou glissez-la dans la zone d&apos;édition pour l&apos;insérer à l&apos;endroit voulu dans votre contrat.
                 </div>
+
+                {/* CTA Aperçu — dans la colonne gauche */}
+                <button type="button" className="contract-preview-btn" onClick={() => setShowMobilePreview(true)}>
+                  <svg width="15" height="15" fill="none" viewBox="0 0 15 15"><path d="M1 7.5S3.5 3 7.5 3s6.5 4.5 6.5 4.5-2.5 4.5-6.5 4.5S1 7.5 1 7.5z" stroke="currentColor" strokeWidth="1.2"/><circle cx="7.5" cy="7.5" r="2" stroke="currentColor" strokeWidth="1.2"/></svg>
+                  Aperçu du contrat
+                </button>
 
                 {/* Sauvegarde */}
                 <div className="contract-actions">
@@ -922,12 +928,6 @@ export default function EtablissementForm({ gite, guesthouse }: { gite?: GiteDat
 
             {/* RIGHT: éditeur (pleine largeur) */}
             <div className="contract-right-col">
-
-              {/* CTA Aperçu — toujours visible */}
-              <button type="button" className="contract-preview-btn" onClick={() => setShowMobilePreview(true)}>
-                <svg width="15" height="15" fill="none" viewBox="0 0 15 15"><path d="M1 7.5S3.5 3 7.5 3s6.5 4.5 6.5 4.5-2.5 4.5-6.5 4.5S1 7.5 1 7.5z" stroke="currentColor" strokeWidth="1.2"/><circle cx="7.5" cy="7.5" r="2" stroke="currentColor" strokeWidth="1.2"/></svg>
-                Aperçu du contrat
-              </button>
 
               {/* Onglets zones */}
               <div className="editor-zone-tabs">
