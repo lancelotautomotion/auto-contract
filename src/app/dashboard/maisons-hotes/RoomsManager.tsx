@@ -9,6 +9,7 @@ interface Room {
   slug: string | null;
   capacity: number;
   basePrice: number;
+  cleaningFee: number;
   specificClauses: string | null;
   active: boolean;
 }
@@ -28,7 +29,7 @@ export default function RoomsManager({
   initialRooms: Room[];
 }) {
   const [rooms, setRooms] = useState<Room[]>(initialRooms);
-  const [draft, setDraft] = useState({ name: "", capacity: "2", basePrice: "", slug: "" });
+  const [draft, setDraft] = useState({ name: "", capacity: "2", basePrice: "", cleaningFee: "", slug: "" });
   const [draftSlugTouched, setDraftSlugTouched] = useState(false);
   const [loading, setLoading] = useState(false);
   const [showAdd, setShowAdd] = useState(false);
@@ -133,6 +134,7 @@ export default function RoomsManager({
           name: draft.name.trim(),
           capacity: draft.capacity,
           basePrice: draft.basePrice,
+          cleaningFee: parseFloat(draft.cleaningFee) || 0,
           slug: draft.slug || null,
         }),
       });
@@ -140,7 +142,7 @@ export default function RoomsManager({
       if (!res.ok) { setError(data.error ?? "Erreur lors de l'ajout."); return; }
       setRooms((rs) => [...rs, data.room]);
       setWarning(data.warning ?? null);
-      setDraft({ name: "", capacity: "2", basePrice: "", slug: "" });
+      setDraft({ name: "", capacity: "2", basePrice: "", cleaningFee: "", slug: "" });
       setDraftSlugTouched(false);
       setShowAdd(false);
     } catch {
@@ -284,6 +286,7 @@ export default function RoomsManager({
             <input type="text" className="form-input" style={{ flex: "2 1 200px" }} placeholder="Nom / numéro de la chambre" value={draft.name} onChange={(e) => { setDraft((d) => ({ ...d, name: e.target.value })); setError(""); }} autoFocus />
             <input type="number" min="1" className="form-input" style={{ flex: "0 1 90px" }} placeholder="Pers." value={draft.capacity} onChange={(e) => setDraft((d) => ({ ...d, capacity: e.target.value }))} />
             <input type="number" min="0" step="0.01" className="form-input" style={{ flex: "0 1 110px" }} placeholder="Prix/nuit" value={draft.basePrice} onChange={(e) => setDraft((d) => ({ ...d, basePrice: e.target.value }))} />
+            <input type="number" min="0" step="0.01" className="form-input" style={{ flex: "0 1 110px" }} placeholder="Ménage €" value={draft.cleaningFee} onChange={(e) => setDraft((d) => ({ ...d, cleaningFee: e.target.value }))} title="Frais de ménage (€)" />
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
             <span style={{ fontSize: "12px", color: "var(--ink-lighter)" }}>Identifiant URL :</span>
@@ -305,7 +308,7 @@ export default function RoomsManager({
             <button type="submit" className="btn btn-green" disabled={loading}>
               {loading ? "Ajout…" : "Ajouter la chambre"}
             </button>
-            <button type="button" className="btn btn-outline" onClick={() => { setShowAdd(false); setDraft({ name: "", capacity: "2", basePrice: "", slug: "" }); setDraftSlugTouched(false); setError(""); }}>
+            <button type="button" className="btn btn-outline" onClick={() => { setShowAdd(false); setDraft({ name: "", capacity: "2", basePrice: "", cleaningFee: "", slug: "" }); setDraftSlugTouched(false); setError(""); }}>
               Annuler
             </button>
           </div>
@@ -361,6 +364,7 @@ function RoomCard({
   const [name, setName] = useState(room.name);
   const [capacity, setCapacity] = useState(String(room.capacity));
   const [basePrice, setBasePrice] = useState(String(room.basePrice));
+  const [cleaningFee, setCleaningFee] = useState(String(room.cleaningFee));
   const [slug, setSlug] = useState(room.slug ?? "");
   const [slugState, setSlugState] = useState<AvailState>("idle");
   const [slugReason, setSlugReason] = useState("");
@@ -378,6 +382,7 @@ function RoomCard({
   useEffect(() => { setName(room.name); }, [room.name]);
   useEffect(() => { setCapacity(String(room.capacity)); }, [room.capacity]);
   useEffect(() => { setBasePrice(String(room.basePrice)); }, [room.basePrice]);
+  useEffect(() => { setCleaningFee(String(room.cleaningFee)); }, [room.cleaningFee]);
   useEffect(() => { setSlug(room.slug ?? ""); savedSlug.current = room.slug ?? ""; }, [room.slug]);
   useEffect(() => { setClauses(room.specificClauses ?? ""); savedClauses.current = room.specificClauses ?? ""; }, [room.specificClauses]);
 
@@ -447,6 +452,15 @@ function RoomCard({
             title="Prix par nuit (€)"
           />
           <span style={{ fontSize: "12px", color: "var(--ink-lighter)" }}>€/nuit</span>
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: "4px", flex: "0 1 140px" }}>
+          <input
+            type="number" min="0" step="0.01" className="form-input" style={{ width: "90px" }} value={cleaningFee}
+            onChange={(e) => setCleaningFee(e.target.value)}
+            onBlur={() => parseFloat(cleaningFee) !== room.cleaningFee && onUpdate({ cleaningFee: parseFloat(cleaningFee) || 0 })}
+            title="Frais de ménage (€)"
+          />
+          <span style={{ fontSize: "12px", color: "var(--ink-lighter)" }}>€ ménage</span>
         </div>
         <button
           type="button"

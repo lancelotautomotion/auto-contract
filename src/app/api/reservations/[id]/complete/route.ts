@@ -11,7 +11,8 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   if (!dbUser) return NextResponse.json({ error: "Utilisateur introuvable" }, { status: 404 });
 
   const existing = await prisma.reservation.findFirst({
-    where: { id, gite: { userId: dbUser.id }, status: 'PENDING_REVIEW' },
+    where: { id, OR: [{ gite: { userId: dbUser.id } }, { guesthouse: { userId: dbUser.id } }], status: 'PENDING_REVIEW' },
+    include: { reservationRooms: true },
   });
   if (!existing) return NextResponse.json({ error: "Demande introuvable" }, { status: 404 });
 

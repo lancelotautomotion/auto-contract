@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { generateContractPdf } from "@/lib/contractPdf";
-import { requireActivePlan } from "@/lib/auth";
+import { requireActivePlanAny } from "@/lib/auth";
 import { resolveReservationProperty, buildContractData } from "@/lib/reservationProperty";
 
 export async function POST(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const [ctx, err] = await requireActivePlan();
+  const [ctx, err] = await requireActivePlanAny();
   if (err) return err;
 
   const reservation = await prisma.reservation.findFirst({

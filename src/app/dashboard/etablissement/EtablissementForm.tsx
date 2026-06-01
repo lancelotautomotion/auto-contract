@@ -125,7 +125,7 @@ interface GiteData {
   documents: GiteDoc[];
 }
 
-interface GuesthouseRoomLite { id: string; name: string; slug: string | null; capacity: number; basePrice: number; specificClauses: string | null; active: boolean; }
+interface GuesthouseRoomLite { id: string; name: string; slug: string | null; capacity: number; basePrice: number; cleaningFee: number; specificClauses: string | null; active: boolean; }
 interface GuesthouseData {
   slug: string | null;
   id: string; name: string; email: string; phone: string;

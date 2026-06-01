@@ -52,7 +52,7 @@ export default async function GuesthouseHebergementPage({ params }: { params: Pr
           contractTemplateGeneral: guesthouse.contractTemplateGeneral ?? '',
           contractTemplateHouseRules: guesthouse.contractTemplateHouseRules ?? '',
           logoUrl: guesthouse.logoUrl ?? '',
-          rooms: guesthouse.rooms.map(r => ({ id: r.id, name: r.name, slug: r.slug ?? null, capacity: r.capacity, basePrice: r.basePrice, specificClauses: r.specificClauses ?? null, active: r.active })),
+          rooms: guesthouse.rooms.map(r => ({ id: r.id, name: r.name, slug: r.slug ?? null, capacity: r.capacity, basePrice: r.basePrice, cleaningFee: r.cleaningFee, specificClauses: r.specificClauses ?? null, active: r.active })),
           documents: guesthouse.documents.map(d => ({ id: d.id, label: d.label, fileName: d.fileName, mimeType: d.mimeType, createdAt: d.createdAt.toISOString() })),
         }} />
       </div>

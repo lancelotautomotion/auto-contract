@@ -82,6 +82,33 @@ export default async function GuesthouseReservationDetailPage({
           </div>
         </div>
 
+        {/* Bandeau PENDING_REVIEW */}
+        {reservation.status === "PENDING_REVIEW" && (
+          <div style={{
+            display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "12px",
+            background: "#FEF3CD", border: "1px solid #F5C842", borderRadius: "10px",
+            padding: "14px 16px", marginBottom: "20px",
+          }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+              <svg width="18" height="18" fill="none" viewBox="0 0 18 18" style={{ flexShrink: 0, color: "#B7791F" }}>
+                <circle cx="9" cy="9" r="7" stroke="currentColor" strokeWidth="1.4"/>
+                <path d="M9 5v4.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
+                <circle cx="9" cy="12.5" r="0.8" fill="currentColor"/>
+              </svg>
+              <div style={{ fontSize: "13px", fontWeight: 600, color: "#7B4F0A" }}>
+                Cette demande est en attente de traitement.
+              </div>
+            </div>
+            <Link
+              href={`/dashboard/maisons-hotes/${id}/reservations/${resaId}/complete`}
+              className="btn btn-violet"
+              style={{ fontSize: "12px", padding: "8px 16px" }}
+            >
+              Traiter la demande →
+            </Link>
+          </div>
+        )}
+
         {/* Allergies — badge rouge visible */}
         {reservation.dietaryNotes?.trim() && (
           <div style={{ display: "flex", alignItems: "flex-start", gap: "12px", background: "#FDECEC", border: "1px solid #F5B5B5", borderRadius: "10px", padding: "14px 16px", marginBottom: "20px" }}>

@@ -194,6 +194,7 @@ export default async function CompleteReservationPage({ params }: { params: Prom
         {/* Validate form */}
         <CompleteReservationForm
           id={id}
+          giteId={reservation.giteId ?? ""}
           defaultCheckIn={fmt(reservation.checkIn)}
           defaultCheckOut={fmt(reservation.checkOut)}
           defaultCleaningFee={String(reservation.gite?.cleaningFee ?? 0)}
