@@ -839,7 +839,7 @@ export default function EtablissementForm({ gite, guesthouse }: { gite?: GiteDat
         <div>
           <div className="contract-split">
 
-            {/* LEFT: variables + dual-zone editor */}
+            {/* LEFT: balises + aide + sauvegarde */}
             <div className="contract-left-col">
 
               {/* Alerte balises obligatoires manquantes */}
@@ -862,47 +862,74 @@ export default function EtablissementForm({ gite, guesthouse }: { gite?: GiteDat
 
               <div className="editor-left-sticky">
 
-              {/* Variables panel */}
-              <div className="form-card variables-panel">
-                <div className="form-card-title">
-                  <svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M4 2h6a1 1 0 011 1v8a1 1 0 01-1 1H4a1 1 0 01-1-1V3a1 1 0 011-1z" stroke="currentColor" strokeWidth="1.2"/><path d="M5 5h4M5 7h3M5 9h2" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/></svg>
-                  Balises dynamiques
-                  <span className="contract-zone-hint">→ zone active : <strong>{activeEditorZone === 'general' ? 'Conditions Générales' : 'Règlement Intérieur'}</strong></span>
-                </div>
-                <div className="variables-groups">
-                  {activeVarGroups.map(group => (
-                    <div key={group.cat} className="variables-group">
-                      <span className="variables-group-label">{group.label}</span>
-                      <div className="variables-bar">
-                        {activeVariables.filter(([, , cat]) => cat === group.cat).map(([v, label, cat]) => {
-                          const varName = v.slice(2, -2);
-                          const isMandatory = activeMandatoryTags.some(t => t.key === varName);
-                          const isMissing = isMandatory && missingMandatoryTags.some(t => t.key === varName);
-                          return (
-                            <button
-                              key={v}
-                              type="button"
-                              className={`var-tag ${cat}${isMissing ? ' var-tag-missing' : ''}`}
-                              draggable
-                              onDragStart={e => e.dataTransfer.setData('text/plain', varName)}
-                              onClick={() => insertVariable(varName)}
-                            >
-                              {isMissing && (
-                                <svg width="9" height="9" fill="none" viewBox="0 0 9 9" style={{ marginRight: '3px', flexShrink: 0 }}>
-                                  <path d="M4.5 1L8 7.5H1L4.5 1z" stroke="currentColor" strokeWidth="1.1" strokeLinejoin="round"/>
-                                </svg>
-                              )}
-                              {label}
-                            </button>
-                          );
-                        })}
+                {/* Variables panel */}
+                <div className="form-card variables-panel">
+                  <div className="form-card-title">
+                    <svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M4 2h6a1 1 0 011 1v8a1 1 0 01-1 1H4a1 1 0 01-1-1V3a1 1 0 011-1z" stroke="currentColor" strokeWidth="1.2"/><path d="M5 5h4M5 7h3M5 9h2" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/></svg>
+                    Balises dynamiques
+                    <span className="contract-zone-hint">→ zone active : <strong>{activeEditorZone === 'general' ? 'Conditions Générales' : 'Règlement Intérieur'}</strong></span>
+                  </div>
+                  <div className="variables-groups">
+                    {activeVarGroups.map(group => (
+                      <div key={group.cat} className="variables-group">
+                        <span className="variables-group-label">{group.label}</span>
+                        <div className="variables-bar">
+                          {activeVariables.filter(([, , cat]) => cat === group.cat).map(([v, label, cat]) => {
+                            const varName = v.slice(2, -2);
+                            const isMandatory = activeMandatoryTags.some(t => t.key === varName);
+                            const isMissing = isMandatory && missingMandatoryTags.some(t => t.key === varName);
+                            return (
+                              <button
+                                key={v}
+                                type="button"
+                                className={`var-tag ${cat}${isMissing ? ' var-tag-missing' : ''}`}
+                                draggable
+                                onDragStart={e => e.dataTransfer.setData('text/plain', varName)}
+                                onClick={() => insertVariable(varName)}
+                              >
+                                {isMissing && (
+                                  <svg width="9" height="9" fill="none" viewBox="0 0 9 9" style={{ marginRight: '3px', flexShrink: 0 }}>
+                                    <path d="M4.5 1L8 7.5H1L4.5 1z" stroke="currentColor" strokeWidth="1.1" strokeLinejoin="round"/>
+                                  </svg>
+                                )}
+                                {label}
+                              </button>
+                            );
+                          })}
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
-              </div>
 
-              {/* Inner tabs: Conditions Générales / Règlement Intérieur */}
+                {/* Info box — sous les balises */}
+                <div className="info-box" style={{ marginBottom: 0 }}>
+                  <strong>Comment fonctionnent les balises ?</strong><br />
+                  Les balises ci-dessus sont des variables qui seront remplacées par les données réelles de chaque réservation au moment de la génération du PDF. Cliquez sur une balise ou glissez-la dans la zone d&apos;édition pour l&apos;insérer à l&apos;endroit voulu dans votre contrat.
+                </div>
+
+                {/* Sauvegarde */}
+                <div className="contract-actions">
+                  <button type="submit" disabled={loading} className="btn btn-violet contract-action-btn">
+                    {loading ? 'Enregistrement...' : 'Sauvegarder'}
+                    {!loading && <svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M3 7h8M8 4l3 3-3 3" stroke="#fff" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/></svg>}
+                  </button>
+                  {saved && <span style={{ fontSize: '12px', color: 'var(--green)', fontWeight: 600 }}>✓ Sauvegardé</span>}
+                </div>
+
+              </div>{/* end editor-left-sticky */}
+            </div>
+
+            {/* RIGHT: éditeur (pleine largeur) */}
+            <div className="contract-right-col">
+
+              {/* CTA Aperçu — toujours visible */}
+              <button type="button" className="contract-preview-btn" onClick={() => setShowMobilePreview(true)}>
+                <svg width="15" height="15" fill="none" viewBox="0 0 15 15"><path d="M1 7.5S3.5 3 7.5 3s6.5 4.5 6.5 4.5-2.5 4.5-6.5 4.5S1 7.5 1 7.5z" stroke="currentColor" strokeWidth="1.2"/><circle cx="7.5" cy="7.5" r="2" stroke="currentColor" strokeWidth="1.2"/></svg>
+                Aperçu du contrat
+              </button>
+
+              {/* Onglets zones */}
               <div className="editor-zone-tabs">
                 <button
                   type="button"
@@ -929,7 +956,7 @@ export default function EtablissementForm({ gite, guesthouse }: { gite?: GiteDat
                 )}
               </div>
 
-              {/* Hint sous l'onglet Règlement Intérieur */}
+              {/* Hint Règlement Intérieur */}
               {activeEditorZone === 'houseRules' && (
                 <div className="editor-zone-desc">
                   Zone libre pour les règles spécifiques de votre gîte (ménage, piscine, animaux, horaires…). Ce texte sera ajouté à la suite des Conditions Générales dans le PDF.
@@ -947,8 +974,6 @@ export default function EtablissementForm({ gite, guesthouse }: { gite?: GiteDat
                 <span className="ct-sep" />
                 <button type="button" className="ct-btn" title="Liste à puces" onClick={toggleBullet}>•</button>
               </div>
-
-              </div>{/* end editor-left-sticky */}
 
               {/* Éditeur Conditions Générales */}
               <div
@@ -981,49 +1006,23 @@ export default function EtablissementForm({ gite, guesthouse }: { gite?: GiteDat
                 onDrop={handleEditorDrop('houseRules')}
                 onDragOver={e => e.preventDefault()}
               />
-            </div>
 
-            {/* RIGHT: info box + preview */}
-            <div className="contract-right-col">
-              <div className="info-box">
-                <strong>Comment fonctionnent les balises ?</strong><br />
-                Les balises ci-contre sont des variables qui seront remplacées par les données réelles de chaque réservation au moment de la génération du PDF. Cliquez sur une balise ou glissez-la dans la zone d&apos;édition (Conditions Générales ou Règlement Intérieur) pour l&apos;insérer à l&apos;endroit voulu dans votre contrat.
-              </div>
-              <button type="button" className="contract-preview-mobile-btn" onClick={() => setShowMobilePreview(true)}>
-                <svg width="15" height="15" fill="none" viewBox="0 0 15 15"><path d="M1 7.5S3.5 3 7.5 3s6.5 4.5 6.5 4.5-2.5 4.5-6.5 4.5S1 7.5 1 7.5z" stroke="currentColor" strokeWidth="1.2"/><circle cx="7.5" cy="7.5" r="2" stroke="currentColor" strokeWidth="1.2"/></svg>
-                Aperçu du contrat
-              </button>
-              <div className="contract-preview">
-                <div className="cp-header">
-                  <span>Aperçu en direct</span>
-                  <span className="cp-sub">données d&apos;exemple — les deux zones fusionnées</span>
-                </div>
-                <div className="cp-body">
-                  {previewBody}
-                </div>
-              </div>
-
-              {/* Actions pinned at bottom of right column */}
-              <div className="contract-actions">
-                <button type="submit" disabled={loading} className="btn btn-violet contract-action-btn">
-                  {loading ? 'Enregistrement...' : 'Sauvegarder'}
-                  {!loading && <svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M3 7h8M8 4l3 3-3 3" stroke="#fff" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/></svg>}
-                </button>
-                {saved && <span style={{ fontSize: '12px', color: 'var(--green)', fontWeight: 600 }}>✓ Sauvegardé</span>}
-              </div>
             </div>
 
           </div>
 
-          {/* Aperçu plein écran (mobile) */}
+          {/* Modale aperçu — bottom-sheet mobile, dialog centré desktop */}
           {showMobilePreview && (
-            <div className="mobile-preview-overlay" onClick={() => setShowMobilePreview(false)}>
-              <div className="mobile-preview-sheet" onClick={e => e.stopPropagation()}>
+            <div className="preview-modal-overlay" onClick={() => setShowMobilePreview(false)}>
+              <div className="preview-modal-dialog" onClick={e => e.stopPropagation()}>
                 <div className="cp-header">
                   <span>Aperçu en direct</span>
-                  <button type="button" className="mobile-preview-close" onClick={() => setShowMobilePreview(false)} aria-label="Fermer l'aperçu">
-                    <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><path d="M3 3l10 10M13 3L3 13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>
-                  </button>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <span className="cp-sub">données d&apos;exemple — les deux zones fusionnées</span>
+                    <button type="button" className="mobile-preview-close" onClick={() => setShowMobilePreview(false)} aria-label="Fermer l'aperçu">
+                      <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><path d="M3 3l10 10M13 3L3 13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>
+                    </button>
+                  </div>
                 </div>
                 <div className="cp-body">
                   {previewBody}
