@@ -677,6 +677,12 @@
 }
 .contract-editor [data-kind="twocol"] { color: var(--ink-soft); }
 
+/* Header sticky onglets + toolbar */
+.editor-sticky-header {
+  position: sticky; top: 0; z-index: 10;
+  background: var(--dash-bg); padding-bottom: 0;
+}
+
 /* Barre de formatage de l'éditeur de contrat */
 .contract-toolbar {
   display: flex; align-items: center; gap: 2px; flex-wrap: wrap;

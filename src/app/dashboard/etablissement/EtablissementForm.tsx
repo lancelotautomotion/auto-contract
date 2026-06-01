@@ -929,50 +929,52 @@ export default function EtablissementForm({ gite, guesthouse }: { gite?: GiteDat
             {/* RIGHT: éditeur (pleine largeur) */}
             <div className="contract-right-col">
 
-              {/* Onglets zones */}
-              <div className="editor-zone-tabs">
-                <button
-                  type="button"
-                  className={`editor-zone-tab${activeEditorZone === 'general' ? ' active' : ''}`}
-                  onClick={() => setActiveEditorZone('general')}
-                >
-                  Conditions Générales
-                </button>
-                <button
-                  type="button"
-                  className={`editor-zone-tab${activeEditorZone === 'houseRules' ? ' active' : ''}`}
-                  onClick={() => setActiveEditorZone('houseRules')}
-                >
-                  Règlement Intérieur
-                </button>
-                {activeEditorZone === 'general' ? (
-                  <button type="button" className="editor-zone-reset" onClick={handleResetGeneral} title="Réinitialiser les Conditions Générales">
-                    Réinitialiser
+              {/* Onglets + toolbar — sticky au scroll */}
+              <div className="editor-sticky-header">
+                <div className="editor-zone-tabs">
+                  <button
+                    type="button"
+                    className={`editor-zone-tab${activeEditorZone === 'general' ? ' active' : ''}`}
+                    onClick={() => setActiveEditorZone('general')}
+                  >
+                    Conditions Générales
                   </button>
-                ) : (
-                  <button type="button" className="editor-zone-reset" onClick={handleResetHouseRules} title="Effacer le Règlement Intérieur">
-                    Effacer
+                  <button
+                    type="button"
+                    className={`editor-zone-tab${activeEditorZone === 'houseRules' ? ' active' : ''}`}
+                    onClick={() => setActiveEditorZone('houseRules')}
+                  >
+                    Règlement Intérieur
                   </button>
-                )}
-              </div>
-
-              {/* Hint Règlement Intérieur */}
-              {activeEditorZone === 'houseRules' && (
-                <div className="editor-zone-desc">
-                  Zone libre pour les règles spécifiques de votre gîte (ménage, piscine, animaux, horaires…). Ce texte sera ajouté à la suite des Conditions Générales dans le PDF.
+                  {activeEditorZone === 'general' ? (
+                    <button type="button" className="editor-zone-reset" onClick={handleResetGeneral} title="Réinitialiser les Conditions Générales">
+                      Réinitialiser
+                    </button>
+                  ) : (
+                    <button type="button" className="editor-zone-reset" onClick={handleResetHouseRules} title="Effacer le Règlement Intérieur">
+                      Effacer
+                    </button>
+                  )}
                 </div>
-              )}
 
-              {/* Barre de formatage */}
-              <div className="contract-toolbar" onMouseDown={e => e.preventDefault()}>
-                <button type="button" className="ct-btn" title="Annuler" onClick={() => exec('undo')}>↶</button>
-                <button type="button" className="ct-btn" title="Rétablir" onClick={() => exec('redo')}>↷</button>
-                <span className="ct-sep" />
-                <button type="button" className="ct-btn" title="Gras" onClick={() => exec('bold')} style={{ fontWeight: 700 }}>B</button>
-                <button type="button" className="ct-btn" title="Italique" onClick={() => exec('italic')} style={{ fontStyle: 'italic' }}>I</button>
-                <button type="button" className="ct-btn" title="Souligné" onClick={() => exec('underline')} style={{ textDecoration: 'underline' }}>U</button>
-                <span className="ct-sep" />
-                <button type="button" className="ct-btn" title="Liste à puces" onClick={toggleBullet}>•</button>
+                {/* Hint Règlement Intérieur */}
+                {activeEditorZone === 'houseRules' && (
+                  <div className="editor-zone-desc">
+                    Zone libre pour les règles spécifiques de votre gîte (ménage, piscine, animaux, horaires…). Ce texte sera ajouté à la suite des Conditions Générales dans le PDF.
+                  </div>
+                )}
+
+                {/* Barre de formatage */}
+                <div className="contract-toolbar" onMouseDown={e => e.preventDefault()}>
+                  <button type="button" className="ct-btn" title="Annuler" onClick={() => exec('undo')}>↶</button>
+                  <button type="button" className="ct-btn" title="Rétablir" onClick={() => exec('redo')}>↷</button>
+                  <span className="ct-sep" />
+                  <button type="button" className="ct-btn" title="Gras" onClick={() => exec('bold')} style={{ fontWeight: 700 }}>B</button>
+                  <button type="button" className="ct-btn" title="Italique" onClick={() => exec('italic')} style={{ fontStyle: 'italic' }}>I</button>
+                  <button type="button" className="ct-btn" title="Souligné" onClick={() => exec('underline')} style={{ textDecoration: 'underline' }}>U</button>
+                  <span className="ct-sep" />
+                  <button type="button" className="ct-btn" title="Liste à puces" onClick={toggleBullet}>•</button>
+                </div>
               </div>
 
               {/* Éditeur Conditions Générales */}
