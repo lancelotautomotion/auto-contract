@@ -680,9 +680,9 @@
 /* Header sticky onglets + toolbar */
 .editor-sticky-header {
   position: sticky; top: 0; z-index: 10;
-  background: var(--dash-bg);
-  padding-top: 4px;
-  margin-bottom: -4px;
+  background: var(--line-light);
+  padding-top: 2px;
+  padding-bottom: 2px;
 }
 
 /* Barre de formatage de l'éditeur de contrat */
