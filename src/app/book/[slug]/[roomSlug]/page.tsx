@@ -1,53 +1,63 @@
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import GuesthouseRoomBookingForm from "./GuesthouseRoomBookingForm";
+import BookingForm from "../BookingForm";
 
-export const dynamic = "force-dynamic";
+function slugToDisplayName(slug: string): string {
+  return slug.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+}
 
-// Réservation publique d'UNE chambre entière d'une maison d'hôtes.
-// URL : /book/<guesthouseSlug>/<roomSlug>
-export default async function GuesthouseRoomBookingPage({ params }: { params: Promise<{ slug: string; roomSlug: string }> }) {
+export default async function RoomBookingPage({
+  params,
+}: {
+  params: Promise<{ slug: string; roomSlug: string }>;
+}) {
   const { slug, roomSlug } = await params;
+  const fullSlug = `${slug}/${roomSlug}`;
 
-  const guesthouse = await prisma.guesthouse.findFirst({
-    where: { slug, deletedAt: null },
+  const gite = await prisma.gite.findFirst({
+    where: { slug: fullSlug, deletedAt: null },
     include: {
-      rooms: { where: { slug: roomSlug } },
-      meals: { where: { active: true }, orderBy: [{ position: "asc" }, { createdAt: "asc" }] },
+      options: { orderBy: { position: 'asc' } },
+      icalFeeds: true,
     },
   });
-  if (!guesthouse) notFound();
 
-  const room = guesthouse.rooms[0];
-  if (!room || !room.active) notFound();
+  if (!gite) notFound();
 
-  const feeds = await prisma.guesthouseIcalFeed.findMany({ where: { roomId: room.id } });
-  const icalBlocked = feeds.flatMap((feed) =>
-    ((feed.blockedDates as Array<{ start: string; end: string }>) ?? []).map((e) => ({
+  const icalBlocked = gite.icalFeeds.flatMap(feed =>
+    ((feed.blockedDates as Array<{ start: string; end: string }>) ?? []).map(e => ({
       start: e.start, end: e.end, platform: feed.platform, label: feed.label,
     }))
   );
+
+  // Cherche le gîte parent (propriété) par le slug de premier niveau
+  const parentGite = await prisma.gite.findFirst({
+    where: { slug, deletedAt: null },
+    select: { name: true },
+  });
+  const propertyName = parentGite?.name ?? slugToDisplayName(slug);
 
   return (
     <>
       <div className="book-hero">
         <div className="book-hero-inner">
-          <h1>Réservez la chambre <span className="g">{room.name}</span></h1>
-          <p>{guesthouse.name} — renseignez vos informations ci-dessous. Le gérant vous contactera pour confirmer votre séjour et vous transmettre le contrat.</p>
+          <h1>Réservez la chambre <span className="g">{gite.name}</span></h1>
+          <p>
+            <strong>{propertyName}</strong> — renseignez vos informations ci-dessous.
+            Le gérant vous contactera pour confirmer votre séjour et vous transmettre le contrat.
+          </p>
         </div>
       </div>
 
       <div className="book-main">
-        <GuesthouseRoomBookingForm
-          guesthouseSlug={guesthouse.slug ?? ""}
-          roomSlug={room.slug ?? ""}
-          guesthouseName={guesthouse.name}
-          guesthouseCity={guesthouse.city}
-          guesthouseLogoUrl={guesthouse.logoUrl}
-          roomName={room.name}
-          roomCapacity={room.capacity}
-          roomPrice={room.basePrice}
-          meals={guesthouse.meals.map((m) => ({ id: m.id, name: m.name, description: m.description, price: m.price, service: m.service }))}
+        <BookingForm
+          giteSlug={fullSlug}
+          giteName={gite.name}
+          giteCity={gite.city}
+          giteLogoUrl={gite.logoUrl}
+          giteCapacity={gite.capacity}
+          propertyName={propertyName}
+          options={gite.options.map(o => ({ id: o.id, label: o.label, price: o.price }))}
           icalBlocked={icalBlocked}
         />
       </div>

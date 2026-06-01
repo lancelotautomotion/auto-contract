@@ -56,13 +56,13 @@
 
 /* ─── OPTIONS ─── */
 .book-opts{display:flex;flex-direction:column;gap:8px}
-.book-opt{display:flex;align-items:center;gap:12px;background:var(--white);border:1.5px solid var(--line);border-radius:10px;padding:12px 16px;cursor:pointer;transition:all .2s;user-select:none}
+.book-opt{display:flex;align-items:flex-start;gap:12px;background:var(--white);border:1.5px solid var(--line);border-radius:10px;padding:12px 16px;cursor:pointer;transition:all .2s;user-select:none}
 .book-opt:hover{border-color:var(--violet-light);background:var(--violet-light)}
 .book-opt.checked{border-color:var(--violet);background:var(--violet-light)}
-.book-opt-box{width:20px;height:20px;border-radius:6px;border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;background:var(--white)}
+.book-opt-box{width:20px;height:20px;min-width:20px;border-radius:6px;border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;background:var(--white);margin-top:1px}
 .book-opt.checked .book-opt-box{background:var(--violet);border-color:var(--violet)}
-.book-opt-name{flex:1;font-size:14px;font-weight:500;color:var(--ink)}
-.book-opt-price{font-size:13px;font-weight:700;color:var(--ink-lighter)}
+.book-opt-name{flex:1;font-size:14px;font-weight:500;color:var(--ink);line-height:1.5}
+.book-opt-price{font-size:13px;font-weight:700;color:var(--ink-lighter);flex-shrink:0;white-space:nowrap;margin-top:2px}
 .book-opt.checked .book-opt-price{color:var(--violet-dark)}
 
 /* ─── CONSENT ─── */

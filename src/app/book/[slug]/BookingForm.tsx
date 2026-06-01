@@ -16,6 +16,8 @@ interface Props {
   giteName: string;
   giteCity?: string | null;
   giteLogoUrl?: string | null;
+  giteCapacity?: number | null;
+  propertyName?: string | null;
   options: GiteOption[];
   icalBlocked?: IcalBlock[];
 }
@@ -31,7 +33,8 @@ function fmtDate(d: string) {
   return new Date(d + 'T12:00:00').toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
 }
 
-export default function BookingForm({ giteSlug, giteName, giteCity, giteLogoUrl, options, icalBlocked = [] }: Props) {
+export default function BookingForm({ giteSlug, giteName, giteCity, giteLogoUrl, giteCapacity, propertyName, options, icalBlocked = [] }: Props) {
+  const isRoom = !!propertyName;
   const [step, setStep] = useState<'form' | 'success'>('form');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -345,9 +348,22 @@ export default function BookingForm({ giteSlug, giteName, giteCity, giteLogoUrl,
                 <Image src={giteLogoUrl} alt={giteName} width={200} height={56} style={{ height: 32, width: 'auto', objectFit: 'contain' }} unoptimized/>
               </div>
             ) : (
-              <div className="book-recap-gite-name">{giteName}</div>
+              <div className="book-recap-gite-name">{isRoom ? propertyName : giteName}</div>
             )}
             {giteCity && <div className="book-recap-gite-city">{giteCity}</div>}
+
+            {isRoom && (
+              <div style={{ marginTop: '12px', padding: '12px 14px', background: 'var(--line-light)', borderRadius: '10px', border: '1px solid var(--line)' }}>
+                <div style={{ fontSize: '13px', fontWeight: 700, color: 'var(--ink)', marginBottom: '4px' }}>
+                  Chambre {giteName}
+                </div>
+                {giteCapacity && (
+                  <div style={{ fontSize: '12px', color: 'var(--ink-soft)' }}>
+                    Jusqu&apos;à {giteCapacity} personne{giteCapacity > 1 ? 's' : ''}
+                  </div>
+                )}
+              </div>
+            )}
 
             <div className="book-recap-sep"/>
 
