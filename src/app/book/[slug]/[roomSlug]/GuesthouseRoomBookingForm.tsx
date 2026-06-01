@@ -70,7 +70,6 @@ export default function GuesthouseRoomBookingForm({
   const lodging = roomPrice * nights;
   const mealsTotal = chosenMeals.reduce((s, m) => s + m.price * qtyForMeals, 0);
   const total = lodging + mealsTotal;
-
   const overCapacity = guests > 0 && guests > roomCapacity;
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -84,10 +83,7 @@ export default function GuesthouseRoomBookingForm({
       const res = await fetch(`/api/book/${guesthouseSlug}/${roomSlug}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...form,
-          selectedMealIds: Array.from(selectedMeals),
-        }),
+        body: JSON.stringify({ ...form, selectedMealIds: Array.from(selectedMeals) }),
       });
       if (res.ok) setStep("success");
       else {
@@ -158,13 +154,13 @@ export default function GuesthouseRoomBookingForm({
       {/* Honeypot anti-spam */}
       <div aria-hidden="true" style={{ position: "absolute", left: "-9999px", width: "1px", height: "1px", overflow: "hidden" }}>
         <label htmlFor="website">Site web</label>
-        <input id="website" type="text" name="website" value={form.website} onChange={(e) => set("website", e.target.value)} tabIndex={-1} autoComplete="off" />
+        <input id="website" type="text" name="website" value={form.website} onChange={(e) => set("website", e.target.value)} tabIndex={-1} autoComplete="off"/>
       </div>
 
       <div className="book-layout">
         <div className="book-form-col">
 
-          {/* Chambre choisie */}
+          {/* Chambre */}
           <div className="book-fs">
             <div className="book-fs-title">
               <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
@@ -174,15 +170,17 @@ export default function GuesthouseRoomBookingForm({
             </div>
             <div className="book-fs-divider"/>
             <div className="book-card">
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "8px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "8px" }}>
                 <div>
                   <div style={{ fontSize: "16px", fontWeight: 700, color: "var(--ink)" }}>{roomName}</div>
-                  <div style={{ fontSize: "13px", color: "var(--ink-lighter)" }}>
+                  <div style={{ fontSize: "13px", color: "var(--violet)", marginTop: "2px" }}>
                     Chambre entière · jusqu&apos;à {roomCapacity} personne{roomCapacity > 1 ? "s" : ""}
                   </div>
                 </div>
                 {roomPrice > 0 && (
-                  <div style={{ fontSize: "15px", fontWeight: 700, color: "#689D71" }}>{roomPrice} € <span style={{ fontSize: "12px", fontWeight: 500, color: "var(--ink-lighter)" }}>/ nuit</span></div>
+                  <div style={{ fontSize: "15px", fontWeight: 700, color: "var(--green)", flexShrink: 0 }}>
+                    {roomPrice} € <span style={{ fontSize: "12px", fontWeight: 500, color: "var(--ink-lighter)" }}>/ nuit</span>
+                  </div>
                 )}
               </div>
             </div>
@@ -312,28 +310,41 @@ export default function GuesthouseRoomBookingForm({
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M3 11h18M5 11a7 7 0 0114 0M4 15h16M2 19h20"/>
                 </svg>
-                Restauration <span style={{ fontWeight: 400, color: "var(--ink-lighter)" }}>(facultatif)</span>
+                Restauration <span style={{ fontWeight: 400, textTransform: "none", letterSpacing: 0, color: "var(--ink-lighter)" }}>(facultatif)</span>
               </div>
               <div className="book-fs-divider"/>
               <div className="book-opts">
                 {meals.map((m) => {
                   const checked = selectedMeals.has(m.id);
                   return (
-                    <div key={m.id} className={`book-opt-box${checked ? " checked" : ""}`} onClick={() => toggleMeal(m.id)}>
-                      <div className={`book-opt-check${checked ? " checked" : ""}`}>
+                    <div
+                      key={m.id}
+                      className={`book-opt${checked ? " checked" : ""}`}
+                      onClick={() => toggleMeal(m.id)}
+                      role="checkbox"
+                      aria-checked={checked}
+                      tabIndex={0}
+                      onKeyDown={(e) => e.key === " " && (e.preventDefault(), toggleMeal(m.id))}
+                    >
+                      <div className="book-opt-box">
                         {checked && (
-                          <svg width="11" height="11" fill="none" viewBox="0 0 11 11">
-                            <path d="M2 5.5l2.5 2.5L9 3" stroke="#fff" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+                          <svg width="10" height="10" fill="none" viewBox="0 0 10 10">
+                            <path d="M2 5l2 2 4-4" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                           </svg>
                         )}
                       </div>
                       <span className="book-opt-name">
                         {m.name}
-                        {m.description && <span style={{ display: "block", fontSize: "11.5px", fontWeight: 400, color: "var(--ink-lighter)", marginTop: "2px" }}>{m.description}</span>}
+                        {m.description && (
+                          <span style={{ display: "block", fontSize: "11.5px", fontWeight: 400, color: "var(--ink-lighter)", marginTop: "2px" }}>
+                            {m.description}
+                          </span>
+                        )}
                       </span>
                       {m.price > 0
-                        ? <span className="book-opt-price">+{m.price}€ <span style={{ fontWeight: 400, fontSize: "10px" }}>/ pers.</span></span>
-                        : <span className="book-opt-price free">Inclus</span>}
+                        ? <span className="book-opt-price">+{m.price} € <span style={{ fontWeight: 400, fontSize: "10px" }}>/ pers.</span></span>
+                        : <span className="book-opt-price">Inclus</span>
+                      }
                     </div>
                   );
                 })}
@@ -341,102 +352,166 @@ export default function GuesthouseRoomBookingForm({
             </div>
           )}
 
-          {/* Notes */}
+          {/* Message */}
           <div className="book-fs">
             <div className="book-fs-title">
               <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
-                <path d="M3 2h6l3 3v7a.5.5 0 01-.5.5h-9A.5.5 0 012 12V2.5z" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round"/>
+                <path d="M7 1.5c-3 0-5.5 2-5.5 4.5 0 1.5.9 2.8 2.3 3.6L3 13l2.5-1.3c.5.1 1 .2 1.5.2 3 0 5.5-2 5.5-4.5S10 1.5 7 1.5z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
-              Informations complémentaires
+              Message (optionnel)
             </div>
             <div className="book-fs-divider"/>
             <div className="book-card">
-              <div className="book-group">
-                <label className="book-label">Message au gérant <span style={{ fontWeight: 400, color: "var(--ink-lighter)" }}>(facultatif)</span></label>
-                <textarea className="book-textarea" rows={4} placeholder="Allergies, régime, heure d'arrivée prévue, questions…" value={form.notes} onChange={(e) => set("notes", e.target.value)}/>
-              </div>
-            </div>
-          </div>
-
-          {/* Consentement RGPD */}
-          <div className="book-fs">
-            <div className="book-card">
-              <label className="book-consent">
-                <input type="checkbox" checked={form.gdprConsent} onChange={(e) => set("gdprConsent", e.target.checked)} />
-                <span>J&apos;accepte que mes données soient utilisées pour traiter ma demande de réservation conformément à la politique de confidentialité.</span>
-              </label>
+              <p style={{ fontSize: "13px", color: "var(--ink-lighter)", margin: "0 0 10px", lineHeight: 1.5 }}>
+                Allergies, régime alimentaire, heure d&apos;arrivée estimée ou toute demande particulière.
+              </p>
+              <textarea
+                className="book-textarea"
+                placeholder="Ex. Arrivée prévue vers 17h, régime végétarien…"
+                value={form.notes}
+                onChange={(e) => set("notes", e.target.value)}
+              />
             </div>
           </div>
 
         </div>
 
-        {/* Récapitulatif */}
-        <div className="book-final-col">
+        {/* ── COLONNE RÉCAP ── */}
+        <aside className="book-recap-col">
           <div className="book-recap-card">
-            <div className="book-recap-label">Récapitulatif</div>
-
-            {guesthouseLogoUrl && (
+            {guesthouseLogoUrl ? (
               <div className="book-recap-logo">
-                <Image src={guesthouseLogoUrl} alt={guesthouseName} width={80} height={40} style={{ objectFit: "contain" }} />
+                <Image src={guesthouseLogoUrl} alt={guesthouseName} width={200} height={56} style={{ height: 32, width: "auto", objectFit: "contain" }} unoptimized/>
               </div>
+            ) : (
+              <div className="book-recap-gite-name">{guesthouseName}</div>
             )}
-
-            <div className="book-recap-gite-name">{guesthouseName}</div>
             {guesthouseCity && <div className="book-recap-gite-city">{guesthouseCity}</div>}
+
+            <div style={{ marginTop: "12px", padding: "12px 14px", background: "var(--line-light)", borderRadius: "10px", border: "1px solid var(--line)" }}>
+              <div style={{ fontSize: "13px", fontWeight: 700, color: "var(--ink)", marginBottom: "4px" }}>
+                Chambre {roomName}
+              </div>
+              <div style={{ fontSize: "12px", color: "var(--ink-soft)" }}>
+                Jusqu&apos;à {roomCapacity} personne{roomCapacity > 1 ? "s" : ""}
+                {roomPrice > 0 && <> · {roomPrice} € / nuit</>}
+              </div>
+            </div>
 
             <div className="book-recap-sep"/>
 
             <div className="book-recap-row">
-              <span className="book-recap-label-sm">Chambre</span>
-              <span className="book-recap-val">{roomName}</span>
-            </div>
-            <div className="book-recap-row">
-              <span className="book-recap-label-sm">Arrivée</span>
+              <span className="book-recap-label">Arrivée</span>
               <span className="book-recap-val">{form.checkIn ? fmtDate(form.checkIn) : "—"}</span>
             </div>
             <div className="book-recap-row">
-              <span className="book-recap-label-sm">Départ</span>
+              <span className="book-recap-label">Départ</span>
               <span className="book-recap-val">{form.checkOut ? fmtDate(form.checkOut) : "—"}</span>
             </div>
             <div className="book-recap-row">
-              <span className="book-recap-label-sm">Voyageurs</span>
+              <span className="book-recap-label">Voyageurs</span>
               <span className="book-recap-val">{form.guestCount || "—"}</span>
             </div>
+            {nights > 0 && (
+              <div className="book-recap-nights">
+                <svg width="12" height="12" fill="none" viewBox="0 0 12 12">
+                  <path d="M9.5 7A5 5 0 0 1 5 1.5 4 4 0 1 0 9.5 7z" stroke="#7F77DD" strokeWidth="1.1"/>
+                </svg>
+                {nights} nuit{nights > 1 ? "s" : ""}
+              </div>
+            )}
 
             {(nights > 0 || chosenMeals.length > 0) && (
               <>
                 <div className="book-recap-sep"/>
                 {nights > 0 && roomPrice > 0 && (
                   <div className="book-recap-row">
-                    <span className="book-recap-label-sm">Nuitées ({nights})</span>
+                    <span className="book-recap-label">Nuitées ({nights})</span>
                     <span className="book-recap-val">{fmtMoney(lodging)}</span>
                   </div>
                 )}
                 {chosenMeals.map((m) => (
                   <div className="book-recap-row" key={m.id}>
-                    <span className="book-recap-label-sm">{m.name} ×{qtyForMeals}</span>
+                    <span className="book-recap-label">{m.name} ×{qtyForMeals}</span>
                     <span className="book-recap-val">{m.price > 0 ? `+${fmtMoney(m.price * qtyForMeals)}` : "Inclus"}</span>
                   </div>
                 ))}
                 {total > 0 && (
                   <div className="book-recap-row" style={{ fontWeight: 700, marginTop: "4px" }}>
-                    <span className="book-recap-label-sm" style={{ fontWeight: 700, color: "var(--ink)" }}>Estimation</span>
-                    <span className="book-recap-val" style={{ color: "#689D71" }}>{fmtMoney(total)}</span>
+                    <span className="book-recap-label" style={{ fontWeight: 700, color: "var(--ink)" }}>Estimation</span>
+                    <span className="book-recap-val" style={{ color: "var(--green)" }}>{fmtMoney(total)}</span>
                   </div>
                 )}
               </>
             )}
 
-            {error && <p className="book-error" style={{ color: "#b91c1c", fontSize: "12.5px", margin: "10px 0 0" }}>{error}</p>}
+            <div className="book-recap-sep"/>
+            <div className="book-recap-notice">
+              <svg width="13" height="13" fill="none" viewBox="0 0 13 13">
+                <circle cx="6.5" cy="6.5" r="5" stroke="#7F77DD" strokeWidth="1.1"/>
+                <path d="M6.5 5.5v4" stroke="#7F77DD" strokeWidth="1.1" strokeLinecap="round"/>
+                <circle cx="6.5" cy="4" r=".65" fill="#7F77DD"/>
+              </svg>
+              Les tarifs sont confirmés par le gérant.
+            </div>
 
-            <button type="submit" className="btn-book-submit" disabled={loading || !form.gdprConsent}>
-              {loading ? <span className="book-spinner"/> : "Envoyer ma demande"}
-            </button>
-            <p className="book-submit-note">
-              Sans engagement — le gérant confirme la disponibilité.
-            </p>
+            <div className="book-recap-trust">
+              <div className="book-trust-item">
+                <svg width="11" height="11" fill="none" viewBox="0 0 11 11">
+                  <path d="M5.5 1L2 3v3c0 2.5 1.5 4 3.5 5 2-1 3.5-2.5 3.5-5V3L5.5 1z" stroke="#A3A3A0" strokeWidth="1"/>
+                </svg>
+                Données sécurisées
+              </div>
+              <div className="book-trust-item">
+                <svg width="11" height="11" fill="none" viewBox="0 0 11 11">
+                  <rect x="1" y="1.5" width="9" height="8" rx="1.2" stroke="#A3A3A0" strokeWidth="1"/>
+                  <path d="M3.5 5.5l1.5 1.5L8 4.5" stroke="#A3A3A0" strokeWidth="1" strokeLinecap="round"/>
+                </svg>
+                Signature eIDAS
+              </div>
+              <div className="book-trust-item">
+                <svg width="11" height="11" fill="none" viewBox="0 0 11 11">
+                  <circle cx="5.5" cy="5.5" r="4" stroke="#A3A3A0" strokeWidth="1"/>
+                  <path d="M5.5 3v2.5l1.5 1" stroke="#A3A3A0" strokeWidth="1" strokeLinecap="round"/>
+                </svg>
+                Réponse sous 24h
+              </div>
+            </div>
+          </div>
+        </aside>
+
+        {/* ── COLONNE FINALE — consentement + bouton ── */}
+        <div className="book-final-col">
+          <div className="book-consent">
+            <input type="checkbox" id="rgpd" required checked={form.gdprConsent} onChange={(e) => set("gdprConsent", e.target.checked)}/>
+            <label htmlFor="rgpd">
+              J&apos;accepte que mes données personnelles soient utilisées pour le traitement de ma demande conformément à la politique de confidentialité. <span className="req">*</span>
+            </label>
+          </div>
+
+          {error && <div className="book-error">{error}</div>}
+
+          <button className="btn-book-submit" type="submit" disabled={loading || !form.gdprConsent}>
+            {loading ? (
+              <span className="book-spinner"/>
+            ) : (
+              <>
+                Envoyer ma demande
+                <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
+                  <path d="M3 8h10m-4-4l4 4-4 4" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </>
+            )}
+          </button>
+          <div className="book-submit-note">
+            <svg width="13" height="13" fill="none" viewBox="0 0 13 13">
+              <path d="M6.5 1.5L2 4v3.5c0 3 2 5 4.5 6 2.5-1 4.5-3 4.5-6V4L6.5 1.5z" stroke="#A3A3A0" strokeWidth="1" strokeLinecap="round"/>
+              <path d="M4.5 6.5l1.5 1.5L9 5" stroke="#A3A3A0" strokeWidth="1" strokeLinecap="round"/>
+            </svg>
+            Aucun paiement requis à cette étape.
           </div>
         </div>
+
       </div>
     </form>
   );
