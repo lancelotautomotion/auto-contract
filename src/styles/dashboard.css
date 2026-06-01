@@ -646,12 +646,13 @@
 
 .etab-form { width: 100%; min-width: 0; }
 .contract-split { display: grid; grid-template-columns: 40fr 60fr; gap: 20px; align-items: start; width: 100%; }
-.contract-left-col { display: flex; flex-direction: column; gap: 20px; min-width: 0; overflow-x: clip; }
-.editor-left-sticky {
-  position: sticky; top: 20px; z-index: 2;
+.contract-left-col {
   display: flex; flex-direction: column; gap: 16px;
+  position: sticky; top: 20px;
   max-height: calc(100vh - 60px); overflow-y: auto;
+  min-width: 0;
 }
+.editor-left-sticky { display: contents; }
 .contract-right-col {
   display: flex; flex-direction: column; gap: 16px;
   min-width: 0;
