@@ -4,6 +4,7 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import TopbarSignOut from "@/app/dashboard/TopbarSignOut";
 import { nightsBetween } from "@/lib/billing";
+import MonthSelector from "./MonthSelector";
 
 export const dynamic = "force-dynamic";
 
@@ -13,8 +14,6 @@ const SERVICE_LABEL: Record<string, string> = {
   DINNER: "Dîner / Table d'hôtes",
   OTHER: "Autre",
 };
-
-const MONTH_NAMES = ["Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre"];
 
 // Nuits d'une réservation tombant dans [mStart, mEnd) — borne inférieure incluse, supérieure exclue
 function nightsOverlap(checkIn: Date, checkOut: Date, mStart: Date, mEnd: Date): number {
@@ -67,13 +66,6 @@ export default async function GuesthouseDashboardPage({
   const monthStart    = new Date(selYear, selMonth, 1);
   const monthEnd      = new Date(selYear, selMonth + 1, 1); // exclusive
   const daysInMonth   = Math.round((monthEnd.getTime() - monthStart.getTime()) / 86_400_000);
-
-  // Navigation prev/next
-  const prevDate  = new Date(selYear, selMonth - 1, 1);
-  const nextDate  = new Date(selYear, selMonth + 1, 1);
-  const prevParam = `${prevDate.getFullYear()}-${String(prevDate.getMonth() + 1).padStart(2, "0")}`;
-  const nextParam = `${nextDate.getFullYear()}-${String(nextDate.getMonth() + 1).padStart(2, "0")}`;
-  const isCurrentMonth = selYear === now.getFullYear() && selMonth === now.getMonth();
 
   // ── Calculs stats mensuels ────────────────────────────────────────────────
   const activeRooms        = guesthouse.rooms.filter((r) => r.active).length;
@@ -182,25 +174,8 @@ export default async function GuesthouseDashboardPage({
         {/* STATS MENSUELLES */}
         <div style={{ marginBottom: "20px" }}>
 
-          {/* Navigation mois */}
-          <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "14px" }}>
-            <Link
-              href={`?month=${prevParam}`}
-              className="topbar-btn"
-              style={{ width: "30px", height: "30px", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, fontSize: "15px", textDecoration: "none" }}
-            >‹</Link>
-            <div style={{ fontSize: "14px", fontWeight: 700, color: "var(--ink)", display: "flex", alignItems: "center", gap: "8px" }}>
-              {MONTH_NAMES[selMonth]} {selYear}
-              {isCurrentMonth && (
-                <span style={{ fontSize: "10px", fontWeight: 600, color: "var(--violet)", background: "var(--violet-light)", padding: "2px 8px", borderRadius: "20px" }}>En cours</span>
-              )}
-            </div>
-            <Link
-              href={`?month=${nextParam}`}
-              className="topbar-btn"
-              style={{ width: "30px", height: "30px", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, fontSize: "15px", textDecoration: "none" }}
-            >›</Link>
-          </div>
+          {/* Sélecteur mois/année */}
+          <MonthSelector selYear={selYear} selMonth={selMonth} />
 
           {/* Ligne 1 : 3 stats principales */}
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "12px", marginBottom: "12px" }}>
@@ -254,26 +229,26 @@ export default async function GuesthouseDashboardPage({
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: "12px" }}>
 
             {/* Durée moy. séjour */}
-            <div className="stat-card ink">
+            <div className="stat-card violet">
               <div className="sc-top">
                 <span className="sc-label">Durée moy.</span>
-                <span className="sc-icon i">
+                <span className="sc-icon v">
                   <svg width="14" height="14" fill="none" viewBox="0 0 14 14"><rect x="1" y="2.5" width="12" height="9" rx="1.5" stroke="currentColor" strokeWidth="1.2"/><path d="M1 6h12M4.5 1v3M9.5 1v3" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/></svg>
                 </span>
               </div>
-              <div className="sc-num">{avgStay > 0 ? avgStay : "—"}<span style={{ fontSize: "14px", fontWeight: 500, color: "var(--ink-soft)" }}>{avgStay > 0 ? " n." : ""}</span></div>
+              <div className="sc-num" style={{ color: "var(--violet)" }}>{avgStay > 0 ? avgStay : "—"}<span style={{ fontSize: "14px", fontWeight: 500, color: "var(--ink-soft)" }}>{avgStay > 0 ? " n." : ""}</span></div>
               <div className="sc-change" style={{ color: "var(--ink-lighter)", fontWeight: 400 }}>{resasCheckInMonth.length} arrivée{resasCheckInMonth.length > 1 ? "s" : ""} dans le mois</div>
             </div>
 
             {/* Repas servis */}
-            <div className="stat-card ink">
+            <div className="stat-card green">
               <div className="sc-top">
                 <span className="sc-label">Repas servis</span>
-                <span className="sc-icon i">
+                <span className="sc-icon g">
                   <svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M2 12h10M3.5 12V6.5a3.5 3.5 0 017 0V12" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/></svg>
                 </span>
               </div>
-              <div className="sc-num">{mealsMonth}</div>
+              <div className="sc-num" style={{ color: "var(--green)" }}>{mealsMonth}</div>
               <div className="sc-change" style={{ color: "var(--ink-lighter)", fontWeight: 400 }}>toutes formules</div>
             </div>
 
