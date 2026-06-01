@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useCallback, useEffect, useMemo } from "react";
-import { DEFAULT_CONTRACT_TEMPLATE, mergeTemplates } from "@/lib/defaultContractTemplate";
+import { DEFAULT_CONTRACT_TEMPLATE, DEFAULT_GUESTHOUSE_CONTRACT_TEMPLATE, mergeTemplates } from "@/lib/defaultContractTemplate";
 import {
   parseStored, serializeLines, classifyLine, splitRunsAtPipe,
   resolveRun, runsPlain, templateHasVar, domToLines, PREVIEW_SIZE_PX,
@@ -322,8 +322,9 @@ export default function EtablissementForm({ gite, guesthouse }: { gite?: GiteDat
     touristTax: src.touristTax.toString(),
   });
   const [savedSlug, setSavedSlug] = useState(gite?.slug ?? '');
+  const DEFAULT_TEMPLATE = mode === 'guesthouse' ? DEFAULT_GUESTHOUSE_CONTRACT_TEMPLATE : DEFAULT_CONTRACT_TEMPLATE;
   const [contractTemplateGeneral, setContractTemplateGeneral] = useState(
-    src.contractTemplateGeneral || DEFAULT_CONTRACT_TEMPLATE
+    src.contractTemplateGeneral || DEFAULT_TEMPLATE
   );
   const [contractTemplateHouseRules, setContractTemplateHouseRules] = useState(
     src.contractTemplateHouseRules || ''
@@ -511,9 +512,9 @@ export default function EtablissementForm({ gite, guesthouse }: { gite?: GiteDat
 
   const handleResetGeneral = useCallback(() => {
     if (!confirm('Remettre les Conditions Générales par défaut ?')) return;
-    setContractTemplateGeneral(DEFAULT_CONTRACT_TEMPLATE);
+    setContractTemplateGeneral(DEFAULT_TEMPLATE);
     setSaved(false);
-    if (editorGeneralRef.current) editorGeneralRef.current.innerHTML = buildEditorHTML(DEFAULT_CONTRACT_TEMPLATE);
+    if (editorGeneralRef.current) editorGeneralRef.current.innerHTML = buildEditorHTML(DEFAULT_TEMPLATE);
   }, []);
 
   const handleResetHouseRules = useCallback(() => {

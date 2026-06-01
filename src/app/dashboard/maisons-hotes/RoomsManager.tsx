@@ -586,7 +586,8 @@ function RoomCard({
         {clausesOpen && (
           <div style={{ marginTop: "8px" }}>
             <p style={{ fontSize: "11.5px", color: "var(--ink-lighter)", margin: "0 0 6px", lineHeight: 1.45 }}>
-              Texte libre injecté dans le contrat via la balise <code style={{ background: "#F5F4F0", padding: "1px 6px", borderRadius: "4px", fontSize: "11px", color: "#5B52B5" }}>{"{{specificites_chambre}}"}</code>. Laissez vide si aucune particularité.
+              Texte libre injecté dans le contrat via la balise{" "}
+              <span className="var-tag chambre" style={{ fontSize: "10.5px", cursor: "default", pointerEvents: "none", display: "inline-flex" }}>Clauses spécifiques</span>. Laissez vide si aucune particularité.
             </p>
             <textarea
               className="form-textarea"

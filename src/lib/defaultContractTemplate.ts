@@ -7,6 +7,73 @@ export function mergeTemplates(general: string, houseRules: string | null | unde
   return mergeStored(general, houseRules);
 }
 
+export const DEFAULT_GUESTHOUSE_CONTRACT_TEMPLATE = `CONTRAT DE SÉJOUR EN MAISON D'HÔTES
+
+Entre les soussignés :
+
+HÔTE
+{{nom_gite}}
+{{adresse_gite}}
+{{ville_gite}}
+Email : {{email_gite}}
+Téléphone : {{telephone_gite}}
+
+LOCATAIRE
+{{prenom_client}} {{nom_client}}
+{{adresse_client}}
+{{code_postal_client}} {{ville_client}}
+Email : {{email_client}}
+Téléphone : {{telephone_client}}
+
+Il a été convenu ce qui suit :
+
+ARTICLE 1 — OBJET ET DESCRIPTION DE LA CHAMBRE
+
+L'hôte met à disposition du locataire, à titre saisonnier, la chambre {{nom_chambre}} au sein de la maison d'hôtes {{nom_gite}}, située {{adresse_gite}}, {{ville_gite}}.
+
+Capacité maximale : {{capacite_chambre}} personne(s).
+Prix par nuit : {{prix_chambre_nuit}} €.
+
+La location prend effet le {{date_entree}} et se termine le {{date_sortie}}.
+
+{{specificites_chambre}}
+
+ARTICLE 2 — PRIX ET CONDITIONS DE PAIEMENT
+
+Loyer total : {{loyer}} €
+Acompte à la réservation : {{acompte}} €
+Solde à régler à l'arrivée : {{solde}} €
+Frais de ménage : {{menage}} €
+Taxe de séjour : {{taxe_sejour}} € par adulte et par nuit
+
+ARTICLE 3 — RESTAURATION
+
+{{options}}
+
+ARTICLE 4 — DÉPÔT DE GARANTIE
+
+Un dépôt de garantie pourra être demandé à l'arrivée. Il sera restitué dans un délai de 10 jours suivant le départ, déduction faite des éventuels dommages constatés.
+
+ARTICLE 5 — OBLIGATIONS DU LOCATAIRE
+
+Le locataire s'engage à :
+- Utiliser la chambre en bon père de famille et à la restituer en parfait état
+- Ne pas dépasser la capacité d'accueil maximale de la chambre
+- Respecter le règlement intérieur de la maison d'hôtes
+- Ne pas introduire des personnes extérieures dans les parties réservées aux hôtes sans accord préalable
+
+ARTICLE 6 — RÉSILIATION
+
+En cas de résiliation par le locataire, l'acompte versé restera acquis à l'hôte à titre de dédommagement. En cas de résiliation par l'hôte, celui-ci remboursera l'intégralité des sommes versées.
+
+Fait à {{ville_gite}}, le {{date_du_jour}}
+
+L'HÔTE | LE LOCATAIRE
+
+___________________________ | ___________________________
+
+{{nom_gite}} | {{prenom_client}} {{nom_client}}`;
+
 export const DEFAULT_CONTRACT_TEMPLATE = `CONTRAT DE LOCATION SAISONNIÈRE
 
 Entre les soussignés :

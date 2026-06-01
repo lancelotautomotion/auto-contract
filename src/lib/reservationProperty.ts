@@ -2,7 +2,7 @@
 // d'hôtes. Ce module normalise la "source" de la réservation pour les flux
 // partagés (contrat PDF, emails, notifications) sans dupliquer le pipeline.
 import type { Gite, Guesthouse, User, MealType } from "@prisma/client";
-import { DEFAULT_CONTRACT_TEMPLATE, mergeTemplates } from "@/lib/defaultContractTemplate";
+import { DEFAULT_CONTRACT_TEMPLATE, DEFAULT_GUESTHOUSE_CONTRACT_TEMPLATE, mergeTemplates } from "@/lib/defaultContractTemplate";
 import type { ContractData } from "@/lib/contractPdf";
 
 type GiteWithUser = Gite & { user?: User };
@@ -126,7 +126,7 @@ export function buildContractData(opts: {
   ];
 
   return {
-    template: mergeTemplates(p.contractTemplateGeneral ?? DEFAULT_CONTRACT_TEMPLATE, p.contractTemplateHouseRules),
+    template: mergeTemplates(p.contractTemplateGeneral ?? (p.kind === 'guesthouse' ? DEFAULT_GUESTHOUSE_CONTRACT_TEMPLATE : DEFAULT_CONTRACT_TEMPLATE), p.contractTemplateHouseRules),
     nom_client: r.clientLastName,
     prenom_client: r.clientFirstName,
     email_client: r.clientEmail,
