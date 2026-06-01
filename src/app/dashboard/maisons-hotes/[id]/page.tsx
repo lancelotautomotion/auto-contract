@@ -180,145 +180,165 @@ export default async function GuesthouseDashboardPage({
         </div>
 
         {/* STATS MENSUELLES */}
-        <div className="form-card" style={{ padding: "20px", marginBottom: "20px" }}>
+        <div style={{ marginBottom: "20px" }}>
 
           {/* Navigation mois */}
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "20px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "14px" }}>
             <Link
               href={`?month=${prevParam}`}
-              style={{ display: "flex", alignItems: "center", justifyContent: "center", width: "32px", height: "32px", borderRadius: "8px", border: "1px solid var(--line)", background: "var(--dash-white)", color: "var(--ink-soft)", textDecoration: "none", fontSize: "16px", flexShrink: 0 }}
+              className="topbar-btn"
+              style={{ width: "30px", height: "30px", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, fontSize: "15px", textDecoration: "none" }}
             >‹</Link>
-            <div style={{ textAlign: "center" }}>
-              <div style={{ fontSize: "15px", fontWeight: 700, color: "var(--ink)" }}>
-                {MONTH_NAMES[selMonth]} {selYear}
-              </div>
+            <div style={{ fontSize: "14px", fontWeight: 700, color: "var(--ink)", display: "flex", alignItems: "center", gap: "8px" }}>
+              {MONTH_NAMES[selMonth]} {selYear}
               {isCurrentMonth && (
-                <div style={{ fontSize: "11px", color: "var(--ink-lighter)", marginTop: "2px" }}>Mois en cours</div>
+                <span style={{ fontSize: "10px", fontWeight: 600, color: "var(--violet)", background: "var(--violet-light)", padding: "2px 8px", borderRadius: "20px" }}>En cours</span>
               )}
             </div>
             <Link
               href={`?month=${nextParam}`}
-              style={{ display: "flex", alignItems: "center", justifyContent: "center", width: "32px", height: "32px", borderRadius: "8px", border: "1px solid var(--line)", background: "var(--dash-white)", color: "var(--ink-soft)", textDecoration: "none", fontSize: "16px", flexShrink: 0 }}
+              className="topbar-btn"
+              style={{ width: "30px", height: "30px", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, fontSize: "15px", textDecoration: "none" }}
             >›</Link>
           </div>
 
-          {/* Grille stats */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: "12px" }}>
+          {/* Ligne 1 : 3 stats principales */}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "12px", marginBottom: "12px" }}>
 
             {/* Taux d'occupation */}
-            <div style={{ padding: "14px 16px", background: "var(--line-light)", borderRadius: "12px" }}>
-              <div style={{ fontSize: "11px", fontWeight: 700, color: "var(--ink-lighter)", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: "6px" }}>Taux d&apos;occupation</div>
-              <div style={{ fontSize: "28px", fontWeight: 700, color: occupancyRate >= 70 ? "#689D71" : occupancyRate >= 40 ? "#B8600A" : "var(--ink)", lineHeight: 1 }}>
-                {occupancyRate}<span style={{ fontSize: "16px", fontWeight: 600 }}>%</span>
+            <div className={`stat-card ${occupancyRate >= 70 ? "green" : occupancyRate >= 40 ? "amber" : "ink"}`}>
+              <div className="sc-top">
+                <span className="sc-label">Taux d&apos;occupation</span>
+                <span className={`sc-icon ${occupancyRate >= 70 ? "g" : occupancyRate >= 40 ? "a" : "i"}`}>
+                  <svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M2 11a5 5 0 0110 0" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/><path d="M7 6V3" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/></svg>
+                </span>
               </div>
-              <div style={{ fontSize: "11px", color: "var(--ink-lighter)", marginTop: "4px" }}>
+              <div className="sc-num" style={{ color: occupancyRate >= 70 ? "var(--green)" : occupancyRate >= 40 ? "var(--amber)" : "var(--ink)" }}>
+                {occupancyRate}<span style={{ fontSize: "18px", fontWeight: 600, color: "var(--ink-soft)" }}>%</span>
+              </div>
+              {/* Barre de progression */}
+              <div style={{ marginTop: "10px", height: "4px", background: "var(--line)", borderRadius: "4px", overflow: "hidden" }}>
+                <div style={{ height: "100%", width: `${Math.min(occupancyRate, 100)}%`, background: occupancyRate >= 70 ? "var(--green)" : occupancyRate >= 40 ? "var(--amber)" : "var(--ink-soft)", borderRadius: "4px", transition: "width .4s" }} />
+              </div>
+              <div className="sc-change" style={{ color: "var(--ink-lighter)", fontWeight: 400 }}>
                 {occupiedRoomNights} / {availableRoomNights} nuits-chambre
               </div>
             </div>
 
-            {/* CA du mois */}
-            <div style={{ padding: "14px 16px", background: "var(--line-light)", borderRadius: "12px" }}>
-              <div style={{ fontSize: "11px", fontWeight: 700, color: "var(--ink-lighter)", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: "6px" }}>Chiffre d&apos;affaires</div>
-              <div style={{ fontSize: "28px", fontWeight: 700, color: "#689D71", lineHeight: 1 }}>
-                {fmtMoney(revenueMonth)}
+            {/* CA mensuel */}
+            <div className="stat-card green">
+              <div className="sc-top">
+                <span className="sc-label">Chiffre d&apos;affaires</span>
+                <span className="sc-icon g">
+                  <svg width="14" height="14" fill="none" viewBox="0 0 14 14"><circle cx="7" cy="7" r="5" stroke="currentColor" strokeWidth="1.2"/><path d="M7 4v6M5 5.5h3a1.5 1.5 0 010 3H5.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/></svg>
+                </span>
               </div>
-              <div style={{ fontSize: "11px", color: "var(--ink-lighter)", marginTop: "4px" }}>loyers proratés</div>
+              <div className="sc-num" style={{ color: "var(--green)", fontSize: revenueMonth >= 10000 ? "24px" : "32px" }}>{fmtMoney(revenueMonth)}</div>
+              <div className="sc-change" style={{ color: "var(--ink-lighter)", fontWeight: 400 }}>loyers proratés sur le mois</div>
             </div>
 
             {/* RevPAR */}
-            <div style={{ padding: "14px 16px", background: "var(--line-light)", borderRadius: "12px" }}>
-              <div style={{ fontSize: "11px", fontWeight: 700, color: "var(--ink-lighter)", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: "6px" }}>RevPAR</div>
-              <div style={{ fontSize: "28px", fontWeight: 700, color: "#5B52B5", lineHeight: 1 }}>
-                {fmtMoney(revpar)}
+            <div className="stat-card violet">
+              <div className="sc-top">
+                <span className="sc-label">RevPAR</span>
+                <span className="sc-icon v">
+                  <svg width="14" height="14" fill="none" viewBox="0 0 14 14"><rect x="1.5" y="3.5" width="11" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.2"/><path d="M5 7h4M7 5.5V8.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/></svg>
+                </span>
               </div>
-              <div style={{ fontSize: "11px", color: "var(--ink-lighter)", marginTop: "4px" }}>CA / nuit-chambre dispo</div>
+              <div className="sc-num" style={{ color: "var(--violet)" }}>{fmtMoney(revpar)}</div>
+              <div className="sc-change" style={{ color: "var(--ink-lighter)", fontWeight: 400 }}>CA / nuit-chambre disponible</div>
             </div>
+          </div>
+
+          {/* Ligne 2 : 2 stats secondaires + les deux blocs opérationnels */}
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: "12px" }}>
 
             {/* Durée moy. séjour */}
-            <div style={{ padding: "14px 16px", background: "var(--line-light)", borderRadius: "12px" }}>
-              <div style={{ fontSize: "11px", fontWeight: 700, color: "var(--ink-lighter)", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: "6px" }}>Durée moy. séjour</div>
-              <div style={{ fontSize: "28px", fontWeight: 700, color: "var(--ink)", lineHeight: 1 }}>
-                {avgStay > 0 ? avgStay : "—"}<span style={{ fontSize: "14px", fontWeight: 500, color: "var(--ink-soft)" }}>{avgStay > 0 ? " nuit" + (avgStay > 1 ? "s" : "") : ""}</span>
+            <div className="stat-card ink">
+              <div className="sc-top">
+                <span className="sc-label">Durée moy.</span>
+                <span className="sc-icon i">
+                  <svg width="14" height="14" fill="none" viewBox="0 0 14 14"><rect x="1" y="2.5" width="12" height="9" rx="1.5" stroke="currentColor" strokeWidth="1.2"/><path d="M1 6h12M4.5 1v3M9.5 1v3" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/></svg>
+                </span>
               </div>
-              <div style={{ fontSize: "11px", color: "var(--ink-lighter)", marginTop: "4px" }}>
-                {resasCheckInMonth.length} arrivée{resasCheckInMonth.length > 1 ? "s" : ""} dans le mois
-              </div>
+              <div className="sc-num">{avgStay > 0 ? avgStay : "—"}<span style={{ fontSize: "14px", fontWeight: 500, color: "var(--ink-soft)" }}>{avgStay > 0 ? " n." : ""}</span></div>
+              <div className="sc-change" style={{ color: "var(--ink-lighter)", fontWeight: 400 }}>{resasCheckInMonth.length} arrivée{resasCheckInMonth.length > 1 ? "s" : ""} dans le mois</div>
             </div>
 
             {/* Repas servis */}
-            <div style={{ padding: "14px 16px", background: "var(--line-light)", borderRadius: "12px" }}>
-              <div style={{ fontSize: "11px", fontWeight: 700, color: "var(--ink-lighter)", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: "6px" }}>Repas servis</div>
-              <div style={{ fontSize: "28px", fontWeight: 700, color: "var(--ink)", lineHeight: 1 }}>{mealsMonth}</div>
-              <div style={{ fontSize: "11px", color: "var(--ink-lighter)", marginTop: "4px" }}>toutes formules</div>
+            <div className="stat-card ink">
+              <div className="sc-top">
+                <span className="sc-label">Repas servis</span>
+                <span className="sc-icon i">
+                  <svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M2 12h10M3.5 12V6.5a3.5 3.5 0 017 0V12" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/></svg>
+                </span>
+              </div>
+              <div className="sc-num">{mealsMonth}</div>
+              <div className="sc-change" style={{ color: "var(--ink-lighter)", fontWeight: 400 }}>toutes formules</div>
+            </div>
+
+            {/* Prochaines arrivées */}
+            <div className="form-card" style={{ gridColumn: "span 2" }}>
+              <div className="form-card-title">
+                <svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M2 6h10M7 2v8M5 12h4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/></svg>
+                Prochaines arrivées
+              </div>
+              {upcoming.length === 0 ? (
+                <p style={{ fontSize: "13px", color: "var(--ink-lighter)", fontStyle: "italic" }}>Aucune arrivée prévue.</p>
+              ) : (
+                <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                  {upcoming.slice(0, 3).map((r) => {
+                    const hasMeals     = r.meals.length > 0;
+                    const hasAllergies = (r.dietaryNotes ?? "").trim().length > 0;
+                    return (
+                      <Link
+                        key={r.id}
+                        href={`/dashboard/maisons-hotes/${id}/reservations/${r.id}`}
+                        style={{ display: "flex", gap: "8px", padding: "8px 10px", border: "1px solid #EFEDE8", borderRadius: "10px", textDecoration: "none", color: "inherit", alignItems: "center" }}
+                      >
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <div style={{ fontSize: "13px", fontWeight: 700, color: "var(--ink)" }}>{r.clientFirstName} {r.clientLastName}</div>
+                          <div style={{ fontSize: "11px", color: "var(--ink-lighter)" }}>{fmt(r.checkIn)} → {fmt(r.checkOut)} · {r.reservationRooms.map((rr) => rr.roomName).join(", ") || "—"}</div>
+                        </div>
+                        <div style={{ display: "flex", gap: "4px" }}>
+                          {hasMeals && <span style={{ fontSize: "10px", fontWeight: 700, background: "#E6F0E8", color: "#3E7A48", padding: "2px 7px", borderRadius: "20px" }}>Repas</span>}
+                          {hasAllergies && <span style={{ fontSize: "10px", fontWeight: 700, background: "#FDECEC", color: "#B91C1C", padding: "2px 7px", borderRadius: "20px" }}>Allergies</span>}
+                        </div>
+                      </Link>
+                    );
+                  })}
+                </div>
+              )}
             </div>
 
           </div>
         </div>
 
-        {/* PROCHAINES ARRIVÉES + AUJOURD'HUI EN CUISINE */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }}>
-          <div className="form-card">
-            <div className="form-card-title">
-              <svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M2 6h10M7 2v8M5 12h4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/></svg>
-              Prochaines arrivées
-            </div>
-            {upcoming.length === 0 ? (
-              <p style={{ fontSize: "13px", color: "var(--ink-lighter)", fontStyle: "italic" }}>Aucune arrivée prévue.</p>
-            ) : (
-              <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-                {upcoming.map((r) => {
-                  const hasMeals    = r.meals.length > 0;
-                  const hasAllergies = (r.dietaryNotes ?? "").trim().length > 0;
-                  return (
-                    <Link
-                      key={r.id}
-                      href={`/dashboard/maisons-hotes/${id}/reservations/${r.id}`}
-                      style={{ display: "flex", gap: "10px", padding: "10px 12px", border: "1px solid #EFEDE8", borderRadius: "10px", textDecoration: "none", color: "inherit", alignItems: "flex-start", flexWrap: "wrap" }}
-                    >
-                      <div style={{ flex: "1 1 200px", minWidth: 0 }}>
-                        <div style={{ fontSize: "13px", fontWeight: 700, color: "var(--ink)" }}>{r.clientFirstName} {r.clientLastName}</div>
-                        <div style={{ fontSize: "12px", color: "var(--ink-lighter)" }}>{fmt(r.checkIn)} → {fmt(r.checkOut)}</div>
-                        <div style={{ fontSize: "12px", color: "var(--ink-lighter)" }}>{r.reservationRooms.map((rr) => rr.roomName).join(", ") || "—"}</div>
-                      </div>
-                      <div style={{ display: "flex", gap: "4px", flexWrap: "wrap" }}>
-                        {hasMeals && (
-                          <span style={{ fontSize: "10px", fontWeight: 700, background: "#E6F0E8", color: "#3E7A48", padding: "2px 8px", borderRadius: "20px" }}>Repas</span>
-                        )}
-                        {hasAllergies && (
-                          <span style={{ fontSize: "10px", fontWeight: 700, background: "#FDECEC", color: "#B91C1C", padding: "2px 8px", borderRadius: "20px" }}>Allergies</span>
-                        )}
-                      </div>
-                    </Link>
-                  );
-                })}
-              </div>
-            )}
+        {/* AUJOURD'HUI EN CUISINE */}
+        <div className="form-card">
+          <div className="form-card-title">
+            <svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M2 12h10M3.5 12V6.5a3.5 3.5 0 017 0V12" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/></svg>
+            Aujourd&apos;hui en cuisine
           </div>
-
-          <div className="form-card">
-            <div className="form-card-title">
-              <svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M2 12h10M3.5 12V6.5a3.5 3.5 0 017 0V12" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/></svg>
-              Aujourd&apos;hui en cuisine
-            </div>
-            {kitchenRows.length === 0 ? (
-              <p style={{ fontSize: "13px", color: "var(--ink-lighter)", fontStyle: "italic" }}>Aucun repas à préparer aujourd&apos;hui.</p>
-            ) : (
-              <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-                {kitchenRows.map((row) => (
-                  <div key={row.service} style={{ padding: "10px 12px", background: "#F8F6F1", borderRadius: "10px" }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "4px" }}>
-                      <span style={{ fontSize: "12px", fontWeight: 700, color: "#5B52B5", textTransform: "uppercase", letterSpacing: "0.5px" }}>
-                        {SERVICE_LABEL[row.service] ?? row.service}
-                      </span>
-                      <span style={{ fontSize: "16px", fontWeight: 700, color: "var(--ink)" }}>{row.count}</span>
-                    </div>
-                    <div style={{ fontSize: "12px", color: "var(--ink-lighter)" }}>{row.labels.join(" · ")}</div>
+          {kitchenRows.length === 0 ? (
+            <p style={{ fontSize: "13px", color: "var(--ink-lighter)", fontStyle: "italic" }}>Aucun repas à préparer aujourd&apos;hui.</p>
+          ) : (
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "10px" }}>
+              {kitchenRows.map((row) => (
+                <div key={row.service} style={{ padding: "12px 14px", background: "#F8F6F1", borderRadius: "10px" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "4px" }}>
+                    <span style={{ fontSize: "11px", fontWeight: 700, color: "#5B52B5", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                      {SERVICE_LABEL[row.service] ?? row.service}
+                    </span>
+                    <span style={{ fontSize: "20px", fontWeight: 700, color: "var(--ink)" }}>{row.count}</span>
                   </div>
-                ))}
-              </div>
-            )}
-          </div>
+                  <div style={{ fontSize: "12px", color: "var(--ink-lighter)" }}>{row.labels.join(" · ")}</div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
+
       </div>
     </>
   );
