@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import Image from "next/image";
 import { Check, CalendarDays, User, Home, Utensils, MessageSquare, Moon, AlertTriangle, Info, ArrowRight, Shield, Lock, Clock } from "lucide-react";
 
@@ -32,6 +32,9 @@ function fmtDate(d: string) {
 }
 const fmtMoney = (n: number) => `${n.toLocaleString("fr-FR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €`;
 
+// Services soumis à la capacité table d'hôtes
+const CAPACITY_SERVICES = new Set<MealService>(["BREAKFAST", "LUNCH", "DINNER"]);
+
 export default function GuesthouseRoomBookingForm({
   guesthouseSlug, roomSlug, guesthouseName, guesthouseCity, guesthouseLogoUrl,
   roomName, roomCapacity, roomPrice, meals, icalBlocked = [],
@@ -50,26 +53,82 @@ export default function GuesthouseRoomBookingForm({
     website: "",
   });
 
+  // Capacité table d'hôtes — fetché quand les dates changent
+  const [mealCapacity, setMealCapacity] = useState<{ capacity: number; booked: Record<string, number> } | null>(null);
+  const fetchRef = useRef<AbortController | null>(null);
+
   const set = (k: string, v: string | boolean) => setForm((f) => ({ ...f, [k]: v }));
   const today = new Date().toISOString().split("T")[0];
   const nights = useMemo(() => countNights(form.checkIn, form.checkOut), [form.checkIn, form.checkOut]);
   const guests = parseInt(form.guestCount) || 0;
+
+  // Fetch meal availability whenever dates are valid
+  useEffect(() => {
+    if (!form.checkIn || !form.checkOut || form.checkIn >= form.checkOut) {
+      setMealCapacity(null);
+      return;
+    }
+    fetchRef.current?.abort();
+    const ctrl = new AbortController();
+    fetchRef.current = ctrl;
+    fetch(`/api/book/${guesthouseSlug}/meal-availability?checkIn=${form.checkIn}&checkOut=${form.checkOut}`, { signal: ctrl.signal })
+      .then((r) => r.json())
+      .then((data) => setMealCapacity(data))
+      .catch(() => { /* ignore abort */ });
+    return () => ctrl.abort();
+  }, [form.checkIn, form.checkOut, guesthouseSlug]);
 
   const icalConflicts = useMemo(() => {
     if (!form.checkIn || !form.checkOut) return [];
     return icalBlocked.filter((b) => b.start < form.checkOut && b.end > form.checkIn);
   }, [form.checkIn, form.checkOut, icalBlocked]);
 
-  const toggleMeal = (id: string) => setSelectedMeals((prev) => {
-    const next = new Set(prev);
-    if (next.has(id)) next.delete(id); else next.add(id);
-    return next;
-  });
+  // Per meal: is it disabled due to capacity?
+  const mealDisabled = useMemo((): Record<string, { disabled: boolean; reason: string }> => {
+    const result: Record<string, { disabled: boolean; reason: string }> = {};
+    if (!mealCapacity || mealCapacity.capacity <= 0 || guests <= 0) return result;
+    for (const m of meals) {
+      if (!CAPACITY_SERVICES.has(m.service)) continue;
+      const alreadyBooked = mealCapacity.booked[m.service] ?? 0;
+      const remaining = mealCapacity.capacity - alreadyBooked;
+      if (remaining < guests) {
+        result[m.id] = {
+          disabled: true,
+          reason: remaining <= 0
+            ? "Table d'hôtes complète pour ces dates"
+            : `Capacité insuffisante pour ${guests} personne${guests > 1 ? "s" : ""} (${remaining} couvert${remaining > 1 ? "s" : ""} restant${remaining > 1 ? "s" : ""})`,
+        };
+      }
+    }
+    return result;
+  }, [mealCapacity, guests, meals]);
+
+  const toggleMeal = (id: string) => {
+    if (mealDisabled[id]?.disabled) return;
+    setSelectedMeals((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  };
+
+  // Uncheck meals that became disabled when guest count or dates change
+  useEffect(() => {
+    const toRemove = Array.from(selectedMeals).filter((id) => mealDisabled[id]?.disabled);
+    if (toRemove.length > 0) {
+      setSelectedMeals((prev) => {
+        const next = new Set(prev);
+        toRemove.forEach((id) => next.delete(id));
+        return next;
+      });
+    }
+  }, [mealDisabled]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const chosenMeals = meals.filter((m) => selectedMeals.has(m.id));
-  const qtyForMeals = Math.max(1, guests);
+  // Quantity = guests (min 1 as fallback before guestCount is entered)
+  const qtyForMeals = guests > 0 ? guests : 0;
   const lodging = roomPrice * nights;
-  const mealsTotal = chosenMeals.reduce((s, m) => s + m.price * qtyForMeals, 0);
+  const mealsTotal = chosenMeals.reduce((s, m) => s + m.price * Math.max(1, qtyForMeals), 0);
   const total = lodging + mealsTotal;
   const overCapacity = guests > 0 && guests > roomCapacity;
 
@@ -225,7 +284,7 @@ export default function GuesthouseRoomBookingForm({
             </div>
           </div>
 
-          {/* Dates */}
+          {/* Dates + nombre de personnes */}
           <div className="book-fs">
             <div className="book-fs-title">
               <CalendarDays size={14} strokeWidth={1.4} />
@@ -295,18 +354,22 @@ export default function GuesthouseRoomBookingForm({
               <div className="book-opts">
                 {meals.map((m) => {
                   const checked = selectedMeals.has(m.id);
+                  const cap = mealDisabled[m.id];
+                  const isDisabled = cap?.disabled ?? false;
                   return (
                     <div
                       key={m.id}
-                      className={`book-opt${checked ? " checked" : ""}`}
+                      className={`book-opt${checked ? " checked" : ""}${isDisabled ? " disabled" : ""}`}
                       onClick={() => toggleMeal(m.id)}
                       role="checkbox"
                       aria-checked={checked}
-                      tabIndex={0}
-                      onKeyDown={(e) => e.key === " " && (e.preventDefault(), toggleMeal(m.id))}
+                      aria-disabled={isDisabled}
+                      tabIndex={isDisabled ? -1 : 0}
+                      onKeyDown={(e) => !isDisabled && e.key === " " && (e.preventDefault(), toggleMeal(m.id))}
+                      style={isDisabled ? { opacity: 0.55, cursor: "not-allowed", pointerEvents: "none" } : undefined}
                     >
-                      <div className="book-opt-box">
-                        {checked && (
+                      <div className="book-opt-box" style={isDisabled ? { borderColor: "#D0CEC8", background: "#F3F2EE" } : undefined}>
+                        {checked && !isDisabled && (
                           <Check size={10} strokeWidth={1.5} color="#fff" />
                         )}
                       </div>
@@ -315,6 +378,11 @@ export default function GuesthouseRoomBookingForm({
                         {m.description && (
                           <span style={{ display: "block", fontSize: "11.5px", fontWeight: 400, color: "var(--ink-lighter)", marginTop: "2px" }}>
                             {m.description}
+                          </span>
+                        )}
+                        {isDisabled && (
+                          <span style={{ display: "block", fontSize: "11px", fontWeight: 500, color: "#B7791F", marginTop: "3px" }}>
+                            {cap.reason}
                           </span>
                         )}
                       </span>
@@ -403,12 +471,21 @@ export default function GuesthouseRoomBookingForm({
                     <span className="book-recap-val">{fmtMoney(lodging)}</span>
                   </div>
                 )}
-                {chosenMeals.map((m) => (
-                  <div className="book-recap-row" key={m.id}>
-                    <span className="book-recap-label">{m.name} ×{qtyForMeals}</span>
-                    <span className="book-recap-val">{m.price > 0 ? `+${fmtMoney(m.price * qtyForMeals)}` : "Inclus"}</span>
-                  </div>
-                ))}
+                {chosenMeals.map((m) => {
+                  const qty = Math.max(1, qtyForMeals);
+                  const lineTotal = m.price * qty;
+                  return (
+                    <div className="book-recap-row" key={m.id}>
+                      <span className="book-recap-label">
+                        {m.name}
+                        {guests > 0 && (
+                          <span style={{ fontSize: "11px", color: "var(--ink-lighter)", fontWeight: 400 }}> × {guests} pers.</span>
+                        )}
+                      </span>
+                      <span className="book-recap-val">{m.price > 0 ? `+${fmtMoney(lineTotal)}` : "Inclus"}</span>
+                    </div>
+                  );
+                })}
                 {total > 0 && (
                   <div className="book-recap-row" style={{ fontWeight: 700, marginTop: "4px" }}>
                     <span className="book-recap-label" style={{ fontWeight: 700, color: "var(--ink)" }}>Estimation</span>
