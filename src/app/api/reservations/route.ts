@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { requireActivePlan, requireGiteById, requireGuesthouseById } from "@/lib/auth";
+import { requireActivePlan, requireActivePlanAny, requireGiteById, requireGuesthouseById } from "@/lib/auth";
 import { computeLodgingTotal, computeMealsTotal, computeTouristTax, nightsBetween } from "@/lib/billing";
 import { mealLabel } from "@/lib/reservationProperty";
 import type { MealType, MealService } from "@prisma/client";
@@ -10,14 +10,16 @@ const VALID_SERVICES: MealService[] = ["BREAKFAST", "LUNCH", "DINNER", "OTHER"];
 export async function POST(req: NextRequest) {
   const body = await req.json();
 
-  // requireActivePlan checks trial expiry
-  const [planCtx, planErr] = await requireActivePlan();
-  if (planErr) return planErr;
-
   // Aiguillage : réservation Maison d'hôtes (par chambre) vs Gîte (entier).
   if (body.guesthouseId) {
+    const [planCtx, planErr] = await requireActivePlanAny();
+    if (planErr) return planErr;
     return createGuesthouseReservation(body, planCtx.userId);
   }
+
+  // requireActivePlan checks trial expiry and requires a Gite
+  const [planCtx, planErr] = await requireActivePlan();
+  if (planErr) return planErr;
 
   const [ctx, giteErr] = await requireGiteById(body.giteId);
   if (giteErr) return giteErr;

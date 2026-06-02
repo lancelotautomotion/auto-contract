@@ -22,7 +22,7 @@ export default function GuesthouseReservationForm({
   const [form, setForm] = useState({
     clientFirstName: "", clientLastName: "", clientEmail: "", clientPhone: "",
     clientAddress: "", clientCity: "", clientZipCode: "",
-    checkIn: "", checkOut: "", adultsCount: "2", deposit: "", dietaryNotes: "", notes: "",
+    checkIn: "", checkOut: "", adultsCount: "2", rent: "", deposit: "", dietaryNotes: "", notes: "",
   });
   const [selectedRooms, setSelectedRooms] = useState<Set<string>>(new Set());
 
@@ -72,6 +72,7 @@ export default function GuesthouseReservationForm({
       const payload = {
         guesthouseId,
         ...form,
+        rent: form.rent !== "" ? form.rent : undefined,
         roomIds: Array.from(selectedRooms),
         meals: mealOptions
           .filter((m) => mealLines[m.id]?.enabled)
@@ -239,6 +240,10 @@ export default function GuesthouseReservationForm({
             <div className="fs-title">Acompte & notes</div>
             <div className="fs-divider" />
             <div className="form-card">
+              <div className="form-group">
+                <label className="form-label">Loyer total (€) <span style={{ fontWeight: 400, color: "var(--ink-lighter)" }}>— optionnel, remplace le calcul auto</span></label>
+                <input type="number" step="0.01" min="0" className="form-input" placeholder={`${total.toFixed(2)} (calculé)`} value={form.rent} onChange={(e) => set("rent", e.target.value)} />
+              </div>
               <div className="form-group">
                 <label className="form-label">Acompte (€)</label>
                 <input type="number" step="0.01" className="form-input" value={form.deposit} onChange={(e) => set("deposit", e.target.value)} />
