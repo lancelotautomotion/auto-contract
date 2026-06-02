@@ -17,11 +17,12 @@ interface Props {
   guesthouseId: string;
   guesthouseSlug: string | null;
   rooms: RoomLink[];
+  noMargin?: boolean;
 }
 
 const STORAGE_KEY = "kordia.bookingLinksBanner.collapsed";
 
-export default function RoomBookingLinksBanner({ guesthouseId, guesthouseSlug, rooms }: Props) {
+export default function RoomBookingLinksBanner({ guesthouseId, guesthouseSlug, rooms, noMargin }: Props) {
   const [collapsed, setCollapsed] = useState(false);
   const [origin, setOrigin] = useState("");
   const [copiedId, setCopiedId] = useState<string | null>(null);
@@ -62,7 +63,7 @@ export default function RoomBookingLinksBanner({ guesthouseId, guesthouseSlug, r
   const missingGuesthouseSlug = !guesthouseSlug;
 
   return (
-    <div className="form-card" style={{ marginBottom: "20px", padding: "16px 18px" }}>
+    <div className="form-card" style={{ marginBottom: noMargin ? 0 : "20px", padding: "16px 18px" }}>
       <button
         type="button"
         onClick={toggle}

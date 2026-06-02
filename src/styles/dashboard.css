@@ -254,6 +254,7 @@
 }
 .upcoming-item:last-child { border: none; }
 .upcoming-item:hover { background: var(--line-light); }
+.upcoming-row:hover { background: var(--line-light); }
 .ui-bar { width: 4px; height: 36px; border-radius: 2px; flex-shrink: 0; }
 .ui-bar.g { background: var(--green); }
 .ui-bar.v { background: var(--violet); }
@@ -1214,6 +1215,8 @@
 
 /* ═══ SMALL MOBILE ≤640px ═══ */
 @media (max-width: 640px) {
+  .upcoming-row:hover { background: transparent; }
+
   /* Dashboard header : stack vertical, CTA compact en-dessous */
   .dash-header,
   .page-header {
