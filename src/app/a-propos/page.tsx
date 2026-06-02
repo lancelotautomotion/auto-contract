@@ -8,7 +8,7 @@ import '@/styles/pages.css';
 import NavPages from '@/components/landing/NavPages';
 import ScrollToTop from '@/components/landing/ScrollToTop';
 import Footer from '@/components/landing/Footer';
-import { FileText, Home, CalendarDays, Clock, CheckSquare, Star, Mail, ArrowRight } from 'lucide-react';
+import { IcoFileText, IcoHome, IcoCalendarDays, IcoClock, IcoCheckSquare, IcoStar, IcoMail, IcoArrowRight } from '@/components/icons';
 import ScrollReveal from '@/app/ScrollReveal';
 
 export const metadata: Metadata = {
@@ -53,21 +53,21 @@ export default function AProposPage() {
           <div className="mission-grid">
             <div className="mission-card reveal reveal-d1">
               <div className="mc-icon g">
-                <FileText size={20} strokeWidth={1.4} color="#689D71" />
+                <IcoFileText size={20} strokeWidth={1.4} color="#689D71" />
               </div>
               <div className="mc-title">Contrats auto-générés</div>
               <div className="mc-desc">À partir de vos infos de réservation, le contrat se crée tout seul. Personnalisable clause par clause, conforme à la loi ALUR.</div>
             </div>
             <div className="mission-card reveal reveal-d2">
               <div className="mc-icon v">
-                <Home size={20} strokeWidth={1.4} color="#7F77DD" />
+                <IcoHome size={20} strokeWidth={1.4} color="#7F77DD" />
               </div>
               <div className="mc-title">Signature en ligne</div>
               <div className="mc-desc">Votre locataire signe en 30 secondes depuis son téléphone. Conforme eIDAS, horodatée, juridiquement valable.</div>
             </div>
             <div className="mission-card reveal reveal-d3">
               <div className="mc-icon g">
-                <CalendarDays size={20} strokeWidth={1.4} color="#689D71" />
+                <IcoCalendarDays size={20} strokeWidth={1.4} color="#689D71" />
               </div>
               <div className="mc-title">Suivi centralisé</div>
               <div className="mc-desc">Calendrier des réservations avec le statut de chaque contrat en temps réel. Plus jamais de flou sur l&apos;état d&apos;une réservation.</div>
@@ -86,28 +86,28 @@ export default function AProposPage() {
           <div className="values-grid">
             <div className="val-card reveal reveal-d1">
               <div className="val-icon g">
-                <Clock size={22} strokeWidth={1.4} color="#4A7353" />
+                <IcoClock size={22} strokeWidth={1.4} color="#4A7353" />
               </div>
               <div className="val-title">Simplicité</div>
               <div className="val-desc">Pas de formation, pas de complexité. Si c&apos;est pas simple, c&apos;est pas Kordia.</div>
             </div>
             <div className="val-card reveal reveal-d2">
               <div className="val-icon v">
-                <CheckSquare size={22} strokeWidth={1.4} color="#5B52B5" />
+                <IcoCheckSquare size={22} strokeWidth={1.4} color="#5B52B5" />
               </div>
               <div className="val-title">Transparence</div>
               <div className="val-desc">Tarifs clairs, pas de frais cachés. Vous savez exactement ce que vous payez et pourquoi.</div>
             </div>
             <div className="val-card reveal reveal-d3">
               <div className="val-icon g">
-                <Star size={22} strokeWidth={1.4} color="#4A7353" />
+                <IcoStar size={22} strokeWidth={1.4} color="#4A7353" />
               </div>
               <div className="val-title">Indépendance</div>
               <div className="val-desc">On aide les propriétaires à se libérer des plateformes. Votre gîte, vos règles, vos revenus.</div>
             </div>
             <div className="val-card reveal reveal-d4">
               <div className="val-icon v">
-                <Home size={22} strokeWidth={1.4} color="#5B52B5" />
+                <IcoHome size={22} strokeWidth={1.4} color="#5B52B5" />
               </div>
               <div className="val-title">Proximité</div>
               <div className="val-desc">Un humain derrière chaque réponse. Pas de chatbot, pas de ticket perdu. On est là.</div>
@@ -126,7 +126,7 @@ export default function AProposPage() {
             <p>Passionné d&apos;automatisation et de produits bien pensés, j&apos;ai créé Kordia après avoir constaté que des milliers de propriétaires de gîtes gèrent encore leurs contrats à la main — sur Word, par email, sans suivi.</p>
             <p>Mon objectif : donner à chaque propriétaire indépendant les mêmes outils qu&apos;un professionnel, en gardant la simplicité au centre de tout.</p>
             <a className="founder-link" href="mailto:contact@kordia.fr">
-              <Mail size={14} strokeWidth={1.4} color="#7F77DD" />
+              <IcoMail size={14} strokeWidth={1.4} color="#7F77DD" />
               contact@kordia.fr
             </a>
           </div>
@@ -140,7 +140,7 @@ export default function AProposPage() {
           <p>Essayez Kordia gratuitement pendant 1 mois. Sans carte bancaire.</p>
           <Link className="btn-white" href="/sign-up">
             Démarrer l&apos;essai gratuit
-            <ArrowRight size={16} strokeWidth={1.5} color="#5B52B5" style={{ verticalAlign: 'middle', marginLeft: '4px' }} />
+            <IcoArrowRight size={16} strokeWidth={1.5} color="#5B52B5" style={{ verticalAlign: 'middle', marginLeft: '4px' }} />
           </Link>
         </div>
       </section>

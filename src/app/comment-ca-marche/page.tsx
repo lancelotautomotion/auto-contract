@@ -6,7 +6,7 @@ import Footer from "@/components/landing/Footer";
 import ScrollToTop from "@/components/landing/ScrollToTop";
 import FaqAccordion from "./FaqAccordion";
 import StepVisual from "./StepVisual";
-import { Check, ArrowRight } from "lucide-react";
+import { IcoCheck, IcoArrowRight } from "@/components/icons";
 
 const steps = [
   {
@@ -118,7 +118,7 @@ export default function CommentCaMarche() {
                 <div className="ccm-flow-line" />
                 <div className="ccm-flow-item done">
                   <div className="ccm-flow-dot">
-                    <Check size={16} strokeWidth={1.8} color="#fff" />
+                    <IcoCheck size={16} strokeWidth={1.8} color="#fff" />
                   </div>
                   <div className="ccm-flow-body">
                     <div className="ccm-flow-title">Contrat signé</div>
@@ -146,7 +146,7 @@ export default function CommentCaMarche() {
                     {step.points.map(pt => (
                       <li key={pt}>
                         <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '16px', height: '16px', borderRadius: '50%', background: '#EFEEF9', flexShrink: 0 }}>
-                          <Check size={10} strokeWidth={1.6} color="#7F77DD" />
+                          <IcoCheck size={10} strokeWidth={1.6} color="#7F77DD" />
                         </span>
                         <span>{pt}</span>
                       </li>
@@ -188,7 +188,7 @@ export default function CommentCaMarche() {
             <p>Configuration en 5 minutes. 30 jours d&apos;essai gratuits. Aucune carte bancaire requise.</p>
             <Link href="/sign-up" className="btn btn-violet btn-lg">
               Créer mon compte gratuitement
-              <ArrowRight size={16} strokeWidth={1.5} color="#fff" />
+              <IcoArrowRight size={16} strokeWidth={1.5} color="#fff" />
             </Link>
           </div>
         </section>

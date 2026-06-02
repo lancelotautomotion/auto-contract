@@ -1,7 +1,7 @@
 import { SignUp } from '@clerk/nextjs';
 import Link from 'next/link';
 import { Suspense } from 'react';
-import { ChevronLeft, Plus, FileCheck, CalendarDays, Clock } from 'lucide-react';
+import { IcoChevronLeft, IcoPlus, IcoFileCheck, IcoCalendarDays, IcoClock } from '@/components/icons';
 
 import { Plus_Jakarta_Sans } from 'next/font/google';
 import '@/styles/pages.css';
@@ -58,7 +58,7 @@ export default function SignUpPage() {
           <div className="orb orb-2" />
           <div className="orb orb-3" />
           <Link href="/" className="auth-back">
-            <ChevronLeft size={14} strokeWidth={1.5} />
+            <IcoChevronLeft size={14} strokeWidth={1.5} />
             Retour à l&apos;accueil
           </Link>
           <div className="ab-content">
@@ -68,10 +68,10 @@ export default function SignUpPage() {
             <div className="ab-headline">Gérez votre gîte<br /><span className="g">sans la paperasse.</span></div>
             <div className="ab-desc">Contrats auto-générés, signature en ligne, suivi centralisé. Tout ce qu&apos;il faut pour louer l&apos;esprit libre.</div>
             <div className="ab-pills">
-              <div className="ab-pill"><div className="ab-pill-icon g"><Plus size={14} strokeWidth={1.4} color="#689D71" /></div>Contrat généré en 3 minutes</div>
-              <div className="ab-pill"><div className="ab-pill-icon v"><FileCheck size={14} strokeWidth={1.4} color="#7F77DD" /></div>Signature électronique eIDAS</div>
-              <div className="ab-pill"><div className="ab-pill-icon g"><CalendarDays size={14} strokeWidth={1.4} color="#689D71" /></div>Calendrier et suivi en temps réel</div>
-              <div className="ab-pill"><div className="ab-pill-icon v"><Clock size={14} strokeWidth={1.4} color="#7F77DD" /></div>Essai gratuit 1 mois, sans CB</div>
+              <div className="ab-pill"><div className="ab-pill-icon g"><IcoPlus size={14} strokeWidth={1.4} color="#689D71" /></div>Contrat généré en 3 minutes</div>
+              <div className="ab-pill"><div className="ab-pill-icon v"><IcoFileCheck size={14} strokeWidth={1.4} color="#7F77DD" /></div>Signature électronique eIDAS</div>
+              <div className="ab-pill"><div className="ab-pill-icon g"><IcoCalendarDays size={14} strokeWidth={1.4} color="#689D71" /></div>Calendrier et suivi en temps réel</div>
+              <div className="ab-pill"><div className="ab-pill-icon v"><IcoClock size={14} strokeWidth={1.4} color="#7F77DD" /></div>Essai gratuit 1 mois, sans CB</div>
             </div>
           </div>
           <div className="ab-footer">© 2026 Kordia · Fait avec soin en France</div>
@@ -80,7 +80,7 @@ export default function SignUpPage() {
         <div className="auth-form-panel">
           <div className="auth-form-inner">
             <Link href="/" className="auth-back-mobile">
-              <ChevronLeft size={13} strokeWidth={1.5} />
+              <IcoChevronLeft size={13} strokeWidth={1.5} />
               Retour à l&apos;accueil
             </Link>
             <img src="/logotype_KORDIA.svg" alt="Kordia" className="auth-form-logo" style={{ height: 36, width: 'auto', display: 'block' }} />

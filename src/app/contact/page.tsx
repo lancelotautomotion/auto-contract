@@ -6,7 +6,7 @@ import Nav from '@/components/landing/Nav';
 import Footer from '@/components/landing/Footer';
 import ScrollToTop from '@/components/landing/ScrollToTop';
 import ContactForm from './ContactForm';
-import { Mail, Clock, ArrowRight, FileText } from 'lucide-react';
+import { IcoMail, IcoClock, IcoArrowRight, IcoFileText } from '@/components/icons';
 
 export const metadata: Metadata = {
   title: 'Contact — Kordia',
@@ -43,19 +43,19 @@ export default function ContactPage() {
             <aside className="ct-info">
               <div className="ct-card">
                 <div className="ct-ico violet">
-                  <Mail size={20} strokeWidth={1.4} />
+                  <IcoMail size={20} strokeWidth={1.4} />
                 </div>
                 <div className="ct-card-title">Email</div>
                 <div className="ct-card-desc">Le canal préféré. On lit chaque message et on répond personnellement.</div>
                 <a className="ct-card-link" href="mailto:contact@kordia.fr">
                   contact@kordia.fr
-                  <ArrowRight size={14} strokeWidth={1.5} />
+                  <IcoArrowRight size={14} strokeWidth={1.5} />
                 </a>
               </div>
 
               <div className="ct-card">
                 <div className="ct-ico green">
-                  <Clock size={20} strokeWidth={1.4} />
+                  <IcoClock size={20} strokeWidth={1.4} />
                 </div>
                 <div className="ct-card-title">Réponse rapide</div>
                 <div className="ct-card-desc">En moyenne moins de 4h sur les jours ouvrés. Pas de chatbot, un humain.</div>
@@ -63,7 +63,7 @@ export default function ContactPage() {
 
               <div className="ct-card">
                 <div className="ct-ico violet">
-                  <FileText size={20} strokeWidth={1.4} />
+                  <IcoFileText size={20} strokeWidth={1.4} />
                 </div>
                 <div className="ct-card-title">Démo personnalisée</div>
                 <div className="ct-card-desc">Envie de voir Kordia en action&nbsp;? Réservez 15 min en visio, on vous montre tout.</div>
@@ -74,13 +74,13 @@ export default function ContactPage() {
                   rel="noopener noreferrer"
                 >
                   Réserver un créneau
-                  <ArrowRight size={14} strokeWidth={1.5} />
+                  <IcoArrowRight size={14} strokeWidth={1.5} />
                 </a>
               </div>
 
               <div className="ct-hours">
                 <div className="ct-hours-title">
-                  <Clock size={16} strokeWidth={1.3} />
+                  <IcoClock size={16} strokeWidth={1.3} />
                   Horaires de support
                 </div>
                 <div className="ct-hours-row"><span>Lundi – Vendredi</span><strong>9h – 18h</strong></div>
