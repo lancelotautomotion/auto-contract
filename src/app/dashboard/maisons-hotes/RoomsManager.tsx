@@ -24,6 +24,13 @@ const MAX_CAPACITY = 15;
 
 type AvailState = "idle" | "checking" | "available" | "taken" | "invalid";
 
+/* Styles partagés pour les inputs à l'intérieur des InputGroup (sans bordure propre) */
+const inputReset: React.CSSProperties = {
+  border: "none", outline: "none", padding: "7px 10px",
+  fontFamily: "inherit", fontSize: "13px", color: "var(--ink)", background: "transparent",
+  minWidth: 0,
+};
+
 export default function RoomsManager({
   guesthouseId,
   guesthouseSlug: initialGuesthouseSlug,
@@ -270,10 +277,10 @@ export default function RoomsManager({
           <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
             <input type="text" className="form-input" style={{ flex: "2 1 180px", fontWeight: 600 }} placeholder="Nom / numéro" value={draft.name} onChange={(e) => { setDraft((d) => ({ ...d, name: e.target.value })); setError(""); }} autoFocus />
             <InputGroup suffix="pers.">
-              <input type="number" min="1" style={{ width: "60px" }} placeholder="Pers." value={draft.capacity} onChange={(e) => setDraft((d) => ({ ...d, capacity: e.target.value }))} />
+              <input type="number" min="1" style={{ ...inputReset, width: "60px" }} placeholder="Pers." value={draft.capacity} onChange={(e) => setDraft((d) => ({ ...d, capacity: e.target.value }))} />
             </InputGroup>
             <InputGroup suffix="€/nuit">
-              <input type="number" min="0" step="0.01" style={{ width: "80px" }} placeholder="Prix" value={draft.basePrice} onChange={(e) => setDraft((d) => ({ ...d, basePrice: e.target.value }))} />
+              <input type="number" min="0" step="0.01" style={{ ...inputReset, width: "80px" }} placeholder="Prix" value={draft.basePrice} onChange={(e) => setDraft((d) => ({ ...d, basePrice: e.target.value }))} />
             </InputGroup>
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
@@ -318,12 +325,6 @@ function InputGroup({ suffix, children }: { suffix: string; children: React.Reac
     </div>
   );
 }
-
-/* InputGroup needs raw inputs without their own border */
-const inputReset: React.CSSProperties = {
-  border: "none", outline: "none", padding: "7px 10px",
-  fontFamily: "inherit", fontSize: "13px", color: "var(--ink)", background: "transparent",
-};
 
 function SlugStateBadge({ state, reason }: { state: AvailState; reason: string }) {
   if (state === "idle") return null;
