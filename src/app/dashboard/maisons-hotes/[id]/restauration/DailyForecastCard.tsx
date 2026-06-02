@@ -17,6 +17,9 @@ const SERVICE_ICON: Record<string, React.ReactNode> = {
   OTHER: <Plus size={16} strokeWidth={1.7} />,
 };
 
+// Services that count against the table capacity (i.e. "served at the table")
+const CAPACITY_SERVICES = new Set(["BREAKFAST", "LUNCH", "DINNER"]);
+
 const SERVICE_ORDER = ["BREAKFAST", "LUNCH", "DINNER", "OTHER"];
 
 function relativeLabel(d: Date, today: Date): string | null {
@@ -26,18 +29,42 @@ function relativeLabel(d: Date, today: Date): string | null {
   return null;
 }
 
+function MealProgressBar({ count, capacity }: { count: number; capacity: number }) {
+  if (capacity <= 0) return null;
+  const pct = Math.min(100, Math.round((count / capacity) * 100));
+  const full = count >= capacity;
+  const nearFull = pct >= 80;
+  const barColor = full ? "#b91c1c" : nearFull ? "#C87D4A" : "#7F77DD";
+  return (
+    <div style={{ marginTop: "5px" }}>
+      <div style={{ height: "3px", background: "#EFEDE8", borderRadius: "10px", overflow: "hidden" }}>
+        <div style={{ height: "100%", width: `${pct}%`, background: barColor, borderRadius: "10px", transition: "width .3s" }} />
+      </div>
+    </div>
+  );
+}
+
 export interface DailyForecast {
   date: Date;
   services: Map<string, MealAgg>;
   alerts: Alert[];
 }
 
-export default function DailyForecastCard({ day, today }: { day: DailyForecast; today: Date }) {
+export default function DailyForecastCard({
+  day,
+  today,
+  tableDhotesCapacity = 0,
+}: {
+  day: DailyForecast;
+  today: Date;
+  tableDhotesCapacity?: number;
+}) {
   const rel = relativeLabel(day.date, today);
   const dateFmt = day.date.toLocaleDateString("fr-FR", { weekday: "short", day: "2-digit", month: "short" });
   const services = SERVICE_ORDER.filter((s) => day.services.has(s));
   const empty = services.length === 0 && day.alerts.length === 0;
   const isToday = rel === "Aujourd'hui";
+  const hasCapacity = tableDhotesCapacity > 0;
 
   return (
     <div
@@ -75,12 +102,16 @@ export default function DailyForecastCard({ day, today }: { day: DailyForecast; 
             <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
               {services.map((s) => {
                 const agg = day.services.get(s)!;
+                const showCapacity = hasCapacity && CAPACITY_SERVICES.has(s);
+                const full = showCapacity && agg.count >= tableDhotesCapacity;
+                const nearFull = showCapacity && !full && agg.count / tableDhotesCapacity >= 0.8;
+                const countColor = full ? "#b91c1c" : nearFull ? "#C87D4A" : "var(--ink)";
                 return (
                   <div key={s} style={{
-                    display: "flex", alignItems: "center", gap: "10px",
+                    display: "flex", alignItems: "flex-start", gap: "10px",
                     padding: "8px 10px", background: "#F8F6F1", borderRadius: "8px",
                   }}>
-                    <span style={{ color: "#5B52B5", flexShrink: 0, display: "inline-flex" }}>{SERVICE_ICON[s]}</span>
+                    <span style={{ color: "#5B52B5", flexShrink: 0, display: "inline-flex", marginTop: "1px" }}>{SERVICE_ICON[s]}</span>
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div style={{ fontSize: "11px", fontWeight: 700, color: "var(--ink-lighter)", textTransform: "uppercase", letterSpacing: "0.06em" }}>
                         {SERVICE_LABEL[s] ?? s}
@@ -90,9 +121,19 @@ export default function DailyForecastCard({ day, today }: { day: DailyForecast; 
                           {Array.from(agg.labels).join(" · ")}
                         </div>
                       )}
+                      {showCapacity && (
+                        <MealProgressBar count={agg.count} capacity={tableDhotesCapacity} />
+                      )}
                     </div>
-                    <div style={{ fontSize: "18px", fontWeight: 700, color: "var(--ink)", lineHeight: 1 }}>
-                      {agg.count}
+                    <div style={{ textAlign: "right", flexShrink: 0, lineHeight: 1 }}>
+                      {showCapacity ? (
+                        <>
+                          <span style={{ fontSize: "18px", fontWeight: 700, color: countColor }}>{agg.count}</span>
+                          <span style={{ fontSize: "12px", color: "var(--ink-lighter)", fontWeight: 500 }}> / {tableDhotesCapacity}</span>
+                        </>
+                      ) : (
+                        <span style={{ fontSize: "18px", fontWeight: 700, color: "var(--ink)" }}>{agg.count}</span>
+                      )}
                     </div>
                   </div>
                 );

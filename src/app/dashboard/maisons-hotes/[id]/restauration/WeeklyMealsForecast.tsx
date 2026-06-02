@@ -22,7 +22,7 @@ function truncate(s: string, max = 80) {
   return clean.length > max ? clean.slice(0, max - 1) + "…" : clean;
 }
 
-export default function WeeklyMealsForecast({ reservations }: { reservations: ReservationLike[] }) {
+export default function WeeklyMealsForecast({ reservations, tableDhotesCapacity = 0 }: { reservations: ReservationLike[]; tableDhotesCapacity?: number }) {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
@@ -73,7 +73,7 @@ export default function WeeklyMealsForecast({ reservations }: { reservations: Re
       }}
     >
       {ordered.map((day) => (
-        <DailyForecastCard key={dayKey(day.date)} day={day} today={today} />
+        <DailyForecastCard key={dayKey(day.date)} day={day} today={today} tableDhotesCapacity={tableDhotesCapacity} />
       ))}
     </div>
   );
