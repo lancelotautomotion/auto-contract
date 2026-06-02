@@ -84,16 +84,14 @@ export default function Sidebar({ pendingCount = 0, trialInfo, mobileOpen, onMob
           </Link>
         </div>
 
-        {!guesthouseMode && (
-          <div className="sb-section">
-            <div className="sb-section-title">Gestion</div>
+        <div className="sb-section">
+          <div className="sb-section-title">Gestion</div>
 
-            <Link href={`${base}/archives`} className={`sb-link${active(`${base}/archives`) ? ' active' : ''}`}>
-              <span className="sb-icon"><Archive size={18} strokeWidth={1.4} /></span>
-              Archives
-            </Link>
-          </div>
-        )}
+          <Link href={`${base}/archives`} className={`sb-link${active(`${base}/archives`) ? ' active' : ''}`}>
+            <span className="sb-icon"><Archive size={18} strokeWidth={1.4} /></span>
+            Archives
+          </Link>
+        </div>
 
         <div className="sb-section">
           <div className="sb-section-title">Support</div>
