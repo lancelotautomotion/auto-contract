@@ -20,7 +20,8 @@ type Reservation = {
 
 type Props = {
   reservations: Reservation[];
-  giteId: string;
+  giteId?: string;
+  hrefBase?: string; // overrides giteId-based URL
 };
 
 const AVATAR_COLORS = [
@@ -46,7 +47,8 @@ function getPill(r: Reservation) {
 
 const PER_PAGE = 10;
 
-export default function ReservationsTable({ reservations, giteId }: Props) {
+export default function ReservationsTable({ reservations, giteId, hrefBase }: Props) {
+  const base = hrefBase ?? (giteId ? `/dashboard/${giteId}/reservations` : '/dashboard');
   const router = useRouter();
   const [activeTab, setActiveTab] = useState('all');
   const [search, setSearch] = useState('');
@@ -188,8 +190,8 @@ export default function ReservationsTable({ reservations, giteId }: Props) {
                 const av = getAvatarColor(`${r.clientFirstName}${r.clientLastName}`);
                 const pill = getPill(r);
                 const detailHref = r.status === 'PENDING_REVIEW'
-                  ? `/dashboard/${giteId}/reservations/${r.id}/complete`
-                  : `/dashboard/${giteId}/reservations/${r.id}`;
+                  ? `${base}/${r.id}/complete`
+                  : `${base}/${r.id}`;
                 return (
                   <tr key={r.id} onClick={() => router.push(detailHref)}>
                     <td>
