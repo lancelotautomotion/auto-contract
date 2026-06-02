@@ -8,7 +8,15 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
   if (err) return err;
 
   const contract = await prisma.contract.findFirst({
-    where: { reservation: { id, gite: { userId: ctx.userId } } },
+    where: {
+      reservation: {
+        id,
+        OR: [
+          { gite: { userId: ctx.userId } },
+          { guesthouse: { userId: ctx.userId } },
+        ],
+      },
+    },
   });
 
   return NextResponse.json({
