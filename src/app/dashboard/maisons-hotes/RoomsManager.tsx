@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { isValidSlug, slugError, suggestSlug } from "@/lib/slug";
 import {
   BedDouble, Plus, AlertTriangle, Check, X, Trash2,
-  ExternalLink, Copy, ChevronDown, Users, Euro, Sparkles,
+  ExternalLink, Copy, ChevronDown, Users, Sparkles,
   Link as LinkIcon, Settings2,
 } from "lucide-react";
 
@@ -22,9 +22,6 @@ interface Room {
 const MAX_ROOMS = 5;
 const MAX_CAPACITY = 15;
 
-// Palette de couleurs Kordia pour les cartes (violet, vert, puis variations)
-const ROOM_ACCENTS = ["#7F77DD", "#689D71", "#C87D4A", "#5B99C0", "#9B68A0"];
-
 type AvailState = "idle" | "checking" | "available" | "taken" | "invalid";
 
 export default function RoomsManager({
@@ -37,7 +34,7 @@ export default function RoomsManager({
   initialRooms: Room[];
 }) {
   const [rooms, setRooms] = useState<Room[]>(initialRooms);
-  const [draft, setDraft] = useState({ name: "", capacity: "2", basePrice: "", cleaningFee: "", slug: "" });
+  const [draft, setDraft] = useState({ name: "", capacity: "2", basePrice: "", slug: "" });
   const [draftSlugTouched, setDraftSlugTouched] = useState(false);
   const [loading, setLoading] = useState(false);
   const [showAdd, setShowAdd] = useState(false);
@@ -126,13 +123,13 @@ export default function RoomsManager({
       const res = await fetch(`/api/guesthouse/${guesthouseId}/rooms`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: draft.name.trim(), capacity: draft.capacity, basePrice: draft.basePrice, cleaningFee: parseFloat(draft.cleaningFee) || 0, slug: draft.slug || null }),
+        body: JSON.stringify({ name: draft.name.trim(), capacity: draft.capacity, basePrice: draft.basePrice, cleaningFee: 0, slug: draft.slug || null }),
       });
       const data = await res.json();
       if (!res.ok) { setError(data.error ?? "Erreur."); return; }
       setRooms((rs) => [...rs, data.room]);
       setWarning(data.warning ?? null);
-      setDraft({ name: "", capacity: "2", basePrice: "", cleaningFee: "", slug: "" });
+      setDraft({ name: "", capacity: "2", basePrice: "", slug: "" });
       setDraftSlugTouched(false);
       setShowAdd(false);
     } catch { setError("Impossible de contacter le serveur."); }
@@ -221,11 +218,10 @@ export default function RoomsManager({
       )}
 
       <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-        {rooms.map((room, idx) => (
+        {rooms.map((room) => (
           <RoomCard
             key={room.id}
             room={room}
-            accent={ROOM_ACCENTS[idx % ROOM_ACCENTS.length]}
             origin={origin}
             guesthouseId={guesthouseId}
             guesthouseSlug={savedGhSlug}
@@ -273,18 +269,12 @@ export default function RoomsManager({
           </div>
           <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
             <input type="text" className="form-input" style={{ flex: "2 1 180px", fontWeight: 600 }} placeholder="Nom / numéro" value={draft.name} onChange={(e) => { setDraft((d) => ({ ...d, name: e.target.value })); setError(""); }} autoFocus />
-            <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
-              <input type="number" min="1" className="form-input" style={{ width: "70px" }} placeholder="Pers." value={draft.capacity} onChange={(e) => setDraft((d) => ({ ...d, capacity: e.target.value }))} />
-              <span style={{ fontSize: "12px", color: "var(--ink-lighter)" }}>pers.</span>
-            </div>
-            <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
-              <input type="number" min="0" step="0.01" className="form-input" style={{ width: "90px" }} placeholder="Prix/nuit" value={draft.basePrice} onChange={(e) => setDraft((d) => ({ ...d, basePrice: e.target.value }))} />
-              <span style={{ fontSize: "12px", color: "var(--ink-lighter)" }}>€/nuit</span>
-            </div>
-            <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
-              <input type="number" min="0" step="0.01" className="form-input" style={{ width: "90px" }} placeholder="Ménage" value={draft.cleaningFee} onChange={(e) => setDraft((d) => ({ ...d, cleaningFee: e.target.value }))} />
-              <span style={{ fontSize: "12px", color: "var(--ink-lighter)" }}>€ ménage</span>
-            </div>
+            <InputGroup suffix="pers.">
+              <input type="number" min="1" style={{ width: "60px" }} placeholder="Pers." value={draft.capacity} onChange={(e) => setDraft((d) => ({ ...d, capacity: e.target.value }))} />
+            </InputGroup>
+            <InputGroup suffix="€/nuit">
+              <input type="number" min="0" step="0.01" style={{ width: "80px" }} placeholder="Prix" value={draft.basePrice} onChange={(e) => setDraft((d) => ({ ...d, basePrice: e.target.value }))} />
+            </InputGroup>
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
             <span style={{ fontSize: "12px", color: "var(--ink-lighter)" }}>URL :</span>
@@ -296,7 +286,7 @@ export default function RoomsManager({
           </div>
           <div style={{ display: "flex", gap: "8px" }}>
             <button type="submit" className="btn btn-green" disabled={loading}>{loading ? "Ajout…" : "Ajouter"}</button>
-            <button type="button" className="btn btn-outline" onClick={() => { setShowAdd(false); setDraft({ name: "", capacity: "2", basePrice: "", cleaningFee: "", slug: "" }); setDraftSlugTouched(false); setError(""); }}>Annuler</button>
+            <button type="button" className="btn btn-outline" onClick={() => { setShowAdd(false); setDraft({ name: "", capacity: "2", basePrice: "", slug: "" }); setDraftSlugTouched(false); setError(""); }}>Annuler</button>
           </div>
         </form>
       )}
@@ -308,6 +298,32 @@ export default function RoomsManager({
     </div>
   );
 }
+
+/* Small helper: input with an attached suffix label sharing the border */
+function InputGroup({ suffix, children }: { suffix: string; children: React.ReactNode }) {
+  return (
+    <div style={{
+      display: "flex", alignItems: "stretch",
+      border: "1px solid var(--line)", borderRadius: "8px", overflow: "hidden", background: "#fff",
+    }}>
+      {/* clone children stripping their own border */}
+      <div style={{ display: "contents" }}>
+        {children}
+      </div>
+      <span style={{
+        padding: "0 10px", display: "flex", alignItems: "center",
+        fontSize: "12px", color: "var(--ink-lighter)", background: "#F8F6F1",
+        borderLeft: "1px solid var(--line)", whiteSpace: "nowrap", userSelect: "none",
+      }}>{suffix}</span>
+    </div>
+  );
+}
+
+/* InputGroup needs raw inputs without their own border */
+const inputReset: React.CSSProperties = {
+  border: "none", outline: "none", padding: "7px 10px",
+  fontFamily: "inherit", fontSize: "13px", color: "var(--ink)", background: "transparent",
+};
 
 function SlugStateBadge({ state, reason }: { state: AvailState; reason: string }) {
   if (state === "idle") return null;
@@ -325,10 +341,10 @@ function SlugStateBadge({ state, reason }: { state: AvailState; reason: string }
 }
 
 function RoomCard({
-  room, accent, origin, guesthouseId, guesthouseSlug, ghSlug, copied,
+  room, origin, guesthouseId, guesthouseSlug, ghSlug, copied,
   onCopy, onUpdate, onRemove, buildUrl,
 }: {
-  room: Room; accent: string; origin: string; guesthouseId: string;
+  room: Room; origin: string; guesthouseId: string;
   guesthouseSlug: string; ghSlug: string; copied: boolean;
   onCopy: () => void; onUpdate: (patch: Partial<Room>) => Promise<boolean>;
   onRemove: () => void; buildUrl: () => string;
@@ -337,12 +353,13 @@ function RoomCard({
   const [name, setName] = useState(room.name);
   const [capacity, setCapacity] = useState(String(room.capacity));
   const [basePrice, setBasePrice] = useState(String(room.basePrice));
-  const [cleaningFee, setCleaningFee] = useState(String(room.cleaningFee));
   const [slug, setSlug] = useState(room.slug ?? "");
   const [slugState, setSlugState] = useState<AvailState>("idle");
   const [slugReason, setSlugReason] = useState("");
-  const [savingSlug, setSavingSlug] = useState(false);
   const savedSlug = useRef(room.slug ?? "");
+
+  const [saving, setSaving] = useState(false);
+  const [saveMsg, setSaveMsg] = useState<{ kind: "ok" | "err"; text: string } | null>(null);
 
   const [clausesOpen, setClausesOpen] = useState(false);
   const [clauses, setClauses] = useState(room.specificClauses ?? "");
@@ -353,7 +370,6 @@ function RoomCard({
   useEffect(() => { setName(room.name); }, [room.name]);
   useEffect(() => { setCapacity(String(room.capacity)); }, [room.capacity]);
   useEffect(() => { setBasePrice(String(room.basePrice)); }, [room.basePrice]);
-  useEffect(() => { setCleaningFee(String(room.cleaningFee)); }, [room.cleaningFee]);
   useEffect(() => { setSlug(room.slug ?? ""); savedSlug.current = room.slug ?? ""; }, [room.slug]);
   useEffect(() => { setClauses(room.specificClauses ?? ""); savedClauses.current = room.specificClauses ?? ""; }, [room.specificClauses]);
 
@@ -377,48 +393,64 @@ function RoomCard({
     return () => { ctrl.abort(); clearTimeout(t); };
   }, [slug, guesthouseId, room.id]);
 
-  const saveSlug = async () => {
-    if (slug === savedSlug.current) return;
-    if (slug && !isValidSlug(slug)) return;
-    setSavingSlug(true);
-    const ok = await onUpdate({ slug: slug || null });
-    if (ok) { savedSlug.current = slug; setSlugState(slug ? "available" : "idle"); setSlugReason(""); }
-    setSavingSlug(false);
+  const saveAll = async () => {
+    if (slug && slugState === "invalid") return;
+    if (slug && slugState === "checking") return;
+    setSaving(true); setSaveMsg(null);
+    const patch: Partial<Room> = {};
+    if (name.trim() && name !== room.name) patch.name = name.trim();
+    const cap = parseInt(capacity) || 0;
+    if (cap !== room.capacity) patch.capacity = cap;
+    const price = parseFloat(basePrice) || 0;
+    if (price !== room.basePrice) patch.basePrice = price;
+    if (slug !== savedSlug.current) patch.slug = slug || null;
+
+    if (Object.keys(patch).length === 0) { setSaving(false); setSaveMsg({ kind: "ok", text: "Aucune modification." }); return; }
+
+    const ok = await onUpdate(patch);
+    if (ok) {
+      if ("slug" in patch) { savedSlug.current = slug; setSlugState(slug ? "available" : "idle"); setSlugReason(""); }
+      setSaveMsg({ kind: "ok", text: "Modifications enregistrées." });
+    } else {
+      setSaveMsg({ kind: "err", text: "Erreur lors de l'enregistrement." });
+    }
+    setSaving(false);
   };
 
   const fullUrl = buildUrl();
+  const borderColor = open ? "var(--violet)" : "#EFEDE8";
 
   return (
     <div style={{
       background: room.active ? "#fff" : "#FAFAF8",
       border: "1px solid #EFEDE8",
-      borderLeft: `4px solid ${room.active ? accent : "#D0CEC8"}`,
+      borderLeft: `3px solid ${room.active ? borderColor : "#D0CEC8"}`,
       borderRadius: "12px",
       overflow: "hidden",
-      transition: "box-shadow .15s",
+      transition: "border-color .2s",
     }}>
       {/* Ligne collapsed : toujours visible */}
       <div
-        style={{ display: "flex", alignItems: "center", gap: "10px", padding: "14px 16px", cursor: "pointer", flexWrap: "wrap" }}
+        style={{ display: "flex", alignItems: "center", gap: "10px", padding: "13px 14px 13px 13px", cursor: "pointer" }}
         onClick={() => setOpen((o) => !o)}
         role="button"
         aria-expanded={open}
       >
         {/* Icône chambre */}
-        <span style={{ width: 32, height: 32, borderRadius: "8px", background: room.active ? `${accent}18` : "#F3F2EE", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-          <BedDouble size={16} strokeWidth={1.4} color={room.active ? accent : "#A3A3A0"} />
+        <span style={{ width: 30, height: 30, borderRadius: "8px", background: room.active ? "#EEF0FB" : "#F3F2EE", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+          <BedDouble size={15} strokeWidth={1.4} color={room.active ? "var(--violet)" : "#A3A3A0"} />
         </span>
 
         {/* Nom */}
-        <span style={{ fontSize: "14px", fontWeight: 700, color: room.active ? "var(--ink)" : "var(--ink-lighter)", flex: "1 1 120px", minWidth: 0 }}>{room.name}</span>
+        <span style={{ fontSize: "14px", fontWeight: 700, color: room.active ? "var(--ink)" : "var(--ink-lighter)", flex: "1 1 100px", minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{room.name}</span>
 
         {/* Badges */}
-        <div style={{ display: "flex", gap: "6px", flexWrap: "wrap", alignItems: "center" }}>
-          <span style={{ display: "inline-flex", alignItems: "center", gap: "4px", fontSize: "11.5px", fontWeight: 600, color: room.active ? accent : "#A3A3A0", background: room.active ? `${accent}14` : "#F3F2EE", padding: "3px 9px", borderRadius: "20px" }}>
+        <div style={{ display: "flex", gap: "6px", alignItems: "center", flexShrink: 0 }}>
+          <span style={{ display: "inline-flex", alignItems: "center", gap: "4px", fontSize: "11.5px", fontWeight: 600, color: "var(--ink-lighter)", background: "#F3F2EE", padding: "3px 9px", borderRadius: "20px" }}>
             <Users size={11} strokeWidth={1.5} />{room.capacity} pers.
           </span>
-          <span style={{ display: "inline-flex", alignItems: "center", gap: "4px", fontSize: "11.5px", fontWeight: 600, color: "#689D71", background: "#EEF5EF", padding: "3px 9px", borderRadius: "20px" }}>
-            <Euro size={11} strokeWidth={1.5} />{room.basePrice} €/nuit
+          <span style={{ display: "inline-flex", alignItems: "center", gap: "4px", fontSize: "11.5px", fontWeight: 600, color: "#3E7A48", background: "#EEF5EF", padding: "3px 9px", borderRadius: "20px" }}>
+            {room.basePrice} €/nuit
           </span>
           {!room.active && (
             <span style={{ fontSize: "10.5px", fontWeight: 700, color: "#A3A3A0", background: "#F3F2EE", padding: "2px 8px", borderRadius: "20px", textTransform: "uppercase", letterSpacing: "0.4px" }}>
@@ -427,7 +459,7 @@ function RoomCard({
           )}
         </div>
 
-        {/* Bouton copier URL */}
+        {/* Bouton copier URL — séparé du chevron */}
         {fullUrl && room.active && (
           <button
             type="button"
@@ -439,8 +471,8 @@ function RoomCard({
           </button>
         )}
 
-        {/* Chevron */}
-        <ChevronDown size={16} strokeWidth={1.4} color="var(--ink-lighter)" style={{ flexShrink: 0, transition: "transform .2s", transform: open ? "rotate(0deg)" : "rotate(-90deg)" }} />
+        {/* Chevron — tout à droite */}
+        <ChevronDown size={16} strokeWidth={1.4} color="var(--ink-lighter)" style={{ flexShrink: 0, marginLeft: "4px", transition: "transform .2s", transform: open ? "rotate(0deg)" : "rotate(-90deg)" }} />
       </div>
 
       {/* Panneau déroulé */}
@@ -448,31 +480,23 @@ function RoomCard({
         <div style={{ padding: "0 16px 16px", borderTop: "1px solid #F0EDE8" }}>
 
           {/* Champs d'édition */}
-          <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", marginTop: "12px", alignItems: "center" }}>
+          <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", marginTop: "14px", alignItems: "stretch" }}>
+            {/* Nom */}
             <input type="text" className="form-input" style={{ flex: "2 1 160px", fontWeight: 600 }} value={name}
-              onChange={(e) => setName(e.target.value)} onBlur={() => name !== room.name && onUpdate({ name })}
+              onChange={(e) => { setName(e.target.value); setSaveMsg(null); }}
               placeholder="Nom de la chambre" />
-            <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
-              <input type="number" min="1" className="form-input" style={{ width: "68px" }} value={capacity}
-                onChange={(e) => setCapacity(e.target.value)}
-                onBlur={() => parseInt(capacity) !== room.capacity && onUpdate({ capacity: parseInt(capacity) || 0 })}
+            {/* Capacité */}
+            <InputGroup suffix="pers.">
+              <input type="number" min="1" style={{ ...inputReset, width: "52px" }} value={capacity}
+                onChange={(e) => { setCapacity(e.target.value); setSaveMsg(null); }}
                 title="Capacité (personnes)" />
-              <span style={{ fontSize: "12px", color: "var(--ink-lighter)" }}>pers.</span>
-            </div>
-            <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
-              <input type="number" min="0" step="0.01" className="form-input" style={{ width: "86px" }} value={basePrice}
-                onChange={(e) => setBasePrice(e.target.value)}
-                onBlur={() => parseFloat(basePrice) !== room.basePrice && onUpdate({ basePrice: parseFloat(basePrice) || 0 })}
+            </InputGroup>
+            {/* Prix */}
+            <InputGroup suffix="€/nuit">
+              <input type="number" min="0" step="0.01" style={{ ...inputReset, width: "72px" }} value={basePrice}
+                onChange={(e) => { setBasePrice(e.target.value); setSaveMsg(null); }}
                 title="Prix par nuit (€)" />
-              <span style={{ fontSize: "12px", color: "var(--ink-lighter)" }}>€/nuit</span>
-            </div>
-            <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
-              <input type="number" min="0" step="0.01" className="form-input" style={{ width: "86px" }} value={cleaningFee}
-                onChange={(e) => setCleaningFee(e.target.value)}
-                onBlur={() => parseFloat(cleaningFee) !== room.cleaningFee && onUpdate({ cleaningFee: parseFloat(cleaningFee) || 0 })}
-                title="Frais de ménage (€)" />
-              <span style={{ fontSize: "12px", color: "var(--ink-lighter)" }}>€ ménage</span>
-            </div>
+            </InputGroup>
           </div>
 
           {/* Slug + URL */}
@@ -482,12 +506,8 @@ function RoomCard({
             </div>
             <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
               <input type="text" className="form-input" style={{ flex: "1 1 180px", background: "#fff" }} placeholder="chambre-rose" value={slug}
-                onChange={(e) => setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "-"))} />
+                onChange={(e) => { setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "-")); setSaveMsg(null); }} />
               <SlugStateBadge state={slugState} reason={slugReason} />
-              <button type="button" className="btn btn-outline" style={{ fontSize: "12px", padding: "6px 12px" }}
-                onClick={saveSlug} disabled={savingSlug || slug === savedSlug.current || (!!slug && slugState !== "available")}>
-                {savingSlug ? "…" : "Enregistrer"}
-              </button>
             </div>
             {fullUrl ? (
               <div style={{ display: "flex", gap: "8px", alignItems: "center", marginTop: "8px", flexWrap: "wrap" }}>
@@ -546,18 +566,41 @@ function RoomCard({
             )}
           </div>
 
-          {/* Actions */}
-          <div style={{ display: "flex", gap: "8px", marginTop: "12px", paddingTop: "12px", borderTop: "1px dashed #EFEDE8", alignItems: "center", flexWrap: "wrap" }}>
+          {/* Actions bas de carte */}
+          <div style={{ display: "flex", gap: "8px", marginTop: "14px", paddingTop: "12px", borderTop: "1px dashed #EFEDE8", alignItems: "center", flexWrap: "wrap" }}>
+            {/* Supprimer — discret, à gauche */}
             <button type="button"
-              className={`btn ${room.active ? "btn-outline" : "btn-violet"}`}
+              style={{ background: "transparent", border: "none", padding: "6px 4px", cursor: "pointer", display: "flex", alignItems: "center", gap: "5px", fontSize: "12px", color: "#b91c1c", fontFamily: "inherit", opacity: 0.7 }}
+              onClick={onRemove}
+              title="Supprimer la chambre">
+              <Trash2 size={13} strokeWidth={1.4} />
+              Supprimer
+            </button>
+
+            <div style={{ flex: 1 }} />
+
+            {/* Désactiver / Activer — secondaire */}
+            <button type="button"
+              className="btn btn-outline"
               style={{ fontSize: "12px", padding: "6px 14px" }}
               onClick={() => onUpdate({ active: !room.active })}>
               {room.active ? "Désactiver" : "Activer"}
             </button>
-            <button type="button" className="btn btn-danger" style={{ fontSize: "12px", padding: "6px 14px" }} onClick={onRemove}>
-              <Trash2 size={13} strokeWidth={1.4} />
-              Supprimer
+
+            {/* Enregistrer les modifications — principal */}
+            <button type="button"
+              className="btn btn-violet"
+              style={{ fontSize: "12px", padding: "6px 16px" }}
+              disabled={saving || (slug !== savedSlug.current && (slugState === "checking" || slugState === "invalid" || slugState === "taken"))}
+              onClick={saveAll}>
+              {saving ? "Enregistrement…" : "Enregistrer les modifications"}
             </button>
+
+            {saveMsg && (
+              <span style={{ fontSize: "11.5px", color: saveMsg.kind === "ok" ? "#3E7A48" : "#b91c1c", fontWeight: 600, width: "100%", textAlign: "right" }}>
+                {saveMsg.text}
+              </span>
+            )}
           </div>
         </div>
       )}
