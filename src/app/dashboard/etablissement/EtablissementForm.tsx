@@ -896,7 +896,12 @@ export default function EtablissementForm({ gite, guesthouse }: { gite?: GiteDat
                 </div>
 
                 {/* CTA Aperçu — dans la colonne gauche */}
-                <button type="button" className="contract-preview-btn" onClick={() => setShowMobilePreview(true)}>
+                <button type="button" className="contract-preview-btn" onClick={() => {
+                  // Sync DOM → state before opening so the preview reflects the latest editor content
+                  if (editorGeneralRef.current) setContractTemplateGeneral(readEditorTemplate(editorGeneralRef.current));
+                  if (editorHouseRulesRef.current) setContractTemplateHouseRules(readEditorTemplate(editorHouseRulesRef.current));
+                  setShowMobilePreview(true);
+                }}>
                   <Eye size={15} strokeWidth={1.4} />
                   Aperçu du contrat
                 </button>
