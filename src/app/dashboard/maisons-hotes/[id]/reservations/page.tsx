@@ -3,10 +3,8 @@ import { redirect, notFound } from "next/navigation";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import TopbarSignOut from "@/app/dashboard/TopbarSignOut";
-import CalendarView from "@/app/dashboard/CalendarView";
-import { buildGuesthouseCalendarData } from "@/lib/guesthouseCalendarData";
-import RoomBookingLinksBanner from "./RoomBookingLinksBanner";
-import { Plus, Info } from "lucide-react";
+import ReservationsTable from "@/app/dashboard/reservations/ReservationsTable";
+import { Plus, Info, CalendarDays, FileText, Check, Clock } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -21,61 +19,56 @@ export default async function GuesthouseReservationsPage({ params }: { params: P
   const guesthouse = await prisma.guesthouse.findFirst({
     where: { id, userId: dbUser.id, deletedAt: null },
     include: {
-      rooms: { orderBy: [{ position: "asc" }, { createdAt: "asc" }] },
+      rooms: { select: { id: true }, where: { active: true } },
       reservations: {
-        include: { reservationRooms: true, contract: { select: { status: true } } },
-        orderBy: { checkIn: "asc" },
+        include: { contract: { select: { status: true, emailStatus: true } } },
+        orderBy: { checkIn: "desc" },
       },
     },
   });
   if (!guesthouse) notFound();
 
-  const icalFeeds = await prisma.guesthouseIcalFeed.findMany({
-    where: { room: { guesthouseId: guesthouse.id } },
-    select: { platform: true, label: true, blockedDates: true, roomId: true },
-  });
-
-  const pendingReservations = guesthouse.reservations.filter((r) => r.status === "PENDING_REVIEW");
-  const activeReservations = guesthouse.reservations.filter((r) => r.status !== "REFUSED" && r.status !== "CANCELLED" && r.status !== "PENDING_REVIEW");
   const hasRooms = guesthouse.rooms.length > 0;
-
-  const multiRooms = buildGuesthouseCalendarData(guesthouse.rooms, guesthouse.reservations, icalFeeds);
-
-  // Couleurs de chambre alignées sur celles du planning (même mapping via id).
-  const colorByRoomId = new Map(multiRooms.map((m) => [m.id, m.color]));
-  const bannerRooms = guesthouse.rooms
-    .filter((r) => r.active)
-    .map((r) => ({
-      id: r.id,
-      name: r.name,
-      slug: r.slug ?? null,
-      capacity: r.capacity,
-      basePrice: r.basePrice,
-      color: colorByRoomId.get(r.id) ?? "#7F77DD",
-    }));
+  const allReservations = guesthouse.reservations;
+  const pendingReservations = allReservations.filter((r) => r.status === "PENDING_REVIEW");
+  const activeCount = allReservations.filter(
+    (r) => r.status !== "REFUSED" && r.status !== "CANCELLED" && r.status !== "PENDING_REVIEW"
+  ).length;
+  const contractsGenerated = allReservations.filter(
+    (r) => r.contract?.status === "GENERATED" || r.contract?.status === "SIGNED"
+  ).length;
+  const contractsSigned = allReservations.filter((r) => r.contract?.status === "SIGNED").length;
 
   const fmt = (d: Date) =>
     new Date(d).toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "numeric" });
+
+  const reservationsForClient = allReservations.map((r) => ({
+    id: r.id,
+    status: r.status,
+    clientFirstName: r.clientFirstName,
+    clientLastName: r.clientLastName,
+    clientEmail: r.clientEmail,
+    checkIn: r.checkIn.toISOString(),
+    checkOut: r.checkOut.toISOString(),
+    rent: r.rent,
+    contractStatus: r.contract?.status ?? null,
+    emailStatus: r.contract?.emailStatus ?? null,
+  }));
 
   return (
     <>
       <div className="topbar">
         <div className="topbar-left">
-          <div className="topbar-breadcrumb">Kordia / {guesthouse.name} / <span>Planning & Réservations</span></div>
+          <div className="topbar-breadcrumb">Kordia / {guesthouse.name} / <span>Réservations</span></div>
         </div>
         <div className="topbar-right"><TopbarSignOut /></div>
       </div>
 
       <div className="content" style={{ maxWidth: "1200px", width: "100%" }}>
-        <div className="dash-header">
+        <div className="page-header">
           <div>
-            <div className="dash-greeting">Planning & Réservations</div>
-            <div className="dash-date">
-              {activeReservations.length} réservation{activeReservations.length > 1 ? "s" : ""} active{activeReservations.length > 1 ? "s" : ""}
-              {pendingReservations.length > 0 && (
-                <> · <span style={{ color: "#B7791F", fontWeight: 700 }}>{pendingReservations.length} en attente</span></>
-              )}
-            </div>
+            <h1>Réservations<span className="v">.</span></h1>
+            <div className="sub">Gérez toutes vos réservations depuis un seul endroit</div>
           </div>
           <div className="header-actions">
             {hasRooms ? (
@@ -91,104 +84,44 @@ export default async function GuesthouseReservationsPage({ params }: { params: P
           </div>
         </div>
 
-        {hasRooms && (
-          <RoomBookingLinksBanner
-            guesthouseId={id}
-            guesthouseSlug={guesthouse.slug ?? null}
-            rooms={bannerRooms}
-          />
-        )}
-
         {pendingReservations.length > 0 && (
-          <div style={{
-            background: "#FEF3CD", border: "1px solid #F5C842", borderRadius: "12px",
-            padding: "16px 20px", marginBottom: "20px",
-          }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "12px" }}>
-              <Info size={16} strokeWidth={1.4} style={{ flexShrink: 0, color: "#B7791F" }} />
-              <div style={{ fontSize: "13px", fontWeight: 700, color: "#7B4F0A" }}>
-                {pendingReservations.length} demande{pendingReservations.length > 1 ? "s" : ""} en attente de traitement
+          <div className="pending-banner">
+            <div className="pb-header">
+              <div className="pb-icon">
+                <Info size={18} strokeWidth={1.4} />
+              </div>
+              <div>
+                <div className="pb-title">
+                  {pendingReservations.length} nouvelle{pendingReservations.length > 1 ? "s" : ""} demande{pendingReservations.length > 1 ? "s" : ""} à valider
+                </div>
+                <div className="pb-sub">Des clients ont soumis une demande via votre formulaire de réservation.</div>
               </div>
             </div>
-            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+            <div className="pb-items">
               {pendingReservations.map((r) => (
-                <div key={r.id} style={{
-                  display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "8px",
-                  background: "#FFFBEF", border: "1px solid #F5C842", borderRadius: "8px", padding: "10px 14px",
-                }}>
-                  <div>
-                    <div style={{ fontSize: "13px", fontWeight: 600, color: "#2C2C2A" }}>
-                      {r.clientFirstName} {r.clientLastName}
-                    </div>
-                    <div style={{ fontSize: "12px", color: "#71716E", marginTop: "2px" }}>
-                      {fmt(r.checkIn)} → {fmt(r.checkOut)}
-                      {r.reservationRooms.length > 0 && (
-                        <> · {r.reservationRooms.map((rr) => rr.roomName).join(", ")}</>
-                      )}
-                    </div>
+                <Link key={r.id} href={`/dashboard/maisons-hotes/${id}/reservations/${r.id}/complete`} className="pb-item">
+                  <div className="pb-item-left">
+                    <span className="pb-item-name">{r.clientFirstName} {r.clientLastName}</span>
+                    <span className="pb-item-dates">{fmt(r.checkIn)} → {fmt(r.checkOut)}</span>
                   </div>
-                  <Link
-                    href={`/dashboard/maisons-hotes/${id}/reservations/${r.id}/complete`}
-                    className="btn btn-violet"
-                    style={{ fontSize: "12px", padding: "7px 14px" }}
-                  >
-                    Traiter la demande →
-                  </Link>
-                </div>
+                  <span className="pb-item-cta">Compléter →</span>
+                </Link>
               ))}
             </div>
           </div>
         )}
 
-        <div className="form-card" style={{ marginBottom: "20px" }}>
-          <div className="form-card-title">Planning</div>
-          {hasRooms ? (
-            <CalendarView
-              reservations={[]}
-              multiGites={multiRooms}
-              allLabel="Toute la maison"
-              reservationHrefBase={`/dashboard/maisons-hotes/${id}/reservations`}
-            />
-          ) : (
-            <p style={{ fontSize: "13px", color: "var(--ink-lighter)", fontStyle: "italic" }}>
-              Aucune chambre configurée — ajoutez vos chambres depuis « Mon hébergement ».
-            </p>
-          )}
+        <div className="stats-row">
+          <div className="stat-card green"><div className="sc-top"><div className="sc-label">Réservations</div><div className="sc-icon g"><CalendarDays size={14} strokeWidth={1.4} color="#4A7353" /></div></div><div className="sc-num">{activeCount}</div></div>
+          <div className="stat-card violet"><div className="sc-top"><div className="sc-label">Contrats générés</div><div className="sc-icon v"><FileText size={14} strokeWidth={1.4} color="#5B52B5" /></div></div><div className="sc-num">{contractsGenerated}</div></div>
+          <div className="stat-card green"><div className="sc-top"><div className="sc-label">Contrats signés</div><div className="sc-icon g"><Check size={14} strokeWidth={1.4} color="#4A7353" /></div></div><div className="sc-num">{contractsSigned}</div></div>
+          <div className="stat-card amber"><div className="sc-top"><div className="sc-label">En attente</div><div className="sc-icon a"><Clock size={14} strokeWidth={1.4} color="#8C6A00" /></div></div><div className="sc-num">{pendingReservations.length}</div></div>
         </div>
 
-        <div className="form-card">
-          <div className="form-card-title">Réservations ({activeReservations.length})</div>
-          {activeReservations.length === 0 ? (
-            <p style={{ fontSize: "13px", color: "var(--ink-lighter)", fontStyle: "italic" }}>Aucune réservation.</p>
-          ) : (
-            <div className="table-card" style={{ overflowX: "auto" }}>
-              <table className="resa-table" style={{ width: "100%", minWidth: "560px", borderCollapse: "collapse" }}>
-                <thead>
-                  <tr style={{ textAlign: "left", fontSize: "11px", color: "#A3A3A0", textTransform: "uppercase" }}>
-                    <th style={{ padding: "8px" }}>Client</th>
-                    <th style={{ padding: "8px" }}>Séjour</th>
-                    <th style={{ padding: "8px" }}>Chambre(s)</th>
-                    <th style={{ padding: "8px" }}>Montant</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {activeReservations.map((r) => (
-                    <tr key={r.id} style={{ borderTop: "1px solid #EFEDE8", fontSize: "13px", cursor: "pointer" }}>
-                      <td style={{ padding: 0, fontWeight: 600 }}>
-                        <Link href={`/dashboard/maisons-hotes/${id}/reservations/${r.id}`} style={{ display: "block", padding: "10px 8px", color: "#2C2C2A", textDecoration: "none" }}>
-                          {r.clientFirstName} {r.clientLastName}
-                        </Link>
-                      </td>
-                      <td style={{ padding: "10px 8px", color: "#71716E" }}>{fmt(r.checkIn)} → {fmt(r.checkOut)}</td>
-                      <td style={{ padding: "10px 8px", color: "#71716E" }}>{r.reservationRooms.map((rr) => rr.roomName).join(", ") || "—"}</td>
-                      <td style={{ padding: "10px 8px", fontWeight: 600 }}>{r.rent != null ? `${r.rent.toLocaleString("fr-FR")} €` : "—"}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </div>
+        <ReservationsTable
+          reservations={reservationsForClient}
+          hrefBase={`/dashboard/maisons-hotes/${id}/reservations`}
+        />
       </div>
     </>
   );

@@ -6,7 +6,7 @@ import { useClerk } from "@clerk/nextjs";
 import type { TrialInfo } from "@/lib/trial";
 import GiteSelector from "@/components/GiteSelector";
 import {
-  LayoutDashboard, CalendarDays, UtensilsCrossed, Building2,
+  LayoutDashboard, CalendarDays, LayoutGrid, UtensilsCrossed, Building2,
   Archive, HelpCircle, Mail, Bug, Settings, LogOut, X, Lock,
 } from "lucide-react";
 
@@ -65,11 +65,18 @@ export default function Sidebar({ pendingCount = 0, trialInfo, mobileOpen, onMob
 
           <Link href={`${base}/reservations`} className={`sb-link${active(`${base}/reservations`) ? ' active' : ''}`}>
             <span className="sb-icon"><CalendarDays size={18} strokeWidth={1.4} /></span>
-            {guesthouseMode ? 'Planning & Réservations' : 'Réservations'}
+            Réservations
             {pendingCount > 0 && (
               <span className="sb-badge">{pendingCount}</span>
             )}
           </Link>
+
+          {guesthouseMode && (
+            <Link href={`${base}/planning`} className={`sb-link${active(`${base}/planning`) ? ' active' : ''}`}>
+              <span className="sb-icon"><LayoutGrid size={18} strokeWidth={1.4} /></span>
+              Planning
+            </Link>
+          )}
 
           {guesthouseMode && (
             <Link href={`${base}/restauration`} className={`sb-link${active(`${base}/restauration`) ? ' active' : ''}`}>
