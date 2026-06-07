@@ -62,7 +62,7 @@ export async function POST(
   if (checkOut <= checkIn)
     return NextResponse.json({ error: "La date de départ doit être après l'arrivée" }, { status: 400 });
 
-  if ((body.address?.length ?? 0) > 500 || (body.city?.length ?? 0) > 200 || (body.notes?.length ?? 0) > 2000)
+  if ((body.address?.length ?? 0) > 500 || (body.city?.length ?? 0) > 200 || (body.notes?.length ?? 0) > 2000 || (body.allergies?.length ?? 0) > 1000)
     return NextResponse.json({ error: "Données trop longues" }, { status: 400 });
 
   const guestCount = parseInt(String(body.guestCount ?? ""), 10) || 1;
@@ -98,7 +98,7 @@ export async function POST(
       deposit: 0,
       cleaningFee: 0,
       touristTax: guesthouse.touristTax,
-      dietaryNotes: body.notes ? String(body.notes) : null,
+      dietaryNotes: body.allergies ? String(body.allergies) : null,
       notes: body.notes ?? "",
       reservationRooms: {
         create: [{ roomId: room.id, roomName: room.name, price: room.basePrice }],
@@ -125,6 +125,9 @@ export async function POST(
       const mealsHtml = chosenMeals.length > 0
         ? `<p style="font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif;font-size:14px;color:#2C2C2A;margin:0 0 6px;"><strong>Restauration :</strong> ${chosenMeals.map((m) => `${m.name}${m.price > 0 ? ` (+${m.price} €/pers.)` : ""}`).join(", ")}</p>`
         : "";
+      const allergiesHtml = body.allergies
+        ? `<p style="font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif;font-size:14px;color:#B91C1C;margin:8px 0 0;font-weight:600;">⚠ Allergies : ${body.allergies}</p>`
+        : "";
       const notesHtml = body.notes
         ? `<p style="font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif;font-size:14px;color:#71716E;margin:8px 0 0;font-style:italic;">« ${body.notes} »</p>`
         : "";
@@ -145,6 +148,7 @@ export async function POST(
     <p style="font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif;font-size:15px;color:#2C2C2A;margin:0 0 4px;">${ci} → ${co}</p>
     <p style="font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif;font-size:14px;color:#7F77DD;font-weight:600;margin:0 0 8px;">${nights} nuit${nights > 1 ? "s" : ""} · ${guestCount} personne${guestCount > 1 ? "s" : ""}</p>
     ${mealsHtml}
+    ${allergiesHtml}
     ${notesHtml}
   </td></tr>
 </table>

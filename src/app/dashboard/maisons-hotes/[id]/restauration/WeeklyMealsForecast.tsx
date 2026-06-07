@@ -1,3 +1,7 @@
+"use client";
+
+import { useState } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import DailyForecastCard, { type DailyForecast } from "./DailyForecastCard";
 
 interface MealEntry {
@@ -23,17 +27,21 @@ function truncate(s: string, max = 80) {
 }
 
 export default function WeeklyMealsForecast({ reservations, tableDhotesCapacity = 0 }: { reservations: ReservationLike[]; tableDhotesCapacity?: number }) {
+  const [weekOffset, setWeekOffset] = useState(0);
+
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
+  const weekStart = new Date(today);
+  weekStart.setDate(today.getDate() + weekOffset * 7);
+
   const days: Date[] = [];
   for (let i = 0; i < 7; i++) {
-    const d = new Date(today);
-    d.setDate(today.getDate() + i);
+    const d = new Date(weekStart);
+    d.setDate(weekStart.getDate() + i);
     days.push(d);
   }
 
-  // Map<dayKey, DailyForecast>
   const grid = new Map<string, DailyForecast>();
   for (const d of days) grid.set(dayKey(d), { date: d, services: new Map(), alerts: [] });
 
@@ -52,7 +60,6 @@ export default function WeeklyMealsForecast({ reservations, tableDhotesCapacity 
           prev.labels.add(m.label);
           slot.services.set(m.service, prev);
         }
-        // Une alerte n'est pertinente que si le client est servi ce jour-là (a au moins un repas)
         if (note && r.meals.length > 0) {
           if (!slot.alerts.some((a) => a.client === clientName)) {
             slot.alerts.push({ client: clientName, note: truncate(note) });
@@ -64,17 +71,48 @@ export default function WeeklyMealsForecast({ reservations, tableDhotesCapacity 
 
   const ordered: DailyForecast[] = days.map((d) => grid.get(dayKey(d))!);
 
+  const fmtWeekRange = () => {
+    const start = days[0];
+    const end = days[6];
+    const opts: Intl.DateTimeFormatOptions = { day: "numeric", month: "short" };
+    return `${start.toLocaleDateString("fr-FR", opts)} – ${end.toLocaleDateString("fr-FR", opts)}`;
+  };
+
   return (
-    <div
-      style={{
-        display: "grid",
-        gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))",
-        gap: "12px",
-      }}
-    >
-      {ordered.map((day) => (
-        <DailyForecastCard key={dayKey(day.date)} day={day} today={today} tableDhotesCapacity={tableDhotesCapacity} />
-      ))}
+    <div>
+      <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "16px" }}>
+        <button
+          type="button"
+          onClick={() => setWeekOffset((o) => o - 1)}
+          style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 32, height: 32, borderRadius: "8px", border: "1px solid var(--line)", background: "var(--dash-white)", cursor: "pointer", flexShrink: 0 }}
+        >
+          <ChevronLeft size={16} strokeWidth={1.7} />
+        </button>
+        <span style={{ fontSize: "13px", fontWeight: 600, color: "var(--ink)", minWidth: 150, textAlign: "center" }}>
+          {weekOffset === 0 ? "Cette semaine" : weekOffset === 1 ? "Semaine prochaine" : fmtWeekRange()}
+        </span>
+        <button
+          type="button"
+          onClick={() => setWeekOffset((o) => o + 1)}
+          style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 32, height: 32, borderRadius: "8px", border: "1px solid var(--line)", background: "var(--dash-white)", cursor: "pointer", flexShrink: 0 }}
+        >
+          <ChevronRight size={16} strokeWidth={1.7} />
+        </button>
+        {weekOffset !== 0 && (
+          <button
+            type="button"
+            onClick={() => setWeekOffset(0)}
+            style={{ fontSize: "12px", color: "var(--violet)", background: "none", border: "none", cursor: "pointer", padding: "0 4px", fontWeight: 600 }}
+          >
+            Aujourd&apos;hui
+          </button>
+        )}
+      </div>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: "12px" }}>
+        {ordered.map((day) => (
+          <DailyForecastCard key={dayKey(day.date)} day={day} today={today} tableDhotesCapacity={tableDhotesCapacity} />
+        ))}
+      </div>
     </div>
   );
 }

@@ -48,6 +48,7 @@ export default function GuesthouseRoomBookingForm({
     address: "", city: "", zipCode: "",
     checkIn: "", checkOut: "",
     guestCount: "",
+    allergies: "",
     notes: "",
     gdprConsent: false,
     website: "",
@@ -143,7 +144,7 @@ export default function GuesthouseRoomBookingForm({
       const res = await fetch(`/api/book/${guesthouseSlug}/${roomSlug}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, selectedMealIds: Array.from(selectedMeals) }),
+        body: JSON.stringify({ ...form, selectedMealIds: Array.from(selectedMeals), allergies: form.allergies }),
       });
       if (res.ok) setStep("success");
       else {
@@ -397,7 +398,27 @@ export default function GuesthouseRoomBookingForm({
             </div>
           )}
 
-          {/* Message */}
+          {/* Allergies */}
+          <div className="book-fs">
+            <div className="book-fs-title">
+              <AlertTriangle size={14} strokeWidth={1.4} />
+              Allergies / régimes alimentaires (optionnel)
+            </div>
+            <div className="book-fs-divider"/>
+            <div className="book-card">
+              <p style={{ fontSize: "13px", color: "var(--ink-lighter)", margin: "0 0 10px", lineHeight: 1.5 }}>
+                Indiquez ici toute allergie ou intolérance alimentaire. Ces informations seront transmises au gérant.
+              </p>
+              <textarea
+                className="book-textarea"
+                placeholder="Ex. Allergie aux fruits de mer, intolérance au lactose, végétarien…"
+                value={form.allergies}
+                onChange={(e) => set("allergies", e.target.value)}
+              />
+            </div>
+          </div>
+
+          {/* Message général */}
           <div className="book-fs">
             <div className="book-fs-title">
               <MessageSquare size={14} strokeWidth={1.4} />
@@ -406,11 +427,11 @@ export default function GuesthouseRoomBookingForm({
             <div className="book-fs-divider"/>
             <div className="book-card">
               <p style={{ fontSize: "13px", color: "var(--ink-lighter)", margin: "0 0 10px", lineHeight: 1.5 }}>
-                Allergies, régime alimentaire, heure d&apos;arrivée estimée ou toute demande particulière.
+                Heure d&apos;arrivée estimée ou toute autre demande particulière.
               </p>
               <textarea
                 className="book-textarea"
-                placeholder="Ex. Arrivée prévue vers 17h, régime végétarien…"
+                placeholder="Ex. Arrivée prévue vers 17h…"
                 value={form.notes}
                 onChange={(e) => set("notes", e.target.value)}
               />
