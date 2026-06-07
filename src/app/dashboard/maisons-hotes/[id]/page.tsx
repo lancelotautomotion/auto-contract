@@ -46,7 +46,10 @@ export default async function GuesthouseDashboardPage({
       rooms: true,
       reservations: {
         where: { status: { notIn: ["REFUSED", "CANCELLED"] } },
-        include: { reservationRooms: true, meals: true },
+        include: {
+          reservationRooms: { include: { room: { select: { name: true } } } },
+          meals: true,
+        },
         orderBy: { checkIn: "asc" },
       },
     },
@@ -274,7 +277,7 @@ export default async function GuesthouseDashboardPage({
                       >
                         <div style={{ flex: 1, minWidth: 0 }}>
                           <div style={{ fontSize: "13px", fontWeight: 700, color: "var(--ink)" }}>{r.clientFirstName} {r.clientLastName}</div>
-                          <div style={{ fontSize: "11px", color: "var(--ink-lighter)" }}>{fmt(r.checkIn)} → {fmt(r.checkOut)} · {r.reservationRooms.map((rr) => rr.roomName).join(", ") || "—"}</div>
+                          <div style={{ fontSize: "11px", color: "var(--ink-lighter)" }}>{fmt(r.checkIn)} → {fmt(r.checkOut)} · {r.reservationRooms.map((rr) => rr.room?.name ?? rr.roomName).join(", ") || "—"}</div>
                         </div>
                         <div style={{ display: "flex", gap: "4px" }}>
                           {hasMeals && <span style={{ fontSize: "10px", fontWeight: 700, background: "#E6F0E8", color: "#3E7A48", padding: "2px 7px", borderRadius: "20px" }}>Repas</span>}

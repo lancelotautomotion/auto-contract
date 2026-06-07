@@ -24,7 +24,10 @@ export default async function GuesthousePlanningPage({ params }: { params: Promi
     include: {
       rooms: { orderBy: [{ position: "asc" }, { createdAt: "asc" }] },
       reservations: {
-        include: { reservationRooms: true, contract: true },
+        include: {
+          reservationRooms: { include: { room: { select: { name: true } } } },
+          contract: true,
+        },
         orderBy: { checkIn: "desc" },
       },
     },
@@ -136,7 +139,7 @@ export default async function GuesthousePlanningPage({ params }: { params: Promi
               <div style={{ display: "flex", flexDirection: "column" }}>
                 {upcoming.map((r, i) => {
                   const nights = nightsBetween(r.checkIn, r.checkOut);
-                  const roomNames = r.reservationRooms.map((rr) => rr.roomName).join(", ");
+                  const roomNames = r.reservationRooms.map((rr) => rr.room?.name ?? rr.roomName).join(", ");
                   const roomColor = r.reservationRooms[0]?.roomId
                     ? (colorByRoomId.get(r.reservationRooms[0].roomId!) ?? "#7F77DD")
                     : "#7F77DD";
