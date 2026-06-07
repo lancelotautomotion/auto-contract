@@ -20,11 +20,26 @@ interface Feed { id: string; platform: string; label: string; url: string; synce
 interface RoomLite { id: string; name: string; }
 
 function platformLabel(p: string) { return PLATFORMS.find(x => x.value === p)?.label ?? p; }
-function fmtSync(iso: string | null) {
-  if (!iso) return "jamais synchronisé";
-  const d = new Date(iso);
-  return `Sync. ${d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' })} à ${d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}`;
+function fmtSync(iso: string | null): { label: string; status: 'ok' | 'warn' | 'never' } {
+  if (!iso) return { label: "Jamais synchronisé", status: 'never' };
+  const diff = Date.now() - new Date(iso).getTime();
+  const mins = Math.floor(diff / 60000);
+  const hours = Math.floor(mins / 60);
+  const days = Math.floor(hours / 24);
+  let label: string;
+  if (mins < 1) label = "À l'instant";
+  else if (mins < 60) label = `Il y a ${mins} min`;
+  else if (hours < 24) label = `Il y a ${hours}h`;
+  else label = `Il y a ${days}j`;
+  const status = hours < 6 ? 'ok' : hours < 48 ? 'warn' : 'never';
+  return { label, status };
 }
+
+const STATUS_DOT: Record<string, { bg: string; text: string }> = {
+  ok:    { bg: '#DCFCE7', text: '#166534' },
+  warn:  { bg: '#FEF9C3', text: '#854D0E' },
+  never: { bg: '#FEE2E2', text: '#991B1B' },
+};
 
 const s = {
   card: {
@@ -180,36 +195,58 @@ export default function IcalTab({ giteId, guesthouseId, rooms = [] }: { giteId?:
           </div>
         ) : (
           <>
-            {feeds.map(feed => (
-              <div key={feed.id} style={s.feedRow}>
-                <div style={{
-                  width: '32px', height: '32px', borderRadius: '8px', flexShrink: 0,
-                  background: PLATFORM_COLORS[feed.platform] ?? '#7F77DD',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                }}>
-                  <CalendarDays size={14} strokeWidth={1.4} color="#fff" />
-                </div>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontSize: '13px', fontWeight: 600, color: '#2C2C2A' }}>
-                    {platformLabel(feed.platform)}
-                    {feed.platform === 'autre' && <span style={{ fontWeight: 400, color: '#71716E', marginLeft: '6px' }}>— {feed.label}</span>}
-                    {mode === "guesthouse" && feed.roomId && (
-                      <span style={{ fontWeight: 500, color: '#5B52B5', marginLeft: '6px', fontSize: '11.5px' }}>· {roomNameFor(feed.roomId)}</span>
-                    )}
+            {/* En-tête tableau */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 140px 80px', gap: '8px', padding: '6px 14px', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: '#A3A3A0', marginBottom: '4px' }}>
+              <span>Plateforme {mode === "guesthouse" ? "· Chambre" : ""}</span>
+              <span>Dernière synchro</span>
+              <span />
+              <span />
+            </div>
+
+            {feeds.map(feed => {
+              const sync = fmtSync(feed.syncedAt);
+              const dot = STATUS_DOT[sync.status];
+              return (
+                <div key={feed.id} style={{ ...s.feedRow, display: 'grid', gridTemplateColumns: '1fr 1fr 140px 80px', gap: '8px', alignItems: 'center' }}>
+                  {/* Plateforme */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0 }}>
+                    <div style={{ width: '30px', height: '30px', borderRadius: '8px', flexShrink: 0, background: PLATFORM_COLORS[feed.platform] ?? '#7F77DD', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <CalendarDays size={13} strokeWidth={1.4} color="#fff" />
+                    </div>
+                    <div style={{ minWidth: 0 }}>
+                      <div style={{ fontSize: '13px', fontWeight: 600, color: '#2C2C2A', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                        {feed.platform === 'autre' ? feed.label : platformLabel(feed.platform)}
+                      </div>
+                      {mode === "guesthouse" && feed.roomId && (
+                        <div style={{ fontSize: '11px', color: '#5B52B5', marginTop: '1px', fontWeight: 500 }}>{roomNameFor(feed.roomId)}</div>
+                      )}
+                    </div>
                   </div>
-                  <div style={{ fontSize: '11px', color: '#A3A3A0', marginTop: '2px' }}>{fmtSync(feed.syncedAt)}</div>
+
+                  {/* Statut */}
+                  <div>
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', background: dot.bg, color: dot.text, fontSize: '11.5px', fontWeight: 600, borderRadius: '20px', padding: '3px 10px' }}>
+                      <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: dot.text, flexShrink: 0 }} />
+                      {sync.label}
+                    </span>
+                  </div>
+
+                  {/* Sync */}
+                  <button type="button" onClick={() => handleSync(feed.id)} disabled={syncing === feed.id}
+                    style={{ background: '#fff', border: '1px solid #D9D7D0', borderRadius: '8px', padding: '6px 12px', cursor: 'pointer', fontSize: '12px', color: '#71716E', display: 'flex', alignItems: 'center', gap: '5px', fontFamily: 'inherit', justifyContent: 'center' }}>
+                    <RefreshCw size={12} strokeWidth={1.4} style={{ animation: syncing === feed.id ? 'ical-spin 1s linear infinite' : 'none' }} />
+                    {syncing === feed.id ? 'Sync…' : 'Synchroniser'}
+                  </button>
+
+                  {/* Supprimer */}
+                  <button type="button" onClick={() => handleDelete(feed.id)} disabled={deleting === feed.id}
+                    style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#C0392B', padding: '4px', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '11.5px', fontFamily: 'inherit', justifyContent: 'center' }}>
+                    <Trash2 size={13} strokeWidth={1.4} />
+                    Supprimer
+                  </button>
                 </div>
-                <button type="button" onClick={() => handleSync(feed.id)} disabled={syncing === feed.id}
-                  style={{ background: '#fff', border: '1px solid #D9D7D0', borderRadius: '7px', padding: '5px 10px', cursor: 'pointer', fontSize: '11px', color: '#71716E', display: 'flex', alignItems: 'center', gap: '4px', fontFamily: 'inherit' }}>
-                  <RefreshCw size={12} strokeWidth={1.4} style={{ animation: syncing === feed.id ? 'ical-spin 1s linear infinite' : 'none' }} />
-                  {syncing === feed.id ? 'Sync…' : 'Sync'}
-                </button>
-                <button type="button" onClick={() => handleDelete(feed.id)} disabled={deleting === feed.id}
-                  style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#A3A3A0', padding: '4px', lineHeight: 1 }}>
-                  <Trash2 size={14} strokeWidth={1.4} />
-                </button>
-              </div>
-            ))}
+              );
+            })}
 
             {!showForm && (
               <button type="button" style={{ ...s.btnOutline, marginTop: '4px' }} onClick={() => setShowForm(true)}>
