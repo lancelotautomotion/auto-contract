@@ -30,7 +30,7 @@ export default async function CompleteGuesthouseReservationPage({
     include: {
       reservationRooms: true,
       meals: true,
-      guesthouse: { select: { id: true, touristTax: true } },
+      guesthouse: { select: { id: true, touristTax: true, defaultDepositPercentage: true } },
     },
   });
   if (!reservation) notFound();
@@ -52,6 +52,23 @@ export default async function CompleteGuesthouseReservationPage({
     : null;
   const defaultCleaningFee = String(firstRoomCleaningFee?.cleaningFee ?? 0);
   const defaultTouristTax = String(reservation.guesthouse?.touristTax ?? 1.0);
+
+  // Nuitées : nombre de nuits entre check-in et check-out (>= 1 par sécurité).
+  const msPerDay = 24 * 60 * 60 * 1000;
+  const nights = Math.max(
+    1,
+    Math.round((reservation.checkOut.getTime() - reservation.checkIn.getTime()) / msPerDay),
+  );
+
+  // Hébergement = somme des prix nuitée des chambres × nombre de nuits.
+  const roomsNightly = reservation.reservationRooms.reduce((sum, r) => sum + (r.price || 0), 0);
+  const lodgingAmount = roomsNightly * nights;
+
+  // Restauration = somme (prix unitaire × quantité) sur tous les repas demandés.
+  const mealsAmount = reservation.meals.reduce((sum, m) => sum + (m.unitPrice || 0) * (m.quantity || 0), 0);
+
+  const depositPct = reservation.guesthouse?.defaultDepositPercentage ?? 30;
+  const depositAmount = Math.round(lodgingAmount * depositPct) / 100;
 
   return (
     <>
@@ -158,6 +175,11 @@ export default async function CompleteGuesthouseReservationPage({
           defaultCheckOut={fmt(reservation.checkOut)}
           defaultCleaningFee={defaultCleaningFee}
           defaultTouristTax={defaultTouristTax}
+          defaultNights={nights}
+          defaultLodging={lodgingAmount}
+          mealsAmount={mealsAmount}
+          defaultDeposit={depositAmount}
+          defaultDepositPercentage={depositPct}
         />
 
       </div>

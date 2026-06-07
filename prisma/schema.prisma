@@ -62,6 +62,10 @@ model Guesthouse {
   touristTax Float @default(1.00)
   // Nombre max de couverts servis à la table d'hôtes par soir (0 = pas de limite)
   tableDhotesCapacity Int @default(0)
+  // Acompte par défaut (en %) appliqué automatiquement au montant de l'hébergement
+  // lors de la validation d'une demande de réservation. Le gérant peut surcharger
+  // ponctuellement la valeur depuis le formulaire de validation.
+  defaultDepositPercentage Float @default(30)
 
   // Pipeline contrat partagé avec le Gîte
   contractTemplateGeneral    String?

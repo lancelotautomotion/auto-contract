@@ -25,6 +25,12 @@ export interface ContractData {
   acompte: number;
   menage: number;
   taxe_sejour: number;
+  // Maison d'hôtes : ventilation hébergement / restauration / total.
+  // Pour un Gîte, restauration = 0, hebergement = loyer, total_sejour = loyer.
+  hebergement?: number;
+  restauration?: number;
+  total_sejour?: number;
+  nombre_nuits?: number;
   options: { label: string; price: number }[];
   nom_gite: string;
   adresse_gite: string | null;
@@ -58,8 +64,12 @@ function buildVars(data: ContractData): Record<string, string> {
         : `- ${o.label} : inclus`
       ).join('\n');
 
-  const solde = Math.max(0, data.loyer - data.acompte);
+  const hebergement = data.hebergement ?? data.loyer;
+  const restauration = data.restauration ?? 0;
+  const totalSejour = data.total_sejour ?? hebergement + restauration;
+  const solde = Math.max(0, totalSejour - data.acompte);
   const dateJour = new Date().toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' });
+  const eur = (n: number) => n.toFixed(2).replace('.', ',');
 
   return {
     nom_client:          data.nom_client,
@@ -71,11 +81,15 @@ function buildVars(data: ContractData): Record<string, string> {
     code_postal_client:  data.code_postal_client ?? '',
     date_entree:         data.date_entree,
     date_sortie:         data.date_sortie,
-    loyer:               data.loyer.toFixed(2).replace('.', ','),
-    acompte:             data.acompte.toFixed(2).replace('.', ','),
-    solde:               solde.toFixed(2).replace('.', ','),
-    menage:              data.menage.toFixed(2).replace('.', ','),
-    taxe_sejour:         data.taxe_sejour.toFixed(2).replace('.', ','),
+    loyer:               eur(data.loyer),
+    hebergement:         eur(hebergement),
+    restauration:        eur(restauration),
+    total_sejour:        eur(totalSejour),
+    nombre_nuits:        data.nombre_nuits != null ? String(data.nombre_nuits) : '',
+    acompte:             eur(data.acompte),
+    solde:               eur(solde),
+    menage:              eur(data.menage),
+    taxe_sejour:         eur(data.taxe_sejour),
     options:             optionsText,
     nom_gite:            data.nom_gite,
     adresse_gite:        data.adresse_gite ?? '',

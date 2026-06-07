@@ -16,6 +16,10 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   if ("touristTax" in body) data.touristTax = parseFloat(body.touristTax) || 0;
   if ("capacity" in body) data.capacity = parseInt(body.capacity) || 0;
   if ("tableDhotesCapacity" in body) data.tableDhotesCapacity = Math.max(0, parseInt(body.tableDhotesCapacity) || 0);
+  if ("defaultDepositPercentage" in body) {
+    const pct = parseFloat(body.defaultDepositPercentage);
+    data.defaultDepositPercentage = Math.min(100, Math.max(0, isNaN(pct) ? 30 : pct));
+  }
   if (typeof data.name === "string" && !data.name.trim())
     return NextResponse.json({ error: "Le nom est requis" }, { status: 400 });
 
