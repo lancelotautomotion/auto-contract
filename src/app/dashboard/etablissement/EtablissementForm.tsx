@@ -623,8 +623,10 @@ export default function EtablissementForm({ gite, guesthouse }: { gite?: GiteDat
     </div>
   );
 
+  const isChambresTab = activeTab === 'Chambres' && mode === 'guesthouse' && guesthouse;
+
   return (
-    <form onSubmit={handleSubmit} className="etab-form">
+    <div className="etab-form">
 
       {/* TABS */}
       <div className="tabs">
@@ -634,6 +636,15 @@ export default function EtablissementForm({ gite, guesthouse }: { gite?: GiteDat
           </button>
         ))}
       </div>
+
+      {/* Chambres tab renders outside the form to avoid nested-form HTML issue */}
+      {isChambresTab && (
+        <div style={{ maxWidth: '860px' }}>
+          <RoomsManager guesthouseId={guesthouse!.id} guesthouseSlug={guesthouse!.slug ?? null} initialRooms={guesthouse!.rooms} />
+        </div>
+      )}
+
+      {!isChambresTab && <form onSubmit={handleSubmit}>
 
       {/* ═══ INFORMATIONS ═══ */}
       {activeTab === 'Informations' && (
@@ -786,13 +797,6 @@ export default function EtablissementForm({ gite, guesthouse }: { gite?: GiteDat
           </div>
 
           <SaveBar />
-        </div>
-      )}
-
-      {/* ═══ CHAMBRES (Maison d'hôtes) ═══ */}
-      {activeTab === 'Chambres' && mode === 'guesthouse' && guesthouse && (
-        <div style={{ maxWidth: '860px' }}>
-          <RoomsManager guesthouseId={guesthouse.id} guesthouseSlug={guesthouse.slug ?? null} initialRooms={guesthouse.rooms} />
         </div>
       )}
 
@@ -1082,6 +1086,8 @@ export default function EtablissementForm({ gite, guesthouse }: { gite?: GiteDat
           : <IcalTab giteId={src.id} />
       )}
 
-    </form>
+      </form>}
+
+    </div>
   );
 }
