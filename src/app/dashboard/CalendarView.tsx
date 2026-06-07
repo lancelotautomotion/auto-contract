@@ -12,6 +12,7 @@ interface Reservation {
   checkOut: string;
   status: string;
   contractStatus: string | null;
+  depositReceived: boolean;
   rent: number | null;
 }
 
@@ -74,11 +75,14 @@ function toDateStr(year: number, month: number, day: number): string {
 const MONTHS = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
 const DAYS   = ['Lu','Ma','Me','Je','Ve','Sa','Di'];
 
-const STATUS_LABELS: Record<string, { label: string; bg: string; color: string }> = {
-  SIGNED:    { label: 'Signé',       bg: SIGNED_BG,  color: SIGNED_TEXT },
-  GENERATED: { label: 'Envoyé',      bg: SENT_BG,    color: SENT_TEXT },
-  default:   { label: 'En attente',  bg: WAITING_BG, color: WAITING_TEXT },
-};
+const CONFIRMED_BG = '#DCFCE7'; const CONFIRMED_TEXT = '#166534';
+
+function getStatusLabel(r: Reservation): { label: string; bg: string; color: string } {
+  if (r.depositReceived) return { label: 'Confirmé', bg: CONFIRMED_BG, color: CONFIRMED_TEXT };
+  if (r.contractStatus === 'SIGNED')    return { label: 'Signé',      bg: SIGNED_BG,  color: SIGNED_TEXT };
+  if (r.contractStatus === 'GENERATED') return { label: 'Envoyé',     bg: SENT_BG,    color: SENT_TEXT };
+  return { label: 'En attente', bg: WAITING_BG, color: WAITING_TEXT };
+}
 
 type UnifiedEntry = { gite: GiteCalendarData; reservation?: Reservation; ical?: IcalBlock };
 
@@ -98,7 +102,7 @@ function ReservationTooltip({ reservation: r, rect }: { reservation: Reservation
   const nights = nightsBetween(r.checkIn, r.checkOut);
   const initials = `${r.clientFirstName[0]}${r.clientLastName[0]}`.toUpperCase();
   const color = getContractColor(r);
-  const statusStyle = STATUS_LABELS[r.contractStatus ?? 'default'] ?? STATUS_LABELS.default;
+  const statusStyle = getStatusLabel(r);
   const { left, top } = tooltipPosition(rect, 220);
   return (
     <div style={{

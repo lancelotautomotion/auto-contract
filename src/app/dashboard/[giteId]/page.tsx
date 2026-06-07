@@ -64,7 +64,8 @@ export default async function DashboardPage({ params }: { params: Promise<{ gite
         .map(r => ({
           id: r.id, clientFirstName: r.clientFirstName, clientLastName: r.clientLastName,
           checkIn: r.checkIn.toISOString(), checkOut: r.checkOut.toISOString(),
-          status: r.status, contractStatus: r.contract?.status ?? null, rent: null,
+          status: r.status, contractStatus: r.contract?.status ?? null,
+          depositReceived: r.contract?.depositReceived ?? false, rent: null,
         })),
       icalBlocked: allIcalFeeds
         .filter(f => f.giteId === g.id)

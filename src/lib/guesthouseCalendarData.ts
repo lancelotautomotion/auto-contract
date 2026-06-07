@@ -61,6 +61,7 @@ export function buildGuesthouseCalendarData(
         checkOut: toDateStr(r.checkOut),
         status: r.status,
         contractStatus: r.contract?.status ?? null,
+        depositReceived: r.contract?.depositReceived ?? false,
         rent: r.rent,
       }));
 

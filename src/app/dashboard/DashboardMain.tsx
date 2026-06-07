@@ -150,9 +150,10 @@ export default function DashboardMain({ multiGites, currentGiteId }: Props) {
                 );
               }
               const status = item.contractStatus;
-              const barClass = status === "SIGNED" ? "g" : status === "GENERATED" ? "v" : "a";
-              const pillClass = status === "SIGNED" ? "pill-g" : status === "GENERATED" ? "pill-v" : "pill-a";
-              const pillLabel = status === "SIGNED" ? "Signé" : status === "GENERATED" ? "Envoyé" : "En attente";
+              const confirmed = item.depositReceived;
+              const barClass = confirmed ? "g" : status === "SIGNED" ? "g" : status === "GENERATED" ? "v" : "a";
+              const pillClass = confirmed ? "pill-g" : status === "SIGNED" ? "pill-g" : status === "GENERATED" ? "pill-v" : "pill-a";
+              const pillLabel = confirmed ? "Confirmé" : status === "SIGNED" ? "Signé" : status === "GENERATED" ? "Envoyé" : "En attente";
               return (
                 <Link key={item.id} href={`/dashboard/${item.gite.id}/reservations/${item.id}`} style={{ textDecoration: "none" }}>
                   <div className="upcoming-item upcoming-item-compact">
