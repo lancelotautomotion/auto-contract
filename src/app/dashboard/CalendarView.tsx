@@ -218,11 +218,11 @@ function UnifiedTooltip({ entries, rect, dateLabel }: { entries: UnifiedEntry[];
             {e.reservation && (
               <div style={{
                 flexShrink: 0,
-                background: (STATUS_LABELS[e.reservation.contractStatus ?? 'default'] ?? STATUS_LABELS.default).bg,
-                color: (STATUS_LABELS[e.reservation.contractStatus ?? 'default'] ?? STATUS_LABELS.default).color,
+                background: getStatusLabel(e.reservation).bg,
+                color: getStatusLabel(e.reservation).color,
                 fontSize: '10px', fontWeight: 600, borderRadius: '20px', padding: '2px 7px',
               }}>
-                {(STATUS_LABELS[e.reservation.contractStatus ?? 'default'] ?? STATUS_LABELS.default).label}
+                {getStatusLabel(e.reservation).label}
               </div>
             )}
           </div>
