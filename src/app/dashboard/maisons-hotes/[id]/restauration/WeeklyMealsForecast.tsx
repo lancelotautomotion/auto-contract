@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, CalendarDays } from "lucide-react";
 import DailyForecastCard, { type DailyForecast } from "./DailyForecastCard";
 
 interface MealEntry {
@@ -78,36 +78,50 @@ export default function WeeklyMealsForecast({ reservations, tableDhotesCapacity 
     return `${start.toLocaleDateString("fr-FR", opts)} – ${end.toLocaleDateString("fr-FR", opts)}`;
   };
 
+  const navButtons = (
+    <div style={{ display: "flex", alignItems: "center", gap: "8px", flexShrink: 0 }}>
+      {weekOffset !== 0 && (
+        <button
+          type="button"
+          onClick={() => setWeekOffset(0)}
+          className="btn btn-outline"
+          style={{ fontSize: "12px", padding: "5px 12px", borderRadius: "20px" }}
+        >
+          Aujourd&apos;hui
+        </button>
+      )}
+      <button
+        type="button"
+        onClick={() => setWeekOffset((o) => o - 1)}
+        style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 30, height: 30, borderRadius: "8px", border: "1px solid var(--line)", background: "var(--dash-white)", cursor: "pointer", flexShrink: 0 }}
+      >
+        <ChevronLeft size={15} strokeWidth={1.7} />
+      </button>
+      <span style={{ fontSize: "13px", fontWeight: 600, color: "var(--ink)", minWidth: 140, textAlign: "center" }}>
+        {weekOffset === 0 ? "Cette semaine" : weekOffset === 1 ? "Semaine prochaine" : fmtWeekRange()}
+      </span>
+      <button
+        type="button"
+        onClick={() => setWeekOffset((o) => o + 1)}
+        style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 30, height: 30, borderRadius: "8px", border: "1px solid var(--line)", background: "var(--dash-white)", cursor: "pointer", flexShrink: 0 }}
+      >
+        <ChevronRight size={15} strokeWidth={1.7} />
+      </button>
+    </div>
+  );
+
   return (
-    <div>
-      <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "16px" }}>
-        <button
-          type="button"
-          onClick={() => setWeekOffset((o) => o - 1)}
-          style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 32, height: 32, borderRadius: "8px", border: "1px solid var(--line)", background: "var(--dash-white)", cursor: "pointer", flexShrink: 0 }}
-        >
-          <ChevronLeft size={16} strokeWidth={1.7} />
-        </button>
-        <span style={{ fontSize: "13px", fontWeight: 600, color: "var(--ink)", minWidth: 150, textAlign: "center" }}>
-          {weekOffset === 0 ? "Cette semaine" : weekOffset === 1 ? "Semaine prochaine" : fmtWeekRange()}
-        </span>
-        <button
-          type="button"
-          onClick={() => setWeekOffset((o) => o + 1)}
-          style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 32, height: 32, borderRadius: "8px", border: "1px solid var(--line)", background: "var(--dash-white)", cursor: "pointer", flexShrink: 0 }}
-        >
-          <ChevronRight size={16} strokeWidth={1.7} />
-        </button>
-        {weekOffset !== 0 && (
-          <button
-            type="button"
-            onClick={() => setWeekOffset(0)}
-            style={{ fontSize: "12px", color: "var(--violet)", background: "none", border: "none", cursor: "pointer", padding: "0 4px", fontWeight: 600 }}
-          >
-            Aujourd&apos;hui
-          </button>
-        )}
+    <div className="form-card" style={{ marginBottom: 0 }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "6px" }}>
+        <div className="form-card-title" style={{ marginBottom: 0 }}>
+          <CalendarDays size={14} strokeWidth={1.7} />
+          Assistant cuisine — 7 prochains jours
+        </div>
+        {navButtons}
       </div>
+      <p style={{ fontSize: "13px", color: "var(--ink-lighter)", margin: "0 0 16px" }}>
+        Vue d&apos;ensemble des repas à préparer et des régimes spécifiques signalés par vos clients.
+      </p>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: "12px" }}>
         {ordered.map((day) => (
           <DailyForecastCard key={dayKey(day.date)} day={day} today={today} tableDhotesCapacity={tableDhotesCapacity} />

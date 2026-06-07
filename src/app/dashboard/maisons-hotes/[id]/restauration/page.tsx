@@ -6,7 +6,6 @@ import MealsManager from "../../MealsManager";
 import WeeklyMealsForecast from "./WeeklyMealsForecast";
 import TableDhotesCapacitySettings from "./TableDhotesCapacitySettings";
 import type { MealTag } from "./MealFormModal";
-import { CalendarDays } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -77,16 +76,7 @@ export default async function GuesthouseRestaurationPage({ params }: { params: P
           <MealsManager guesthouseId={id} initialMeals={meals} />
         </div>
 
-        <div className="form-card">
-          <div className="form-card-title">
-            <CalendarDays size={14} strokeWidth={1.7} />
-            Assistant cuisine — 7 prochains jours
-          </div>
-          <p style={{ fontSize: "13px", color: "var(--ink-lighter)", margin: "0 0 16px" }}>
-            Vue d&apos;ensemble des repas à préparer et des régimes spécifiques signalés par vos clients.
-          </p>
-          <WeeklyMealsForecast reservations={forecastReservations} tableDhotesCapacity={guesthouse.tableDhotesCapacity ?? 0} />
-        </div>
+        <WeeklyMealsForecast reservations={forecastReservations} tableDhotesCapacity={guesthouse.tableDhotesCapacity ?? 0} />
       </div>
     </>
   );
