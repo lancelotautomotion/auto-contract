@@ -17,7 +17,7 @@ interface ReservationLike {
   checkOut: Date | string;
   status: string;
   rent: number | null;
-  contract?: { status: string } | null;
+  contract?: { status: string; depositReceived: boolean } | null;
   reservationRooms: { roomId: string | null; roomName: string }[];
 }
 

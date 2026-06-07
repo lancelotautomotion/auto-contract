@@ -24,7 +24,7 @@ export default async function GuesthousePlanningPage({ params }: { params: Promi
     include: {
       rooms: { orderBy: [{ position: "asc" }, { createdAt: "asc" }] },
       reservations: {
-        include: { reservationRooms: true },
+        include: { reservationRooms: true, contract: true },
         orderBy: { checkIn: "desc" },
       },
     },
