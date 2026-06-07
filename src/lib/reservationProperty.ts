@@ -125,6 +125,16 @@ export function buildContractData(opts: {
     })),
   ];
 
+  // Ventilation hébergement / restauration / total — base de calcul de l'acompte
+  // pour les maisons d'hôtes (l'acompte ne porte que sur les nuitées).
+  const lodging = r.rent ?? 0;
+  const mealsTotal = (r.meals ?? []).reduce((sum, m) => sum + (m.unitPrice || 0) * (m.quantity || 0), 0);
+  const msPerDay = 24 * 60 * 60 * 1000;
+  const nights = Math.max(
+    1,
+    Math.round((new Date(r.checkOut).getTime() - new Date(r.checkIn).getTime()) / msPerDay),
+  );
+
   return {
     template: mergeTemplates(p.contractTemplateGeneral ?? (p.kind === 'guesthouse' ? DEFAULT_GUESTHOUSE_CONTRACT_TEMPLATE : DEFAULT_CONTRACT_TEMPLATE), p.contractTemplateHouseRules),
     nom_client: r.clientLastName,
@@ -136,7 +146,11 @@ export function buildContractData(opts: {
     code_postal_client: r.clientZipCode,
     date_entree: fmt(r.checkIn),
     date_sortie: fmt(r.checkOut),
-    loyer: r.rent ?? 0,
+    loyer: lodging,
+    hebergement: lodging,
+    restauration: mealsTotal,
+    total_sejour: lodging + mealsTotal,
+    nombre_nuits: nights,
     acompte: r.deposit ?? 0,
     menage: r.cleaningFee ?? 0,
     taxe_sejour: r.touristTax ?? 0,

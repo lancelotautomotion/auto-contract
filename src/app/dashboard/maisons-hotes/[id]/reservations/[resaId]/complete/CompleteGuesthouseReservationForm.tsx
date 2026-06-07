@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Check, CalendarDays, Euro, FileText, ArrowRight } from "lucide-react";
 
@@ -11,6 +11,15 @@ interface Props {
   defaultCheckOut: string;
   defaultTouristTax: string;
   defaultCleaningFee: string;
+  defaultNights: number;
+  defaultLodging: number;
+  mealsAmount: number;
+  defaultDeposit: number;
+  defaultDepositPercentage: number;
+}
+
+function fmtEuro(n: number): string {
+  return n.toFixed(2);
 }
 
 export default function CompleteGuesthouseReservationForm({
@@ -20,20 +29,36 @@ export default function CompleteGuesthouseReservationForm({
   defaultCheckOut,
   defaultTouristTax,
   defaultCleaningFee,
+  defaultNights,
+  defaultLodging,
+  mealsAmount,
+  defaultDeposit,
+  defaultDepositPercentage,
 }: Props) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
     checkIn: defaultCheckIn,
     checkOut: defaultCheckOut,
-    rent: "",
-    deposit: "",
+    rent: fmtEuro(defaultLodging),
+    deposit: fmtEuro(defaultDeposit),
     cleaningFee: defaultCleaningFee,
     touristTax: defaultTouristTax,
     notes: "",
   });
+  const [depositTouched, setDepositTouched] = useState(false);
 
   const set = (k: string, v: string) => setForm((f) => ({ ...f, [k]: v }));
+
+  // Recalcule automatiquement l'acompte tant que le gérant n'a pas modifié le champ
+  // manuellement — préserve un geste commercial éventuel.
+  useEffect(() => {
+    if (depositTouched) return;
+    const lodging = parseFloat(form.rent);
+    if (isNaN(lodging)) return;
+    const newDeposit = Math.round(lodging * defaultDepositPercentage) / 100;
+    setForm((f) => ({ ...f, deposit: fmtEuro(newDeposit) }));
+  }, [form.rent, defaultDepositPercentage, depositTouched]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -64,7 +89,7 @@ export default function CompleteGuesthouseReservationForm({
           {/* Dates */}
           <div className="req-fs-label">
             <CalendarDays size={12} strokeWidth={1.4} />
-            Confirmer les dates
+            Confirmer les dates ({defaultNights} nuit{defaultNights > 1 ? "s" : ""})
           </div>
           <div className="form-row" style={{ marginBottom: "0" }}>
             <div className="form-group">
@@ -85,19 +110,51 @@ export default function CompleteGuesthouseReservationForm({
           </div>
           <div className="form-row" style={{ marginBottom: "14px" }}>
             <div className="form-group">
-              <label className="form-label">Loyer (€) <span className="req">*</span></label>
-              <input className="form-input" type="number" step="0.01" placeholder="ex: 800" required value={form.rent} onChange={(e) => set("rent", e.target.value)} />
+              <label className="form-label">Hébergement (€) <span className="req">*</span></label>
+              <input
+                className="form-input"
+                type="number"
+                step="0.01"
+                placeholder="ex: 800"
+                required
+                value={form.rent}
+                onChange={(e) => set("rent", e.target.value)}
+              />
+              <div className="form-hint">Pré-rempli : {defaultNights} nuit{defaultNights > 1 ? "s" : ""} × prix par nuit de la chambre.</div>
             </div>
             <div className="form-group">
-              <label className="form-label">Acompte (€) <span className="req">*</span></label>
-              <input className="form-input" type="number" step="0.01" placeholder="ex: 200" required value={form.deposit} onChange={(e) => set("deposit", e.target.value)} />
+              <label className="form-label">Restauration (€)</label>
+              <input
+                className="form-input"
+                type="number"
+                step="0.01"
+                value={fmtEuro(mealsAmount)}
+                readOnly
+                style={{ background: "#F4F3F0", color: "#71716E", cursor: "not-allowed" }}
+              />
+              <div className="form-hint">Somme automatique des repas sélectionnés.</div>
             </div>
           </div>
-          <div className="form-row" style={{ marginBottom: "0" }}>
+          <div className="form-row" style={{ marginBottom: "14px" }}>
+            <div className="form-group">
+              <label className="form-label">Acompte (€) <span className="req">*</span></label>
+              <input
+                className="form-input"
+                type="number"
+                step="0.01"
+                placeholder="ex: 200"
+                required
+                value={form.deposit}
+                onChange={(e) => { setDepositTouched(true); set("deposit", e.target.value); }}
+              />
+              <div className="form-hint">Calculé sur l&apos;hébergement à {defaultDepositPercentage}% (hors repas). Modifiable.</div>
+            </div>
             <div className="form-group">
               <label className="form-label">Frais de ménage (€)</label>
               <input className="form-input" type="number" step="0.01" value={form.cleaningFee} onChange={(e) => set("cleaningFee", e.target.value)} />
             </div>
+          </div>
+          <div className="form-row" style={{ marginBottom: "0" }}>
             <div className="form-group">
               <label className="form-label">Taxe de séjour (€/adulte/nuit)</label>
               <input className="form-input" type="number" step="0.01" value={form.touristTax} onChange={(e) => set("touristTax", e.target.value)} />

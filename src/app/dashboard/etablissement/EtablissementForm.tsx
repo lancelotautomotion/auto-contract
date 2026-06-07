@@ -17,7 +17,9 @@ const EXAMPLE_DATA: Record<string, string> = {
   telephone_client: '06 12 34 56 78', adresse_client: '12 rue des Lilas',
   ville_client: 'Lyon', code_postal_client: '69003',
   date_entree: '15 juillet 2025', date_sortie: '22 juillet 2025',
-  loyer: '1 200,00', acompte: '600,00', solde: '600,00',
+  loyer: '1 200,00', acompte: '360,00', solde: '930,00',
+  hebergement: '1 200,00', restauration: '90,00', total_sejour: '1 290,00',
+  nombre_nuits: '7',
   menage: '90,00', taxe_sejour: '1,65',
   options: '- Bain nordique : 50,00 €\n- Linge de maison : inclus',
   date_du_jour: '28 mars 2026', code_postal_gite: '93400',
@@ -135,6 +137,7 @@ interface GuesthouseData {
   contractTemplateHouseRules: string;
   logoUrl: string;
   capacity: number; touristTax: number;
+  defaultDepositPercentage: number;
   rooms: GuesthouseRoomLite[];
   documents: GiteDoc[];
 }
@@ -177,6 +180,10 @@ const VARIABLES_GUESTHOUSE: Array<[string, string, VarCat]> = [
   ['{{capacite_chambre}}', 'Capacité (pers.)', 'chambre'],
   ['{{prix_chambre_nuit}}', 'Prix/nuit chambre €', 'chambre'],
   ['{{specificites_chambre}}', 'Clauses spécifiques', 'chambre'],
+  ['{{nombre_nuits}}', 'Nombre de nuits', 'booking'],
+  ['{{hebergement}}', 'Hébergement €', 'booking'],
+  ['{{restauration}}', 'Restauration €', 'booking'],
+  ['{{total_sejour}}', 'Total séjour €', 'booking'],
 ];
 
 // Balises dont l'absence rend le contrat juridiquement incomplet (selon le mode)
@@ -190,7 +197,13 @@ const MANDATORY_TAGS_GITE: Array<{ key: string; label: string }> = [
   { key: 'nom_gite',      label: 'Nom gîte' },
 ];
 const MANDATORY_TAGS_GUESTHOUSE: Array<{ key: string; label: string }> = [
-  ...MANDATORY_TAGS_GITE,
+  { key: 'nom_client',    label: 'Nom client' },
+  { key: 'prenom_client', label: 'Prénom client' },
+  { key: 'date_entree',   label: 'Arrivée' },
+  { key: 'date_sortie',   label: 'Départ' },
+  { key: 'hebergement',   label: 'Hébergement €' },
+  { key: 'acompte',       label: 'Acompte €' },
+  { key: 'nom_gite',      label: 'Nom gîte' },
   { key: 'nom_chambre',   label: 'Nom de la chambre' },
 ];
 
@@ -321,6 +334,7 @@ export default function EtablissementForm({ gite, guesthouse }: { gite?: GiteDat
     capacity: src.capacity.toString(),
     cleaningFee: (gite?.cleaningFee ?? 0).toString(),
     touristTax: src.touristTax.toString(),
+    defaultDepositPercentage: (guesthouse?.defaultDepositPercentage ?? 30).toString(),
   });
   const [savedSlug, setSavedSlug] = useState(gite?.slug ?? '');
   const DEFAULT_TEMPLATE = mode === 'guesthouse' ? DEFAULT_GUESTHOUSE_CONTRACT_TEMPLATE : DEFAULT_CONTRACT_TEMPLATE;
@@ -578,6 +592,7 @@ export default function EtablissementForm({ gite, guesthouse }: { gite?: GiteDat
             email: form.email, phone: form.phone,
             address: form.address, city: form.city, zipCode: form.zipCode,
             capacity: form.capacity, touristTax: form.touristTax,
+            defaultDepositPercentage: form.defaultDepositPercentage,
             contractTemplateGeneral, contractTemplateHouseRules, logoUrl,
           }),
         });
@@ -765,7 +780,7 @@ export default function EtablissementForm({ gite, guesthouse }: { gite?: GiteDat
           <div className="form-card">
             <div className="form-card-title">
               <Clock size={14} strokeWidth={1.4} />
-              Tarifs par défaut
+              {mode === 'guesthouse' ? 'Tarifs et conditions par défaut' : 'Tarifs par défaut'}
             </div>
             {mode === 'gite' ? (
               <div className="form-row-3">
@@ -783,16 +798,33 @@ export default function EtablissementForm({ gite, guesthouse }: { gite?: GiteDat
                 </div>
               </div>
             ) : (
-              <div className="form-row">
-                <div className="form-group">
-                  <label className="form-label">Capacité max (personnes)</label>
-                  <input className="form-input" type="number" value={form.capacity} onChange={e => set('capacity', e.target.value)} />
+              <>
+                <div className="form-row">
+                  <div className="form-group">
+                    <label className="form-label">Capacité max (personnes)</label>
+                    <input className="form-input" type="number" value={form.capacity} onChange={e => set('capacity', e.target.value)} />
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Taxe de séjour (€/adulte/nuit)</label>
+                    <input className="form-input" type="number" step="0.01" value={form.touristTax} onChange={e => set('touristTax', e.target.value)} />
+                  </div>
                 </div>
                 <div className="form-group">
-                  <label className="form-label">Taxe de séjour (€/adulte/nuit)</label>
-                  <input className="form-input" type="number" step="0.01" value={form.touristTax} onChange={e => set('touristTax', e.target.value)} />
+                  <label className="form-label">Acompte par défaut (%)</label>
+                  <input
+                    className="form-input"
+                    type="number"
+                    min="0"
+                    max="100"
+                    step="1"
+                    value={form.defaultDepositPercentage}
+                    onChange={e => set('defaultDepositPercentage', e.target.value)}
+                  />
+                  <div className="form-hint">
+                    L&apos;acompte sera calculé automatiquement sur le prix des nuitées (hors repas).
+                  </div>
                 </div>
-              </div>
+              </>
             )}
           </div>
 

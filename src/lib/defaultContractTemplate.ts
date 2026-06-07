@@ -40,11 +40,15 @@ La location prend effet le {{date_entree}} et se termine le {{date_sortie}}.
 
 ARTICLE 2 — PRIX ET CONDITIONS DE PAIEMENT
 
-Loyer total : {{loyer}} €
+Hébergement ({{nombre_nuits}} nuits) : {{hebergement}} €
+Restauration : {{restauration}} €
+Montant total du séjour : {{total_sejour}} €
 Acompte à la réservation : {{acompte}} €
-Solde à régler à l'arrivée : {{solde}} €
+Solde à régler sur place : {{solde}} €
 Frais de ménage : {{menage}} €
 Taxe de séjour : {{taxe_sejour}} € par adulte et par nuit
+
+L'acompte est calculé uniquement sur le montant de l'hébergement (hors repas).
 
 ARTICLE 3 — RESTAURATION
 
