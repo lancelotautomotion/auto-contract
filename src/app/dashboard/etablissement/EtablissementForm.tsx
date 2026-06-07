@@ -890,9 +890,11 @@ export default function EtablissementForm({ gite, guesthouse }: { gite?: GiteDat
                 </div>
 
                 {/* Info box — centrée entre balises et actions */}
-                <div className="info-box" style={{ marginBottom: 0 }}>
-                  <strong>Comment fonctionnent les balises ?</strong><br />
-                  Les balises ci-dessus sont des variables qui seront remplacées par les données réelles de chaque réservation au moment de la génération du PDF. Cliquez sur une balise ou glissez-la dans la zone d&apos;édition pour l&apos;insérer à l&apos;endroit voulu dans votre contrat.
+                <div style={{ flex: 1, display: 'flex', alignItems: 'center' }}>
+                  <div className="info-box" style={{ marginBottom: 0, width: '100%' }}>
+                    <strong>Comment fonctionnent les balises ?</strong><br />
+                    Les balises ci-dessus sont des variables qui seront remplacées par les données réelles de chaque réservation au moment de la génération du PDF. Cliquez sur une balise ou glissez-la dans la zone d&apos;édition pour l&apos;insérer à l&apos;endroit voulu dans votre contrat.
+                  </div>
                 </div>
 
                 {/* CTA Aperçu — dans la colonne gauche */}
