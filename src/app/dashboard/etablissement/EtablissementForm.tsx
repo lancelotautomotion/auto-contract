@@ -186,22 +186,26 @@ const VARIABLES_GUESTHOUSE: Array<[string, string, VarCat]> = [
   ['{{total_sejour}}', 'Total séjour €', 'booking'],
 ];
 
-// Balises dont l'absence rend le contrat juridiquement incomplet (selon le mode)
-const MANDATORY_TAGS_GITE: Array<{ key: string; label: string }> = [
+// Balises dont l'absence rend le contrat juridiquement incomplet (selon le mode).
+// `alternatives` liste des balises sémantiquement équivalentes : la présence d'au
+// moins une d'entre elles suffit à valider l'exigence (ex. {{loyer}} OU {{hebergement}}).
+type MandatoryTag = { key: string; label: string; alternatives?: string[] };
+
+const MANDATORY_TAGS_GITE: MandatoryTag[] = [
   { key: 'nom_client',    label: 'Nom client' },
   { key: 'prenom_client', label: 'Prénom client' },
   { key: 'date_entree',   label: 'Arrivée' },
   { key: 'date_sortie',   label: 'Départ' },
-  { key: 'loyer',         label: 'Loyer €' },
+  { key: 'loyer',         label: 'Loyer €', alternatives: ['hebergement'] },
   { key: 'acompte',       label: 'Acompte €' },
   { key: 'nom_gite',      label: 'Nom gîte' },
 ];
-const MANDATORY_TAGS_GUESTHOUSE: Array<{ key: string; label: string }> = [
+const MANDATORY_TAGS_GUESTHOUSE: MandatoryTag[] = [
   { key: 'nom_client',    label: 'Nom client' },
   { key: 'prenom_client', label: 'Prénom client' },
   { key: 'date_entree',   label: 'Arrivée' },
   { key: 'date_sortie',   label: 'Départ' },
-  { key: 'hebergement',   label: 'Hébergement €' },
+  { key: 'hebergement',   label: 'Hébergement €', alternatives: ['loyer'] },
   { key: 'acompte',       label: 'Acompte €' },
   { key: 'nom_gite',      label: 'Nom gîte' },
   { key: 'nom_chambre',   label: 'Nom de la chambre' },
@@ -371,7 +375,10 @@ export default function EtablissementForm({ gite, guesthouse }: { gite?: GiteDat
 
   // Balises obligatoires manquantes dans les Conditions Générales
   const missingMandatoryTags = useMemo(() =>
-    activeMandatoryTags.filter(({ key }) => !templateHasVar(contractTemplateGeneral, key)),
+    activeMandatoryTags.filter(({ key, alternatives }) => {
+      if (templateHasVar(contractTemplateGeneral, key)) return false;
+      return !(alternatives ?? []).some(alt => templateHasVar(contractTemplateGeneral, alt));
+    }),
     [contractTemplateGeneral, activeMandatoryTags]
   );
 
