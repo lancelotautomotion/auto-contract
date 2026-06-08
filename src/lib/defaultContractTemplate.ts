@@ -36,9 +36,9 @@ Prix par nuit : {{prix_chambre_nuit}} €.
 
 Le séjour débute le {{date_entree}} et se termine le {{date_sortie}}.
 
-Horaires d'arrivée et de départ : à préciser directement avec l'hôte (à titre indicatif : arrivée entre 17h00 et 20h00, départ avant 11h00).
+Horaires : l'arrivée s'effectue entre 17h00 et 20h00 le jour de début du séjour ; le départ doit être réalisé au plus tard à 11h00 le jour de fin de séjour.
 
-Animaux de compagnie : à préciser avec l'hôte avant l'arrivée (acceptation et éventuel supplément à l'appréciation de l'hôte).
+Animaux de compagnie : les animaux de compagnie sont acceptés au sein de l'établissement, sous réserve qu'ils restent en permanence sous la responsabilité de leur propriétaire et qu'ils ne causent ni gêne ni dégradation aux lieux ou aux autres clients.
 
 {{specificites_chambre}}
 
