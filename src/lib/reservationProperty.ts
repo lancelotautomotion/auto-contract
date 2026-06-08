@@ -53,7 +53,7 @@ export function resolveReservationProperty(reservation: {
       notifContractSigned: g.notifContractSigned,
       n8nWebhookUrl: g.n8nWebhookUrl,
       slug: g.slug,
-      mediatorInfo: null,
+      mediatorInfo: g.mediatorInfo,
       user: g.user,
     };
   }

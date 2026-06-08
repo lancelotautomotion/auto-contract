@@ -125,6 +125,7 @@ interface GiteData {
   contractTemplateHouseRules: string;
   logoUrl: string;
   capacity: number; cleaningFee: number; touristTax: number;
+  mediatorInfo: string;
   options: GiteOption[];
   documents: GiteDoc[];
 }
@@ -174,6 +175,7 @@ const VARIABLES_BASE: Array<[string, string, VarCat]> = [
   ['{{email_gite}}', 'Email gîte', 'gite'],
   ['{{telephone_gite}}', 'Tél. gîte', 'gite'],
   ['{{date_du_jour}}', 'Date du jour', 'gite'],
+  ['{{mediateur}}', 'Médiateur conso.', 'gite'],
 ];
 
 // Variables additionnelles disponibles uniquement en mode maison d'hôtes (location à la chambre).
@@ -186,7 +188,6 @@ const VARIABLES_GUESTHOUSE: Array<[string, string, VarCat]> = [
   ['{{hebergement}}', 'Hébergement €', 'booking'],
   ['{{restauration}}', 'Restauration €', 'booking'],
   ['{{total_sejour}}', 'Total séjour €', 'booking'],
-  ['{{mediateur}}', 'Médiateur conso.', 'gite'],
 ];
 
 // Balises dont l'absence rend le contrat juridiquement incomplet (selon le mode).
@@ -342,7 +343,7 @@ export default function EtablissementForm({ gite, guesthouse }: { gite?: GiteDat
     cleaningFee: (gite?.cleaningFee ?? 0).toString(),
     touristTax: src.touristTax.toString(),
     defaultDepositPercentage: (guesthouse?.defaultDepositPercentage ?? 30).toString(),
-    mediatorInfo: guesthouse?.mediatorInfo ?? '',
+    mediatorInfo: (guesthouse?.mediatorInfo ?? gite?.mediatorInfo) ?? '',
   });
   const [savedSlug, setSavedSlug] = useState(gite?.slug ?? '');
   const DEFAULT_TEMPLATE = mode === 'guesthouse' ? DEFAULT_GUESTHOUSE_CONTRACT_TEMPLATE : DEFAULT_CONTRACT_TEMPLATE;
@@ -612,7 +613,11 @@ export default function EtablissementForm({ gite, guesthouse }: { gite?: GiteDat
         res = await fetch('/api/etablissement', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ giteId: src.id, ...form, contractTemplateGeneral, contractTemplateHouseRules, options, logoUrl }),
+          body: JSON.stringify({
+            giteId: src.id, ...form,
+            mediatorInfo: form.mediatorInfo,
+            contractTemplateGeneral, contractTemplateHouseRules, options, logoUrl,
+          }),
         });
       }
       if (res.ok) { setSaved(true); setSavedSlug(form.slug); }
@@ -840,12 +845,11 @@ export default function EtablissementForm({ gite, guesthouse }: { gite?: GiteDat
             )}
           </div>
 
-          {mode === 'guesthouse' && (
-            <div className="form-card">
-              <div className="form-card-title">
-                <AlertTriangle size={14} strokeWidth={1.4} />
-                Médiateur de la consommation
-              </div>
+          <div className="form-card">
+            <div className="form-card-title">
+              <AlertTriangle size={14} strokeWidth={1.4} />
+              Médiateur de la consommation
+            </div>
               <p style={{ fontSize: '13px', color: 'var(--ink)', marginBottom: '6px', lineHeight: 1.5 }}>
                 <strong>Mention obligatoire pour tout gérant professionnel</strong> (immatriculé au RCS / disposant d&apos;un SIRET).
               </p>
@@ -864,12 +868,11 @@ export default function EtablissementForm({ gite, guesthouse }: { gite?: GiteDat
                   value={form.mediatorInfo}
                   onChange={e => set('mediatorInfo', e.target.value)}
                 />
-                <div className="form-hint">
-                  Indiquez le nom de l&apos;organisme, son adresse et son site web (ou tout autre moyen de contact).
-                </div>
+              <div className="form-hint">
+                Indiquez le nom de l&apos;organisme, son adresse et son site web (ou tout autre moyen de contact).
               </div>
             </div>
-          )}
+          </div>
 
           <SaveBar />
         </div>

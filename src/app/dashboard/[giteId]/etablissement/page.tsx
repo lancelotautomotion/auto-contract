@@ -55,6 +55,7 @@ export default async function EtablissementPage({ params }: { params: Promise<{ 
           contractTemplateGeneral: gite.contractTemplateGeneral ?? '',
           contractTemplateHouseRules: gite.contractTemplateHouseRules ?? '',
           logoUrl: gite.logoUrl ?? '',
+          mediatorInfo: gite.mediatorInfo ?? '',
           options: gite.options.map(o => ({ id: o.id, label: o.label, price: o.price })),
           documents: gite.documents.map(d => ({ id: d.id, label: d.label, fileName: d.fileName, mimeType: d.mimeType, createdAt: d.createdAt.toISOString() })),
         }} />

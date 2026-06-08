@@ -210,6 +210,10 @@ model Gite {
   driveTemplateFolderId String?
   driveOutputFolderId   String?
   n8nWebhookUrl         String?
+  // Coordonnées du médiateur de la consommation (article L.612-1 du Code de la
+  // consommation). Obligatoire pour tout gérant professionnel (immatricule SIRET).
+  // Si renseigne, l'article correspondant est automatiquement insere dans le contrat.
+  mediatorInfo          String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

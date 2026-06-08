@@ -112,9 +112,13 @@ Il a été convenu ce qui suit :
 
 ARTICLE 1 — OBJET ET DURÉE DE LA LOCATION
 
-Le bailleur met à disposition du locataire, à titre saisonnier, le bien meublé situé à l'adresse indiquée ci-dessus.
+Le bailleur met à disposition du locataire, à titre saisonnier, le bien meublé situé {{adresse_gite}}, {{ville_gite}}.
 
 La location prend effet le {{date_entree}} et se termine le {{date_sortie}}.
+
+Horaires : l'arrivée s'effectue entre 16h00 et 19h00 le jour de début du séjour ; le départ doit être réalisé au plus tard à 10h00 le jour de fin de séjour.
+
+Animaux de compagnie : les animaux de compagnie sont acceptés au sein du logement, sous réserve qu'ils restent en permanence sous la responsabilité de leur propriétaire et qu'ils ne causent ni gêne ni dégradation aux lieux.
 
 ARTICLE 2 — PRIX ET CONDITIONS DE PAIEMENT
 
@@ -130,24 +134,28 @@ ARTICLE 3 — OPTIONS SÉLECTIONNÉES
 
 ARTICLE 4 — DÉPÔT DE GARANTIE
 
-Un dépôt de garantie pourra être demandé à l'arrivée. Il sera restitué dans un délai de 10 jours suivant le départ, déduction faite des éventuels dommages constatés.
+Un dépôt de garantie pourra être demandé à l'arrivée. Il sera restitué dans un délai de 10 jours suivant le départ, déduction faite des éventuels dommages constatés sur les lieux ou le mobilier.
 
 ARTICLE 5 — ÉTAT DES LIEUX
 
-Un état des lieux contradictoire sera réalisé à l'entrée et à la sortie. Toute dégradation constatée lors de l'état des lieux de sortie pourra être retenue sur le dépôt de garantie.
+Un état des lieux contradictoire sera réalisé à l'entrée et à la sortie du locataire. Toute dégradation constatée lors de l'état des lieux de sortie pourra être retenue sur le dépôt de garantie.
 
 ARTICLE 6 — OBLIGATIONS DU LOCATAIRE
 
 Le locataire s'engage à :
-- Utiliser les lieux en bon père de famille
-- Restituer les lieux en parfait état de propreté
+- Occuper les lieux raisonnablement et les restituer en parfait état de propreté
 - Ne pas sous-louer le bien sans autorisation écrite du bailleur
 - Respecter le règlement intérieur du gîte
 - Ne pas dépasser la capacité d'accueil maximale
+- Attester être couvert par une assurance responsabilité civile (garantie villégiature) couvrant la durée du séjour
 
-ARTICLE 7 — RÉSILIATION
+ARTICLE 7 — ANNULATION
 
-En cas de résiliation par le locataire, l'acompte versé restera acquis au bailleur à titre de dédommagement. En cas de résiliation par le bailleur, celui-ci remboursera l'intégralité des sommes versées.
+En cas d'annulation par le locataire plus de 30 jours avant la date d'arrivée, l'acompte versé reste acquis au bailleur à titre de dédommagement. En cas d'annulation à moins de 30 jours, ou de non-présentation du locataire, la totalité du séjour est due. En cas d'annulation par le bailleur, l'intégralité des sommes déjà versées est remboursée au locataire, sauf cas de force majeure.
+
+ARTICLE 8 — MÉDIATION DE LA CONSOMMATION
+
+{{mediateur}}
 
 Fait à {{ville_gite}}, le {{date_du_jour}}
 

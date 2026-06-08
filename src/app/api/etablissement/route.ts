@@ -21,6 +21,9 @@ export async function POST(req: NextRequest) {
     capacity: parseInt(body.capacity ?? "12"),
     cleaningFee: parseFloat(body.cleaningFee ?? "90"),
     touristTax: parseFloat(body.touristTax ?? "1.32"),
+    mediatorInfo: typeof body.mediatorInfo === "string"
+      ? (body.mediatorInfo.trim() ? body.mediatorInfo.trim() : null)
+      : undefined,
   };
 
   let gite = await prisma.gite.update({ where: { id: ctx.giteId }, data: giteData });
