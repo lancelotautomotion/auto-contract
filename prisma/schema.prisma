@@ -66,6 +66,10 @@ model Guesthouse {
   // lors de la validation d'une demande de réservation. Le gérant peut surcharger
   // ponctuellement la valeur depuis le formulaire de validation.
   defaultDepositPercentage Float @default(30)
+  // Coordonnées du médiateur de la consommation (article L.612-1 du Code de la
+  // consommation). Obligatoire pour tout gérant professionnel (immatricule SIRET).
+  // Si renseigne, l'article correspondant est automatiquement insere dans le contrat.
+  mediatorInfo String?
 
   // Pipeline contrat partagé avec le Gîte
   contractTemplateGeneral    String?

@@ -43,6 +43,8 @@ export interface ContractData {
   capacite_chambre?: number | null;
   prix_chambre_nuit?: number | null;
   specificites_chambre?: string | null;
+  // Coordonnees du mediateur (maison d'hotes pro). null/vide => article du contrat masque.
+  mediateur?: string | null;
   logoUrl?: string | null;
 }
 
@@ -101,6 +103,11 @@ function buildVars(data: ContractData): Record<string, string> {
     capacite_chambre:    data.capacite_chambre != null ? String(data.capacite_chambre) : '',
     prix_chambre_nuit:   data.prix_chambre_nuit != null ? data.prix_chambre_nuit.toFixed(2).replace('.', ',') : '',
     specificites_chambre: (data.specificites_chambre ?? '').trim(),
+    // Quand un mediateur est renseigne, on insere le paragraphe legal complet.
+    // Sinon variable vide => l'article entier est masque par le rendu (cf _render).
+    mediateur:           (data.mediateur ?? '').trim()
+      ? `Conformément aux articles L.611-1 et suivants du Code de la consommation, en cas de litige non résolu à l'amiable, le client peut saisir gratuitement le médiateur de la consommation suivant : ${(data.mediateur ?? '').trim()}`
+      : '',
     date_du_jour:        dateJour,
   };
 }
@@ -179,8 +186,32 @@ function renderRunsAt(
 // ─── PDF renderer ─────────────────────────────────────────────────────────────
 async function _render(data: ContractData, sig: SignatureInfo | null): Promise<Buffer> {
   const vars = buildVars(data);
-  const lines = parseStored(data.template);
-  while (lines.length && classifyLine(lines[lines.length - 1]) === 'empty') lines.pop();
+  const rawLines = parseStored(data.template);
+  while (rawLines.length && classifyLine(rawLines[rawLines.length - 1]) === 'empty') rawLines.pop();
+
+  // Masque les articles dont le corps est entierement compose de variables non
+  // resolues (ex. {{mediateur}} laisse vide). On supprime l'entete + tout le
+  // corps jusqu'au prochain article/label, afin de ne pas laisser un titre
+  // orphelin dans le PDF.
+  const resolvedEmpty = (line: typeof rawLines[number]) =>
+    line.runs.map(r => resolveRun(r, vars)).join('').trim() === '';
+  const lines: typeof rawLines = [];
+  for (let i = 0; i < rawLines.length; i++) {
+    const line = rawLines[i];
+    if (classifyLine(line) === 'article') {
+      let j = i + 1;
+      while (j < rawLines.length) {
+        const k = classifyLine(rawLines[j]);
+        if (k === 'article' || k === 'label') break;
+        j++;
+      }
+      const body = rawLines.slice(i + 1, j);
+      const bodyAllEmpty = body.every(l => classifyLine(l) === 'empty' || resolvedEmpty(l));
+      if (bodyAllEmpty) { i = j - 1; continue; }
+    }
+    lines.push(line);
+  }
+
   const logoBuffer = data.logoUrl ? await fetchImageBuffer(data.logoUrl) : null;
 
   return new Promise((resolve, reject) => {

@@ -10,7 +10,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
 
   const body = await req.json();
   const data: Record<string, unknown> = {};
-  for (const field of ["name", "address", "city", "zipCode", "email", "phone", "contractTemplateGeneral", "contractTemplateHouseRules", "logoUrl"] as const) {
+  for (const field of ["name", "address", "city", "zipCode", "email", "phone", "contractTemplateGeneral", "contractTemplateHouseRules", "logoUrl", "mediatorInfo"] as const) {
     if (field in body) data[field] = body[field];
   }
   if ("touristTax" in body) data.touristTax = parseFloat(body.touristTax) || 0;

@@ -50,6 +50,7 @@ export default async function GuesthouseHebergementPage({ params }: { params: Pr
           capacity: guesthouse.capacity,
           touristTax: guesthouse.touristTax,
           defaultDepositPercentage: guesthouse.defaultDepositPercentage,
+          mediatorInfo: guesthouse.mediatorInfo ?? '',
           contractTemplateGeneral: guesthouse.contractTemplateGeneral ?? '',
           contractTemplateHouseRules: guesthouse.contractTemplateHouseRules ?? '',
           logoUrl: guesthouse.logoUrl ?? '',

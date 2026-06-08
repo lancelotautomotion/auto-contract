@@ -27,6 +27,9 @@ export interface ReservationProperty {
   notifContractSigned: boolean;
   n8nWebhookUrl: string | null;
   slug: string | null;
+  // Coordonnees du mediateur de la consommation (maison d'hotes uniquement).
+  // null pour un Gite.
+  mediatorInfo: string | null;
   user?: User;
 }
 
@@ -50,6 +53,7 @@ export function resolveReservationProperty(reservation: {
       notifContractSigned: g.notifContractSigned,
       n8nWebhookUrl: g.n8nWebhookUrl,
       slug: g.slug,
+      mediatorInfo: null,
       user: g.user,
     };
   }
@@ -67,6 +71,7 @@ export function resolveReservationProperty(reservation: {
       notifContractSigned: true,
       n8nWebhookUrl: null,
       slug: null,
+      mediatorInfo: h.mediatorInfo,
       user: h.user,
     };
   }
@@ -165,6 +170,7 @@ export function buildContractData(opts: {
     capacite_chambre: primaryRoom?.room?.capacity ?? null,
     prix_chambre_nuit: primaryRoom?.price ?? primaryRoom?.room?.basePrice ?? null,
     specificites_chambre: primaryRoom?.room?.specificClauses ?? null,
+    mediateur: p.mediatorInfo,
     logoUrl: p.logoUrl,
   };
 }

@@ -23,6 +23,7 @@ const EXAMPLE_DATA: Record<string, string> = {
   menage: '90,00', taxe_sejour: '1,65',
   options: '- Bain nordique : 50,00 €\n- Linge de maison : inclus',
   date_du_jour: '28 mars 2026', code_postal_gite: '93400',
+  mediateur: "Conformément aux articles L.611-1 et suivants du Code de la consommation, en cas de litige non résolu à l'amiable, le client peut saisir gratuitement le médiateur de la consommation suivant : AME CONSO — 11 place Dauphine, 75001 Paris — www.mediationconso-ame.com",
 };
 
 function buildPreviewVars(form: { giteName: string; address: string; city: string; zipCode: string; email: string; phone: string }): Record<string, string> {
@@ -138,6 +139,7 @@ interface GuesthouseData {
   logoUrl: string;
   capacity: number; touristTax: number;
   defaultDepositPercentage: number;
+  mediatorInfo: string;
   rooms: GuesthouseRoomLite[];
   documents: GiteDoc[];
 }
@@ -184,6 +186,7 @@ const VARIABLES_GUESTHOUSE: Array<[string, string, VarCat]> = [
   ['{{hebergement}}', 'Hébergement €', 'booking'],
   ['{{restauration}}', 'Restauration €', 'booking'],
   ['{{total_sejour}}', 'Total séjour €', 'booking'],
+  ['{{mediateur}}', 'Médiateur conso.', 'gite'],
 ];
 
 // Balises dont l'absence rend le contrat juridiquement incomplet (selon le mode).
@@ -339,6 +342,7 @@ export default function EtablissementForm({ gite, guesthouse }: { gite?: GiteDat
     cleaningFee: (gite?.cleaningFee ?? 0).toString(),
     touristTax: src.touristTax.toString(),
     defaultDepositPercentage: (guesthouse?.defaultDepositPercentage ?? 30).toString(),
+    mediatorInfo: guesthouse?.mediatorInfo ?? '',
   });
   const [savedSlug, setSavedSlug] = useState(gite?.slug ?? '');
   const DEFAULT_TEMPLATE = mode === 'guesthouse' ? DEFAULT_GUESTHOUSE_CONTRACT_TEMPLATE : DEFAULT_CONTRACT_TEMPLATE;
@@ -600,6 +604,7 @@ export default function EtablissementForm({ gite, guesthouse }: { gite?: GiteDat
             address: form.address, city: form.city, zipCode: form.zipCode,
             capacity: form.capacity, touristTax: form.touristTax,
             defaultDepositPercentage: form.defaultDepositPercentage,
+            mediatorInfo: form.mediatorInfo.trim() ? form.mediatorInfo.trim() : null,
             contractTemplateGeneral, contractTemplateHouseRules, logoUrl,
           }),
         });
@@ -834,6 +839,37 @@ export default function EtablissementForm({ gite, guesthouse }: { gite?: GiteDat
               </>
             )}
           </div>
+
+          {mode === 'guesthouse' && (
+            <div className="form-card">
+              <div className="form-card-title">
+                <AlertTriangle size={14} strokeWidth={1.4} />
+                Médiateur de la consommation
+              </div>
+              <p style={{ fontSize: '13px', color: 'var(--ink)', marginBottom: '6px', lineHeight: 1.5 }}>
+                <strong>Mention obligatoire pour tout gérant professionnel</strong> (immatriculé au RCS / disposant d&apos;un SIRET).
+              </p>
+              <p style={{ fontSize: '12px', color: 'var(--ink-lighter)', marginBottom: '16px', lineHeight: 1.5 }}>
+                L&apos;article L.612-1 du Code de la consommation impose à tout professionnel d&apos;indiquer dans ses
+                contrats les coordonnées d&apos;un médiateur de la consommation agréé, vers lequel le client peut se
+                tourner gratuitement en cas de litige. Si vous renseignez ce champ, l&apos;information sera
+                automatiquement insérée dans vos contrats ; laissé vide, aucun article médiateur n&apos;est ajouté.
+              </p>
+              <div className="form-group">
+                <label className="form-label">Coordonnées du médiateur</label>
+                <textarea
+                  className="form-textarea"
+                  rows={3}
+                  placeholder="Ex. AME CONSO — 11 place Dauphine, 75001 Paris — www.mediationconso-ame.com"
+                  value={form.mediatorInfo}
+                  onChange={e => set('mediatorInfo', e.target.value)}
+                />
+                <div className="form-hint">
+                  Indiquez le nom de l&apos;organisme, son adresse et son site web (ou tout autre moyen de contact).
+                </div>
+              </div>
+            </div>
+          )}
 
           <SaveBar />
         </div>

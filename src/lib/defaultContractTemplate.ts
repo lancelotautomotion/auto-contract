@@ -18,7 +18,7 @@ HÔTE
 Email : {{email_gite}}
 Téléphone : {{telephone_gite}}
 
-LOCATAIRE
+CLIENT
 {{prenom_client}} {{nom_client}}
 {{adresse_client}}
 {{code_postal_client}} {{ville_client}}
@@ -29,12 +29,16 @@ Il a été convenu ce qui suit :
 
 ARTICLE 1 — OBJET ET DESCRIPTION DE LA CHAMBRE
 
-L'hôte met à disposition du locataire, à titre saisonnier, la chambre {{nom_chambre}} au sein de la maison d'hôtes {{nom_gite}}, située {{adresse_gite}}, {{ville_gite}}.
+L'hôte met à disposition du client, dans le cadre de son activité de chambres d'hôtes, la chambre {{nom_chambre}} au sein de la maison d'hôtes {{nom_gite}}, située {{adresse_gite}}, {{ville_gite}}.
 
 Capacité maximale : {{capacite_chambre}} personne(s).
 Prix par nuit : {{prix_chambre_nuit}} €.
 
-La location prend effet le {{date_entree}} et se termine le {{date_sortie}}.
+Le séjour débute le {{date_entree}} et se termine le {{date_sortie}}.
+
+Horaires d'arrivée et de départ : à préciser directement avec l'hôte (à titre indicatif : arrivée entre 17h00 et 20h00, départ avant 11h00).
+
+Animaux de compagnie : à préciser avec l'hôte avant l'arrivée (acceptation et éventuel supplément à l'appréciation de l'hôte).
 
 {{specificites_chambre}}
 
@@ -50,29 +54,37 @@ Taxe de séjour : {{taxe_sejour}} € par adulte et par nuit
 
 L'acompte est calculé uniquement sur le montant de l'hébergement (hors repas).
 
-ARTICLE 3 — RESTAURATION
+ARTICLE 3 — PRESTATIONS ET RESTAURATION
 
+Conformément à la réglementation des chambres d'hôtes (article D.324-13 du Code du tourisme), le prix de la nuitée inclut la fourniture du linge de maison ainsi que le petit-déjeuner.
+
+Le détail des prestations de restauration sélectionnées par le client :
 {{options}}
 
 ARTICLE 4 — DÉPÔT DE GARANTIE
 
 Un dépôt de garantie pourra être demandé à l'arrivée. Il sera restitué dans un délai de 10 jours suivant le départ, déduction faite des éventuels dommages constatés.
 
-ARTICLE 5 — OBLIGATIONS DU LOCATAIRE
+ARTICLE 5 — OBLIGATIONS DU CLIENT
 
-Le locataire s'engage à :
-- Utiliser la chambre en bon père de famille et à la restituer en parfait état
+Le client s'engage à :
+- Occuper les lieux raisonnablement et les restituer en parfait état
 - Ne pas dépasser la capacité d'accueil maximale de la chambre
 - Respecter le règlement intérieur de la maison d'hôtes
-- Ne pas introduire des personnes extérieures dans les parties réservées aux hôtes sans accord préalable
+- Ne pas introduire de personnes extérieures dans les parties réservées aux hôtes sans accord préalable
+- Attester être couvert par une assurance responsabilité civile (garantie villégiature) couvrant la durée du séjour
 
-ARTICLE 6 — RÉSILIATION
+ARTICLE 6 — ANNULATION
 
-En cas de résiliation par le locataire, l'acompte versé restera acquis à l'hôte à titre de dédommagement. En cas de résiliation par l'hôte, celui-ci remboursera l'intégralité des sommes versées.
+En cas d'annulation par le client plus de 30 jours avant la date d'arrivée, l'acompte versé reste acquis à l'hôte à titre de dédommagement. En cas d'annulation à moins de 30 jours, ou de non-présentation du client, la totalité du séjour est due. En cas d'annulation par l'hôte, l'intégralité des sommes déjà versées est remboursée au client, sauf cas de force majeure.
+
+ARTICLE 7 — MÉDIATION DE LA CONSOMMATION
+
+{{mediateur}}
 
 Fait à {{ville_gite}}, le {{date_du_jour}}
 
-L'HÔTE | LE LOCATAIRE
+L'HÔTE | LE CLIENT
 
 ___________________________ | ___________________________
 
