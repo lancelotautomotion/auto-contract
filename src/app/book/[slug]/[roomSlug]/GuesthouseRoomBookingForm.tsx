@@ -42,7 +42,14 @@ export default function GuesthouseRoomBookingForm({
   const [step, setStep] = useState<"form" | "success">("form");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [selectedMeals, setSelectedMeals] = useState<Set<string>>(new Set());
+  // Petit-dejeuner obligatoire (D.324-13 du Code du tourisme) : on pre-coche le
+  // premier petit-dejeuner configure si l'hote en a au moins un. Le client peut
+  // basculer vers une autre formule mais ne peut pas tout deselectionner.
+  const breakfastMeals = useMemo(() => meals.filter((m) => m.service === "BREAKFAST"), [meals]);
+  const defaultBreakfastId = breakfastMeals[0]?.id ?? null;
+  const [selectedMeals, setSelectedMeals] = useState<Set<string>>(
+    () => new Set(defaultBreakfastId ? [defaultBreakfastId] : []),
+  );
   const [form, setForm] = useState({
     firstName: "", lastName: "", email: "", phone: "",
     address: "", city: "", zipCode: "",
@@ -106,30 +113,53 @@ export default function GuesthouseRoomBookingForm({
 
   const toggleMeal = (id: string) => {
     if (mealDisabled[id]?.disabled) return;
+    const meal = meals.find((m) => m.id === id);
+    if (!meal) return;
     setSelectedMeals((prev) => {
       const next = new Set(prev);
+      // Petit-dejeuner : comportement radio. Cliquer sur un PDJ deja selectionne
+      // ne le decoche pas (obligatoire) ; cliquer sur un autre PDJ remplace la
+      // selection courante.
+      if (meal.service === "BREAKFAST") {
+        if (next.has(id)) return prev; // pas de decochage
+        for (const other of breakfastMeals) next.delete(other.id);
+        next.add(id);
+        return next;
+      }
       if (next.has(id)) next.delete(id); else next.add(id);
       return next;
     });
   };
 
-  // Uncheck meals that became disabled when guest count or dates change
+  // Uncheck meals that became disabled when guest count or dates change.
+  // Pour le petit-dejeuner, si l'option pre-selectionnee devient indisponible
+  // (capacite table d'hote saturee), on bascule automatiquement sur la premiere
+  // autre formule petit-dejeuner disponible plutot que de tout decocher.
   useEffect(() => {
     const toRemove = Array.from(selectedMeals).filter((id) => mealDisabled[id]?.disabled);
-    if (toRemove.length > 0) {
-      setSelectedMeals((prev) => {
-        const next = new Set(prev);
-        toRemove.forEach((id) => next.delete(id));
-        return next;
-      });
-    }
+    if (toRemove.length === 0) return;
+    setSelectedMeals((prev) => {
+      const next = new Set(prev);
+      toRemove.forEach((id) => next.delete(id));
+      const hasBreakfast = Array.from(next).some((id) => meals.find((m) => m.id === id)?.service === "BREAKFAST");
+      if (!hasBreakfast) {
+        const fallback = breakfastMeals.find((m) => !mealDisabled[m.id]?.disabled);
+        if (fallback) next.add(fallback.id);
+      }
+      return next;
+    });
   }, [mealDisabled]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const chosenMeals = meals.filter((m) => selectedMeals.has(m.id));
-  // Quantity = guests (min 1 as fallback before guestCount is entered)
-  const qtyForMeals = guests > 0 ? guests : 0;
+  // Quantite par repas : un petit-dejeuner est servi a chaque personne et a
+  // chaque nuit du sejour ; les autres formules restent factu rees par personne.
+  const qtyForMeal = (service: MealService): number => {
+    const g = guests > 0 ? guests : 0;
+    if (service === "BREAKFAST") return g * Math.max(0, nights);
+    return g;
+  };
   const lodging = roomPrice * nights;
-  const mealsTotal = chosenMeals.reduce((s, m) => s + m.price * Math.max(1, qtyForMeals), 0);
+  const mealsTotal = chosenMeals.reduce((s, m) => s + m.price * Math.max(1, qtyForMeal(m.service)), 0);
   const total = lodging + mealsTotal;
   const overCapacity = guests > 0 && guests > roomCapacity;
 
@@ -349,20 +379,31 @@ export default function GuesthouseRoomBookingForm({
             <div className="book-fs">
               <div className="book-fs-title">
                 <Utensils size={14} strokeWidth={1.7} />
-                Restauration <span style={{ fontWeight: 400, textTransform: "none", letterSpacing: 0, color: "var(--ink-lighter)" }}>(facultatif)</span>
+                Restauration
               </div>
               <div className="book-fs-divider"/>
+              {breakfastMeals.length > 0 && (
+                <div style={{ display: "flex", alignItems: "flex-start", gap: "10px", background: "#EFEDFC", border: "1px solid #DAD7F0", borderRadius: "10px", padding: "10px 12px", marginBottom: "12px" }}>
+                  <Info size={14} strokeWidth={1.5} color="#5B52B5" style={{ flexShrink: 0, marginTop: "1px" }} />
+                  <div style={{ fontSize: "12px", color: "#3F3A8C", lineHeight: 1.5 }}>
+                    Le petit-déjeuner est inclus dans la prestation chambres d&apos;hôtes et servi tous les matins du séjour. Vous pouvez choisir la formule qui vous convient.
+                  </div>
+                </div>
+              )}
               <div className="book-opts">
                 {meals.map((m) => {
                   const checked = selectedMeals.has(m.id);
                   const cap = mealDisabled[m.id];
                   const isDisabled = cap?.disabled ?? false;
+                  const isBreakfast = m.service === "BREAKFAST";
+                  // Petit-dejeuner deja coche : verrouille (radio obligatoire)
+                  const isLocked = isBreakfast && checked;
                   return (
                     <div
                       key={m.id}
                       className={`book-opt${checked ? " checked" : ""}${isDisabled ? " disabled" : ""}`}
                       onClick={() => toggleMeal(m.id)}
-                      role="checkbox"
+                      role={isBreakfast ? "radio" : "checkbox"}
                       aria-checked={checked}
                       aria-disabled={isDisabled}
                       tabIndex={isDisabled ? -1 : 0}
@@ -376,6 +417,12 @@ export default function GuesthouseRoomBookingForm({
                       </div>
                       <span className="book-opt-name">
                         {m.name}
+                        {isBreakfast && (
+                          <span style={{ display: "inline-flex", alignItems: "center", gap: "3px", marginLeft: "8px", fontSize: "10px", fontWeight: 700, color: "#5B52B5", background: "#EFEDFC", padding: "1px 7px", borderRadius: "20px", verticalAlign: "middle" }}>
+                            {isLocked && <Lock size={9} strokeWidth={1.7} />}
+                            Obligatoire
+                          </span>
+                        )}
                         {m.description && (
                           <span style={{ display: "block", fontSize: "11.5px", fontWeight: 400, color: "var(--ink-lighter)", marginTop: "2px" }}>
                             {m.description}
@@ -388,7 +435,7 @@ export default function GuesthouseRoomBookingForm({
                         )}
                       </span>
                       {m.price > 0
-                        ? <span className="book-opt-price">+{m.price} € <span style={{ fontWeight: 400, fontSize: "10px" }}>/ pers.</span></span>
+                        ? <span className="book-opt-price">+{m.price} € <span style={{ fontWeight: 400, fontSize: "10px" }}>/ pers.{isBreakfast ? " / nuit" : ""}</span></span>
                         : <span className="book-opt-price">Inclus</span>
                       }
                     </div>
@@ -493,14 +540,18 @@ export default function GuesthouseRoomBookingForm({
                   </div>
                 )}
                 {chosenMeals.map((m) => {
-                  const qty = Math.max(1, qtyForMeals);
+                  const qty = Math.max(1, qtyForMeal(m.service));
                   const lineTotal = m.price * qty;
+                  const isBreakfast = m.service === "BREAKFAST";
+                  const detail = isBreakfast
+                    ? (guests > 0 && nights > 0 ? ` × ${nights} nuit${nights > 1 ? "s" : ""} × ${guests} pers.` : "")
+                    : (guests > 0 ? ` × ${guests} pers.` : "");
                   return (
                     <div className="book-recap-row" key={m.id}>
                       <span className="book-recap-label">
                         {m.name}
-                        {guests > 0 && (
-                          <span style={{ fontSize: "11px", color: "var(--ink-lighter)", fontWeight: 400 }}> × {guests} pers.</span>
+                        {detail && (
+                          <span style={{ fontSize: "11px", color: "var(--ink-lighter)", fontWeight: 400 }}>{detail}</span>
                         )}
                       </span>
                       <span className="book-recap-val">{m.price > 0 ? `+${fmtMoney(lineTotal)}` : "Inclus"}</span>

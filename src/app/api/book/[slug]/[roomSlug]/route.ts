@@ -73,10 +73,32 @@ export async function POST(
   const qty = Math.max(1, guestCount);
 
   const selectedMealIds: string[] = Array.isArray(body.selectedMealIds) ? body.selectedMealIds : [];
-  const chosenMeals = guesthouse.meals.filter((m) => selectedMealIds.includes(m.id));
+  const chosenMealsRaw = guesthouse.meals.filter((m) => selectedMealIds.includes(m.id));
+
+  // Petit-dejeuner obligatoire (D.324-13 du Code du tourisme) : si la maison
+  // d'hotes propose au moins une formule petit-dejeuner et que le client n'en a
+  // selectionne aucune (ex. requete forgee), on force la premiere formule.
+  const breakfastConfigured = guesthouse.meals.filter((m) => m.service === "BREAKFAST");
+  const hasBreakfastSelected = chosenMealsRaw.some((m) => m.service === "BREAKFAST");
+  if (breakfastConfigured.length > 0 && !hasBreakfastSelected) {
+    chosenMealsRaw.push(breakfastConfigured[0]);
+  }
+  // Si plusieurs petits-dejeuners ont ete coches (anomalie cote client), on n'en
+  // garde qu'un seul — le premier dans l'ordre de configuration de l'hote.
+  const chosenBreakfasts = chosenMealsRaw.filter((m) => m.service === "BREAKFAST");
+  const dedupedBreakfastId = chosenBreakfasts.length > 0
+    ? (breakfastConfigured.find((b) => chosenBreakfasts.some((c) => c.id === b.id))?.id ?? chosenBreakfasts[0].id)
+    : null;
+  const chosenMeals = chosenMealsRaw.filter(
+    (m) => m.service !== "BREAKFAST" || m.id === dedupedBreakfastId,
+  );
+
+  // Quantite par repas : petit-dejeuner = nuits × personnes ; sinon personnes.
+  const mealQty = (service: typeof chosenMeals[number]["service"]) =>
+    service === "BREAKFAST" ? Math.max(1, nights) * qty : qty;
 
   const lodging = computeLodgingTotal([{ price: room.basePrice }], nights);
-  const mealsTotal = computeMealsTotal(chosenMeals.map((m) => ({ unitPrice: m.price, quantity: qty })));
+  const mealsTotal = computeMealsTotal(chosenMeals.map((m) => ({ unitPrice: m.price, quantity: mealQty(m.service) })));
   const rent = lodging + mealsTotal;
 
   const reservation = await prisma.reservation.create({
@@ -110,7 +132,7 @@ export async function POST(
           service: m.service,
           label: m.name,
           unitPrice: m.price,
-          quantity: qty,
+          quantity: mealQty(m.service),
         })),
       },
     },
