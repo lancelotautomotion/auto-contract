@@ -12,11 +12,13 @@ export const stripe = new Stripe(secret ?? "sk_test_unset", {
   typescript: true,
 });
 
-// TODO STRIPE — coller ici (via Vercel env vars) les nouveaux Price IDs du
-// passage aux prix ronds (juin 2026). Voir bloc commenté plus bas pour les
-// montants à configurer dans le dashboard Stripe.
+// Price IDs Stripe — configurés via Vercel env vars.
+//   STRIPE_PRICE_ID        → Essentiel (tiered : 10 €/20 €)
+//   STRIPE_PRICE_ID_HOTE   → Maison d'Hôtes (20 €/mois)
+//   STRIPE_PRICE_ID_ETAPE  → Kordia Étape (25 €/mois)
 export const STRIPE_PRICE_ID = process.env.STRIPE_PRICE_ID ?? "";
-export const STRIPE_PRICE_ID_MULTI = process.env.STRIPE_PRICE_ID_MULTI ?? "";
+export const STRIPE_PRICE_ID_HOTE = process.env.STRIPE_PRICE_ID_HOTE ?? "";
+export const STRIPE_PRICE_ID_ETAPE = process.env.STRIPE_PRICE_ID_ETAPE ?? "";
 export const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET ?? "";
 
 // Plan Essentiel : facturation par paliers (volume tiers) selon le nombre
@@ -26,7 +28,7 @@ export const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET ?? "";
 //   palier 2 (up_to 5)  → 20 €/mois  (flat_amount 2000)
 // La quantité de l'abonnement = nombre d'hébergements (borné entre 1 et 5).
 //
-// Plans à venir (à créer plus tard côté Stripe quand activés) :
+// Plans Maison d'Hôtes et Kordia Étape : prix fixes (quantity = 1).
 //   Maison d'Hôtes  → 20 €/mois  (flat_amount 2000)
 //   Kordia Étape    → 25 €/mois  (flat_amount 2500)
 export const MAX_GITES = 5;
