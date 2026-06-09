@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
   const isAdmin = (sessionClaims?.metadata as Record<string, unknown> | undefined)?.role === "admin";
 
   // Le plan Essentiel couvre jusqu'à 5 hébergements entiers
-  // (9,99 €/mois pour 1, puis 19,99 €/mois de 2 à 5).
+  // (10 €/mois pour 1, puis 20 €/mois de 2 à 5).
   if (!isAdmin && giteCount >= MAX_GITES) {
     return NextResponse.json(
       { error: `Plan Essentiel limité à ${MAX_GITES} hébergements`, code: "MAX_REACHED" },
@@ -59,7 +59,7 @@ export async function POST(req: NextRequest) {
   });
 
   // Aligne la facturation Stripe sur le nouveau nombre d'hébergements
-  // (palier 19,99 € dès le 2e). Best-effort, n'empêche pas la création.
+  // (palier 20 € dès le 2e). Best-effort, n'empêche pas la création.
   if (user.planStatus === "ACTIVE" && user.stripeSubscriptionId) {
     await syncEssentialSubscriptionQuantity(user.stripeSubscriptionId, giteCount + 1);
   }

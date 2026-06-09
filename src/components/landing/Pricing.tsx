@@ -54,9 +54,9 @@ export default function Pricing() {
               </div>
               <div className="pc-plan">Essentiel</div>
               <div style={{ fontSize: '12px', fontWeight: 600, color: '#71716E', marginBottom: '6px' }}>Propriétaires de gîtes &amp; meublés</div>
-              <div className="pc-price"><span style={{ fontSize: '15px', fontWeight: 600, color: '#71716E', marginRight: '4px' }}>dès</span>9<span style={{ fontSize: '22px' }}>,99</span><sup>€</sup></div>
+              <div className="pc-price"><span style={{ fontSize: '15px', fontWeight: 600, color: '#71716E', marginRight: '6px' }}>dès</span>10 €</div>
               <div className="pc-period">par mois · 1 hébergement</div>
-              <div style={{ fontSize: '12px', color: '#71716E', marginTop: '6px', lineHeight: 1.4 }}>puis 19,99 €/mois de 2 à 5 hébergements entiers</div>
+              <div style={{ fontSize: '12px', color: '#71716E', marginTop: '6px', lineHeight: 1.4 }}>puis 20 €/mois de 2 à 5 hébergements entiers</div>
             </div>
             <hr className="pc-div" />
             <ul className="pc-feat">
@@ -78,7 +78,7 @@ export default function Pricing() {
               </div>
               <div className="pc-plan">Maison d&apos;Hôtes</div>
               <div style={{ fontSize: '12px', fontWeight: 600, color: '#71716E', marginBottom: '6px' }}>Propriétaires de chambres d&apos;hôtes</div>
-              <div className="pc-price">19<span style={{ fontSize: '22px' }}>,99</span><sup>€</sup></div>
+              <div className="pc-price">20 €</div>
               <div className="pc-period">par mois · jusqu&apos;à 5 chambres (1 même site)</div>
             </div>
             <hr className="pc-div" />
@@ -99,7 +99,7 @@ export default function Pricing() {
               </div>
               <div className="pc-plan">Kordia Étape</div>
               <div style={{ fontSize: '12px', fontWeight: 600, color: '#71716E', marginBottom: '6px' }}>Gîtes d&apos;étape, auberges, dortoirs</div>
-              <div className="pc-price">24<span style={{ fontSize: '22px' }}>,99</span><sup>€</sup></div>
+              <div className="pc-price">25 €</div>
               <div className="pc-period">par mois · hébergements multi-espaces</div>
             </div>
             <hr className="pc-div" />

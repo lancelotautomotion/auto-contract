@@ -28,7 +28,7 @@ export async function sendTrialReminder({ to, name, daysLeft }: SendTrialReminde
         </p>
         <p style="font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif;font-size:15px;line-height:1.7;color:#71716E;margin:0 0 24px;">
           Pour continuer à gérer vos contrats de location sans interruption,
-          souscrivez à l'abonnement Essentiel à partir de <strong style="color:#2C2C2A;">9,99 € HT/mois</strong>.
+          souscrivez à l'abonnement Essentiel à partir de <strong style="color:#2C2C2A;">10 € HT/mois</strong>.
         </p>
         ${ctaButton("Souscrire à Kordia", upgradeUrl)}
         ${divider()}
@@ -48,7 +48,7 @@ export async function sendTrialReminder({ to, name, daysLeft }: SendTrialReminde
         </p>
         ${ctaButton("Continuer avec Kordia", upgradeUrl)}
         ${divider()}
-        ${muted("Sans engagement · Résiliable à tout moment · à partir de 9,99 € HT/mois")}
+        ${muted("Sans engagement · Résiliable à tout moment · à partir de 10 € HT/mois")}
       `,
     },
     1: {
@@ -64,7 +64,7 @@ export async function sendTrialReminder({ to, name, daysLeft }: SendTrialReminde
         </p>
         ${ctaButton("S'abonner maintenant", upgradeUrl)}
         ${divider()}
-        ${muted("Sans engagement · Résiliable à tout moment · à partir de 9,99 € HT/mois")}
+        ${muted("Sans engagement · Résiliable à tout moment · à partir de 10 € HT/mois")}
       `,
     },
     0: {
@@ -80,7 +80,7 @@ export async function sendTrialReminder({ to, name, daysLeft }: SendTrialReminde
         </p>
         ${ctaButton("Réactiver mon compte", upgradeUrl)}
         ${divider()}
-        ${muted("Vos données sont conservées 2 mois · à partir de 9,99 € HT/mois · Sans engagement")}
+        ${muted("Vos données sont conservées 2 mois · à partir de 10 € HT/mois · Sans engagement")}
       `,
     },
   };

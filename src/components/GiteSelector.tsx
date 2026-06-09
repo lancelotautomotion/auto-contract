@@ -164,7 +164,7 @@ function AddGiteModal({
   const inputRef = useRef<HTMLInputElement>(null);
 
   // Le passage de 1 → 2 hébergements fait basculer la facturation du palier
-  // 9,99 € au palier 19,99 €. Au-delà (2 → 5) le prix ne bouge plus.
+  // 10 € au palier 20 €. Au-delà (2 → 5) le prix ne bouge plus.
   const willChangePrice = currentCount === 1;
 
   useEffect(() => { setTimeout(() => inputRef.current?.focus(), 50); }, []);
@@ -228,7 +228,7 @@ function AddGiteModal({
             </div>
             <p style={{ fontSize: '12.5px', color: '#5B52B5', lineHeight: 1.6, margin: 0 }}>
               En ajoutant un 2<sup>e</sup> hébergement, votre abonnement passe de{' '}
-              <strong>9,99 €</strong> à <strong>19,99 € HT/mois</strong> (forfait 2 à 5 hébergements).
+              <strong>10 €</strong> à <strong>20 € HT/mois</strong> (forfait 2 à 5 hébergements).
               {planActive
                 ? ' Le montant sera ajusté au prorata et prélevé dès maintenant.'
                 : ' Ce tarif s’appliquera à votre abonnement à la fin de l’essai.'}
@@ -344,7 +344,7 @@ function UpgradeModal({ onClose }: { onClose: () => void }) {
           Votre plan <strong>Essentiel</strong> couvre jusqu&apos;à 5 hébergements entiers.
         </p>
         <p style={{ fontSize: '14px', color: '#71716E', lineHeight: 1.7, marginBottom: '28px' }}>
-          La facturation passe à <strong style={{ color: '#7F77DD' }}>19,99&nbsp;€/mois</strong> dès le 2<sup>e</sup> hébergement (au lieu de 9,99&nbsp;€/mois pour 1 seul).
+          La facturation passe à <strong style={{ color: '#7F77DD' }}>20&nbsp;€/mois</strong> dès le 2<sup>e</sup> hébergement (au lieu de 10&nbsp;€/mois pour 1 seul).
         </p>
         <div style={{ display: 'flex', gap: '10px' }}>
           <button
