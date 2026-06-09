@@ -1,0 +1,311 @@
+{
+  "name": "Kordia - Sourcing gîtes (auto 9h)",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 9 * * *"
+            }
+          ]
+        }
+      },
+      "id": "n-cron",
+      "name": "9h chaque jour",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        240,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// >>> A MODIFIER : colle ta cle Google Places ici <<<\nconst apiKey = \"COLLE_TA_CLE_GOOGLE_ICI\";\n\n// Departements a prospecter (rotation : 1 different chaque jour). Edite la liste librement.\nconst departements = [\"Dordogne\", \"Lot\", \"Gard\", \"Vaucluse\", \"Var\", \"Alpes-Maritimes\", \"Hérault\", \"Pyrénées-Orientales\", \"Pyrénées-Atlantiques\", \"Landes\", \"Gironde\", \"Charente-Maritime\", \"Vendée\", \"Morbihan\", \"Finistère\", \"Côtes-d'Armor\", \"Calvados\", \"Manche\", \"Savoie\", \"Haute-Savoie\", \"Isère\", \"Hautes-Alpes\", \"Ardèche\", \"Drôme\", \"Lozère\", \"Aveyron\", \"Corse-du-Sud\", \"Haute-Corse\", \"Haute-Loire\", \"Cantal\"];\n\nconst start = Date.UTC(new Date().getUTCFullYear(), 0, 0);\nconst dayOfYear = Math.floor((Date.now() - start) / 86400000);\nconst d = departements[dayOfYear % departements.length];\n\n// 8 requetes pour couvrir le marche (Places renvoie ~20 resultats par requete)\nconst modeles = [\n  \"gîte {d}\",\n  \"chambre d'hôtes {d}\",\n  \"maison d'hôtes {d}\",\n  \"gîte de charme {d}\",\n  \"gîte rural {d}\",\n  \"table d'hôtes {d}\",\n];\nconst out = [];\nfor (const m of modeles) {\n  out.push({ json: { query: m.replace(\"{d}\", d), departement: d, apiKey } });\n}\nreturn out;\n"
+      },
+      "id": "n-prep",
+      "name": "1. Préparer les recherches",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        460,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://places.googleapis.com/v1/places:searchText",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "X-Goog-Api-Key",
+              "value": "={{ $json.apiKey }}"
+            },
+            {
+              "name": "X-Goog-FieldMask",
+              "value": "places.displayName,places.formattedAddress,places.websiteUri,places.nationalPhoneNumber"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ textQuery: $json.query, languageCode: 'fr', regionCode: 'FR' }) }}",
+        "options": {}
+      },
+      "id": "n-places",
+      "name": "2. Google Places",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        680,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Aplatit les resultats, exclut gites d'etape + annuaires, deduplique par domaine\nconst departement = $('1. Préparer les recherches').first().json.departement;\nconst DIRS = [\"booking.com\",\"airbnb.com\",\"airbnb.fr\",\"gites-de-france.com\",\n  \"cybevasion.fr\",\"abritel.fr\",\"vrbo.com\",\"tripadvisor.fr\",\"tripadvisor.com\",\n  \"leboncoin.fr\",\"homeexchange.fr\",\"homeaway.fr\"];\nconst seen = new Set();\nconst out = [];\nfor (const item of $input.all()) {\n  const places = item.json.places || [];\n  for (const p of places) {\n    const site = p.websiteUri;\n    const nom = (p.displayName && p.displayName.text) || \"\";\n    // 1. Anti-etape : on saute les gites d'etape (offre Kordia pas encore prete)\n    const nomLow = nom.toLowerCase();\n    if (nomLow.includes(\"étape\") || nomLow.includes(\"etape\")) continue;\n    // 2. Doit avoir un site web\n    if (!site) continue;\n    // 3. Dedup par domaine + exclure les annuaires (Booking, Airbnb...)\n    const domain = site.toLowerCase().replace(/^https?:\\/\\//, \"\").replace(/^www\\./, \"\").split(\"/\")[0];\n    if (!domain || seen.has(domain)) continue;\n    if (DIRS.some((dir) => domain.endsWith(dir))) continue;\n    seen.add(domain);\n    out.push({ json: {\n      departement,\n      nom,\n      adresse: p.formattedAddress || \"\",\n      telephone: p.nationalPhoneNumber || \"\",\n      site,\n    }});\n  }\n}\nreturn out;\n"
+      },
+      "id": "n-lister",
+      "name": "3. Lister les gîtes (dédup)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        900,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Visite chaque site et extrait le premier email de contact trouve\nconst EMAIL_RE = /[A-Za-z0-9._%+\\-]+@[A-Za-z0-9.\\-]+\\.[A-Za-z]{2,}/g;\nconst BLOCK = [\"example.com\",\"exemple\",\"domaine.com\",\"votre\",\"utilisateur\",\"monemail\",\n  \"test@\",\"wixpress\",\"sentry\",\"godaddy\",\"jimdo\",\"squarespace\",\n  \".png\",\".jpg\",\".jpeg\",\".gif\",\".webp\",\".svg\",\"@2x\",\n  \"booking.com\",\"airbnb.com\",\"airbnb.fr\",\"gites-de-france.com\",\"cybevasion.fr\",\n  \"abritel.fr\",\"vrbo.com\",\"tripadvisor\"];\nconst seenEmails = new Set();\nconst out = [];\nfor (const item of $input.all()) {\n  const d = item.json;\n  let html = \"\";\n  try {\n    const res = await this.helpers.httpRequest({\n      url: d.site, method: \"GET\", timeout: 12000,\n      headers: { \"User-Agent\": \"Mozilla/5.0 (KordiaProspection)\" },\n    });\n    html = typeof res === \"string\" ? res : JSON.stringify(res);\n  } catch (e) { html = \"\"; }\n  const found = (html.match(EMAIL_RE) || [])\n    .map((e) => e.toLowerCase().replace(/^(%[0-9a-f]{2})+/i, \"\").replace(/\\.$/, \"\"))\n    .filter((e) => !BLOCK.some((b) => e.includes(b)));\n  const email = found[0] || \"\";\n  if (email && seenEmails.has(email)) continue;\n  if (email) seenEmails.add(email);\n  out.push({ json: {\n    departement: d.departement, nom: d.nom, email,\n    telephone: d.telephone, site: d.site, adresse: d.adresse,\n    date_ajout: new Date().toISOString().slice(0, 10),\n  }});\n  await new Promise((r) => setTimeout(r, 800));\n}\nreturn out;\n"
+      },
+      "id": "n-visiter",
+      "name": "4. Visiter site + extraire email",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1120,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.email }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "n-filter",
+      "name": "5. Garder ceux avec email",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2,
+      "position": [
+        1340,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "COLLE_ID_DE_TON_GOOGLE_SHEET",
+          "mode": "list",
+          "cachedResultName": "Kordia - Prospection"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Leads",
+          "mode": "list",
+          "cachedResultName": "Leads"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "departement": "={{ $json.departement }}",
+            "nom": "={{ $json.nom }}",
+            "email": "={{ $json.email }}",
+            "telephone": "={{ $json.telephone }}",
+            "site": "={{ $json.site }}",
+            "adresse": "={{ $json.adresse }}",
+            "date_ajout": "={{ $json.date_ajout }}"
+          },
+          "matchingColumns": [
+            "email"
+          ]
+        },
+        "options": {}
+      },
+      "id": "n-leads",
+      "name": "6. Enregistrer (anti-doublon)",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1560,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Resume du scrape : 1 ligne pour le Journal (compteur)\nconst items = $input.all();\nconst departement = $('1. Préparer les recherches').first().json.departement;\nreturn [{ json: {\n  departement,\n  date: new Date().toISOString().slice(0, 16).replace(\"T\", \" \"),\n  nb_leads: items.length,\n}}];\n"
+      },
+      "id": "n-resume",
+      "name": "7. Résumé du scrape",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1780,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "COLLE_ID_DE_TON_GOOGLE_SHEET",
+          "mode": "list",
+          "cachedResultName": "Kordia - Prospection"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Journal",
+          "mode": "list",
+          "cachedResultName": "Journal"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "departement": "={{ $json.departement }}",
+            "date": "={{ $json.date }}",
+            "nb_leads": "={{ $json.nb_leads }}"
+          }
+        },
+        "options": {}
+      },
+      "id": "n-journal",
+      "name": "8. Journal (compteur)",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2000,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "9h chaque jour": {
+      "main": [
+        [
+          {
+            "node": "1. Préparer les recherches",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "1. Préparer les recherches": {
+      "main": [
+        [
+          {
+            "node": "2. Google Places",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "2. Google Places": {
+      "main": [
+        [
+          {
+            "node": "3. Lister les gîtes (dédup)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "3. Lister les gîtes (dédup)": {
+      "main": [
+        [
+          {
+            "node": "4. Visiter site + extraire email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "4. Visiter site + extraire email": {
+      "main": [
+        [
+          {
+            "node": "5. Garder ceux avec email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "5. Garder ceux avec email": {
+      "main": [
+        [
+          {
+            "node": "6. Enregistrer (anti-doublon)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "6. Enregistrer (anti-doublon)": {
+      "main": [
+        [
+          {
+            "node": "7. Résumé du scrape",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "7. Résumé du scrape": {
+      "main": [
+        [
+          {
+            "node": "8. Journal (compteur)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/Paris"
+  }
+}

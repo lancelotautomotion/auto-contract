@@ -1,0 +1,124 @@
+{
+  "name": "Kordia - Récap hebdo prospection",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 20 * * 0"
+            }
+          ]
+        }
+      },
+      "id": "r-cron",
+      "name": "Dimanche 20h",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        240,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "COLLE_ID_DE_TON_GOOGLE_SHEET",
+          "mode": "list",
+          "cachedResultName": "Kordia - Prospection"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Leads",
+          "mode": "list",
+          "cachedResultName": "Leads"
+        },
+        "options": {}
+      },
+      "id": "r-read",
+      "name": "Lire les leads",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        460,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Compte les emails envoyes ces 7 derniers jours (statut contacte / date_contact)\nconst rows = $input.all().map((i) => i.json);\nconst now = new Date();\nconst debut = new Date(now.getTime() - 7 * 86400000);\n\nconst fmt = (d) => d.toISOString().slice(0, 10);\nconst envoyes = rows.filter((r) => {\n  if (!r.date_contact) return false;\n  const d = new Date(r.date_contact);\n  return !isNaN(d) && d >= debut && d <= now;\n});\n\nconst parDep = {};\nfor (const r of envoyes) {\n  const dep = r.departement || \"(inconnu)\";\n  parDep[dep] = (parDep[dep] || 0) + 1;\n}\nconst detail = Object.entries(parDep)\n  .sort((a, b) => b[1] - a[1])\n  .map(([d, n]) => \"- \" + d + \" : \" + n)\n  .join(\"\\n\") || \"- (aucun envoi cette semaine)\";\n\nconst total = envoyes.length;\nconst message = [\n  \"Recap prospection Kordia\",\n  \"Semaine du \" + fmt(debut) + \" au \" + fmt(now),\n  \"\",\n  \"Total emails de prospection envoyes : \" + total,\n  \"\",\n  \"Detail par departement :\",\n  detail,\n].join(\"\\n\");\n\nreturn [{ json: { total, message } }];\n"
+      },
+      "id": "r-count",
+      "name": "Compter les envois (7 j)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        680,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "operation": "send",
+        "sendTo": "contact@kordia.fr",
+        "subject": "=Récap prospection — {{ $json.total }} emails cette semaine",
+        "emailType": "text",
+        "message": "={{ $json.message }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "r-mail",
+      "name": "Envoyer le récap",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        900,
+        300
+      ],
+      "webhookId": "kordia-recap-gmail"
+    }
+  ],
+  "connections": {
+    "Dimanche 20h": {
+      "main": [
+        [
+          {
+            "node": "Lire les leads",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire les leads": {
+      "main": [
+        [
+          {
+            "node": "Compter les envois (7 j)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Compter les envois (7 j)": {
+      "main": [
+        [
+          {
+            "node": "Envoyer le récap",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/Paris"
+  }
+}

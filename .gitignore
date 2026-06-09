@@ -28,3 +28,7 @@ tsconfig.tsbuildinfo
 .idea/
 .vscode/
 .claude/worktrees/
+
+# Python
+__pycache__/
+*.pyc
