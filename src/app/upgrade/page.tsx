@@ -29,15 +29,18 @@ export default async function UpgradePage({ searchParams }: { searchParams: Prom
   const { userId: clerkId } = await auth();
   let trialInfo = null;
   let giteCount = 0;
+  let offerType: string = "gite";
   if (clerkId) {
     const dbUser = await prisma.user.findUnique({ where: { clerkId } });
     if (dbUser) {
       trialInfo = getTrialInfo(dbUser);
+      offerType = dbUser.offerType ?? "gite";
       giteCount = await prisma.gite.count({ where: { userId: dbUser.id, deletedAt: null } });
     }
   }
   const billedQuantity = Math.min(Math.max(giteCount, 1), 5);
   const monthlyPrice = billedQuantity <= 1 ? "10 €" : "20 €";
+  const recommended: "essential" | "hote" = offerType === "guesthouse" ? "hote" : "essential";
   const user = await currentUser();
   const initials = user
     ? `${user.firstName?.[0] ?? ''}${user.lastName?.[0] ?? ''}`.toUpperCase() || (user.emailAddresses[0]?.emailAddress?.[0]?.toUpperCase() ?? 'U')
@@ -125,12 +128,14 @@ export default async function UpgradePage({ searchParams }: { searchParams: Prom
         {/* Pricing grid */}
         <div className="upgrade-grid">
 
-          {/* Plan Essentiel — Recommandé */}
-          <div style={{ backgroundColor: '#FFFFFF', borderRadius: '16px', border: '2px solid #7F77DD', overflow: 'hidden', position: 'relative', display: 'flex', flexDirection: 'column' }}>
+          {/* Plan Essentiel */}
+          <div style={{ backgroundColor: '#FFFFFF', borderRadius: '16px', border: recommended === 'essential' ? '2px solid #7F77DD' : '1.5px solid #ECEAE4', overflow: 'hidden', position: 'relative', display: 'flex', flexDirection: 'column' }}>
             <div style={{ height: '4px', backgroundColor: '#7F77DD', flexShrink: 0 }}/>
-            <div style={{ position: 'absolute', top: '16px', right: '16px', background: '#7F77DD', color: '#fff', fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', padding: '3px 10px', borderRadius: '20px' }}>
-              Recommandé
-            </div>
+            {recommended === 'essential' && (
+              <div style={{ position: 'absolute', top: '16px', right: '16px', background: '#7F77DD', color: '#fff', fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', padding: '3px 10px', borderRadius: '20px' }}>
+                Recommandé
+              </div>
+            )}
             <div style={{ padding: '24px 26px 24px', display: 'flex', flexDirection: 'column', flex: 1 }}>
               <div className="upgrade-card-top">
                 <p style={{ fontSize: '15px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.06em', color: '#7F77DD', margin: '0 0 8px' }}>Essentiel</p>
@@ -170,16 +175,18 @@ export default async function UpgradePage({ searchParams }: { searchParams: Prom
               <p style={{ fontSize: '11px', color: '#A3A3A0', textAlign: 'center', margin: '0 0 10px', lineHeight: 1.5 }}>
                 Paiement sécurisé par Stripe.
               </p>
-              <SubscribeButton disabled={isActive} />
+              <SubscribeButton disabled={isActive} plan="essential" />
             </div>
           </div>
 
-          {/* Plan Maison d'Hôtes — Bientôt */}
-          <div style={{ backgroundColor: '#FFFFFF', borderRadius: '16px', border: '1.5px solid rgba(104,157,113,.3)', overflow: 'hidden', position: 'relative', display: 'flex', flexDirection: 'column', opacity: 0.85 }}>
+          {/* Plan Maison d'Hôtes */}
+          <div style={{ backgroundColor: '#FFFFFF', borderRadius: '16px', border: recommended === 'hote' ? '2px solid #689D71' : '1.5px solid rgba(104,157,113,.3)', overflow: 'hidden', position: 'relative', display: 'flex', flexDirection: 'column' }}>
             <div style={{ height: '4px', backgroundColor: '#689D71', flexShrink: 0 }}/>
-            <div style={{ position: 'absolute', top: '16px', right: '16px', background: '#689D71', color: '#fff', fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', padding: '3px 10px', borderRadius: '20px' }}>
-              Bientôt
-            </div>
+            {recommended === 'hote' && (
+              <div style={{ position: 'absolute', top: '16px', right: '16px', background: '#689D71', color: '#fff', fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', padding: '3px 10px', borderRadius: '20px' }}>
+                Recommandé
+              </div>
+            )}
             <div style={{ padding: '24px 26px 24px', display: 'flex', flexDirection: 'column', flex: 1 }}>
               <div className="upgrade-card-top">
                 <p style={{ fontSize: '15px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.06em', color: '#689D71', margin: '0 0 8px' }}>Maison d&apos;Hôtes</p>
@@ -194,15 +201,16 @@ export default async function UpgradePage({ searchParams }: { searchParams: Prom
               <hr className="upgrade-card-divider" />
               <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 16px', display: 'flex', flexDirection: 'column', gap: '8px', flex: 1 }}>
                 {['Tout le plan Essentiel', 'Réservation par chambre', 'Gestion de la demi-pension'].map(f => (
-                  <li key={f} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', color: '#71716E' }}>
-                    <span style={{ width: '18px', height: '18px', borderRadius: '5px', backgroundColor: 'rgba(104,157,113,.1)', color: '#689D71', fontSize: '10px', fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>✓</span>
+                  <li key={f} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', color: '#2C2C2A' }}>
+                    <span style={{ width: '18px', height: '18px', borderRadius: '5px', backgroundColor: 'rgba(104,157,113,.15)', color: '#689D71', fontSize: '10px', fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>✓</span>
                     {f}
                   </li>
                 ))}
               </ul>
-              <div style={{ padding: '11px 16px', background: '#EEF5EF', border: '1px solid rgba(104,157,113,.25)', borderRadius: '10px', textAlign: 'center', fontSize: '13px', fontWeight: 700, color: '#4A7353' }}>
-                Bientôt disponible
-              </div>
+              <p style={{ fontSize: '11px', color: '#A3A3A0', textAlign: 'center', margin: '0 0 10px', lineHeight: 1.5 }}>
+                Paiement sécurisé par Stripe.
+              </p>
+              <SubscribeButton disabled={isActive} plan="hote" />
             </div>
           </div>
 
