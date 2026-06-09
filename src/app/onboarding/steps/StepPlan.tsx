@@ -19,7 +19,7 @@ const plans: {
   {
     id: "essential",
     name: "Essentiel",
-    price: "dès 9,99 €",
+    price: "dès 10 €",
     period: "/ mois · jusqu'à 5 hébergements",
     features: ["Contrats automatiques illimités", "Signature conforme eIDAS", "Relances automatiques"],
     color: "#7F77DD",
@@ -28,7 +28,7 @@ const plans: {
   {
     id: "maison",
     name: "Maison d'Hôtes",
-    price: "19,99 €",
+    price: "20 €",
     period: "/ mois · jusqu'à 5 chambres (1 même site)",
     features: ["Tout le plan Essentiel", "Réservation par chambre", "Gestion de la demi-pension"],
     color: "#689D71",
@@ -37,7 +37,7 @@ const plans: {
   {
     id: "etape",
     name: "Kordia Étape",
-    price: "24,99 €",
+    price: "25 €",
     period: "/ mois · hébergements multi-espaces",
     features: ["Tout le plan Maison d'Hôtes", "Réservation par lit / dortoir", "Planification multi-espaces"],
     color: "#A3A3A0",
@@ -133,7 +133,7 @@ export default function StepPlan({ selected, onSelect }: Props) {
           background: "rgba(127,119,221,.07)", border: "1px solid rgba(127,119,221,.2)",
           fontSize: "12px", color: "#5B52B5", lineHeight: 1.5,
         }}>
-          {selected === "essential" && "Jusqu'à 5 hébergements entiers · 9,99 €/mois pour 1, puis 19,99 €/mois de 2 à 5. Contrats illimités, toutes les fonctionnalités incluses."}
+          {selected === "essential" && "Jusqu'à 5 hébergements entiers · 10 €/mois pour 1, puis 20 €/mois de 2 à 5. Contrats illimités, toutes les fonctionnalités incluses."}
           {selected === "maison" && "Location par chambre (jusqu'à 5 chambres, 15 personnes) sur un même site. Gestion des repas et taxe de séjour au réel."}
         </div>
       )}

@@ -1,13 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { prisma } from "@/lib/prisma";
-import { STRIPE_WEBHOOK_SECRET, stripe } from "@/lib/stripe";
+import { STRIPE_PRICE_ID_ETAPE, STRIPE_PRICE_ID_HOTE, STRIPE_WEBHOOK_SECRET, stripe } from "@/lib/stripe";
 
 export const runtime = "nodejs";
 
 function derivePlanTier(priceId: string | null | undefined): string {
-  const multiPriceId = process.env.STRIPE_PRICE_ID_MULTI;
-  if (multiPriceId && priceId === multiPriceId) return "multi";
+  if (!priceId) return "essential";
+  if (STRIPE_PRICE_ID_HOTE && priceId === STRIPE_PRICE_ID_HOTE) return "hote";
+  if (STRIPE_PRICE_ID_ETAPE && priceId === STRIPE_PRICE_ID_ETAPE) return "etape";
   return "essential";
 }
 

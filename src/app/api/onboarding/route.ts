@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
 
     // L'offre Essentiel couvre désormais jusqu'à 5 hébergements
-    // (1 = 9,99 € HT/mois, 2 à 5 = 19,99 € HT/mois). C'est le seul
+    // (1 = 10 € HT/mois, 2 à 5 = 20 € HT/mois). C'est le seul
     // plan souscriptible à l'onboarding.
     const planTier = "essential";
 

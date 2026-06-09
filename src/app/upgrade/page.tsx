@@ -37,7 +37,7 @@ export default async function UpgradePage({ searchParams }: { searchParams: Prom
     }
   }
   const billedQuantity = Math.min(Math.max(giteCount, 1), 5);
-  const monthlyPrice = billedQuantity <= 1 ? "9,99 €" : "19,99 €";
+  const monthlyPrice = billedQuantity <= 1 ? "10 €" : "20 €";
   const user = await currentUser();
   const initials = user
     ? `${user.firstName?.[0] ?? ''}${user.lastName?.[0] ?? ''}`.toUpperCase() || (user.emailAddresses[0]?.emailAddress?.[0]?.toUpperCase() ?? 'U')
@@ -136,7 +136,7 @@ export default async function UpgradePage({ searchParams }: { searchParams: Prom
                 <p style={{ fontSize: '15px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.06em', color: '#7F77DD', margin: '0 0 8px' }}>Essentiel</p>
                 <div style={{ display: 'flex', alignItems: 'flex-end', gap: '6px', marginBottom: '4px' }}>
                   <span style={{ fontSize: '13px', color: '#71716E', fontWeight: 600, paddingBottom: '8px' }}>dès</span>
-                  <span style={{ fontSize: '30px', fontWeight: 800, color: '#2C2C2A', letterSpacing: '-0.04em', lineHeight: 1 }}>9,99 €</span>
+                  <span style={{ fontSize: '30px', fontWeight: 800, color: '#2C2C2A', letterSpacing: '-0.04em', lineHeight: 1 }}>10 €</span>
                   <span style={{ fontSize: '13px', color: '#A3A3A0', paddingBottom: '6px' }}>HT / mois</span>
                 </div>
                 <p style={{ fontSize: '13px', color: '#71716E', margin: 0, lineHeight: 1.5 }}>
@@ -144,11 +144,11 @@ export default async function UpgradePage({ searchParams }: { searchParams: Prom
                 </p>
                 <div style={{ marginTop: '10px', display: 'flex', gap: '8px' }}>
                   <div style={{ flex: 1, padding: '10px', textAlign: 'center', background: billedQuantity <= 1 ? 'rgba(127,119,221,.1)' : '#F7F6F2', border: `1.5px solid ${billedQuantity <= 1 ? 'rgba(127,119,221,.4)' : '#ECEAE4'}`, borderRadius: '10px' }}>
-                    <div style={{ fontSize: '16px', fontWeight: 800, color: '#2C2C2A' }}>9,99 €</div>
+                    <div style={{ fontSize: '16px', fontWeight: 800, color: '#2C2C2A' }}>10 €</div>
                     <div style={{ fontSize: '11px', color: '#71716E', marginTop: '2px' }}>1 hébergement</div>
                   </div>
                   <div style={{ flex: 1, padding: '10px', textAlign: 'center', background: billedQuantity > 1 ? 'rgba(127,119,221,.1)' : '#F7F6F2', border: `1.5px solid ${billedQuantity > 1 ? 'rgba(127,119,221,.4)' : '#ECEAE4'}`, borderRadius: '10px' }}>
-                    <div style={{ fontSize: '16px', fontWeight: 800, color: '#2C2C2A' }}>19,99 €</div>
+                    <div style={{ fontSize: '16px', fontWeight: 800, color: '#2C2C2A' }}>20 €</div>
                     <div style={{ fontSize: '11px', color: '#71716E', marginTop: '2px' }}>2 à 5 hébergements</div>
                   </div>
                 </div>
@@ -184,7 +184,7 @@ export default async function UpgradePage({ searchParams }: { searchParams: Prom
               <div className="upgrade-card-top">
                 <p style={{ fontSize: '15px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.06em', color: '#689D71', margin: '0 0 8px' }}>Maison d&apos;Hôtes</p>
                 <div style={{ display: 'flex', alignItems: 'flex-end', gap: '6px', marginBottom: '4px' }}>
-                  <span style={{ fontSize: '30px', fontWeight: 800, color: '#2C2C2A', letterSpacing: '-0.04em', lineHeight: 1 }}>19,99 €</span>
+                  <span style={{ fontSize: '30px', fontWeight: 800, color: '#2C2C2A', letterSpacing: '-0.04em', lineHeight: 1 }}>20 €</span>
                   <span style={{ fontSize: '13px', color: '#A3A3A0', paddingBottom: '6px' }}>HT / mois</span>
                 </div>
                 <p style={{ fontSize: '13px', color: '#71716E', margin: 0, lineHeight: 1.5 }}>
@@ -216,7 +216,7 @@ export default async function UpgradePage({ searchParams }: { searchParams: Prom
               <div className="upgrade-card-top">
                 <p style={{ fontSize: '15px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.06em', color: '#689D71', margin: '0 0 8px' }}>Kordia Étape</p>
                 <div style={{ display: 'flex', alignItems: 'flex-end', gap: '6px', marginBottom: '4px' }}>
-                  <span style={{ fontSize: '30px', fontWeight: 800, color: '#2C2C2A', letterSpacing: '-0.04em', lineHeight: 1 }}>24,99 €</span>
+                  <span style={{ fontSize: '30px', fontWeight: 800, color: '#2C2C2A', letterSpacing: '-0.04em', lineHeight: 1 }}>25 €</span>
                   <span style={{ fontSize: '13px', color: '#A3A3A0', paddingBottom: '6px' }}>HT / mois</span>
                 </div>
                 <p style={{ fontSize: '13px', color: '#71716E', margin: 0, lineHeight: 1.5 }}>

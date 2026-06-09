@@ -16,8 +16,8 @@ export async function POST(req: NextRequest) {
   const dbUser = await prisma.user.findUnique({ where: { clerkId } });
   if (!dbUser) return NextResponse.json({ error: "Compte introuvable." }, { status: 404 });
 
-  // La quantité de l'abonnement reflète le nombre d'hébergements (1 → 9,99 €,
-  // 2 à 5 → 19,99 € via les paliers volume du prix Stripe).
+  // La quantité de l'abonnement reflète le nombre d'hébergements (1 → 10 €,
+  // 2 à 5 → 20 € via les paliers volume du prix Stripe).
   const giteCount = await prisma.gite.count({ where: { userId: dbUser.id, deletedAt: null } });
   const quantity = clampGiteQuantity(giteCount);
 

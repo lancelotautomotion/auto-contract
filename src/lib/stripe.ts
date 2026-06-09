@@ -12,16 +12,25 @@ export const stripe = new Stripe(secret ?? "sk_test_unset", {
   typescript: true,
 });
 
+// Price IDs Stripe — configurés via Vercel env vars.
+//   STRIPE_PRICE_ID        → Essentiel (tiered : 10 €/20 €)
+//   STRIPE_PRICE_ID_HOTE   → Maison d'Hôtes (20 €/mois)
+//   STRIPE_PRICE_ID_ETAPE  → Kordia Étape (25 €/mois)
 export const STRIPE_PRICE_ID = process.env.STRIPE_PRICE_ID ?? "";
-export const STRIPE_PRICE_ID_MULTI = process.env.STRIPE_PRICE_ID_MULTI ?? "";
+export const STRIPE_PRICE_ID_HOTE = process.env.STRIPE_PRICE_ID_HOTE ?? "";
+export const STRIPE_PRICE_ID_ETAPE = process.env.STRIPE_PRICE_ID_ETAPE ?? "";
 export const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET ?? "";
 
 // Plan Essentiel : facturation par paliers (volume tiers) selon le nombre
 // d'hébergements. Le prix Stripe `STRIPE_PRICE_ID` doit être configuré en
 // `billing_scheme=tiered`, `tiers_mode=volume` :
-//   palier 1 (up_to 1)  → 9,99 €/mois  (flat_amount 999)
-//   palier 2 (up_to 5)  → 19,99 €/mois (flat_amount 1999)
+//   palier 1 (up_to 1)  → 10 €/mois  (flat_amount 1000)
+//   palier 2 (up_to 5)  → 20 €/mois  (flat_amount 2000)
 // La quantité de l'abonnement = nombre d'hébergements (borné entre 1 et 5).
+//
+// Plans Maison d'Hôtes et Kordia Étape : prix fixes (quantity = 1).
+//   Maison d'Hôtes  → 20 €/mois  (flat_amount 2000)
+//   Kordia Étape    → 25 €/mois  (flat_amount 2500)
 export const MAX_GITES = 5;
 
 export function clampGiteQuantity(count: number): number {

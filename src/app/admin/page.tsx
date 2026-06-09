@@ -225,7 +225,7 @@ export default async function AdminPage() {
             </div>
           </div>
           {activeCount > 0 && (
-            <div className="ac-mrr">MRR estimé <strong>{(activeCount * 9.99).toLocaleString("fr-FR", { minimumFractionDigits: 2 })} €</strong></div>
+            <div className="ac-mrr">MRR estimé <strong>{(activeCount * 10).toLocaleString("fr-FR")} €</strong></div>
           )}
         </div>
 

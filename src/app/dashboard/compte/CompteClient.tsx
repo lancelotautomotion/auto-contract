@@ -102,7 +102,7 @@ export default function CompteClient({ fullName, email, initials, planStatus, da
               {planStatus === 'ACTIVE' && (
                 <>
                   <div style={{ fontSize: '22px', fontWeight: 800, color: 'var(--ink)', letterSpacing: '-0.02em', marginBottom: '4px' }}>
-                    Plan Essentiel <span style={{ fontSize: '14px', fontWeight: 500, color: 'var(--ink-soft)' }}>— à partir de 9,99 € HT / mois</span>
+                    Plan Essentiel <span style={{ fontSize: '14px', fontWeight: 500, color: 'var(--ink-soft)' }}>— à partir de 10 € HT / mois</span>
                   </div>
                   <p style={{ fontSize: '13px', color: 'var(--ink-soft)', margin: 0, lineHeight: 1.6 }}>
                     Facturation mensuelle automatique. Gérez votre carte, vos factures et votre abonnement depuis le portail sécurisé Stripe.
