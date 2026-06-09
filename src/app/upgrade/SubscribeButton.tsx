@@ -4,12 +4,15 @@ import { useState } from "react";
 
 interface Props {
   disabled?: boolean;
-  plan?: "essential";
+  plan?: "essential" | "hote";
 }
 
 export default function SubscribeButton({ disabled, plan = "essential" }: Props) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const accent = plan === "hote" ? "#689D71" : "#7F77DD";
+  const accentLoading = plan === "hote" ? "#8FB698" : "#9A94E0";
 
   const handleClick = async () => {
     setLoading(true);
@@ -48,7 +51,7 @@ export default function SubscribeButton({ disabled, plan = "essential" }: Props)
           padding: "16px",
           fontSize: "15px",
           fontWeight: 700,
-          backgroundColor: disabled ? "#C9D4CC" : loading ? "#9A94E0" : "#7F77DD",
+          backgroundColor: disabled ? "#C9D4CC" : loading ? accentLoading : accent,
           color: "#FFFFFF",
           border: "none",
           borderRadius: "11px",
