@@ -7,6 +7,12 @@ const CheckViolet = () => (
   </span>
 );
 
+const CheckGreen = () => (
+  <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '16px', height: '16px', borderRadius: '50%', background: '#E7F0E9', flexShrink: 0 }}>
+    <Check size={10} strokeWidth={1.6} color="#4A7353" />
+  </span>
+);
+
 const CheckGray = () => (
   <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '16px', height: '16px', borderRadius: '50%', background: '#F0F0EE', flexShrink: 0 }}>
     <Check size={10} strokeWidth={1.6} color="#A3A3A0" />
@@ -69,9 +75,8 @@ export default function Pricing() {
             </Link>
           </div>
 
-          {/* Maison d'Hôtes — en développement */}
-          <div className="pc reveal reveal-d2" style={{ opacity: 0.85 }}>
-            <div className="pc-badge-dev">Bientôt disponible</div>
+          {/* Maison d'Hôtes */}
+          <div className="pc reveal reveal-d2">
             <div className="pc-header">
               <div className="pc-icon g">
                 <LayoutGrid size={20} strokeWidth={1.4} color="#4A7353" />
@@ -83,11 +88,13 @@ export default function Pricing() {
             </div>
             <hr className="pc-div" />
             <ul className="pc-feat">
-              <li><CheckGray />Tout le plan Essentiel</li>
-              <li><CheckGray />Réservation par chambre</li>
-              <li><CheckGray />Gestion de la demi-pension</li>
+              <li><CheckGreen />Tout le plan Essentiel</li>
+              <li><CheckGreen />Réservation par chambre</li>
+              <li><CheckGreen />Gestion de la demi-pension</li>
             </ul>
-            <span className="pc-dev-cta">Bientôt disponible</span>
+            <Link className="btn btn-green" style={{ width: '100%' }} href="/sign-up">
+              Essayer gratuitement 30 jours
+            </Link>
           </div>
 
           {/* Kordia Étape — en développement */}
