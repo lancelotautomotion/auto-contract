@@ -220,7 +220,7 @@
         "columns": {
           "mappingMode": "defineBelow",
           "value": {
-            "email": "={{ $json.email }}",
+            "email": "={{ $('Boucle d\\'envoi').item.json.email }}",
             "statut": "contacté",
             "date_contact": "={{ new Date().toISOString().slice(0,10) }}"
           },
