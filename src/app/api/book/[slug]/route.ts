@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { resend } from "@/lib/resend";
-import { buildEmailHtml, divider, ctaButton, muted } from "@/lib/emailTemplate";
+import { buildEmailHtml, divider, ctaButton, muted, escapeHtml } from "@/lib/emailTemplate";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 import { isHoneypotTriggered } from "@/lib/honeypot";
 
@@ -99,16 +99,16 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ slu
         ? `<p style="font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif;font-size:14px;color:#2C2C2A;margin:0 0 6px;"><strong>Personnes :</strong> ${guestCount}</p>`
         : '';
       const notesHtml = body.notes
-        ? `<p style="font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif;font-size:14px;color:#71716E;margin:8px 0 0;font-style:italic;">« ${body.notes} »</p>`
+        ? `<p style="font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif;font-size:14px;color:#71716E;margin:8px 0 0;font-style:italic;">« ${escapeHtml(String(body.notes))} »</p>`
         : '';
 
       const emailBody = `
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#F3F2EE;border-radius:12px;padding:20px;margin-bottom:24px;">
   <tr><td>
     <p style="font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:#A3A3A0;margin:0 0 12px;">Demandeur</p>
-    <p style="font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif;font-size:16px;font-weight:700;color:#2C2C2A;margin:0 0 4px;">${body.firstName} ${body.lastName}</p>
-    <p style="font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif;font-size:14px;color:#71716E;margin:0 0 2px;">${body.email}</p>
-    <p style="font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif;font-size:14px;color:#71716E;margin:0;">${body.phone}</p>
+    <p style="font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif;font-size:16px;font-weight:700;color:#2C2C2A;margin:0 0 4px;">${escapeHtml(String(body.firstName))} ${escapeHtml(String(body.lastName))}</p>
+    <p style="font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif;font-size:14px;color:#71716E;margin:0 0 2px;">${escapeHtml(String(body.email))}</p>
+    <p style="font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif;font-size:14px;color:#71716E;margin:0;">${escapeHtml(String(body.phone))}</p>
   </td></tr>
 </table>
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#EFEEF9;border-radius:12px;padding:20px;margin-bottom:24px;">

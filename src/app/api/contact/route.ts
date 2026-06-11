@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { resend } from "@/lib/resend";
+import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 
 const INBOX = "contact@kordia.fr";
 
@@ -18,6 +19,15 @@ function nl2br(value: string) {
 
 export async function POST(req: NextRequest) {
   try {
+    const ip = getClientIp(req);
+    const rl = checkRateLimit(`contact:${ip}`, 5, 600_000);
+    if (!rl.ok) {
+      return NextResponse.json(
+        { error: "Trop de messages envoyés. Veuillez réessayer dans quelques minutes." },
+        { status: 429, headers: { "Retry-After": "600" } }
+      );
+    }
+
     const body = await req.json();
     const prenom = String(body.prenom ?? "").trim();
     const nom = String(body.nom ?? "").trim();

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { generateSignedContractPdf, buildSignedContractFilename } from "@/lib/contractPdf";
-import { buildEmailHtml, divider, muted, signOff } from "@/lib/emailTemplate";
+import { buildEmailHtml, divider, muted, signOff, escapeHtml } from "@/lib/emailTemplate";
 import { resend, getFromEmail } from "@/lib/resend";
 import { requireAuth } from "@/lib/auth";
 import { resolveReservationProperty, buildContractData } from "@/lib/reservationProperty";
@@ -62,12 +62,15 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
     const giteAddress = [property.address, property.zipCode, property.city]
       .filter(Boolean).join(', ') || undefined;
 
+    const safeName = escapeHtml(property.name);
+    const safeClient = `${escapeHtml(reservation.clientFirstName)} ${escapeHtml(reservation.clientLastName)}`;
+
     const clientBody = `
-      <p style="margin:0 0 20px;">Suite à la réception de votre acompte, veuillez trouver ci-joint votre exemplaire du contrat de location signé pour le séjour du <strong style="color:#2C2C2A;">${dateEntree}</strong> au <strong style="color:#2C2C2A;">${dateSortie}</strong> au <strong style="color:#2C2C2A;">${property.name}</strong>.</p>
+      <p style="margin:0 0 20px;">Suite à la réception de votre acompte, veuillez trouver ci-joint votre exemplaire du contrat de location signé pour le séjour du <strong style="color:#2C2C2A;">${dateEntree}</strong> au <strong style="color:#2C2C2A;">${dateSortie}</strong> au <strong style="color:#2C2C2A;">${safeName}</strong>.</p>
       <p style="margin:0 0 20px;">Nous vous souhaitons un excellent séjour.</p>
       ${divider()}
       ${muted("Conservez ce document — il fait office de preuve de votre réservation.")}
-      ${signOff(property.name)}
+      ${signOff(safeName)}
     `;
 
     // Emails non-fatals — l'acompte est déjà marqué en DB
@@ -91,10 +94,10 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
       const notifEmail = property.notificationEmail || property.user?.email;
       if (notifEmail) {
         const managerBody = `
-          <p style="margin:0 0 20px;">L'acompte de <strong style="color:#2C2C2A;">${reservation.clientFirstName} ${reservation.clientLastName}</strong> a été marqué comme reçu.</p>
+          <p style="margin:0 0 20px;">L'acompte de <strong style="color:#2C2C2A;">${safeClient}</strong> a été marqué comme reçu.</p>
           <p style="margin:0 0 20px;">Le contrat signé a été automatiquement envoyé au locataire. Une copie est jointe ci-dessous.</p>
           ${divider()}
-          ${muted(`Séjour du ${dateEntree} au ${dateSortie} — ${property.name}`)}
+          ${muted(`Séjour du ${dateEntree} au ${dateSortie} — ${safeName}`)}
         `;
         await resend.emails.send({
           from: fromEmail,

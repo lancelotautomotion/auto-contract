@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { buildEmailHtml, divider, muted, signOff } from "@/lib/emailTemplate";
+import { buildEmailHtml, divider, muted, signOff, escapeHtml } from "@/lib/emailTemplate";
 import { resend, getFromEmail } from "@/lib/resend";
 import { requireAuth } from "@/lib/auth";
 import { resolveReservationProperty } from "@/lib/reservationProperty";
@@ -48,19 +48,20 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     const dateEntree = fmt(reservation.checkIn);
     const dateSortie = fmt(reservation.checkOut);
 
+    const safeName = escapeHtml(property.name);
     const reasonLabel = REASON_LABELS[reason] ?? REASON_LABELS["other"];
     const noteHtml = (reason === "other" && note)
-      ? `<p style="margin:0 0 20px;">${note}</p>`
+      ? `<p style="margin:0 0 20px;">${escapeHtml(note)}</p>`
       : "";
 
     const body_html = `
-      <p style="margin:0 0 20px;">Nous vous remercions sincèrement de l'intérêt que vous portez à <strong style="color:#2C2C2A;">${property.name}</strong> et de la confiance que vous nous témoignez.</p>
+      <p style="margin:0 0 20px;">Nous vous remercions sincèrement de l'intérêt que vous portez à <strong style="color:#2C2C2A;">${safeName}</strong> et de la confiance que vous nous témoignez.</p>
       <p style="margin:0 0 20px;">Après examen de votre demande de réservation du <strong style="color:#2C2C2A;">${dateEntree}</strong> au <strong style="color:#2C2C2A;">${dateSortie}</strong>, nous avons le regret de vous informer que nous ne sommes pas en mesure d'y donner suite, ${reasonLabel}.</p>
       ${noteHtml}
       <p style="margin:0 0 20px;">Nous espérons avoir l'occasion de vous accueillir lors d'une prochaine occasion et vous souhaitons de trouver rapidement un hébergement qui correspond à vos attentes.</p>
       ${divider()}
       ${muted("Ce message est envoyé automatiquement suite à l'examen de votre demande de réservation.")}
-      ${signOff(property.name)}
+      ${signOff(safeName)}
     `;
 
     await resend.emails.send({

@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { TRIAL_DAYS } from "@/lib/trial";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
+import { MAX_GITES } from "@/lib/stripe";
 
 async function uniqueSlug(base: string, excludeGiteId?: string): Promise<string> {
   const candidate = base || "gite";
@@ -115,9 +116,13 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // Create additional gîtes for multi plan
+    // Create additional gîtes for multi plan — borné par MAX_GITES pour
+    // empêcher la création illimitée d'hébergements (contournement de palier).
     if (Array.isArray(body.extraGites) && body.extraGites.length > 0) {
+      const currentCount = await prisma.gite.count({ where: { userId: user.id, deletedAt: null } });
+      let slotsLeft = Math.max(0, MAX_GITES - currentCount);
       for (const extra of body.extraGites as { name: string; capacity?: number; cleaningFee?: number; touristTax?: number }[]) {
+        if (slotsLeft <= 0) break;
         const trimmed = (extra.name ?? "").trim();
         if (!trimmed) continue;
         const extraSlug = await uniqueSlug(
@@ -135,6 +140,7 @@ export async function POST(req: NextRequest) {
             notificationEmail: body.email || null,
           },
         });
+        slotsLeft--;
       }
     }
 

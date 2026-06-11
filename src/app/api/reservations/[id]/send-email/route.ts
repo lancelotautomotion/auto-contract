@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { resend, getFromEmail } from "@/lib/resend";
 import { randomBytes } from "crypto";
-import { buildEmailHtml, recapCard, ctaButton, divider, infoBox, muted, signOff } from "@/lib/emailTemplate";
+import { buildEmailHtml, recapCard, ctaButton, divider, infoBox, muted, signOff, escapeHtml } from "@/lib/emailTemplate";
 import { requireActivePlanAny } from "@/lib/auth";
 import { resolveReservationProperty } from "@/lib/reservationProperty";
 
@@ -54,8 +54,9 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
     ...(depositFormatted ? [{ label: 'Acompte à régler', value: depositFormatted, valueColor: '#689D71' }] : []),
   ];
 
+  const safeName = escapeHtml(property.name);
   const body = `
-    <p style="margin:0 0 20px;">Votre contrat de location pour votre séjour au <strong style="color:#2C2C2A;">${property.name}</strong> est prêt à être signé.</p>
+    <p style="margin:0 0 20px;">Votre contrat de location pour votre séjour au <strong style="color:#2C2C2A;">${safeName}</strong> est prêt à être signé.</p>
     ${recapCard(
       [{ label: 'Arrivée', value: dateEntree }, { label: 'Départ', value: dateSortie }],
       rightCol.length > 0 ? rightCol : [{ label: 'Séjour', value: `${dateEntree} → ${dateSortie}` }]
@@ -68,7 +69,7 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
       : ''
     }
     ${muted("Ce lien est personnel et sécurisé. La signature est conforme au règlement eIDAS.")}
-    ${signOff(property.name)}
+    ${signOff(safeName)}
   `;
 
   const giteAddress = [property.address, property.zipCode, property.city]

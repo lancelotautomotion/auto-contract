@@ -23,6 +23,10 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ tok
       return NextResponse.json({ error: 'Lien invalide' }, { status: 404 });
     }
 
+    if (contract.signatureTokenExpiresAt && contract.signatureTokenExpiresAt < new Date()) {
+      return NextResponse.json({ error: 'Lien de signature expiré' }, { status: 410 });
+    }
+
     const { reservation } = contract;
     const property = resolveReservationProperty(reservation);
     if (!property) return NextResponse.json({ error: 'Hébergement introuvable' }, { status: 404 });

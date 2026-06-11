@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
 
   const user = await prisma.user.findUnique({
     where: { id: ctx.userId },
-    select: { planStatus: true, planTier: true, trialEndsAt: true, stripeSubscriptionId: true },
+    select: { planStatus: true, planTier: true, offerType: true, trialEndsAt: true, stripeSubscriptionId: true },
   });
   if (!user) return NextResponse.json({ error: "Utilisateur introuvable" }, { status: 404 });
 
@@ -32,6 +32,14 @@ export async function POST(req: NextRequest) {
   // Admin bypass: skip all plan guards
   const { sessionClaims } = await auth();
   const isAdmin = (sessionClaims?.metadata as Record<string, unknown> | undefined)?.role === "admin";
+
+  // Un compte Maison d'hôtes ne peut pas créer de gîtes entiers.
+  if (!isAdmin && user.offerType === "guesthouse") {
+    return NextResponse.json(
+      { error: "Les gîtes ne sont pas disponibles sur l'offre Maison d'hôtes", code: "OFFER_MISMATCH" },
+      { status: 403 }
+    );
+  }
 
   // Le plan Essentiel couvre jusqu'à 5 hébergements entiers
   // (10 €/mois pour 1, puis 20 €/mois de 2 à 5).
