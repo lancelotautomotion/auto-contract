@@ -33,6 +33,13 @@ export interface ReservationProperty {
   user?: User;
 }
 
+// Adresse de réponse pour les emails envoyés au locataire au nom du gérant.
+// Les emails partent d'une adresse @kordia.fr (domaine vérifié Resend) : sans
+// Reply-To, les réponses des locataires atterrissent chez Kordia.
+export function managerReplyTo(p: ReservationProperty): string | undefined {
+  return p.email || p.notificationEmail || p.user?.email || undefined;
+}
+
 // Résout la propriété (gîte OU maison d'hôtes) d'une réservation.
 // Renvoie null si la réservation n'est rattachée à aucune des deux.
 export function resolveReservationProperty(reservation: {

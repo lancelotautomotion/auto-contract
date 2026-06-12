@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { resend, getFromEmail } from "@/lib/resend";
 import { buildEmailHtml, recapCard, ctaButton, divider, infoBox, muted, signOff } from "@/lib/emailTemplate";
-import { resolveReservationProperty } from "@/lib/reservationProperty";
+import { resolveReservationProperty, managerReplyTo } from "@/lib/reservationProperty";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -113,6 +113,7 @@ export async function GET(req: Request) {
       const { error } = await resend.emails.send({
         from: getFromEmail(),
         to: reservation.clientEmail,
+        replyTo: managerReplyTo(property),
         subject: `Rappel${reminderNum > 1 ? ` (${reminderNum})` : ""} : votre contrat de location attend votre signature — ${property.name}`,
         html,
         attachments,

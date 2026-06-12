@@ -4,7 +4,7 @@ import { generateSignedContractPdf, buildSignedContractFilename } from "@/lib/co
 import { buildEmailHtml, divider, muted, signOff, escapeHtml } from "@/lib/emailTemplate";
 import { resend, getFromEmail } from "@/lib/resend";
 import { requireAuth } from "@/lib/auth";
-import { resolveReservationProperty, buildContractData } from "@/lib/reservationProperty";
+import { resolveReservationProperty, buildContractData, managerReplyTo } from "@/lib/reservationProperty";
 
 export async function POST(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -78,6 +78,7 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
       await resend.emails.send({
         from: fromEmail,
         to: reservation.clientEmail,
+        replyTo: managerReplyTo(property),
         subject: `Contrat signé — ${property.name}`,
         html: buildEmailHtml({
           giteName: property.name,
@@ -102,6 +103,7 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
         await resend.emails.send({
           from: fromEmail,
           to: notifEmail,
+          replyTo: reservation.clientEmail,
           subject: `Acompte reçu — contrat envoyé à ${reservation.clientFirstName} ${reservation.clientLastName}`,
           html: buildEmailHtml({
             giteName: property.name,

@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { buildEmailHtml, divider, infoBox, muted, signOff } from "@/lib/emailTemplate";
 import { generateContractPdf } from "@/lib/contractPdf";
 import { resend, getFromEmail } from "@/lib/resend";
-import { resolveReservationProperty, buildContractData } from "@/lib/reservationProperty";
+import { resolveReservationProperty, buildContractData, managerReplyTo } from "@/lib/reservationProperty";
 
 export async function GET(_req: NextRequest, { params }: { params: Promise<{ token: string }> }) {
   const { token } = await params;
@@ -98,6 +98,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ tok
     await resend.emails.send({
       from: fromEmail,
       to: reservation.clientEmail,
+      replyTo: managerReplyTo(property),
       subject: `Signature enregistrée — ${property.name}`,
       html: buildEmailHtml({
         giteName: property.name,
@@ -126,6 +127,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ tok
       await resend.emails.send({
         from: fromEmail,
         to: notifEmail,
+        replyTo: reservation.clientEmail,
         subject: `Contrat signé par ${reservation.clientFirstName} ${reservation.clientLastName} — acompte en attente`,
         html: buildEmailHtml({
           giteName: property.name,

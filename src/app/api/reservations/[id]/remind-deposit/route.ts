@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { buildEmailHtml, divider, infoBox, muted, signOff } from "@/lib/emailTemplate";
 import { resend, getFromEmail } from "@/lib/resend";
 import { requireAuth } from "@/lib/auth";
-import { resolveReservationProperty } from "@/lib/reservationProperty";
+import { resolveReservationProperty, managerReplyTo } from "@/lib/reservationProperty";
 
 export async function POST(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -59,6 +59,7 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
     await resend.emails.send({
       from: fromEmail,
       to: reservation.clientEmail,
+      replyTo: managerReplyTo(property),
       subject: `Rappel acompte — ${property.name}`,
       html: buildEmailHtml({
         giteName: property.name,

@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { buildEmailHtml, divider, muted, signOff, escapeHtml } from "@/lib/emailTemplate";
 import { resend, getFromEmail } from "@/lib/resend";
 import { requireAuth } from "@/lib/auth";
-import { resolveReservationProperty } from "@/lib/reservationProperty";
+import { resolveReservationProperty, managerReplyTo } from "@/lib/reservationProperty";
 
 const REASON_LABELS: Record<string, string> = {
   dates_taken:    "les dates demandées sont malheureusement déjà réservées",
@@ -67,6 +67,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     await resend.emails.send({
       from: fromEmail,
       to: reservation.clientEmail,
+      replyTo: managerReplyTo(property),
       subject: `Suite à votre demande — ${property.name}`,
       html: buildEmailHtml({
         giteName: property.name,

@@ -182,6 +182,7 @@ ${muted("Cette demande est en attente de votre confirmation dans Kordia.")}
       await resend.emails.send({
         from: "Kordia <notifications@kordia.fr>",
         to: notifTo,
+        replyTo: body.email,
         subject: `Nouvelle demande — ${body.firstName} ${body.lastName} · ${room.name} (${guesthouse.name})`,
         html: buildEmailHtml({
           giteName: guesthouse.name,

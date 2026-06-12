@@ -4,7 +4,7 @@ import { resend, getFromEmail } from "@/lib/resend";
 import { randomBytes } from "crypto";
 import { buildEmailHtml, recapCard, ctaButton, divider, infoBox, muted, signOff, escapeHtml } from "@/lib/emailTemplate";
 import { requireActivePlanAny } from "@/lib/auth";
-import { resolveReservationProperty } from "@/lib/reservationProperty";
+import { resolveReservationProperty, managerReplyTo } from "@/lib/reservationProperty";
 
 export async function POST(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -102,6 +102,7 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
   const { error } = await resend.emails.send({
     from: fromEmail,
     to: reservation.clientEmail,
+    replyTo: managerReplyTo(property),
     subject: `Votre contrat de location à signer — ${property.name}`,
     html,
     attachments,
