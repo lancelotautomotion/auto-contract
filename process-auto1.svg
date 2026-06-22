@@ -1,0 +1,157 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="1320" viewBox="0 0 900 1320" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif">
+  <defs>
+    <!-- Ombre douce -->
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#16223a" flood-opacity="0.18"/>
+    </filter>
+    <!-- Dégradé orange Auto1 -->
+    <linearGradient id="orange" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FF7A1A"/>
+      <stop offset="1" stop-color="#FF6200"/>
+    </linearGradient>
+    <linearGradient id="dark" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#27314A"/>
+      <stop offset="1" stop-color="#1B2236"/>
+    </linearGradient>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="6" refY="6" orient="auto">
+      <path d="M2,2 L10,6 L2,10 Z" fill="#FF6200"/>
+    </marker>
+    <marker id="arrowDash" markerWidth="12" markerHeight="12" refX="6" refY="6" orient="auto">
+      <path d="M2,2 L10,6 L2,10 Z" fill="#9AA4B8"/>
+    </marker>
+  </defs>
+
+  <!-- Fond -->
+  <rect width="900" height="1320" fill="#F4F5F7"/>
+
+  <!-- En-tête -->
+  <rect x="0" y="0" width="900" height="86" fill="url(#dark)"/>
+  <rect x="0" y="86" width="900" height="5" fill="url(#orange)"/>
+  <text x="48" y="54" fill="#FFFFFF" font-size="30" font-weight="700">AUTO<tspan fill="#FF6200">1</tspan>.com</text>
+  <text x="852" y="52" text-anchor="end" fill="#9AA4B8" font-size="17" font-weight="500" letter-spacing="2">PROCESS D'ACHAT VEHICULE</text>
+
+  <!-- Ligne centrale verticale (rail) -->
+  <line x1="320" y1="150" x2="320" y2="1180" stroke="#E2E5EB" stroke-width="2"/>
+
+  <!-- ====== ETAPES ====== -->
+  <!-- Helper layout: x=130 width=380 height=64, gap 112 -->
+
+  <!-- 1 -->
+  <g filter="url(#shadow)">
+    <rect x="130" y="150" width="380" height="64" rx="14" fill="#FFFFFF" stroke="#E2E5EB"/>
+    <rect x="130" y="150" width="6" height="64" rx="3" fill="url(#orange)"/>
+    <circle cx="170" cy="182" r="17" fill="url(#orange)"/>
+    <text x="170" y="188" text-anchor="middle" fill="#FFFFFF" font-size="16" font-weight="700">1</text>
+    <text x="206" y="188" fill="#1B2236" font-size="18" font-weight="600">Offre à accepter</text>
+  </g>
+  <line x1="320" y1="214" x2="320" y2="262" stroke="#FF6200" stroke-width="2.5" marker-end="url(#arrow)"/>
+
+  <!-- 2 -->
+  <g filter="url(#shadow)">
+    <rect x="130" y="262" width="380" height="64" rx="14" fill="#FFFFFF" stroke="#E2E5EB"/>
+    <rect x="130" y="262" width="6" height="64" rx="3" fill="url(#orange)"/>
+    <circle cx="170" cy="294" r="17" fill="url(#orange)"/>
+    <text x="170" y="300" text-anchor="middle" fill="#FFFFFF" font-size="16" font-weight="700">2</text>
+    <text x="206" y="288" fill="#1B2236" font-size="18" font-weight="600">Offre à accepter</text>
+    <text x="206" y="309" fill="#7A8499" font-size="13" font-weight="500">Traitement manuel</text>
+  </g>
+  <line x1="320" y1="326" x2="320" y2="374" stroke="#FF6200" stroke-width="2.5" marker-end="url(#arrow)"/>
+
+  <!-- 3 -->
+  <g filter="url(#shadow)">
+    <rect x="130" y="374" width="380" height="64" rx="14" fill="#FFFFFF" stroke="#E2E5EB"/>
+    <rect x="130" y="374" width="6" height="64" rx="3" fill="url(#orange)"/>
+    <circle cx="170" cy="406" r="17" fill="url(#orange)"/>
+    <text x="170" y="412" text-anchor="middle" fill="#FFFFFF" font-size="16" font-weight="700">3</text>
+    <text x="206" y="412" fill="#1B2236" font-size="18" font-weight="600">Inspection</text>
+  </g>
+  <line x1="320" y1="438" x2="320" y2="486" stroke="#FF6200" stroke-width="2.5" marker-end="url(#arrow)"/>
+
+  <!-- 4 -->
+  <g filter="url(#shadow)">
+    <rect x="130" y="486" width="380" height="64" rx="14" fill="#FFFFFF" stroke="#E2E5EB"/>
+    <rect x="130" y="486" width="6" height="64" rx="3" fill="url(#orange)"/>
+    <circle cx="170" cy="518" r="17" fill="url(#orange)"/>
+    <text x="170" y="524" text-anchor="middle" fill="#FFFFFF" font-size="16" font-weight="700">4</text>
+    <text x="206" y="524" fill="#1B2236" font-size="18" font-weight="600">Transport</text>
+  </g>
+  <line x1="320" y1="550" x2="320" y2="598" stroke="#FF6200" stroke-width="2.5" marker-end="url(#arrow)"/>
+
+  <!-- 5 - Non conformité (conditionnel, style alerte) -->
+  <g filter="url(#shadow)">
+    <rect x="130" y="598" width="380" height="64" rx="14" fill="#FFF6F0" stroke="#FFCBA8"/>
+    <rect x="130" y="598" width="6" height="64" rx="3" fill="#E04A1F"/>
+    <path d="M170 612 l16 28 h-32 z" fill="#E04A1F"/>
+    <text x="170" y="637" text-anchor="middle" fill="#FFFFFF" font-size="15" font-weight="700">!</text>
+    <text x="206" y="624" fill="#1B2236" font-size="18" font-weight="600">Non-conformité</text>
+    <text x="206" y="645" fill="#B5491F" font-size="13" font-weight="500">Si écart constaté à l'inspection</text>
+  </g>
+  <!-- chemin conditionnel en pointillés vers prix final -->
+  <line x1="320" y1="662" x2="320" y2="710" stroke="#9AA4B8" stroke-width="2.5" stroke-dasharray="6 5" marker-end="url(#arrowDash)"/>
+  <!-- badge conditionnel à droite -->
+  <g>
+    <rect x="540" y="612" width="150" height="36" rx="18" fill="#FFFFFF" stroke="#FFCBA8"/>
+    <text x="615" y="635" text-anchor="middle" fill="#E04A1F" font-size="13" font-weight="600">étape optionnelle</text>
+  </g>
+  <line x1="510" y1="630" x2="540" y2="630" stroke="#FFCBA8" stroke-width="2"/>
+
+  <!-- 6 - Prix final -->
+  <g filter="url(#shadow)">
+    <rect x="130" y="710" width="380" height="64" rx="14" fill="#FFFFFF" stroke="#E2E5EB"/>
+    <rect x="130" y="710" width="6" height="64" rx="3" fill="url(#orange)"/>
+    <circle cx="170" cy="742" r="17" fill="url(#orange)"/>
+    <text x="170" y="748" text-anchor="middle" fill="#FFFFFF" font-size="16" font-weight="700">5</text>
+    <text x="206" y="748" fill="#1B2236" font-size="18" font-weight="600">Prix final</text>
+  </g>
+  <line x1="320" y1="774" x2="320" y2="822" stroke="#FF6200" stroke-width="2.5" marker-end="url(#arrow)"/>
+
+  <!-- 7 - Achat -->
+  <g filter="url(#shadow)">
+    <rect x="130" y="822" width="380" height="64" rx="14" fill="#FFFFFF" stroke="#E2E5EB"/>
+    <rect x="130" y="822" width="6" height="64" rx="3" fill="url(#orange)"/>
+    <circle cx="170" cy="854" r="17" fill="url(#orange)"/>
+    <text x="170" y="860" text-anchor="middle" fill="#FFFFFF" font-size="16" font-weight="700">6</text>
+    <text x="206" y="860" fill="#1B2236" font-size="18" font-weight="600">Achat</text>
+  </g>
+  <line x1="320" y1="886" x2="320" y2="934" stroke="#FF6200" stroke-width="2.5" marker-end="url(#arrow)"/>
+
+  <!-- 8 - Paiement -->
+  <g filter="url(#shadow)">
+    <rect x="130" y="934" width="380" height="64" rx="14" fill="#FFFFFF" stroke="#E2E5EB"/>
+    <rect x="130" y="934" width="6" height="64" rx="3" fill="url(#orange)"/>
+    <circle cx="170" cy="966" r="17" fill="url(#orange)"/>
+    <text x="170" y="972" text-anchor="middle" fill="#FFFFFF" font-size="16" font-weight="700">7</text>
+    <text x="206" y="972" fill="#1B2236" font-size="18" font-weight="600">Paiement</text>
+  </g>
+  <line x1="320" y1="998" x2="320" y2="1046" stroke="#FF6200" stroke-width="2.5" marker-end="url(#arrow)"/>
+
+  <!-- 9 - Bon de déblocage (Corporate) -->
+  <g filter="url(#shadow)">
+    <rect x="130" y="1046" width="380" height="64" rx="14" fill="url(#dark)"/>
+    <rect x="130" y="1046" width="6" height="64" rx="3" fill="url(#orange)"/>
+    <circle cx="170" cy="1078" r="17" fill="url(#orange)"/>
+    <text x="170" y="1084" text-anchor="middle" fill="#FFFFFF" font-size="16" font-weight="700">8</text>
+    <text x="206" y="1072" fill="#FFFFFF" font-size="18" font-weight="600">Bon de déblocage</text>
+    <text x="206" y="1093" fill="#9AA4B8" font-size="13" font-weight="500">Validation Corporate</text>
+  </g>
+  <line x1="320" y1="1110" x2="320" y2="1158" stroke="#FF6200" stroke-width="2.5" marker-end="url(#arrow)"/>
+
+  <!-- FIN -->
+  <g filter="url(#shadow)">
+    <rect x="220" y="1158" width="200" height="56" rx="28" fill="url(#orange)"/>
+    <text x="320" y="1193" text-anchor="middle" fill="#FFFFFF" font-size="20" font-weight="700" letter-spacing="3">FIN</text>
+  </g>
+
+  <!-- Légende -->
+  <g transform="translate(600,720)">
+    <rect x="0" y="0" width="252" height="150" rx="14" fill="#FFFFFF" stroke="#E2E5EB" filter="url(#shadow)"/>
+    <text x="20" y="32" fill="#1B2236" font-size="15" font-weight="700">Légende</text>
+    <line x1="20" y1="42" x2="232" y2="42" stroke="#E2E5EB"/>
+    <line x1="20" y1="64" x2="52" y2="64" stroke="#FF6200" stroke-width="2.5" marker-end="url(#arrow)"/>
+    <text x="64" y="69" fill="#5A6478" font-size="13">Flux principal</text>
+    <line x1="20" y1="94" x2="52" y2="94" stroke="#9AA4B8" stroke-width="2.5" stroke-dasharray="6 5" marker-end="url(#arrowDash)"/>
+    <text x="64" y="99" fill="#5A6478" font-size="13">Chemin conditionnel</text>
+    <rect x="20" y="116" width="22" height="16" rx="4" fill="url(#dark)"/>
+    <text x="52" y="129" fill="#5A6478" font-size="13">Étape Corporate</text>
+  </g>
+</svg>
