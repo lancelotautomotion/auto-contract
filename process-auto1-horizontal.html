@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Process d'achat véhicule — AUTO1.com</title>
+<style>
+  :root{
+    --orange:#FF6200; --orange-light:#FF7A1A;
+    --dark:#1B2236; --dark-2:#27314A;
+    --bg:#F4F5F7; --line:#E2E5EB; --grey:#9AA4B8; --txt-soft:#5A6478;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Segoe UI','Helvetica Neue',Arial,sans-serif;background:var(--bg);color:var(--dark);padding:0 0 48px}
+  .topbar{background:var(--dark);padding:22px 40px;border-bottom:5px solid var(--orange);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+  .logo{color:#fff;font-size:28px;font-weight:700;letter-spacing:.5px}
+  .logo span{color:var(--orange)}
+  .subtitle{color:var(--grey);font-size:15px;font-weight:500;letter-spacing:2px;text-transform:uppercase}
+  .wrap{max-width:1320px;margin:34px auto 0;padding:0 24px}
+  h1{font-size:22px;font-weight:700;margin-bottom:4px}
+  .lead{color:var(--txt-soft);font-size:14px;margin-bottom:22px}
+  .canvas{background:#fff;border:1px solid var(--line);border-radius:18px;padding:18px;overflow-x:auto;box-shadow:0 8px 24px rgba(22,34,58,.08)}
+  svg{display:block;min-width:1180px;width:100%;height:auto}
+  .legend{display:flex;flex-wrap:wrap;gap:22px;margin-top:22px;padding:18px 22px;background:#fff;border:1px solid var(--line);border-radius:14px;font-size:13.5px;color:var(--txt-soft)}
+  .legend div{display:flex;align-items:center;gap:9px}
+  .sw{width:26px;height:14px;border-radius:4px}
+  .notes{margin-top:22px;font-size:13.5px;color:var(--txt-soft);line-height:1.7}
+  .notes b{color:var(--dark)}
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="logo">AUTO<span>1</span>.com</div>
+    <div class="subtitle">Process d'achat véhicule</div>
+  </div>
+
+  <div class="wrap">
+    <h1>Flux d'achat — vue horizontale</h1>
+    <p class="lead">Inspection et Transport s'exécutent en parallèle (flux de véhicules distincts). Le Bon de déblocage ne concerne que les VO passés par l'Inspection.</p>
+
+    <div class="canvas">
+      <svg viewBox="0 0 1980 560" xmlns="http://www.w3.org/2000/svg" font-family="'Segoe UI','Helvetica Neue',Arial,sans-serif">
+        <defs>
+          <filter id="sh" x="-20%" y="-20%" width="140%" height="140%">
+            <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#16223a" flood-opacity="0.16"/>
+          </filter>
+          <linearGradient id="org" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#FF7A1A"/><stop offset="1" stop-color="#FF6200"/>
+          </linearGradient>
+          <linearGradient id="drk" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#27314A"/><stop offset="1" stop-color="#1B2236"/>
+          </linearGradient>
+          <marker id="ar" markerWidth="11" markerHeight="11" refX="6" refY="5.5" orient="auto">
+            <path d="M2,2 L9,5.5 L2,9 Z" fill="#FF6200"/>
+          </marker>
+          <marker id="arg" markerWidth="11" markerHeight="11" refX="6" refY="5.5" orient="auto">
+            <path d="M2,2 L9,5.5 L2,9 Z" fill="#9AA4B8"/>
+          </marker>
+        </defs>
+
+        <!-- Zone parallèle -->
+        <rect x="448" y="92" width="458" height="446" rx="16" fill="#FBFBFD" stroke="#D7DBE3" stroke-dasharray="7 6"/>
+        <text x="466" y="120" fill="#9AA4B8" font-size="13" font-weight="600" letter-spacing="1.5">TRAITEMENT EN PARALLÈLE</text>
+
+        <!-- ====== Connecteurs (sous les boîtes) ====== -->
+        <!-- 1 -> 2 -->
+        <line x1="210" y1="310" x2="246" y2="310" stroke="#FF6200" stroke-width="2.5" marker-end="url(#ar)"/>
+        <!-- 2 -> gateway split SP1 -->
+        <line x1="420" y1="310" x2="455" y2="310" stroke="#FF6200" stroke-width="2.5"/>
+        <!-- SP1 -> Inspection (haut) -->
+        <path d="M455,300 V150 H476" fill="none" stroke="#FF6200" stroke-width="2.5" marker-end="url(#ar)"/>
+        <!-- SP1 -> Transport (bas) -->
+        <path d="M455,320 V470 H476" fill="none" stroke="#FF6200" stroke-width="2.5" marker-end="url(#ar)"/>
+        <!-- Inspection -> Non-conformité (conditionnel, pointillés) -->
+        <line x1="650" y1="150" x2="696" y2="150" stroke="#9AA4B8" stroke-width="2.5" stroke-dasharray="6 5" marker-end="url(#arg)"/>
+        <!-- Non-conformité -> merge MG1 -->
+        <path d="M870,150 H905 V296" fill="none" stroke="#FF6200" stroke-width="2.5"/>
+        <!-- Transport -> merge MG1 -->
+        <path d="M650,470 H905 V324" fill="none" stroke="#FF6200" stroke-width="2.5"/>
+        <!-- MG1 -> Prix final -->
+        <line x1="919" y1="310" x2="930" y2="310" stroke="#FF6200" stroke-width="2.5" marker-end="url(#ar)"/>
+        <!-- Prix final -> Achat -->
+        <line x1="1100" y1="310" x2="1136" y2="310" stroke="#FF6200" stroke-width="2.5" marker-end="url(#ar)"/>
+        <!-- Achat -> Paiement -->
+        <line x1="1310" y1="310" x2="1346" y2="310" stroke="#FF6200" stroke-width="2.5" marker-end="url(#ar)"/>
+        <!-- Paiement -> diamond SP2 -->
+        <line x1="1520" y1="310" x2="1527" y2="310" stroke="#FF6200" stroke-width="2.5"/>
+        <!-- SP2 -> Bon de déblocage (VO inspectés) -->
+        <path d="M1545,292 V150 H1556" fill="none" stroke="#FF6200" stroke-width="2.5" marker-end="url(#ar)"/>
+        <!-- SP2 -> FIN (autres flux) -->
+        <line x1="1563" y1="310" x2="1770" y2="310" stroke="#FF6200" stroke-width="2.5" marker-end="url(#ar)"/>
+        <!-- Bon de déblocage -> FIN -->
+        <path d="M1730,150 H1845 V276" fill="none" stroke="#FF6200" stroke-width="2.5" marker-end="url(#ar)"/>
+
+        <!-- Étiquettes connecteurs -->
+        <text x="600" y="142" fill="#B5491F" font-size="12" font-weight="600">si écart constaté</text>
+        <text x="1556" y="232" fill="#5A6478" font-size="12" font-weight="600">VO inspectés</text>
+        <text x="1640" y="300" fill="#5A6478" font-size="12" font-weight="600">autres flux</text>
+
+        <!-- ====== Gateways ====== -->
+        <!-- SP1 parallèle (AND) -->
+        <circle cx="455" cy="310" r="14" fill="#fff" stroke="#FF6200" stroke-width="2.5"/>
+        <path d="M455,303 V317 M448,310 H462" stroke="#FF6200" stroke-width="2.5"/>
+        <!-- MG1 parallèle (AND) -->
+        <circle cx="905" cy="310" r="14" fill="#fff" stroke="#FF6200" stroke-width="2.5"/>
+        <path d="M905,303 V317 M898,310 H912" stroke="#FF6200" stroke-width="2.5"/>
+        <!-- SP2 exclusif (choix VO / autres) -->
+        <path d="M1545,292 L1563,310 L1545,328 L1527,310 Z" fill="#fff" stroke="#FF6200" stroke-width="2.5"/>
+        <path d="M1539,304 L1551,316 M1551,304 L1539,316" stroke="#FF6200" stroke-width="2.2"/>
+
+        <!-- ====== Boîtes ====== -->
+        <!-- helper geometry: width 170, height 72 -->
+        <!-- 1 Offre à accepter -->
+        <g filter="url(#sh)">
+          <rect x="40" y="274" width="170" height="72" rx="14" fill="#fff" stroke="#E2E5EB"/>
+          <rect x="40" y="274" width="6" height="72" rx="3" fill="url(#org)"/>
+          <circle cx="74" cy="298" r="14" fill="url(#org)"/>
+          <text x="74" y="303" text-anchor="middle" fill="#fff" font-size="14" font-weight="700">1</text>
+          <text x="60" y="332" fill="#1B2236" font-size="15" font-weight="600">Offre à accepter</text>
+        </g>
+        <!-- 2 Offre manuel -->
+        <g filter="url(#sh)">
+          <rect x="250" y="274" width="170" height="72" rx="14" fill="#fff" stroke="#E2E5EB"/>
+          <rect x="250" y="274" width="6" height="72" rx="3" fill="url(#org)"/>
+          <circle cx="284" cy="298" r="14" fill="url(#org)"/>
+          <text x="284" y="303" text-anchor="middle" fill="#fff" font-size="14" font-weight="700">2</text>
+          <text x="270" y="324" fill="#1B2236" font-size="15" font-weight="600">Offre à accepter</text>
+          <text x="270" y="341" fill="#7A8499" font-size="11.5" font-weight="500">Traitement manuel</text>
+        </g>
+        <!-- 3a Inspection -->
+        <g filter="url(#sh)">
+          <rect x="480" y="114" width="170" height="72" rx="14" fill="#fff" stroke="#E2E5EB"/>
+          <rect x="480" y="114" width="6" height="72" rx="3" fill="url(#org)"/>
+          <circle cx="514" cy="138" r="14" fill="url(#org)"/>
+          <text x="514" y="143" text-anchor="middle" fill="#fff" font-size="14" font-weight="700">3</text>
+          <text x="500" y="164" fill="#1B2236" font-size="15" font-weight="600">Inspection</text>
+          <text x="500" y="181" fill="#7A8499" font-size="11.5" font-weight="500">Flux VO</text>
+        </g>
+        <!-- Non-conformité (conditionnel) -->
+        <g filter="url(#sh)">
+          <rect x="700" y="114" width="170" height="72" rx="14" fill="#FFF6F0" stroke="#FFCBA8"/>
+          <rect x="700" y="114" width="6" height="72" rx="3" fill="#E04A1F"/>
+          <path d="M734,126 l13,23 h-26 z" fill="#E04A1F"/>
+          <text x="734" y="146" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">!</text>
+          <text x="720" y="160" fill="#1B2236" font-size="15" font-weight="600">Non-conformité</text>
+          <text x="720" y="177" fill="#B5491F" font-size="11.5" font-weight="500">Optionnel</text>
+        </g>
+        <!-- 3b Transport -->
+        <g filter="url(#sh)">
+          <rect x="480" y="434" width="170" height="72" rx="14" fill="#fff" stroke="#E2E5EB"/>
+          <rect x="480" y="434" width="6" height="72" rx="3" fill="url(#org)"/>
+          <circle cx="514" cy="458" r="14" fill="url(#org)"/>
+          <text x="514" y="463" text-anchor="middle" fill="#fff" font-size="14" font-weight="700">3</text>
+          <text x="500" y="484" fill="#1B2236" font-size="15" font-weight="600">Transport</text>
+          <text x="500" y="501" fill="#7A8499" font-size="11.5" font-weight="500">Flux distinct</text>
+        </g>
+        <!-- 4 Prix final -->
+        <g filter="url(#sh)">
+          <rect x="930" y="274" width="170" height="72" rx="14" fill="#fff" stroke="#E2E5EB"/>
+          <rect x="930" y="274" width="6" height="72" rx="3" fill="url(#org)"/>
+          <circle cx="964" cy="298" r="14" fill="url(#org)"/>
+          <text x="964" y="303" text-anchor="middle" fill="#fff" font-size="14" font-weight="700">4</text>
+          <text x="950" y="332" fill="#1B2236" font-size="15" font-weight="600">Prix final</text>
+        </g>
+        <!-- 5 Achat -->
+        <g filter="url(#sh)">
+          <rect x="1140" y="274" width="170" height="72" rx="14" fill="#fff" stroke="#E2E5EB"/>
+          <rect x="1140" y="274" width="6" height="72" rx="3" fill="url(#org)"/>
+          <circle cx="1174" cy="298" r="14" fill="url(#org)"/>
+          <text x="1174" y="303" text-anchor="middle" fill="#fff" font-size="14" font-weight="700">5</text>
+          <text x="1160" y="332" fill="#1B2236" font-size="15" font-weight="600">Achat</text>
+        </g>
+        <!-- 6 Paiement -->
+        <g filter="url(#sh)">
+          <rect x="1350" y="274" width="170" height="72" rx="14" fill="#fff" stroke="#E2E5EB"/>
+          <rect x="1350" y="274" width="6" height="72" rx="3" fill="url(#org)"/>
+          <circle cx="1384" cy="298" r="14" fill="url(#org)"/>
+          <text x="1384" y="303" text-anchor="middle" fill="#fff" font-size="14" font-weight="700">6</text>
+          <text x="1370" y="332" fill="#1B2236" font-size="15" font-weight="600">Paiement</text>
+        </g>
+        <!-- 7 Bon de déblocage (Corporate) -->
+        <g filter="url(#sh)">
+          <rect x="1560" y="114" width="170" height="72" rx="14" fill="url(#drk)"/>
+          <rect x="1560" y="114" width="6" height="72" rx="3" fill="url(#org)"/>
+          <circle cx="1594" cy="138" r="14" fill="url(#org)"/>
+          <text x="1594" y="143" text-anchor="middle" fill="#fff" font-size="14" font-weight="700">7</text>
+          <text x="1580" y="160" fill="#fff" font-size="14.5" font-weight="600">Bon de déblocage</text>
+          <text x="1580" y="177" fill="#9AA4B8" font-size="11.5" font-weight="500">Corporate · VO uniquement</text>
+        </g>
+        <!-- FIN -->
+        <g filter="url(#sh)">
+          <rect x="1770" y="280" width="160" height="60" rx="30" fill="url(#org)"/>
+          <text x="1850" y="316" text-anchor="middle" fill="#fff" font-size="18" font-weight="700" letter-spacing="3">FIN</text>
+        </g>
+      </svg>
+    </div>
+
+    <div class="legend">
+      <div><span class="sw" style="background:linear-gradient(#FF7A1A,#FF6200)"></span> Flux principal</div>
+      <div><span class="sw" style="background:#9AA4B8"></span> Chemin conditionnel (si écart)</div>
+      <div><span class="sw" style="background:linear-gradient(#27314A,#1B2236)"></span> Étape Corporate</div>
+      <div><span class="sw" style="background:#fff;border:2px solid #FF6200;border-radius:50%;width:18px;height:18px"></span> Passerelle « + » : parallèle (ET)</div>
+      <div><span class="sw" style="background:#fff;border:2px solid #FF6200;transform:rotate(45deg);width:16px;height:16px"></span> Passerelle « × » : choix exclusif</div>
+    </div>
+
+    <div class="notes">
+      <p><b>Parallélisme.</b> Après l'offre validée manuellement, le process se scinde : <b>Inspection (flux VO)</b> et <b>Transport (flux distinct)</b> s'exécutent simultanément — ce ne sont pas les mêmes véhicules.</p>
+      <p><b>Non-conformité.</b> Étape conditionnelle rattachée au seul flux Inspection, déclenchée uniquement si un écart est constaté.</p>
+      <p><b>Bon de déblocage.</b> En sortie de Paiement, choix exclusif : les <b>VO passés par l'Inspection</b> nécessitent le bon de déblocage Corporate ; les <b>autres flux</b> terminent directement.</p>
+    </div>
+  </div>
+</body>
+</html>
