@@ -11,7 +11,7 @@ import { IcoFileText, IcoFileCheck, IcoCalendarDays, IcoClock, IcoCheckSquare, I
 import ScrollReveal from '@/app/ScrollReveal';
 
 export const metadata: Metadata = {
-  title: 'À propos — Kordia',
+  title: 'À propos',
   description: "L'histoire derrière Kordia : un outil né d'un gîte familial, pour libérer les propriétaires indépendants de la paperasse.",
 };
 

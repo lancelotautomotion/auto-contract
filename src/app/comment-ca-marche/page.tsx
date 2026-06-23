@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import '@/styles/landing.css';
 import './comment-ca-marche.css';
@@ -7,6 +8,11 @@ import ScrollToTop from "@/components/landing/ScrollToTop";
 import FaqAccordion from "./FaqAccordion";
 import StepVisual from "./StepVisual";
 import { IcoCheck, IcoArrowRight } from "@/components/icons";
+
+export const metadata: Metadata = {
+  title: 'Comment ça marche',
+  description: "De la réservation au contrat signé : configurez votre gîte, saisissez la réservation, envoyez le contrat et le locataire signe en ligne. Découvrez Kordia en 5 étapes.",
+};
 
 const steps = [
   {

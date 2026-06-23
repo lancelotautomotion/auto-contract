@@ -9,7 +9,7 @@ import ContactForm from './ContactForm';
 import { IcoMail, IcoClock, IcoArrowRight, IcoFileText } from '@/components/icons';
 
 export const metadata: Metadata = {
-  title: 'Contact — Kordia',
+  title: 'Contact',
   description: "Une question ? Écrivez-nous, réponse sous 24h ouvrées — contact@kordia.fr.",
 };
 

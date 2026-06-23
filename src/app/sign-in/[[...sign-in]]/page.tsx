@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import { SignIn } from '@clerk/nextjs';
 import Link from 'next/link';
 import { IcoChevronLeft, IcoPlus, IcoFileCheck, IcoCalendarDays, IcoClock } from '@/components/icons';
@@ -5,6 +6,11 @@ import { IcoChevronLeft, IcoPlus, IcoFileCheck, IcoCalendarDays, IcoClock } from
 import { Plus_Jakarta_Sans } from 'next/font/google';
 
 import '@/styles/pages.css';
+
+export const metadata: Metadata = {
+  title: 'Connexion',
+  description: "Connectez-vous à votre espace Kordia pour gérer vos réservations, contrats de location et acomptes.",
+};
 
 const font = Plus_Jakarta_Sans({
   subsets: ['latin'],

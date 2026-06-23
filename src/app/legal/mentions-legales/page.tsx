@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import LegalSidebarClient from "../_components/LegalSidebarClient";
 
 export const metadata: Metadata = {
-  title: "Mentions légales — Kordia",
+  title: "Mentions légales",
   description: "Mentions légales de Kordia, logiciel de gestion de contrats de location pour gîtes.",
 };
 

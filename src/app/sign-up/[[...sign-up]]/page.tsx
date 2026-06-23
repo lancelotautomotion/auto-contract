@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import { SignUp } from '@clerk/nextjs';
 import Link from 'next/link';
 import { Suspense } from 'react';
@@ -5,6 +6,11 @@ import { IcoChevronLeft, IcoPlus, IcoFileCheck, IcoCalendarDays, IcoClock } from
 
 import { Plus_Jakarta_Sans } from 'next/font/google';
 import '@/styles/pages.css';
+
+export const metadata: Metadata = {
+  title: 'Inscription — 30 jours gratuits',
+  description: "Créez votre compte Kordia et automatisez vos contrats de location saisonnière. 30 jours gratuits, sans carte bancaire.",
+};
 import PlanIntentSetter from '../PlanIntentSetter';
 
 const font = Plus_Jakarta_Sans({

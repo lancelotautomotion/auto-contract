@@ -11,7 +11,10 @@ const localization = {
 };
 
 export const metadata: Metadata = {
-  title: "Kordia — Contrats de location pour gîtes, automatisés",
+  title: {
+    default: "Kordia — Contrats de location pour gîtes, automatisés",
+    template: "%s — Kordia",
+  },
   description: "Automatisez vos contrats de location saisonnière en 2 minutes. Génération PDF, envoi email, suivi acompte. 30 jours gratuits, sans CB.",
   icons: {
     icon: '/KORDIA.svg',

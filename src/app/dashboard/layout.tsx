@@ -6,7 +6,7 @@ import { prisma } from "@/lib/prisma";
 import '@/styles/dashboard.css';
 import SentryUserContext from "./SentryUserContext";
 
-export const metadata: Metadata = { title: "Kordia" };
+export const metadata: Metadata = { title: { absolute: "Tableau de bord — Kordia" } };
 export const dynamic = 'force-dynamic';
 
 const font = Plus_Jakarta_Sans({

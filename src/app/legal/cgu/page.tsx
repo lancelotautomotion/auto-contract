@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import LegalSidebarClient from "../_components/LegalSidebarClient";
 
 export const metadata: Metadata = {
-  title: "Conditions Générales d'Utilisation — Kordia",
+  title: "Conditions Générales d'Utilisation",
   description: "Conditions générales d'utilisation de la plateforme Kordia — génération et signature électronique de contrats de location.",
 };
 

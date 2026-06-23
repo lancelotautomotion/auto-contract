@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { auth } from "@clerk/nextjs/server";
 import { currentUser } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/prisma";
@@ -7,6 +8,11 @@ import { Plus_Jakarta_Sans } from "next/font/google";
 import SubscribeButton from "./SubscribeButton";
 import "@/styles/upgrade.css";
 import { IcoChevronLeft, IcoInfo } from "@/components/icons";
+
+export const metadata: Metadata = {
+  title: "Abonnement",
+  description: "Choisissez votre formule Kordia : Essentiel ou Multi-hébergement. Contrats illimités, signature eIDAS, envoi automatisé.",
+};
 
 const font = Plus_Jakarta_Sans({
   subsets: ["latin"],

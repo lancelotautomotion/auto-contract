@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import LegalSidebarClient from "../_components/LegalSidebarClient";
 
 export const metadata: Metadata = {
-  title: "Politique de confidentialité — Kordia",
+  title: "Politique de confidentialité",
   description: "Comment Kordia collecte, utilise et protège vos données personnelles. Conformité RGPD.",
 };
 

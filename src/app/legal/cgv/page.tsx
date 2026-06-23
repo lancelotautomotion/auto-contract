@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import LegalSidebarClient from "../_components/LegalSidebarClient";
 
 export const metadata: Metadata = {
-  title: "Conditions Générales de Vente — Kordia",
+  title: "Conditions Générales de Vente",
   description: "CGV Kordia : abonnement Essentiel dès 10 € HT/mois, essai 30 jours sans CB, résiliation à tout moment.",
 };
 
