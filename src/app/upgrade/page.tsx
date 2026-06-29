@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { auth } from "@clerk/nextjs/server";
 import { currentUser } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { getTrialInfo } from "@/lib/trial";
 import Image from "next/image";
@@ -33,16 +34,22 @@ const essentialFeatures = [
 
 export default async function UpgradePage({ searchParams }: { searchParams: Promise<{ canceled?: string }> }) {
   const { userId: clerkId } = await auth();
+
+  // Page réservée aux utilisateurs connectés (lien depuis les emails de fin
+  // d'essai notamment) : sans session, on demande la connexion puis on revient
+  // ici. Sinon le bouton "Souscrire" appelle un checkout qui renvoie 401.
+  if (!clerkId) {
+    redirect("/sign-in?redirect_url=/upgrade");
+  }
+
   let trialInfo = null;
   let giteCount = 0;
   let offerType: string = "gite";
-  if (clerkId) {
-    const dbUser = await prisma.user.findUnique({ where: { clerkId } });
-    if (dbUser) {
-      trialInfo = getTrialInfo(dbUser);
-      offerType = dbUser.offerType ?? "gite";
-      giteCount = await prisma.gite.count({ where: { userId: dbUser.id, deletedAt: null } });
-    }
+  const dbUser = await prisma.user.findUnique({ where: { clerkId } });
+  if (dbUser) {
+    trialInfo = getTrialInfo(dbUser);
+    offerType = dbUser.offerType ?? "gite";
+    giteCount = await prisma.gite.count({ where: { userId: dbUser.id, deletedAt: null } });
   }
   const billedQuantity = Math.min(Math.max(giteCount, 1), 5);
   const monthlyPrice = billedQuantity <= 1 ? "10 €" : "20 €";
